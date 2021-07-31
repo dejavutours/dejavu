@@ -1,0 +1,107 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <%- include('../partials/headtag'); %>
+</head>
+
+<body>
+    <%- include('../partials/header'); %>
+
+                    <!-- bradcam_area  -->
+            <div class="bradcam_area bradcam_bg_4">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="bradcam_text text-center">
+                                <h3>upcoming Tours & trek</h3>
+                                <p>experience the heart of local</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/ bradcam_area  -->
+
+            <!-- Tours and Trek event - popular places area start -->
+            <div class="popular_places_area">
+                <div class="container">
+                    <div class="row">
+                        <% for (let trips of upcomingtrips ) { %>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="single_place">
+                                <div class="thumb">
+                                    <img src="images/<%= trips.imageurl %>" alt="">
+                                    <a href="/tripdetails/<%= trips.name %>" class="prise">₹<%= trips.price %></a><br>  
+                                </div>
+                                <div class="place_info">
+                                    <a href="/tripdetails/<%= trips.name %>"><h3><%= trips.name %></h3></a>
+                                    <% if (!isAuthenticated) { %>
+                                        <% for (var i = 0; i < trips.upcomingtrip.length; i++) { %>
+                                    <form style ='display:inline-block;' action="/bookdate" method="POST">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <input type="hidden" value="<%= trips.name %>" id="tripname" name="tripname">
+                                        <input type="hidden" value="<%= trips.upcomingtrip[i] %>" id="tripdate" name="tripdate">
+                                        <button class="btn btn-success mt-2" type="submit"><%= trips.upcomingtrip[i] %></button>
+                                    </form>
+                                        <% } %>
+                                    <% } %>
+                                    <% if (isAuthenticated) { %>
+                                        <% for (var i = 0; i < trips.upcomingtrip.length; i++) { %>
+                                        <form style ='display:inline-block;' action="/admin/deleteupcomingdate" method="POST">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <input type="hidden" value="<%= trips._id %>" id="tripid" name="tripid">
+                                            <input type="hidden" value="<%= i %>" id="tripdateindex" name="tripdateindex">
+                                            <button class="btn btn-info mt-2" type="submit">Del&nbsp;<%= trips.upcomingtrip[i] %></button>
+                                        </form>
+                                        <% } %>
+                                    <% } %>
+                                    <p><%= trips.destinations %></p>
+                                    <p><%= trips.route %></p>
+                                    <div class="rating_days d-flex justify-content-between">
+                                        <!--<span class="d-flex justify-content-center align-items-center">
+                                             <i class="fa fa-star"></i> 
+                                             <i class="fa fa-star"></i> 
+                                             <i class="fa fa-star"></i> 
+                                             <i class="fa fa-star"></i> 
+                                             <i class="fa fa-star"></i>
+                                             <a href="#">(20 Review)</a>
+                                        </span>-->
+                                        <div class="days">
+                                            <i class="fa fa-clock-o"></i>
+                                            <a href="#"><%= trips.days %> Days</a>
+                                        </div>
+                                            <!-- <% if (isAuthenticated) { %>
+                                        <div>
+                                            <form action="/admin/deleteupcoming" method="POST">
+                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                <input type="hidden" name="tripid" id="tripid" value="<%= trips._id %>"/>
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
+                                        </div>
+                                        <% } %> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <% } %>
+                        
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="more_place_btn text-center">
+                                <a class="boxed-btn4" href="#">More Places</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+
+    <%- include('../partials/footer'); %>
+    <%- include('../partials/scripttag'); %>
+</body>
+
+</html>

@@ -1,0 +1,386 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <%- include('../partials/headtag'); %>
+</head>
+
+<body>
+    <%- include('../partials/header'); %>
+    <%- include('../partials/slider'); %>
+        <!-- Tours and Trek event - popular places area start -->
+        <div class="popular_places_area">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6">
+                        <div class="section_title text-center mb_70">
+                            <h3>Tours & Trek</h3>
+                            <p>We have pre planned schedule for fix departure tours and treks round the year at different locations.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <% for (let [index, trips] of Tours.entries() ) { %>
+                        <% if(index <= 5){ %>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="single_place">
+                                    <div class="thumb">
+                                        <img src="images/<%= trips.imageurl %>" alt="">
+                                        <a href="/tripdetails/<%= trips.name %>" class="prise">₹<%= trips.price %></a>
+                                    </div>
+                                    <div class="place_info">
+                                        <a href="/tripdetails/<%= trips.name %>"><h3><%= trips.name %></h3></a>
+                                        <p><%= trips.destinations %></p>
+                                        <p><%= trips.route %></p>
+                                        <div class="rating_days d-flex justify-content-between">
+                                            <!--<span class="d-flex justify-content-center align-items-center">
+                                                 <i class="fa fa-star"></i> 
+                                                 <i class="fa fa-star"></i> 
+                                                 <i class="fa fa-star"></i> 
+                                                 <i class="fa fa-star"></i> 
+                                                 <i class="fa fa-star"></i>
+                                                 <a href="#">(20 Review)</a>
+                                            </span>-->
+                                            <div class="days">
+                                                <i class="fa fa-clock-o"></i>
+                                                <a href="#"><%= trips.days %> Days</a>
+                                            </div>
+                                            <% if (isAuthenticated) { %>
+                                            <div>
+                                                <form action="/admin/edit" method="POST">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <input type="hidden" name="tripid" id="tripid" value="<%= trips._id %>"/>
+                                                    <button type="submit" class="btn btn-primary">Edit</button>
+                                                </form>
+                                            </div>
+                                            <div>
+                                                <form action="/admin/delete" method="POST">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <input type="hidden" name="tripid" id="tripid" value="<%= trips._id %>"/>
+                                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                            <div>
+                                                <form action="/admin/AddImage" method="POST">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <input type="hidden" name="tripid" id="tripid" value="<%= trips._id %>"/>
+                                                    <button type="submit" class="btn btn-secondary">Add Image</button>
+                                                </form>
+                                            </div>
+                                            <% } %>
+                                        </div>
+                                        <% if (isAuthenticated) { %>
+                                            <br>
+                                        <div>
+                                            <form action="/admin/addupcoming" method="POST">
+                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                <input type="hidden" name="tripid" id="tripid" value="<%= trips._id %>"/>
+                                                <input type="date" id="tripdate" name="tripdate">
+                                                <button type="submit" class="btn btn-success">Upcoming</button>
+                                            </form>                                    
+                                            <!-- <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">
+                                                Add
+                                            </button>
+                                              
+                                            <div class="modal fade" id="myModal">
+                                                <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                
+                                                    
+                                                    <div class="modal-header bg-primary">
+                                                    <h4 class="modal-title">Trip Date</h4>
+                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    </div>
+                                                    
+                                                    
+                                                    <div class="modal-body">
+                                                        <form action="/admin/addupcoming" method="POST">
+                                                            <input type="hidden" name="tripid" id="tripid" value="<%= trips._id %>"/>
+                                                            <input type="date" id="tripdate" name="tripdate">&nbsp;&nbsp;
+                                                            <button type="submit" class="btn btn-success">Add</button>
+                                                        </form>
+                                                    </div>
+                                                    
+                                                </div>
+                                                </div>
+                                            </div> -->
+                                        </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                          <% } else{ %>  
+                            <div class="col-lg-4 col-md-6" name="showmore" style="display:none;">
+                                <div class="single_place">
+                                    <div class="thumb">
+                                        <img src="images/<%= trips.imageurl %>" alt="">
+                                        <a href="/tripdetails/<%= trips.name %>" class="prise">₹<%= trips.price %></a>
+                                    </div>
+                                    <div class="place_info">
+                                        <a href="/tripdetails/<%= trips.name %>"><h3><%= trips.name %></h3></a>
+                                        <p><%= trips.destinations %></p>
+                                        <p><%= trips.route %></p>
+                                        <div class="rating_days d-flex justify-content-between">
+                                            <!--<span class="d-flex justify-content-center align-items-center">
+                                                 <i class="fa fa-star"></i> 
+                                                 <i class="fa fa-star"></i> 
+                                                 <i class="fa fa-star"></i> 
+                                                 <i class="fa fa-star"></i> 
+                                                 <i class="fa fa-star"></i>
+                                                 <a href="#">(20 Review)</a>
+                                            </span>-->
+                                            <div class="days">
+                                                <i class="fa fa-clock-o"></i>
+                                                <a href="#"><%= trips.days %> Days</a>
+                                            </div>
+                                            <% if (isAuthenticated) { %>
+                                            <div>
+                                                <form action="/admin/edit" method="POST">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <input type="hidden" name="tripid" id="tripid" value="<%= trips._id %>"/>
+                                                    <button type="submit" class="btn btn-primary">Edit</button>
+                                                </form>
+                                            </div>
+                                            <div>
+                                                <form action="/admin/delete" method="POST">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <input type="hidden" name="tripid" id="tripid" value="<%= trips._id %>"/>
+                                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                            <div>
+                                                <form action="/admin/AddImage" method="POST">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <input type="hidden" name="tripid" id="tripid" value="<%= trips._id %>"/>
+                                                    <button type="submit" class="btn btn-secondary">Add Image</button>
+                                                </form>
+                                            </div>
+                                            <% } %>
+                                        </div>
+                                        <% if (isAuthenticated) { %>
+                                            <br>
+                                        <div>
+                                            <form action="/admin/addupcoming" method="POST">
+                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                <input type="hidden" name="tripid" id="tripid" value="<%= trips._id %>"/>
+                                                <input type="date" id="tripdate" name="tripdate">
+                                                <button type="submit" class="btn btn-success">Upcoming</button>
+                                            </form>                                    
+                                            <!-- <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">
+                                                Add
+                                            </button>
+                                              
+                                            <div class="modal fade" id="myModal">
+                                                <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                
+                                                    
+                                                    <div class="modal-header bg-primary">
+                                                    <h4 class="modal-title">Trip Date</h4>
+                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    </div>
+                                                    
+                                                    
+                                                    <div class="modal-body">
+                                                        <form action="/admin/addupcoming" method="POST">
+                                                            <input type="hidden" name="tripid" id="tripid" value="<%= trips._id %>"/>
+                                                            <input type="date" id="tripdate" name="tripdate">&nbsp;&nbsp;
+                                                            <button type="submit" class="btn btn-success">Add</button>
+                                                        </form>
+                                                    </div>
+                                                    
+                                                </div>
+                                                </div>
+                                            </div> -->
+                                        </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                         <% } %>
+                    <% } %>
+                    
+                    
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="more_place_btn text-center">
+                            <button class="btn btn-primary" id="btntag" onclick="displayall()">Show More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+     <!-- Tours and Trek event - popular places area end -->
+             <!-- Accomodation places area start -->
+             <div class="popular_places_area">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-6">
+                            <div class="section_title text-center mb_70">
+                                <h3>Dejavu Accommodation</h3>
+                                <p>Our specially identified local accommodation and delicious food are key ingredients in providing such travel experience. We can understand your travel desire if you want to drive by yourself using your own vehicle or explore places with local transportation, we will help out find such beautiful and unique stay</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <% for (let [index, accods] of accomodations.entries() ) { %>
+                            <% if(index <= 2){ %>
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="single_place">
+                                        <div class="thumb">
+                                            <img src="images/<%= accods.imageurl %>" alt="">
+                                            <a href="/accomodationdetails/<%= accods.name %>" class="prise">₹<%= accods.price %></a>
+                                        </div>
+                                        <div class="place_info">
+                                            <a href="/accomodationdetails/<%= accods.name %>"><h3><%= accods.name %></h3></a>
+                                            <p><%= accods.destinations %></p>
+                                            <!--<p>Ahmedabad to Ahmedabad</p>-->
+                                            <div class="rating_days d-flex justify-content-between">
+                                                <!--<span class="d-flex justify-content-center align-items-center">
+                                                     <i class="fa fa-star"></i> 
+                                                     <i class="fa fa-star"></i> 
+                                                     <i class="fa fa-star"></i> 
+                                                     <i class="fa fa-star"></i> 
+                                                     <i class="fa fa-star"></i>
+                                                     <a href="#">(20 Review)</a>
+                                                </span>-->
+                                                <div class="days">
+                                                    <i class="fa fa-clock-o"></i>
+                                                    <a href="#"><%= accods.days %> Days</a>
+                                                </div>
+                                                <% if (isAuthenticated) { %>
+                                                <div>
+                                                    <form action="/admin/accod/edit" method="POST">
+                                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                        <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>"/>
+                                                        <button type="submit" class="btn btn-primary">Edit</button>
+                                                    </form>
+                                                </div>
+                                                <div>
+                                                    <form action="/admin/accod/delete" method="POST">
+                                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                        <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>"/>
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
+                                                </div>
+                                                <div>
+                                                    <form action="/admin/accod/AddImage" method="POST">
+                                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                        <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>"/>
+                                                        <button type="submit" class="btn btn-secondary">Add Image</button>
+                                                    </form>
+                                                </div>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                              <% } else{ %>  
+                                <div class="col-lg-4 col-md-6"  name="showmoreaccods" style="display:none;">
+                                    <div class="single_place">
+                                        <div class="thumb">
+                                            <img src="images/<%= accods.imageurl %>" alt="">
+                                            <a href="/accomodationdetails/<%= accods.name %>" class="prise">₹<%= accods.price %></a>
+                                        </div>
+                                        <div class="place_info">
+                                            <a href="/accomodationdetails/<%= accods.name %>"><h3><%= accods.name %></h3></a>
+                                            <p><%= accods.destinations %></p>
+                                            <!--<p>Ahmedabad to Ahmedabad</p>-->
+                                            <div class="rating_days d-flex justify-content-between">
+                                                <!--<span class="d-flex justify-content-center align-items-center">
+                                                     <i class="fa fa-star"></i> 
+                                                     <i class="fa fa-star"></i> 
+                                                     <i class="fa fa-star"></i> 
+                                                     <i class="fa fa-star"></i> 
+                                                     <i class="fa fa-star"></i>
+                                                     <a href="#">(20 Review)</a>
+                                                </span>-->
+                                                <div class="days">
+                                                    <i class="fa fa-clock-o"></i>
+                                                    <a href="#"><%= accods.days %> Days</a>
+                                                </div>
+                                                <% if (isAuthenticated) { %>
+                                                <div>
+                                                    <form action="/admin/accod/edit" method="POST">
+                                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                        <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>"/>
+                                                        <button type="submit" class="btn btn-primary">Edit</button>
+                                                    </form>
+                                                </div>
+                                                <div>
+                                                    <form action="/admin/accod/delete" method="POST">
+                                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                        <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>"/>
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
+                                                </div>
+                                                <div>
+                                                    <form action="/admin/accod/AddImage" method="POST">
+                                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                        <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>"/>
+                                                        <button type="submit" class="btn btn-secondary">Add Image</button>
+                                                    </form>
+                                                </div>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                             <% } %>
+                        <% } %>
+                        
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="more_place_btn text-center">
+                                <button class="btn btn-primary" id="btntagaccods" onclick="displayallaccods()">Show More</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+         <!-- Accomodation places area end -->
+    <%- include('../partials/footer'); %>
+    <%- include('../partials/scripttag'); %>
+</body>
+<script>
+    function displayall() {
+      var showmorebtn = document.getElementById("btntag");
+      if(showmorebtn.innerText == "Show More"){
+        showmorebtn.innerText = "Show Less"
+      }else{
+        showmorebtn.innerText = "Show More"
+      }
+      var x = document.getElementsByName("showmore");
+      var i;
+        for (i = 0; i < x.length; i++) {
+                    if (x[i].style.display === "none") {
+                x[i].style.display = "flex";
+            } else {
+                x[i].style.display = "none";
+            }
+        }
+    }
+
+    function displayallaccods() {
+      var showmorebtn = document.getElementById("btntagaccods");
+      if(showmorebtn.innerText == "Show More"){
+        showmorebtn.innerText = "Show Less"
+      }else{
+        showmorebtn.innerText = "Show More"
+      }
+      var x = document.getElementsByName("showmoreaccods");
+      var i;
+        for (i = 0; i < x.length; i++) {
+                    if (x[i].style.display === "none") {
+                x[i].style.display = "flex";
+            } else {
+                x[i].style.display = "none";
+            }
+        }
+    }
+</script>
+
+</html>

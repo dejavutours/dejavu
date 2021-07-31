@@ -1,0 +1,307 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <%- include('../partials/headtag'); %>
+</head>
+<body>
+    <header>
+        <div class="header-area ">
+            <div id="sticky-header" class="main-header-area">
+                <div class="container-fluid">
+                    <div class="header_bottom_border">
+                        <div class="row align-items-center">
+                            <div class="col-xl-2 col-lg-2">
+                                <div class="logo">
+                                    <a href="index.html">
+                                        <img src="/images/logo.png" alt="">
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6">
+                                <div class="main-menu  d-none d-lg-block">
+                                    <nav>
+                                        <ul id="navigation">
+                                            <li>
+                                                <a href="/">Home</a>
+                                            </li>
+                                            <% if (isAuthenticated) { %>
+                                            <li>
+                                                <a href="/admin/addtours">AddTours</a>
+                                            </li>
+                                            <li>
+                                                <a href="/admin/addaccomodation">AddAccod</a>
+                                            </li>
+                                            <li>
+                                                <a href="/admin/accoddetails">Accod</a>
+                                            </li>
+                                            <li>
+                                                <a href="/admin/viewregistration">Reg</a>
+                                            </li>
+                                            <li>
+                                                <a href="/admin/viewmails">Mail</a>
+                                            </li>
+                                            <li>
+                                                <a href="/admin/code">Code</a>
+                                            </li>
+                                            <li>
+                                                <form action="/admin/logout" method="post">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <button type="submit" class="btn btn-primary">Logout</button>
+                                                </form>
+                                            </li>
+                                            <% } else{ %> 
+                                            <li>
+                                                <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">Login</button>
+                                            </li>
+                                            <% } %>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-4 d-none d-lg-block">
+                                <div class="social_wrap d-flex align-items-center justify-content-end">
+                                    <div class="number">
+                                        <p> <i class="fa fa-phone"></i>+91 851111 7891</p>
+                                    </div>
+                                    <div class="social_links d-none d-xl-block">
+                                        <ul>
+                                            <li><a href="https://www.instagram.com/dejavutours/"> <i class="fa fa-instagram"></i> </a></li>
+                                            <li><a href="https://www.youtube.com/watch?v=56-u7Pv-cQg"> <i class="fa fa-youtube-play"></i> </a></li>
+                                            <li><a href="https://www.facebook.com/dejavutours.in"> <i class="fa fa-facebook"></i> </a></li>
+                                            <li><a href="https://twitter.com/dejavutours_in"> <i class="fa fa-twitter"></i> </a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="seach_icon">
+                                <a data-toggle="modal" data-target="#exampleModalCenter" href="#">
+                                    <i class="fa fa-search"></i>
+                                </a>
+                            </div>
+                            <div class="col-12">
+                                <div class="mobile_menu d-block d-lg-none"></div>
+                            </div>
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- header-end -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12" contenteditable="true">
+                <h3>About tour</h3>
+                <pre>
+                    &lt;p&gt;Standing magnificently at an altitude&lt;/p&gt;
+                    &lt;p&gt;Reconstructed by Adi Shankra&lt;/p&gt;
+                </pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12"  contenteditable="true">
+                <h3>Itinerary</h3>
+                <pre>
+                    &lt;h4&gt;Proposed Itinerary&lt;/h4&gt;
+                          &lt;h6&gt; Brief Itinerary:&lt;/h6&gt;
+                               &lt;p&gt;  Day 1: Delhi to Haridwar&lt;br&gt;
+                                    Day 2: Haridwar to Sonprayag&lt;br&gt;
+                                    Day 3: Kedarnath Trek&lt;br&gt;
+                                    Day 4: Kedarnath to Sonprayag to Rishikesh&lt;br&gt;
+                                    Day 5: Rishikesh to Delhi&lt;br&gt;
+                                &lt;/p&gt;
+                              &lt;p&gt; Note: We will guide in arranging transportation from Delhi, Ahmedabad,Mumbai,Pune
+                            &lt;/p&gt;
+                            &lt;h6&gt;Day 1: Delhi to Haridwar (5hours)&lt;/h6&gt;
+                                &lt;p&gt; - Harki Pauri Ghat&lt;br&gt;
+                                    - Ganga Aarti&lt;br&gt;
+                                    - Temple Visit&lt;br&gt;
+                                &lt;/p&gt;
+                                &lt;p&gt; Stay : Hotel/Homestay at Haridwar (3-4 Sharing)&lt;br&gt;
+                                    Food: Dinner
+                                &lt;/p&gt;
+                            &lt;h6&gt;Day 2: Haridwar to Sonprayag (8hours)&lt;/h6&gt;
+                                &lt;p&gt; - DevPrayag&lt;br&gt;
+                                    - Rudraprayag&lt;br&gt;
+                                    - Dharidevi Temple&lt;br&gt;
+                                &lt;/p&gt;
+                                &lt;p&gt; Stay : Hotel/Guest house at Sonprayag/Guptkashi (3-4 Sharing)&lt;br&gt;
+                                    Food: Breakfast, Dinner
+                                &lt;/p&gt;
+
+                </pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12"  contenteditable="true">
+                <h3>Things to carry</h3>
+                <pre>
+                    &lt;h4&gt;Things to carry&lt;/h4&gt;
+                    &lt;h6&gt;Basic Assential&lt;/h6&gt;
+                    &lt;p&gt; - Day Bag(20-30 liter) with Rain Cover (If you hire mule or porter)&lt;br&gt;
+                        - BackPack(50-60 liter) with Rain Cover&lt;br&gt;
+                        - 2- water bottles&lt;br&gt;
+                        - Hiking Shoes-water proof and ankle support&lt;br&gt;
+                        - Torch With extra batteries&lt;br&gt;
+                        - Original ID Card&lt;br&gt;
+                        - Personal Medication(if required)
+                    &lt;/p&gt;
+                    &lt;h6&gt;Clothing Assential & Head Protaction&lt;/h6&gt;
+                    &lt;p&gt; - 2-jacket (1 Fleece, 1 Down feather)&lt;br&gt;
+                        - Warm Inner-wears&lt;br&gt;
+                        - 2-Gloves (1 Woollen, 1 Waterproof)&lt;br&gt;
+                        - 2-Trek Pants (which is a comfortable full day)&lt;br&gt;
+                        - 4-T-shirts (2 Full Sleeves, 2 Half Sleeves)&lt;br&gt;
+                        - 2-Sweater (1 Fleece, 1 Woollen)&lt;br&gt;
+                        - 5-Socks (3 Cotton, 2 Woollen)&lt;br&gt;
+                        - Rain Coat / Poncho&lt;br&gt;
+                        - Handkerchief - towel - Napkin&lt;br&gt;
+                        - 2-Caps (1 Sun Cap, 1 Woollen Cap)&lt;br&gt;
+                        - UV sunglass&lt;br&gt;
+                        - Balaclava/Monkey Cap
+                    &lt;/p&gt;
+                    &lt;h6&gt;Personal Utilities & Accessories&lt;/h6&gt;
+                    &lt;p&gt; - Lip balm, Sunscreen Lotion, Bodylosion, Toothbrush-Paste, Sanitizer&lt;br&gt;
+                        - Camera, Charger, Earphone, Powerbank&lt;br&gt;
+                    &lt;/p&gt;
+                </pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12"  contenteditable="true">
+                <h3>Includes</h3>
+                <pre>
+                    &lt;h4&gt;Includes&lt;/h4&gt;
+                    &lt;p&gt; - Transportation from Hometown (as per package)&lt;br&gt;
+                        - Transportation from Ex. Delhi (Tempo Traveller or Similar Depending on Group Size)&lt;br&gt;
+                        - Accommodation 3-4 sharing tents/hotel as per itinerary&lt;br&gt;
+                        - Food (Veg meal as per itinerary)&lt;br&gt;
+                        - Mountaineering Course Certified Trek Leader&lt;br&gt;
+                        - 16km Rafting in Rishikesh&lt;br&gt;
+                        - Forest Permit, Local support, First Aid
+                    &lt;/p&gt;
+                </pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12"  contenteditable="true">
+                <h3>Excludes</h3>
+                <pre>
+                    &lt;h4&gt;Excludes&lt;/h4&gt;
+                    &lt;p&gt; - 5% GST &lt;br&gt;
+                        - Any personal expenses not mentioned above&lt;br&gt;
+                        - Porter or mule charges for personal need&lt;br&gt;
+                        - Rented gears and equipment
+                    &lt;/p&gt;
+                </pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12"  contenteditable="true">
+                <h3>Rentals</h3>
+                <pre>
+                    &lt;h4&gt;Rental Charges&lt;/h4&gt;
+                    &lt;p&gt;
+                      •	Khachhar charges : 2500/- single side from Gaurikund&lt;br&gt;
+                      •	Helicopter service from Phata : 5000/- to 8000/- approx for both side &lt;br&gt;
+                    &lt;/p&gt;
+                </pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12"  contenteditable="true">
+                <h3>Package Cost</h3>
+                <pre>
+                    &lt;h4&gt;Package Cost&lt;/h4&gt;
+                    &lt;p&gt;
+                        •	9800/- PP(+5% GST) Ex . Delhi(4N/5D)&lt;br&gt;
+                        •	11500/- PP(+5% GST) Ex. Ahmedabad, Baroda, Surat (non AC Sleeper)&lt;br&gt;
+                        •	11900/- PP(+5% GST) Ex. Mumbai,Pune (non AC Sleeper)
+                        •	13500/- PP(+5% GST) Ex  Ahmedabad, Baroda, Surat (3AC Rajdhani Train)&lt;br&gt;
+                        •	13900/- PP(+5% GST) Ex  Ahmedabad, Baroda, Surat (3AC Rajdhani Train)&lt;br&gt;
+                    &lt;/p&gt;
+                </pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12"  contenteditable="true">
+                <h3>Bookings & Cancellation</h3>
+                <pre>
+                    &lt;h4&gt;Booking and Cancellation&lt;/h4&gt;
+                    &lt;h6&gt;Booking Policy&lt;/h6&gt;
+                    &lt;p&gt;
+                        •	Booking shall only be confirmed once received part/full payments &lt;br&gt;
+                        •	30% advance amount while confirmation &lt;br&gt;
+                        •	70% balance amount minimum 14 days prior to trip date &lt;br&gt;
+                    &lt;/p&gt;
+                    &lt;h6&gt;Cancellation Policy&lt;/h6&gt;
+                    &lt;p&gt;
+                        •   100% refund 28days prior to trip date exclusive of GST &lt;br&gt;
+                        •   30% cancellation charges if cancellation done between 28 to 14 days prior or Full  &lt;br&gt;
+                        •   70% cancellation charges if cancellation done between 14 to 7 days prior or 50% amo&lt;br&gt;
+                        •   Fees are neither refundable nor transferable if cancellation done, less than 7 days prior to event date
+                      &lt;/p&gt;
+                </pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12"  contenteditable="true">
+                <h3>Precautions</h3>
+                <pre>
+                    &lt;h4&gt;Precautionary for Covid19&lt;/h4&gt;
+                    &lt;p&gt; •	Wearing mask or face cover and carrying personal hand sanitizer is compulsory.&lt;br&gt;
+                        •	During hiking, sights scene, travelling or any activities, avoid/minimize physical touch.&lt;br&gt;
+                        •	Separate transportation services will be provided or you can choose to drive on your own to the campsite/homestay or base location.&lt;br&gt;
+                        •	Group transportation in bus or tempo traveler will be arranged for fix departure date without violating any government guideline.&lt;br&gt;
+                        •	Necessary hygiene and precautions will be taken care at the campsite and during Activities.&lt;br&gt;
+                        •	If you are feeling unwell due to fever or any medical reason, than strictly avoid travel till you feel well. 
+                        &lt;/p&gt;
+                </pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12"  contenteditable="true">
+                <h3>About Accommodation</h3>
+                <pre>
+                    &lt;h3&gt;About destination&lt;/h3&gt;
+                        &lt;p&gt;Bakor is a small village&lt;/p&gt;
+                        &lt;p&gt;----&lt;/p&gt;
+                        &lt;div class="single_destination"&gt;
+                            &lt;h4&gt;Places to visit&lt;/h4&gt;
+                            &lt;p&gt; - Duna Lake &lt;br&gt;
+                                - Bakor Waterfall&lt;br&gt; 
+                                - Kaleshwari temple and stepwell
+                            &lt;/p&gt;
+                        &lt;/div&gt;
+                        &lt;div class="single_destination"&gt;
+                            &lt;h4&gt;Campsite Activities&lt;/h4&gt;
+                            &lt;p&gt; - Forest Hike and Lake Visit &lt;br&gt;
+                                - Waterfall bath&lt;br&gt;
+                                - Kaleshwari temple and stepwell&lt;br&gt;
+                                - Pool party and Music&lt;br&gt;
+                                - Burmabridge&lt;br&gt;
+                                - Rifle shooting and Archery&lt;br&gt;
+                                - indoor games
+                            &lt;/p&gt;
+                        &lt;/div&gt;
+                        &lt;div class="single_destination"&gt;
+                            &lt;h4&gt;Includes&lt;/h4&gt;
+                            &lt;p&gt; - Stay in Cottages/tent&lt;br&gt;
+                                - Food : Breakfast - Lunch - Hightea - Dinner&lt;br&gt;
+                                - Hiking, Games and Activities&lt;br&gt;
+                                - Guide, First Aid, Entry Fees&lt;br&gt;
+                            &lt;/p&gt;
+                        &lt;/div&gt;
+                </pre>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <%- include('../partials/footer'); %>
+    <%- include('../partials/scripttag'); %>
+    </body>
+</html>

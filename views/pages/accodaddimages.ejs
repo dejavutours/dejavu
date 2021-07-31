@@ -1,0 +1,72 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <%- include('../partials/headtag'); %>
+</head>
+
+<body>
+    <%- include('../partials/header'); %>
+
+    <div class="popular_places_area">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="section_title text-center mb_70">
+                        <form action="/admin/accod/ImageAdded"  method="POST" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <input type="hidden" name="filter" value="image" id="filter">
+                                <input type="hidden" value="<%= accod._id %>" id="accodid" name="accodid">
+                                <input type="file" class="form-control" accept="image/*" name="image" id="file" enctype="multipart/form-data" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Image</button>
+                        </form>
+                        <br>
+                        <form action="/admin/accod/BannerImageAdded"  method="POST" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <input type="hidden" name="filter" value="bannerimage" id="filter">
+                                <input type="hidden" value="<%= accod._id %>" id="accodid" name="accodid">
+                                <input type="file" class="form-control" accept="image/*" name="image" id="file" enctype="multipart/form-data" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Bannner Image</button>
+                        </form>
+                        <br>
+                        <form action="/admin/accod/ImageAdded" method="POST">
+                            <div class="form-group">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <input type="hidden" value="youtube" id="filter" name="filter">
+                                <input type="hidden" value="<%= accod._id %>" id="accodid" name="accodid">
+                              <input type="text" class="form-control" id="youtubeurl" name="youtubeurl" placeholder="youtube URL" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add youtube URL</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <% for (var i = 0; i < accod.imageUrlAll.length; i++) { %>
+                <div class="col-lg-4 col-md-6">
+                    <div class="single_place">
+                        <div class="thumb">
+                            <form action="/admin/accod/deleteimage" method="POST">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <img src="images/<%= accod.imageUrlAll[i] %>" alt="">
+                                <input type="hidden" value="<%= accod._id %>" id="accodid" name="accodid">
+                                <input type="hidden" value="<%= i %>" id="imageindex" name="imageindex">
+                                <button class="prise" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div> 
+                <% } %>
+            </div>
+        </div>
+    </div> 
+
+    <%- include('../partials/footer'); %>
+    <%- include('../partials/scripttag'); %>
+</body>
+
+</html>
