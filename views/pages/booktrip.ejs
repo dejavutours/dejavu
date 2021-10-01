@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+    <!-- Title Page-->
+    <title>Book trip</title>
+
+    <!-- Icons font CSS-->
+    <link href="vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
+    <link href="vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
+    <!-- Font special for pages-->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i" rel="stylesheet">
+
+    <!-- Vendor CSS-->
+    <link href="vendor/select2/select2.min.css" rel="stylesheet" media="all">
+    <link href="vendor/datepicker/daterangepicker.css" rel="stylesheet" media="all">
+
+    <%- include('../partials/headtag'); %>
+
+    <!-- Main CSS-->
+    <link href="css/reg.css" rel="stylesheet" media="all">
+</head>
+
+<body>
+    <%- include('../partials/header'); %>
+    <% if (locals.msg) { %>
+        <div class="alert alert-success alert-dismissible">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Success!</strong> Registration Completed
+          </div>    
+    <% } %>
+    <div class="page-wrapper bg-blue p-t-100 p-b-100 font-robo">
+        <div class="wrapper wrapper--w680">
+            <div class="card card-1">
+                <div class="card-heading"></div>
+                <div class="card-body">
+                    <h2 class="title">Registration Info</h2>
+                    <form method="POST" action="/booktrip">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <div class="input-group">
+                            <input class="input--style-1" type="email" placeholder="EMAIL" name="email" id="email" required>
+                        </div>
+                        <div class="input-group">
+                            <input class="input--style-1" type="text" placeholder="NAME" name="name" id="name" required>
+                        </div>
+                        <div class="input-group">
+                            <!-- <input class="input--style-1" type="number" placeholder="NUMBER OF CO-TRAVELLERS" name="travellers" id="travellers" required> -->
+                            <input class="input--style-1" type="number" min="1" max="5" placeholder="NUMBER OF CO-TRAVELLERS (MAX 5)" name="travellers" id="travellers" />
+                        </div>
+                        <div class="input-group">
+                            <div class="rs-select2 js-select-simple select--no-search">
+                                <select name="gender" id="gender" required>
+                                    <option disabled="disabled" selected="selected">GENDER</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <option>Other</option>
+                                </select>
+                                <div class="select-dropdown"></div>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="birthday">BIRTH DATE</label>
+                            <input type="date" placeholder="BIRTHDATE" name="birthday" id="birthday" required>
+                        </div>
+                        <div class="input-group">
+                            <input class="input--style-1" type="number" placeholder="CONTACT" name="contact" id="contact" required>
+                        </div>
+                        <div class="input-group">
+                            <input class="input--style-1" type="text" placeholder="DESTINATION" name="destination" id="destination" value="<%= tripname %>" required readonly>
+                        </div>
+                        <div class="input-group">
+                            <label for="tripdate">TRIP DATE</label>
+                            <input type="date" placeholder="TRIPDATE" name="tripdate" id="tripdate" value="<%= tripdate %>" required>
+                        </div>
+                        <!-- <div class="input-group">
+                            <label class="input--style-1" for="proof">ID Proof( Adhaar / Driving Licence / VoterID )</label>
+                            <input type="file" accept="image/*" class="input--style-1" id="file" name="image" enctype="multipart/form-data" required />
+                        </div> -->
+
+
+
+                        <div class="p-t-20">
+                            <button class="btn btn--radius btn--green" type="submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('../partials/footer'); %>
+    <%- include('../partials/scripttag'); %>
+    <!-- Jquery JS-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <!-- Vendor JS-->
+    <script src="vendor/select2/select2.min.js"></script>
+    <script src="vendor/datepicker/moment.min.js"></script>
+    <script src="vendor/datepicker/daterangepicker.js"></script>
+
+    <!-- Main JS-->
+    <script src="js/global.js"></script>
+
+</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+
+</html>
+<!-- end document-->

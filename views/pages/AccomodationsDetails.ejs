@@ -1,0 +1,397 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <%- include('../partials/headtag'); %>
+    <style>
+        .bs-example{
+            margin: 20px;
+        }
+        .modal-dialog iframe{
+            margin: 0 auto;
+            display: block;
+        }
+        .play-btn {
+          width: 100px;
+          height: 100px;
+          background: radial-gradient( rgba(35, 235, 142, 0.8) 60%, rgba(255, 255, 255, 1) 62%);
+          border-radius: 50%;
+          position: relative;
+          display: block;
+          margin: 100px auto;
+          box-shadow: 0px 0px 25px 3px rgba(35, 235, 142, 0.8);
+        }
+
+/* triangle */
+        .play-btn::after {
+          content: "";
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          -webkit-transform: translateX(-40%) translateY(-50%);
+          transform: translateX(-40%) translateY(-50%);
+          transform-origin: center center;
+          width: 0;
+          height: 0;
+          border-top: 15px solid transparent;
+          border-bottom: 15px solid transparent;
+          border-left: 25px solid #fff;
+          z-index: 100;
+          -webkit-transition: all 400ms cubic-bezier(0.55, 0.055, 0.675, 0.19);
+          transition: all 400ms cubic-bezier(0.55, 0.055, 0.675, 0.19);
+        }
+
+/* pulse wave */
+        .play-btn:before {
+          content: "";
+          position: absolute;
+          width: 150%;
+          height: 150%;
+          -webkit-animation-delay: 0s;
+          animation-delay: 0s;
+          -webkit-animation: pulsate1 2s;
+          animation: pulsate1 2s;
+          -webkit-animation-direction: forwards;
+          animation-direction: forwards;
+          -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+          -webkit-animation-timing-function: steps;
+          animation-timing-function: steps;
+          opacity: 1;
+          border-radius: 50%;
+          border: 5px solid rgba(255, 255, 255, .75);
+          top: -30%;
+          left: -30%;
+          background: rgba(198, 16, 0, 0);
+        }
+
+        @-webkit-keyframes pulsate1 {
+          0% {
+            -webkit-transform: scale(0.6);
+            transform: scale(0.6);
+            opacity: 1;
+            box-shadow: inset 0px 0px 25px 3px rgba(255, 255, 255, 0.75), 0px 0px 25px 10px rgba(255, 255, 255, 0.75);
+          }
+          100% {
+            -webkit-transform: scale(1);
+            transform: scale(1);
+            opacity: 0;
+            box-shadow: none;
+
+          }
+        }
+
+        @keyframes pulsate1 {
+          0% {
+            -webkit-transform: scale(0.6);
+            transform: scale(0.6);
+            opacity: 1;
+            box-shadow: inset 0px 0px 25px 3px rgba(255, 255, 255, 0.75), 0px 0px 25px 10px rgba(255, 255, 255, 0.75);
+          }
+          100% {
+            -webkit-transform: scale(1, 1);
+            transform: scale(1);
+            opacity: 0;
+            box-shadow: none;
+
+          }
+        }
+    </style>
+    <script>
+    $(document).ready(function(){
+        /* Get iframe src attribute value i.e. YouTube video url
+        and store it in a variable */
+        var url = $("#cartoonVideo").attr('src');
+        
+        /* Assign empty url value to the iframe src attribute when
+        modal hide, which stop the video playing */
+        $("#myModal").on('hide.bs.modal', function(){
+            $("#cartoonVideo").attr('src', '');
+        });
+        
+        /* Assign the initially stored url back to the iframe src
+        attribute when modal is displayed again */
+        $("#myModal").on('show.bs.modal', function(){
+            $("#cartoonVideo").attr('src', url);
+        });
+    });
+    </script>
+</head>
+
+<body>
+    <%- include('../partials/header'); %>
+
+    <% if(accod.bannerimage == null){ %>
+        <div class="destination_banner_dholavira overlay" style="background-image: url('/images/<%= accod.imageurl %>');">
+      <% } else{ %>  
+        <div class="destination_banner_dholavira overlay" style="background-image: url('/images/<%= accod.bannerimage %>');">
+      <% } %>
+      <div class="destination_text text-center">
+            <h3><%= accod.name %></h3>
+            <p><%= accod.destinations %></p>
+            <p>₹ <%= accod.price %></p>
+          <% if(accod.youtubeUrl.length > 0){ %>
+          <a href="#myModal" class="play-btn" data-toggle="modal"></a>
+          <% } %>
+      </div>
+    </div>
+
+    <div class="destination_details_info">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-9">
+                    <div class="destination_info">
+                        <%- accod.about %>
+                        <!--<div class="single_destination">
+                            <h4>Excludes</h4>
+                            <p> - ---<br>
+                                - ---<br>
+                                - ---<br>
+                            </p>
+                        </div>
+                        <div class="single_destination">
+                            <h4>Travel Ethics</h4>
+                            <p> - ---<br>
+                                - ---<br>
+                                - ---<br>
+                            </p>
+                        </div>
+                        <div class="single_destination">
+                            <h4>Cancellation Policy</h4>
+                            <p> - ---<br>
+                                - ---<br>
+                                - ---<br>
+                            </p>
+                        </div>
+                        <div class="single_destination">
+                            <h4>Precautionary Measures</h4>
+                            <p> - We insist you to travel in small group(with known friends, family members and colleagues)<br>
+                                - Seperate transportation services will be provided or you can choose to drive on your own to the campsite or base location<br>
+                                - Necessary hygiene and precautions will be taken care at the campsite and during Activities<br>
+                                - If you are feeling unwell due to fever or any medical reason, than strictly avoid travel till feel well<br>
+                            </p>
+                        </div>
+                    </div>-->
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                          <a class="nav-link active" id="tab1-tab" data-toggle="tab" href="#tab1" role="tab" aria-controls="tab1" aria-selected="true">Nearby Places</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="tab2-tab" data-toggle="tab" href="#tab2" role="tab" aria-controls="tab2" aria-selected="false">Activities & Attractive</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="tab3-tab" data-toggle="tab" href="#tab3" role="tab" aria-controls="tab3" aria-selected="false">Amenities</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="tab4-tab" data-toggle="tab" href="#tab4" role="tab" aria-controls="tab4" aria-selected="false">Package Details</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="tab5-tab" data-toggle="tab" href="#tab5" role="tab" aria-controls="tab5" aria-selected="false">Booking & Cancellation</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="tab6-tab" data-toggle="tab" href="#tab6" role="tab" aria-controls="tab6" aria-selected="false">Guidelines</a>
+                        </li>
+                      </ul>
+                      <div class="tab-content" id="myTabContent">
+                        <!-- Tab 1 content -->
+                        <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+                          <div class="single_destination mt-3 ml-3">
+                              
+                            <%- accod.nearbyPlaces %>
+                            
+                          </div>
+                        </div>
+                        <!-- Tab 2 content -->
+                        <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+                          <div class="single_destination mt-3 ml-3">
+                         
+                            <%- accod.Activities %>
+
+                          </div>
+                        </div>
+                        <!-- Tab 3 content -->
+                        <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
+                          <div class="single_destination mt-3 ml-3">
+                          
+                            <%- accod.Amenities %>
+
+                          </div>
+                        </div>
+                        <!-- Tab 4 content -->
+                        <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="tab4-tab">
+                          <div class="single_destination mt-3 ml-3">
+                          
+                            <%- accod.Package %>
+
+                          </div>
+                        </div>
+                        <!-- Tab 5 content -->
+                        <div class="tab-pane fade" id="tab5" role="tabpanel" aria-labelledby="tab5-tab">
+                          <div class="single_destination mt-3 ml-3">
+                         
+                            <%- accod.bookncancel %>
+
+                          </div>
+                        </div>
+                        <!-- Tab 6 content -->
+                        <div class="tab-pane fade" id="tab6" role="tabpanel" aria-labelledby="tab6-tab">
+                          <div class="single_destination mt-3 ml-3">
+                          
+                            <%- accod.guidelines %>
+
+                          </div>
+                        </div>
+                      </div>
+                    <div class="bordered_1px"></div>
+                    <div class="contact_join">
+                        <h3>Contact for Accomodations</h3>
+                        <form action="/accod/queryform" method="POST">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6">
+                                    <div class="single_input">
+                                        <input type="text" placeholder="Your Name" name="name" id="name">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6">
+                                    <div class="single_input">
+                                        <input type="tel" placeholder="Phone no." name="phone" id="phone" pattern="[0-9]{10}" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="single_input">
+                                        <textarea name="message" id="message" cols="30" rows="10"placeholder="Message" ></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="submit_btn">
+                                        <button class="boxed-btn4" type="submit">submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <br>
+                    <!-- <div class="section-top-border">
+                        <h3>Image Gallery</h3>
+                        <div class="row gallery-item">
+                            <div class="col-md-4">
+                                <a href="img/element/bakor-lake-dejavu.jpg" class="img-pop-up">
+                                    <div class="single-gallery-image" style="background: url(img/element/g1);"></div>
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="img/element/bakor-trekking-dejavu" class="img-pop-up">
+                                    <div class="single-gallery-image" style="background: url(img/element/g2);"></div>
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="img/elements/g3.jpg" class="img-pop-up">
+                                    <div class="single-gallery-image" style="background: url(img/elements/g3.jpg);"></div>
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="img/elements/g4.jpg" class="img-pop-up">
+                                    <div class="single-gallery-image" style="background: url(img/elements/g4.jpg);"></div>
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="img/elements/g5.jpg" class="img-pop-up">
+                                    <div class="single-gallery-image" style="background: url(img/elements/g5.jpg);"></div>
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="img/elements/g6.jpg" class="img-pop-up">
+                                    <div class="single-gallery-image" style="background: url(img/elements/g6.jpg);"></div>
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="img/elements/g7.jpg" class="img-pop-up">
+                                    <div class="single-gallery-image" style="background: url(img/elements/g7.jpg);"></div>
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="img/elements/g8.jpg" class="img-pop-up">
+                                    <div class="single-gallery-image" style="background: url(img/elements/g8.jpg);"></div>
+                                </a>
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+                          <!--- Image Gallary Section start --->
+                          <div class="section-top-border">
+                            <% if(accod.imageUrlAll.length > 0){ %>
+                            <h3>Image Gallery</h3>
+                            <% } %>
+                            <div class="row gallery-item">
+                              <% for (var i = 0; i < accod.imageUrlAll.length; i++) { %>
+                             <div class="col-md-6">
+                                  <a href="images/<%= accod.imageUrlAll[i] %>" class="img-pop-up">
+                                      <div class="single-gallery-image" style="background: url('/images/<%= accod.imageUrlAll[i] %>');"></div>
+                                  </a>
+                              </div>
+                              <% } %>
+                          </div>
+                        </div>
+                        <!--- Image Gallary Section End --->
+            </div>
+        </div>
+    </div>
+
+                            <!-- Modal HTML -->
+                            <div id="myModal" class="modal fade">
+                                <div class="modal-dialog modal-lg modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title"><%= accod.name %></h5>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                          <div class="embed-responsive embed-responsive-16by9">
+                                            <iframe id="cartoonVideo" class="embed-responsive-item" width="560" height="315" src="<%= accod.youtubeUrl[0] %>?autoplay=1&mute=1" allowfullscreen ></iframe>
+                                          </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+    <!-- newletter_area_start  -->
+    <!-- <div class="newletter_area overlay">
+        <div class="container">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-lg-10">
+                    <div class="row align-items-center">
+                        <div class="col-lg-5">
+                            <div class="newsletter_text">
+                                <h4>Subscribe Our Newsletter</h4>
+                                <p>Subscribe newsletter to get offers and about
+                                    new places to discover.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="mail_form">
+                                <div class="row no-gutters">
+                                    <div class="col-lg-9 col-md-8">
+                                        <div class="newsletter_field">
+                                            <input type="email" placeholder="Your mail" >
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4">
+                                        <div class="newsletter_btn">
+                                            <button class="boxed-btn4 " type="submit" >Subscribe</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <%- include('../partials/footer'); %>
+    <%- include('../partials/scripttag'); %>
+</body>
+
+</html>

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+
+    <title>Dejavu Accomodation Details</title>
+</head>
+
+<body class="bg-light text-dark">
+
+    <h1>
+        <center>
+            <br>Dejavu Tours&Treks : Edit Accomodation</br>
+        </center>
+    </h1>
+
+
+    <form action="/admin/accod/addededit" method="POST" enctype="multipart/form-data">
+
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <input type="hidden" value="<%= accod._id %>" id="accodid" name="accodid">
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="TripName" class="form-label">Accomodation Name:-  <b>* Accomodation name must be unique</b></label>
+                <input type="text" class="form-control" name="name" id="name" placeholder="" value="<%= accod.name %>" required="" readonly>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="col-md-4">
+                <label for="state" class="form-label">State</label>
+                <select class="form-select" name="state" id="state" required="">
+                    <option name="default" value="<%= accod.state %>"><%= accod.state %></option>
+                    <option name="Gujarat" value="Gujarat">Gujarat</option>
+                    <option name="Maharashtra" value="Maharashtra">Maharashtra</option>
+                    <option name="Himalayan" value="Himalayan">Himalayan</option>
+                </select>
+
+            </div>
+        </div>
+        
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="imageurlmain" class="form-label">Image</label><br>
+                <input type="file" accept="image/*" name="image" id="file" enctype="multipart/form-data">                               
+            </div>
+        </div>
+        
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="Destinations" class="form-label">Facilites</label>
+                <input type="text" class="form-control" name="destinations" id="destinations" placeholder="" value="<%= accod.destinations %>"  required="">
+
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="Route" class="form-label">Days</label>
+                <input type="text" class="form-control" name="days" id="days" placeholder="" value="<%= accod.days %>" required="">
+
+            </div>
+        </div>
+
+
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="TagLine" class="form-label">Tag Line</label>
+                <input type="text" class="form-control" name="tag" id="tag" placeholder="" value="<%= accod.tag %>" required="">
+
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="Price" class="form-label">Price</label>
+                <input type="text" class="form-control" name="price" id="price" placeholder="" value="<%= accod.price %>" required="">
+
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="About" class="form-label">About Code</label>
+                <textarea rows="5" type="text-area" class="form-control" name="about" id="About" placeholder="" value="" required=""><%- accod.about %>
+                </textarea>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="nearbyPlaces" class="form-label">nearbyPlaces</label>
+                <textarea rows="5" type="text-area" class="form-control" name="nearbyPlaces" id="nearbyPlaces" placeholder="" value="" required=""><%- accod.nearbyPlaces %>
+                </textarea>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="Activities" class="form-label">Activities</label>
+                <textarea rows="5" type="text-area" class="form-control" name="Activities" id="Activities" placeholder="" value="" required=""><%- accod.Activities %>
+                </textarea>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="Amenities" class="form-label">Amenities</label>
+                <textarea rows="5" type="text-area" class="form-control" name="Amenities" id="Amenities" placeholder="" value="" required=""><%- accod.Amenities %>
+                </textarea>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="Package" class="form-label">Package</label>
+                <textarea rows="5" type="text-area" class="form-control" name="Package" id="Package" placeholder="" value="" required=""><%- accod.Package %>
+                </textarea>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="bookncancel" class="form-label">bookncancel</label>
+                <textarea rows="5" type="text-area" class="form-control" name="bookncancel" id="bookncancel" placeholder="" value="" required=""><%- accod.bookncancel %>
+                </textarea>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="guidelines" class="form-label">guidelines</label>
+                <textarea rows="5" type="text-area" class="form-control" name="guidelines" id="guidelines" placeholder="" value="" required=""><%- accod.guidelines %>
+                </textarea>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <br>
+                <center><button type="submit" class="btn btn-primary">Submit</button></center>
+            
+            </div>
+        </div>
+    
+    </form>
+
+
+</body>
+
+</html>

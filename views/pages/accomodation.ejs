@@ -1,0 +1,134 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <%- include('../partials/headtag'); %>
+</head>
+
+<body>
+    <%- include('../partials/header'); %>
+
+    <!-- bradcam_area  -->
+    <div class="bradcam_area bradcam_bg_4">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="bradcam_text text-center">
+                        <h3>Deja-vu Accommodation</h3>
+                        <p>experience the heart of local</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/ bradcam_area  -->
+
+    <!-- Dejavu Accommodation Start -->
+    <div class="popular_places_area">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="section_title text-center mb_70">
+                        <h3>Dejavu Accommodation</h3>
+                        <p>Our specially identified local accommodation and delicious food are key ingredients in providing such travel experience. We can understand your travel desire if you want to drive by yourself using your own vehicle or explore places with local transportation, we will help out find such beautiful and unique stay</p>
+                    </div>
+                </div>
+            </div>        
+            <div class="row">
+                <% for (let accods of accomodations ) { %>
+                <div class="col-lg-4 col-md-6">
+                    <div class="single_place">
+                        <div class="thumb">
+                            <!-- <img src="images/<%= accods.imageurl %>" alt=""> -->
+                            <a href="/accomodationdetails/<%= accods.name %>">
+                                <img src="images/<%= accods.imageurl %>" alt="">
+                            </a>
+                            <a href="/accomodationdetails/<%= accods.name %>" class="prise">₹<%= accods.price %></a>
+                        </div>
+                        <div class="place_info">
+                            <a href="/accomodationdetails/<%= accods.name %>"><h3><%= accods.name %></h3></a>
+                            <p><%= accods.destinations %></p>
+                            <!--<p>Ahmedabad to Ahmedabad</p>-->
+                            <div class="rating_days d-flex justify-content-between">
+                                <!--<span class="d-flex justify-content-center align-items-center">
+                                     <i class="fa fa-star"></i> 
+                                     <i class="fa fa-star"></i> 
+                                     <i class="fa fa-star"></i> 
+                                     <i class="fa fa-star"></i> 
+                                     <i class="fa fa-star"></i>
+                                     <a href="#">(20 Review)</a>
+                                </span>-->
+                                <div class="days">
+                                    <i class="fa fa-clock-o"></i>
+                                    <a href="#"><%= accods.days %> Days</a>
+                                </div>
+                                <% if (isAuthenticated) { %>
+                                <div>
+                                    <form action="/admin/accod/edit" method="POST">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>"/>
+                                        <button type="submit" class="btn btn-primary">Edit</button>
+                                    </form>
+                                </div>
+                                <div>
+                                    <!-- Modal -->
+                                       <div class="modal fade" id="myModalaccod" role="dialog">
+                                           <div class="modal-dialog">
+                                           
+                                           <!-- Modal content-->
+                                           <div class="modal-content">
+                                               <div class="modal-header">
+                                               <h4 class="modal-title">Are you sure to delete the trip ?</h4>
+                                               <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                               </div>
+                                               <div class="modal-body">
+                                               <p class="text-danger">Once Deleted Trip cant be recovered.</p>
+                                               </div>
+                                               <div class="modal-footer">
+                                                   <form action="/admin/accod/delete" method="POST">
+                                                       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                       <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>"/>
+                                                       <button type="submit" class="btn btn-danger">Yes</button>
+                                                   </form>
+                                               <button type="button" class="btn btn-success" data-dismiss="modal">No</button>
+                                               </div>
+                                           </div>
+                                           
+                                           </div>
+                                       </div>
+                                       <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModalaccod">Delete</button>
+                                   <!-- </form> -->
+                               </div>
+                                <div>
+                                    <form action="/admin/accod/AddImage" method="POST">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>"/>
+                                        <button type="submit" class="btn btn-secondary">Add Image</button>
+                                    </form>
+                                </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+            <!--<div class="row">
+                <div class="col-lg-12">
+                    <div class="more_place_btn text-center">
+                        <a class="boxed-btn4" href="#">More Places</a>
+                    </div>
+                </div>
+            </div>-->
+        </div>
+    </div>
+</div>
+<!-- Dejavu Accommodation end -->
+
+
+
+    <%- include('../partials/footer'); %>
+    <%- include('../partials/scripttag'); %>
+</body>
+
+</html>

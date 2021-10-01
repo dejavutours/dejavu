@@ -1,0 +1,158 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <%- include('../partials/headtag'); %>
+</head>
+
+<body>
+    <%- include('../partials/header'); %>
+    <%- include('../partials/slider'); %>
+        <!-- Tours and Trek event - popular places area start -->
+        <div class="popular_places_area">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6">
+                        <div class="section_title text-center mb_70">
+                            <h3>Tours & Trek</h3>
+                            <p>We have pre planned schedule for fix departure tours and treks round the year at different locations.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <% for (let trips of Tours ) { %>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="single_place">
+                            <div class="thumb">
+                                <!-- <img src="/images/<%= trips.imageurl %>" alt=""> -->
+                                <a href="/tripdetails/<%= trips.name %>">
+                                    <img src="/images/<%= trips.imageurl %>" alt="">
+                                </a>
+                                <a href="/tripdetails/<%= trips.name %>" class="prise">₹<%= trips.price %></a>
+                            </div>
+                            <div class="place_info">
+                                <a href="/tripdetails/<%= trips.name %>"><h3><%= trips.name %></h3></a>
+                                <p><%= trips.destinations %></p>
+                                <p><%= trips.route %></p>
+                                <div class="rating_days d-flex justify-content-between">
+                                    <!--<span class="d-flex justify-content-center align-items-center">
+                                         <i class="fa fa-star"></i> 
+                                         <i class="fa fa-star"></i> 
+                                         <i class="fa fa-star"></i> 
+                                         <i class="fa fa-star"></i> 
+                                         <i class="fa fa-star"></i>
+                                         <a href="#">(20 Review)</a>
+                                    </span>-->
+                                    <div class="days">
+                                        <i class="fa fa-clock-o"></i>
+                                        <a href="#"><%= trips.days %> Days</a>
+                                    </div>
+                                    
+                                    <% if (isAuthenticated) { %>
+                                        <div>
+                                            <form action="/admin/edit" method="POST">
+                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                <input type="hidden" name="tripid" id="tripid" value="<%= trips._id %>"/>
+                                                <button type="submit" class="btn btn-primary">Edit</button>
+                                            </form>
+                                        </div>
+                                        <div>
+
+                                            <!-- Modal -->
+                                               <div class="modal fade" id="myModal" role="dialog">
+                                                   <div class="modal-dialog">
+                                                   
+                                                   <!-- Modal content-->
+                                                   <div class="modal-content">
+                                                       <div class="modal-header">
+                                                       <h4 class="modal-title">Are you sure to delete the trip ?</h4>
+                                                       <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                       </div>
+                                                       <div class="modal-body">
+                                                       <p class="text-danger">Once Deleted Trip cant be recovered.</p>
+                                                       </div>
+                                                       <div class="modal-footer">
+                                                           <form action="/admin/delete" method="POST">
+                                                               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                               <input type="hidden" name="tripid" id="tripid" value="<%= trips._id %>"/>
+                                                               <button type="submit" class="btn btn-danger">Yes</button>
+                                                           </form>
+                                                       <button type="button" class="btn btn-success" data-dismiss="modal">No</button>
+                                                       </div>
+                                                   </div>
+                                                   
+                                                   </div>
+                                               </div>
+                                               <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal">Delete</button>
+                                           <!-- </form> -->
+                                       </div>
+                                        <div>
+                                            <form action="/admin/AddImage" method="POST">
+                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                <input type="hidden" name="tripid" id="tripid" value="<%= trips._id %>"/>
+                                                <button type="submit" class="btn btn-secondary">Add Image</button>
+                                            </form>
+                                        </div>
+                                        <% } %>
+                                   
+                                </div>
+                                <% if (isAuthenticated) { %>
+                                    <br>
+                                <div>
+                                    <form action="/admin/addupcoming" method="POST">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <input type="hidden" name="tripid" id="tripid" value="<%= trips._id %>"/>
+                                        <input type="date" id="tripdate" name="tripdate">
+                                        <button type="submit" class="btn btn-success">Upcoming</button>
+                                    </form>                                    
+                                    <!-- <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">
+                                        Add
+                                    </button>
+                                      
+                                    <div class="modal fade" id="myModal">
+                                        <div class="modal-dialog">
+                                        <div class="modal-content">
+                                        
+                                            
+                                            <div class="modal-header bg-primary">
+                                            <h4 class="modal-title">Trip Date</h4>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            </div>
+                                            
+                                            
+                                            <div class="modal-body">
+                                                <form action="/admin/addupcoming" method="POST">
+                                                    <input type="hidden" name="tripid" id="tripid" value="<%= trips._id %>"/>
+                                                    <input type="date" id="tripdate" name="tripdate">&nbsp;&nbsp;
+                                                    <button type="submit" class="btn btn-success">Add</button>
+                                                </form>
+                                            </div>
+                                            
+                                        </div>
+                                        </div>
+                                    </div> -->
+                                </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <% } %>
+                    
+                    
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="more_place_btn text-center">
+                            <a class="boxed-btn4" href="#">More Places</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+     <!-- Tours and Trek event - popular places area end -->
+    <%- include('../partials/footer'); %>
+    <%- include('../partials/scripttag'); %>
+</body>
+
+</html>

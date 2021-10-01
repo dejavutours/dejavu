@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+
+    <title>Dejavu Tours Details</title>
+</head>
+
+<body class="bg-light text-dark">
+
+    <h1>
+        <center>
+            <br>Dejavu Tours&Treks : Edit Blog</br>
+        </center>
+    </h1>
+    <% if(message){ %>
+        <h4  class="text-danger">
+            <center>
+                <%= message %>
+            </center>
+        </h4>
+        <% } %>
+
+
+    <form action="/admin/addEditedblog" method="POST" enctype="multipart/form-data">
+
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="blogid" value="<%= blog._id %>">
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="Title" class="form-label">Title</label>
+                <input type="text" class="form-control" name="title" id="title" placeholder="" value="<%= blog.title %>" required="">
+            </div>
+        </div>
+        <br>
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="headerline" class="form-label">Header Line</label>
+                <input type="text" class="form-control" name="headerline" id="headerline" placeholder="" value="<%= blog.headerline %>" required="">
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="tag" class="form-label">Tag</label>
+                <input type="text" class="form-control" name="tag" id="tag" placeholder="" value="<%= blog.tag %>" required="">
+            </div>
+        </div>
+        <br>
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="bloggername" class="form-label">Blogger Name</label>
+                <input type="text" class="form-control" name="bloggername" id="bloggername" placeholder="" value="<%= blog.blogger %>" required="">
+            </div>
+        </div>
+        <br>
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="insta" class="form-label">Instagram</label>
+                <input type="text" class="form-control" name="insta" id="insta" placeholder="" value="<%= blog.instagram %>" required="">
+            </div>
+        </div>
+        <br>
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="facebk" class="form-label">Facebook</label>
+                <input type="text" class="form-control" name="facebk" id="facebk" placeholder="" value="<%= blog.facebook %>" required="">
+            </div>
+        </div>
+        <br>
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="tripdate">Trip Date</label>
+                <input type="date" placeholder="tripdate" name="tripdate" value="<%= blog.tripdate %>" id="tripdate" required>                              
+            </div>
+        </div>
+        <br>
+
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="imageurlmain" class="form-label">Image</label><br>
+                <input type="file" accept="image/*" name="image" id="file" enctype="multipart/form-data">                               
+            </div>
+        </div>
+        <br>
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="content" class="form-label">Content</label>
+                <textarea rows="5" type="text-area" class="form-control" name="content" id="content" placeholder="" value="" required=""><%- blog.content %>
+                </textarea>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <br>
+                <center><button type="submit" class="btn btn-primary">Submit</button></center>
+            
+            </div>
+        </div>
+    
+    </form>
+
+
+</body>
+
+</html>
