@@ -247,7 +247,7 @@ exports.postBookTrip = (req, res, next) => {
                   " usertripdate: " + usertripdate ;
     var mailOptions = {
       from: process.env.GMAIL_USER,
-      to: process.env.GMAIL_USER, mailid,
+      to: `${process.env.GMAIL_USER},${mailid}`,
       subject: `Trip Registration for ${userdestination} on ${usertripdate}`,
       attachments: {filename: "TripDetails.png" , path: 'images/pdfheader.png', cid: 'testunique@tim.ec' },
       html: '<!DOCTYPE html>'+
