@@ -118,4 +118,6 @@ router.post("/admin/editblog", isAuth, toursController.getEditBlog);
 
 router.post("/admin/addEditedblog", isAuth, toursController.postEditblog);
 
+router.get("/admin/costingcal", isAuth, toursController.getcalculateCosting);
+
 module.exports = router; 

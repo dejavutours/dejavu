@@ -1199,3 +1199,7 @@ exports.postEditblog = (req, res, next) => {
   })
 
 };
+
+exports.getcalculateCosting = (req, res, next) => {
+  res.render('pages/costingcal', { message: null });
+};
