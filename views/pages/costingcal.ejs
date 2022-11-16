@@ -31,7 +31,7 @@
 
     <form  >
 
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+       <!--<input type="hidden" name="_csrf" value="<%= csrfToken %>">--> 
         <div class="container-fluid">
             <div class="col-sm-6">
                 <label for="persons" class="form-label">Number of persons:- </label>
@@ -88,11 +88,34 @@
         <div class="container-fluid" id="result">
         </div>
     </form>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
+    <script>
+$(document).ready(function(){
+$('#cal').click(function(e){
+e.preventDefault();
+});
+$('#cal').click(function(){
+    console.log("dsgfsdh")
+    var persons = parseFloat($('#persons').val());
+    var days = parseFloat($('#nodays').val());
+    var rooms = parseFloat($('#rooms').val());
+    var stay = parseFloat($('#stay_type').val());
+    var transport = parseFloat($('#transport').val());
+    var share = parseFloat($('#share').val());
+    //var per_dayrooms = parseFloat($('#per_dayrooms').val());
+    var room_perday_cost = stay/(days-1);
+    var tot_pack = (days*transport) + ((days-1)*(room_perday_cost*rooms));
+    var transport_cost = transport*days;
+    var stay_cost = (rooms)*(days-1);
+    var costper = tot_pack/persons;
+    console.log(days)
+    $("#result").html("<p>Total Package : "+ tot_pack +"</br> Transportation Cost: "+transport_cost+"<br/> Stay Cost: "+stay_cost+"</br> Cost Per Person:"+costper+"</p>");
 
+}) ;   
+});
+    </script>
 </body>
 
 </html>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-<script type="text/javascript" src='/js/pack_cal.js'></script>
