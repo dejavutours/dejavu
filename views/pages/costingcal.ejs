@@ -42,7 +42,7 @@
        <!--<input type="hidden" name="_csrf" value="<%= csrfToken %>">-->
        <div class="container-fluid">
          <div class="col-sm-6">
-            <label for="persons" class="form-label">Check In Date:- </label>
+            <label for="persons" class="form-label">Check In & Out Date:- </label>
             <input type="text" id="tripdate_in" name="tripdate_in"> 
         </div>
       </div>
@@ -59,16 +59,16 @@
                 <input type="number" class="form-control" name="persons" id="persons" placeholder="" value="" required="">
             </div>
         </div>
-        <div class="container-fluid">
+       <!-- <div class="container-fluid">
             <div class="col-sm-6">
                 <label for="nodays" class="form-label">Number of days:- </label>
                 <input type="number" class="form-control" name="nodays" id="nodays" placeholder="" value="" required="">
             </div>
-        </div>
+        </div> -->
         <div class="container-fluid">
             <div class="col-sm-6">
                 <label for="rooms" class="form-label">Number of rooms:- </label>
-                <input type="number" class="form-control" name="rooms" id="rooms" placeholder="" value="" required="">
+                <input type="number" class="form-control" name="rooms" id="rooms" placeholder="" value="" required="" disabled>
             </div>
         </div>
 
@@ -144,7 +144,13 @@ $('#tripdate_in').daterangepicker({
 });
   }); 
     $(document).ready(function(){
+        $('#persons').mouseout(function(){
+            var tot_rooms = $('#persons').val()/2;
+            $('#rooms').val(Math.ceil(tot_rooms));
+        });
         
+
+
 $('#cal').click(function(e){
 e.preventDefault();
 });
@@ -152,15 +158,16 @@ $('#cal').click(function(){
     console.log("dsgfsdh")
     var persons = parseFloat($('#persons').val());
     var days = parseFloat($('#nodays').val());
+    var tripnight = parseFloat($('#tripnight').val());
     var rooms = parseFloat($('#rooms').val());
     var stay = parseFloat($('#stay_type').val());
     var transport = parseFloat($('#transport').val());
     var share = parseFloat($('#share').val());
     //var per_dayrooms = parseFloat($('#per_dayrooms').val());
-    var room_perday_cost = stay/(days-1);
-    var tot_pack = (days*transport) + ((days-1)*(room_perday_cost*rooms));
-    var transport_cost = transport*days;
-    var stay_cost = (rooms)*(days-1);
+    var room_perday_cost = stay/(tripnight-1);
+    var tot_pack = (tripnight*transport) + ((tripnight-1)*(room_perday_cost*rooms));
+    var transport_cost = transport*tripnight;
+    var stay_cost = (rooms)*(stay/persons)*(tripnight-1);
     var costper = tot_pack/persons;
     console.log(days)
     $("#result").html("<p>Total Package : "+ tot_pack +"</br> Transportation Cost: "+transport_cost+"<br/> Stay Cost: "+stay_cost+"</br> Cost Per Person:"+costper+"</p>");
