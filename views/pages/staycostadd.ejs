@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Icons font CSS-->
+    <link href="/vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
+    <link href="/vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+
+    <title>Dejavu Tours Details</title>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="/vendor/datepicker/daterangepicker.css">
+
+    <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+
+<body class="bg-light text-dark">
+
+    <h1 class="text-primary">
+        <center>
+            Dejavu Tours&Treks : Add Stays
+        </center>
+    </h1>
+    <% if(message){ %>
+    <h4  class="text-danger">
+        <center>
+            <%= message %>
+        </center>
+    </h4>
+    <% } %>
+
+
+    <form action="/admin/getStayCost" method="POST" enctype="multipart/form-data">
+
+       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="destination" class="form-label">Destination </label>
+                <input type="text" class="form-control" name="destination" id="destination" placeholder="" value="" required="" >
+                <span id="err_destination"></span>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="stayname" class="form-label">Stay Name </label>
+                <input type="text" class="form-control" name="stayname" id="stayname" placeholder="" value="" required="" >
+                <span id="err_stayname"></span>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="category" class="form-label">Stay Category </label>
+                <input type="text" class="form-control" name="category" id="category" placeholder="" value="" required="" >
+                <span id="err_scategory"></span>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <label for="staycost" class="form-label">Stay Cost </label>
+                <input type="number" class="form-control" name="staycost" id="staycost" placeholder="" value="" required="" >
+                <span id="err_staycost"></span>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="col-sm-6">
+                <br>
+                <center><button type="submit"  id="cal" class="btn btn-primary">Submit</button></center>
+            </div>
+        </div>
+        
+        <div class="container-fluid" id="result">
+        </div>
+    </form>
+    <table class="table">
+        <thead>
+            <th>Destination</th>
+            <th>Stay Name</th>
+            <th>Category</th>
+            <th>Stay Cost</th>
+        </thead>
+        <tbody>
+            <% if (stays.length > 0) { 
+                for (let stay of stays) {
+            %>
+            <tr>
+               <td><%= stay.destination %></td>
+               <td><%= stay.stay_name %></td>
+               <td><%= stay.category %></td>
+               <td><%= stay.stay_cost %></td>
+            </tr>
+            <% }}  %>
+        </tbody>
+    </table>
+    <style>
+    input {
+        border: 1px solid transparent;
+        background-color: #f1f1f1;
+        padding: 10px;
+        font-size: 16px;
+    }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script>
+ 
+    </script>
+</body>
+
+</html>
+

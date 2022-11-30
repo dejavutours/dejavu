@@ -2,6 +2,8 @@ const express = require("express");
 
 const Tours = require("../models/tours");
 
+const Staycost = require("../models/staycost");
+
 const Newsletter = require("../models/newsletter");
 
 const Contact = require("../models/contact");
@@ -1113,7 +1115,6 @@ exports.getTagFilter = async(req, res, next) => {
 };
 
 exports.getSearchTrip = async(req, res, next) => {
-
   const searchtext = req.body.SearchTrip;
   const searchresult = await Tours.find({'name' : searchtext}); 
   const tests = await Tours.find().distinct('name');
@@ -1200,6 +1201,35 @@ exports.postEditblog = (req, res, next) => {
 
 };
 
-exports.getcalculateCosting = (req, res, next) => {
-  res.render('pages/costingcal', { message: null });
+exports.getcalculateCosting = async(req, res, next) => {
+  const result =  await Staycost.find();//.distinct('stay_name');
+ //console.log(result.length);return false;
+  res.render('pages/costingcal',{stays: result,message:''});
 };
+
+exports.getStayCost = async(req, res, next) => {
+  const result =  await Staycost.find();
+  res.render('pages/staycostadd', {stays: result, message: null });
+};
+
+exports.postStayCost = async(req, res, next) => {
+  const destination = req.body.destination;
+  const stayname = req.body.stayname;
+  const category = req.body.category;
+  const staycost = req.body.staycost;
+  const staycostsearch = await Staycost.find({stay_name: stayname});
+
+  if(staycostsearch.length == 0){
+    const addcosting = new Staycost({
+      category: category,
+      destination: destination,
+      stay_cost: staycost,
+      stay_name: stayname
+    });
+    addcosting.save();
+    res.redirect("/getStayCost");
+  }else{
+    res.redirect("/");
+  }
+};
+

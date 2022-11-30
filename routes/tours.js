@@ -120,4 +120,8 @@ router.post("/admin/addEditedblog", isAuth, toursController.postEditblog);
 
 router.get("/admin/costingcal", isAuth, toursController.getcalculateCosting);
 
+router.get("/admin/getStayCost", isAuth, toursController.getStayCost);
+
+router.post("/admin/getStayCost", isAuth, toursController.postStayCost);
+
 module.exports = router; 
