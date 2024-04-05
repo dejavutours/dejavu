@@ -3424,9 +3424,9 @@ h3 {
 /* line 9, ../../Arafath/CL/December/231. Travel-02/HTML/scss/_popular_place.scss */
 .popular_places_area .single_place {
   background: #fff;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
+  -webkit-border-radius: 18px;
+  -moz-border-radius: 18px;
+  border-radius: 18px;
   overflow: hidden;
   -webkit-transition: 0.3s;
   -moz-transition: 0.3s;
