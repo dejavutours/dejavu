@@ -2776,6 +2776,8 @@ h3 {
 /* line 30, ../../Arafath/CL/December/231. Travel-02/HTML/scss/_destination.scss */
 .popular_destination_area .single_destination .thumb img {
   width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;
