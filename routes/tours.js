@@ -2,8 +2,6 @@ const express = require("express");
 
 const Tours = require("../models/tours");
 
-const makepdfController = require("../controllers/makepdf");
-
 const toursController = require("../controllers/tours");
 
 const isAuth = require('../middleware/is-auth');
