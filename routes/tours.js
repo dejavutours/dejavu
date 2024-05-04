@@ -2,6 +2,8 @@ const express = require("express");
 
 const Tours = require("../models/tours");
 
+const makepdfController = require("../controllers/makepdf");
+
 const toursController = require("../controllers/tours");
 
 const isAuth = require('../middleware/is-auth');
@@ -123,5 +125,7 @@ router.get("/admin/costingcal", isAuth, toursController.getcalculateCosting);
 router.get("/admin/getStayCost", isAuth, toursController.getStayCost);
 
 router.post("/admin/getStayCost", isAuth, toursController.postStayCost);
+
+router.post("/getstateCities" , makepdfController.getstateCities);
 
 module.exports = router; 
