@@ -126,6 +126,4 @@ router.get("/admin/getStayCost", isAuth, toursController.getStayCost);
 
 router.post("/admin/getStayCost", isAuth, toursController.postStayCost);
 
-router.post("/getstateCities" , makepdfController.getstateCities);
-
 module.exports = router; 
