@@ -122,10 +122,10 @@ router.get("/admin/costingcal", isAuth, toursController.getcalculateCosting);
 
 router.get("/admin/getStayCost", isAuth, toursController.getStayCost);
 
-router.post("/admin/getStayCost", isAuth, toursController.postStayCost);
+router.post("/admin/getStayCost", isAuth, toursController.postStayCost)
 
-router.get("/admin/maketripPdf" , isAuth, toursController.maketripPdf);
+router.get('admin/maketripPdf', isAuth , toursController.maketripPdf);
 
-router.post("/admin/maketripPdf" , isAuth, toursController.postgeneratePdf);
+route.post('admin/maketripPdf', isAuth , toursController.postgeneratePdf);
 
 module.exports = router; 
