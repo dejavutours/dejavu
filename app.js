@@ -82,13 +82,15 @@ const csrfProtection = csrf();
   app.set("views", "views");
 
   const tourRoutes = require("./routes/tours");
+  const adminRoutes = require("./routes/admin");
 
   //app.use(helmet());
   app.use(compression());
 
   app.use(bodyParser.urlencoded({ extended: false }));
 
-  app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single("image"));
+ // app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single("image"));
+  app.use(multer({ storage: fileStorage , fileFilter: fileFilter}).array("image",12));
 
   // app.use(async(req, res, next) => {
   //   if(!req.file){
@@ -143,7 +145,7 @@ app.use((req, res, next) => {
 });
 
 app.use(tourRoutes);
-
+app.use(adminRoutes);
 
 mongoose
   .connect(MONGODB_URI, { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false })
