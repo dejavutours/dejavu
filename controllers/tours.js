@@ -1210,7 +1210,8 @@ exports.getcalculateCosting = async(req, res, next) => {
 
 exports.getStayCost = async(req, res, next) => {
   const result =  await Staycost.find();
-  res.render('pages/staycostadd', {stays: result, message: null });
+  res.redirect("/admin/maketripPdf");
+  //res.render('pages/staycostadd', {stays: result, message: null });
 };
 
 exports.postStayCost = async(req, res, next) => {
