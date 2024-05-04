@@ -1,3 +1,4 @@
+var PdfPrinter = require('pdfmake');
 var fonts = {
     Roboto: {
         normal: 'fonts/Roboto-Regular.ttf',
@@ -6,23 +7,14 @@ var fonts = {
         bolditalics: 'fonts/Roboto-MediumItalic.ttf'
     }
 };
- var PdfPrinter = require('pdfmake');
-const fileHelper = require('../util/file');
- var multer  = require('multer');
- var upload = multer({ dest: 'images/'});
-
- var fs = require('fs');
-
-
 var printer = new PdfPrinter(fonts);
-var config = require('../json/statecities.json');
-let state_arr = [config];
-//console.log(state_arr);
+var fs = require('fs');
 
 exports.maketripPdf = (req, res, next) => {
     var obj;
+    var config = require('../json/statecities.json');
+    let state_arr = [config];
     obj = JSON.stringify(config);
-    var sss = JSON.parse(obj);
     let states_arr = ''
     for(var key of state_arr) {
        states_arr = Object.keys(key);
@@ -32,10 +24,22 @@ exports.maketripPdf = (req, res, next) => {
     res.render('pages/getTripPdf', { states_arr : states_arr,regions_arr:regions });
 };
 
+exports.getstateCities =  (req, res, next) => {
+    var config = require('../json/statecities.json');
+    let state_arr = config;
+    let states_arr = '';
+    for (const property in state_arr) {
+        if(property == req.body.state){
+            states_arr = '';
+            states_arr = state_arr[req.body.state];
+            break;
+        }
+    }
+    res.json({ cities: states_arr });
+    };
+
 exports.postgeneratePdf = (req, res, next) => {
     let _ = require("lodash");
-    //res.redirect("/maketripPdf");
-    //console.log(req.files);return false;
     var file_obj = req.files;
     var flag = '';
     var add_month = add_dept_city = add_triptype = add_tripsize = add_days = add_maxalt = add_trek_dist = add_difficulty =
@@ -131,7 +135,6 @@ exports.postgeneratePdf = (req, res, next) => {
     }
 
     let addtripcost = [];
-    var add_tripcost = '';
     if((req.body.available_from  != undefined  && req.body.available_from.length >= 1 ) || (req.body.available_days.length >= 1 || req.body.costing.length >= 1)){
         if(req.body.available_from != undefined){
             available_from =  req.body.available_from;
@@ -388,7 +391,6 @@ exports.postgeneratePdf = (req, res, next) => {
             }
         }	
     }
-   // res.send(docDefinition);   return false;
     var pdfDoc = printer.createPdfKitDocument(docDefinition);
     var filename = 'PdfTrip.pdf';
     if(req.body.filename != undefined && req.body.filename != ''){
@@ -397,9 +399,6 @@ exports.postgeneratePdf = (req, res, next) => {
     pdfDoc.pipe(fs.createWriteStream('images/trippdfs/'+filename));
     pdfDoc.end();
     console.log("file generated!  "+filename);
-    res.redirect("../images/trippdfs/"+filename);
-   // window.open(filename, '_blank', 'fullscreen=yes');
-   // res.send("PDF file generated");
-   
+    res.redirect("../images/trippdfs/"+filename);   
 };
 
