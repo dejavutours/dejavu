@@ -124,8 +124,4 @@ router.get("/admin/getStayCost", isAuth, toursController.getStayCost);
 
 router.post("/admin/getStayCost", isAuth, toursController.postStayCost);
 
-router.get('/admin/maketripPdf', isAuth , toursController.maketripPdf);
-
-router.post('/admin/maketripPdf', isAuth , toursController.postgeneratePdf);
-
 module.exports = router; 
