@@ -299,24 +299,6 @@
                     </div>
                 </div>
 
-<!--             <div class="col-sm-4">
-                    <div class="form-group">
-                        <label for="trip_images">Upload Images</label>
-                        <div class="input-group">
-                            <div class="custom-file">
-                                <input type="file" name="trippp_images" accept="image/*" multiple>
-                                <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                            </div>
-                        </div>
-                    </div><br/>
-                    <span id="uploaded_images"></span>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        <label>Filename (Add only name)</label>
-                        <input type="text" name="filename"  class="form-control" id="filename" >
-                    </div>
-                </div>  -->
             </div>
             <div class="card-footer">
                 <button type="submit" class="btn btn-primary"><i class="fas fa-download"></i> Generate PDF</button>
@@ -332,6 +314,7 @@
 <script src="/vendor/select2/select2.min.js"></script>
 
 <script>
+    //console.log(json)
     $(function () {
    //Initialize Select2 Elements
        $('.select2').select2();
@@ -346,7 +329,6 @@
        var ht = $('.detailedinfo').clone();
        console.log(ht);
        var add = $('.detailedinfo').clone()
-       //$('.detailedinfo').clone().appendTo('#detail_info');
        $('#detail_info').html(add);
 
    }
@@ -354,17 +336,14 @@
    function addrow(i){
        console.log("function click");
        var ht = $('.package_cost').clone();
-      // var button = '';
        var dd = i++;
        var id = 'delrow'+dd;
-       //console.log(id)
-       //var button = "<button class='btn btn-primary' id='"+id+"'>Delete</button>";
-      $('#extra_package_cost').html( $('.package_cost').clone());
+       $('#extra_package_cost').html( $('.package_cost').clone());
 
    }
 
-    trip_images.onchange = evt => {
-       const file = trip_images.files
+   image.onchange = evt => {
+       const file = image.files
        console.log(file)
        var images = '';
        jQuery.each( file, function( key, value ) {
@@ -376,10 +355,26 @@
 
     function getcities(){
        var state = $('#state').val();
-      // $('#deptcity').val('');
+      console.log(state);
+      $.ajax({
+            url: "/getstateCities",
+            type:'POST',
+            data:{'_csrf':"<%= csrfToken %>",state:state},
+            success: function(result){
+                console.log(result)
+                var city = '';
+                jQuery.each(result, function( key, value ) {
+                    value.forEach((value2,index,arr)=>{
+                        city += "<option value="+value2+">"+value2+"</option>";
+                    }); 
+                });
+                $('#deptcity').append(city);
+
+            }
+        });
      
     }
-    Dropzone.autoDiscover = false
+  /*  Dropzone.autoDiscover = false
 
    // Get the template HTML and remove it from the doumenthe template HTML and remove it from the doument
    var previewNode = document.querySelector("#template")
@@ -421,7 +416,7 @@
  }
  document.querySelector("#actions .cancel").onclick = function() {
    myDropzone.removeAllFiles(true)
- }
+ } */
 </script>
 </body>
 </html>
