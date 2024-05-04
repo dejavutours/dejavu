@@ -12,10 +12,6 @@ const router = express.Router();
 
 router.get("/" , toursController.getIndexPage);
 
-router.get("/admin/maketripPdf" , isAuth, makepdfController.maketripPdf);
-
-router.post("/admin/maketripPdf" , isAuth, makepdfController.postgeneratePdf);
-
 router.get("/admin/addtours" , isAuth, toursController.getAddTours);
 
 router.post("/admin/addtours", isAuth,  toursController.postAddTours);
@@ -129,5 +125,9 @@ router.get("/admin/costingcal", isAuth, toursController.getcalculateCosting);
 router.get("/admin/getStayCost", isAuth, toursController.getStayCost);
 
 router.post("/admin/getStayCost", isAuth, toursController.postStayCost);
+
+router.get("/admin/maketripPdf" , isAuth, makepdfController.maketripPdf);
+
+router.post("/admin/maketripPdf" , isAuth, makepdfController.postgeneratePdf);
 
 module.exports = router; 
