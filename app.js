@@ -122,6 +122,9 @@ app.use(csrfProtection);
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
   res.locals.csrfToken = req.csrfToken();
+  if(req.files !== undefined){
+    req.file = req.files[0];
+  }
   //console.log(res.locals.csrfToken);
   next();
 });
