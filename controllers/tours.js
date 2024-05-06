@@ -299,8 +299,13 @@ exports.postEdit = async(req, res, next) => {
         if (index > -1) {
           alltitles.splice(index, 1);
         }
-    console.log(alltitles);
-    res.render("pages/edittrip", { trips: tripdetails[0] , alltrips: alltitles });
+    var config = require('../json/statecities.json');
+    let state_arr = [config];
+    let states_arr = ''
+    for(var key of state_arr) {
+        states_arr = Object.keys(key);
+    }   
+    res.render("pages/edittrip", { trips: tripdetails[0] , alltrips: alltitles ,states_arr : states_arr});
 
   }
   catch(err){
