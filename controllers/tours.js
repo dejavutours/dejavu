@@ -55,7 +55,13 @@ exports.getIndexPage = async(req, res, next) => {
   }; 
 
 exports.getAddTours = (req, res, next) => {
-    res.render('pages/Addtours', { message : null });
+    var config = require('../json/statecities.json');
+    let state_arr = [config];
+    let states_arr = ''
+    for(var key of state_arr) {
+       states_arr = Object.keys(key);
+    }
+    res.render('pages/Addtours', { message : null,states_arr : states_ar });
 };
 
 exports.postAddTours = async(req, res, next) => {
@@ -1215,8 +1221,7 @@ exports.getcalculateCosting = async(req, res, next) => {
 
 exports.getStayCost = async(req, res, next) => {
   const result =  await Staycost.find();
-  res.redirect("/admin/maketripPdf");
-  //res.render('pages/staycostadd', {stays: result, message: null });
+  res.render('pages/staycostadd', {stays: result, message: null });
 };
 
 exports.postStayCost = async(req, res, next) => {
@@ -1226,16 +1231,32 @@ exports.postStayCost = async(req, res, next) => {
   const staycost = req.body.staycost;
   const staycostsearch = await Staycost.find({stay_name: stayname});
 
-  if(staycostsearch.length == 0){
+  if(req.body.submit == 'edit'){
+    const staycostsearch = await Staycost.findById(req.body.stay_id);
+      staycostsearch.category = category;
+      staycostsearch.destination = destination;
+      staycostsearch.stay_cost = staycost;
+      staycostsearch.stay_name = stayname;
+      staycostsearch.save();
+  }else{
     const addcosting = new Staycost({
       category: category,
       destination: destination,
       stay_cost: staycost,
-      stay_name: stayname
+      stay_name: stayname,
+      addcosting.save();
     });
-    addcosting.save();
-    res.redirect("/getStayCost");
-  }else{
-    res.redirect("/");
   }
+  res.redirect("/admin/getStayCost");
 };
+
+exports.deleteStay = async(req, res, next) => {
+  const stayid = req.body.stayid;
+  Staycost.findByIdAndDelete(stayid)
+  .then(() => {
+    res.redirect("/admin/getStayCost");
+  })
+  .catch(err => {
+    console.log(err);
+  })
+}
