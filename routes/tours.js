@@ -124,4 +124,6 @@ router.get("/admin/getStayCost", isAuth, toursController.getStayCost);
 
 router.post("/admin/getStayCost", isAuth, toursController.postStayCost);
 
+router.post("/admin/deleteStay", isAuth, toursController.deleteStay);
+
 module.exports = router; 
