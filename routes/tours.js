@@ -130,8 +130,6 @@ router.post("/admin/deleteStay", isAuth, toursController.deleteStay);
 
 router.get("/admin/maketripPdf" ,isAuth, makepdfController.maketripPdf);
 
-router.post("/admin/maketripPdf" ,isAuth, makepdfController.postgeneratePdf);
-
 router.post("/getstateCities" , makepdfController.getstateCities);
 
 module.exports = router; 
