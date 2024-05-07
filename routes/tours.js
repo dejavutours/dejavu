@@ -128,9 +128,9 @@ router.post("/admin/getStayCost", isAuth, toursController.postStayCost);
 
 router.post("/admin/deleteStay", isAuth, toursController.deleteStay);
 
-router.get("/admin/maketripPdf" ,isAuth, makepdfController.getMaketripPdf);
+router.get("/admin/makepdf" ,isAuth, makepdfController.getMakePdf);
 
-router.post("/admin/maketripPdf" ,isAuth, makepdfController.postMaketripPdf);
+router.post("/admin/makepdf" ,isAuth, makepdfController.postMakePdf);
 
 router.post("/getstateCities" , makepdfController.getstateCities);
 
