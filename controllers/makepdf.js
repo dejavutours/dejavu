@@ -10,7 +10,7 @@ var PdfPrinter = require('pdfmake');
 var printer = new PdfPrinter(fonts);
 var fs = require('fs');
 
-exports.getMaketripPdf = (req, res, next) => {
+exports.getMakePdf = async(req, res, next) => {
     var config = require('../json/statecities.json');
     let state_arr = [config];
     let states_arr = [];
@@ -36,8 +36,8 @@ exports.getstateCities =  (req, res, next) => {
     res.json({ cities: states_arr });
 };
 
-exports.postMaketripPdf = (req, res, next) => {
-    res.send(req.body);return false;
+exports.postMakePdf = async(req, res, next) => {
+   // res.send(req.body);return false;
     let _ = require("lodash");
     var file_obj = req.files;
     var flag = ''; var add_month = '';
