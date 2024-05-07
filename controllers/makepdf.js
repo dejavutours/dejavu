@@ -11,11 +11,9 @@ var printer = new PdfPrinter(fonts);
 var fs = require('fs');
 
 exports.maketripPdf = (req, res, next) => {
-    var obj;
     var config = require('../json/statecities.json');
     let state_arr = [config];
-    obj = JSON.stringify(config);
-    let states_arr = ''
+    let states_arr = [];
     for(var key of state_arr) {
        states_arr = Object.keys(key);
     }
@@ -27,7 +25,7 @@ exports.maketripPdf = (req, res, next) => {
 exports.getstateCities =  (req, res, next) => {
     var config = require('../json/statecities.json');
     let state_arr = config;
-    let states_arr = '';
+    let states_arr = [];
     for (const property in state_arr) {
         if(property == req.body.state){
             states_arr = '';
@@ -36,14 +34,15 @@ exports.getstateCities =  (req, res, next) => {
         }
     }
     res.json({ cities: states_arr });
-    };
+};
 
 exports.postgeneratePdf = (req, res, next) => {
     let _ = require("lodash");
     var file_obj = req.files;
-    var flag = '';
-    var add_month = add_dept_city = add_triptype = add_tripsize = add_days = add_maxalt = add_trek_dist = add_difficulty =
-    add_agelimit = add_regionstate = add_trip_dates = '';
+    var flag = ''; var add_month = '';
+    var add_dept_city = ''; var add_triptype = ''; var add_tripsize = ''; 
+    var add_days = ''; var add_maxalt = ''; var add_trek_dist = ''; var add_difficulty = ''; var add_agelimit = '';
+    var add_regionstate = ''; var add_trip_dates = '';
     if(req.body.month != undefined && req.body.month != ''){
         flag = '1';
         month = req.body.month.join(',');
@@ -96,14 +95,14 @@ exports.postgeneratePdf = (req, res, next) => {
         var route_stack = {
             stack:[{text:'Route', style: 'header2',margin: [0, 0, 0, 10]},
             {text:route, style:'bb'}],margin: [0, 0, 0, 10]
-            }
+            };
     }
     if(flag == '1'){
         var tripdetails_stack = {
             stack:[
                 {text:'Trip Details:', style: 'header2',margin: [0, 0, 0, 10]},
-                        add_trip_dates, add_month,  add_dept_city,  add_triptype, add_tripsize,  add_days, add_maxalt,
-                    add_trek_dist, add_difficulty,   add_agelimit,  add_regionstate,
+                add_trip_dates, add_month,  add_dept_city,  add_triptype, add_tripsize,  add_days, add_maxalt,
+                add_trek_dist, add_difficulty,   add_agelimit,  add_regionstate,
             ],margin: [0, -10, 0, 10]
 
         };
@@ -115,23 +114,22 @@ exports.postgeneratePdf = (req, res, next) => {
     if(req.body.inclusion != undefined && req.body.inclusion != ''){
         inclusion =  req.body.inclusion.split('#');
         inclusion.forEach(function(include) {
-            add_inclusion = {text:include, style:'bb',bold:false}
+            add_inclusion = {text:include, style:'bb',bold:false};
             addinclusion.push(add_inclusion);
         });
-      var inclusion_stack = [{text:'Inclusion:', style: 'header2',margin: [0, 10, 0, 10]},
-                        {      ul: addinclusion       },];
+      var inclusion_stack = [{text:'Inclusion:', style: 'header2',margin: [0, 10, 0, 10]},{  ul: addinclusion  },];
                         
     }
+    
     let addexclusion = [];
     var add_exclusion = '';
     if(req.body.exclusion != undefined && req.body.exclusion != ''){
         exclusion =  req.body.exclusion.split('#');
         exclusion.forEach(function(exclude) {
-            add_exclusion = {text:exclude, style:'bb',bold:false}
+            add_exclusion = {text:exclude, style:'bb',bold:false};
             addexclusion.push(add_exclusion);
         });
-        var exclusion_stack = [{text:'Exclusion:', style: 'header2',margin: [0, 10, 0, 10]},
-        {       ul: addexclusion     },];
+        var exclusion_stack = [{text:'Exclusion:', style: 'header2',margin: [0, 10, 0, 10]}, {  ul: addexclusion   },];
     }
 
     let addtripcost = [];
@@ -149,32 +147,26 @@ exports.postgeneratePdf = (req, res, next) => {
     let packdetails = [];
     var pack_details = '';
     if(req.body.add_trip_cost != undefined && req.body.add_trip_cost != ''){
-        add_trip_cost =  req.body.add_trip_cost.split('#');
+      var  add_trip_cost =  req.body.add_trip_cost.split('#');
         add_trip_cost.forEach(function(details) {
-            pack_details = {text:details, style:'bb',bold:false}
+            pack_details = {text:details, style:'bb',bold:false};
             packdetails.push(pack_details);
         });
         var package_stack = [{text: 'Package Cost', style: 'header2',margin: [0, 0, 0, 10]},
-                    {
-                        style: 'tableExample',
-                        table: {
+                    { style: 'tableExample',  table: {
                             widths: [80,80,80],
                             body: addtripcost,
                             headerRows: 1
                         },margin: [0, 0, 0, 10]
-                    },
-                    {
-                        
-                        ul: packdetails,
-                    },];
+                    },  { ul: packdetails, },];
     }
 
     let activities = [];
     var act_attr_arr = '';
     if(req.body.act_attr != undefined && req.body.act_attr != ''){
-        act_attr =  req.body.act_attr.split('#');
+       var act_attr =  req.body.act_attr.split('#');
         act_attr.forEach(function(attr) {
-            act_attr_arr = {text:attr, style:'bb',bold:false}
+            act_attr_arr = {text:attr, style:'bb',bold:false};
             activities.push(act_attr_arr);
         });
         var activity_stack = [{text:'Activities & Attraction:', style: 'header2',margin: [0, 0, 0, 10]},
@@ -194,7 +186,7 @@ exports.postgeneratePdf = (req, res, next) => {
     
     }
 
-    var details = ''; var daywise = daywise2 = daywiseall = '';let dd_arr2 = [];let dd_arr = [];
+    var details = ''; var daywise = ''; var daywise2 = ''; var daywiseall = ''; let dd_arr2 = []; let dd_arr = [];
     if(req.body.detailed_itinery != undefined && req.body.detailed_itinery != ''){
         req.body.detailed_itinery.forEach(function(detailed,key) {
             details =  detailed.split('#');
@@ -231,32 +223,30 @@ exports.postgeneratePdf = (req, res, next) => {
     if(file_obj!=undefined && file_obj != ''){
         for (var imgs of file_obj) {
             var imggg = '';
-            console.log(j)
-                imggg = {	image: 'images/'+imgs.originalname, width: 180, height: 150};
+                imggg = {image: 'images/'+imgs.originalname, width: 180, height: 150};
                 if(j >= 3){
                     imgarr2.push(imggg);
                 }else{
                     imgarr1.push(imggg);
                 }
                 j = j+1;
-                
         }
-    var image_stack = [{text: 'Trip Gallery',pageBreak: 'before', style: 'header2',margin: [0, 0, 0, 10]},
-    {
-        margin: [0,0,0,2], columnGap: 2, 
-                    columns: imgarr1,
-        },
+        var image_stack = [{text: 'Trip Gallery',pageBreak: 'before', style: 'header2',margin: [0, 0, 0, 10]},
         {
-        margin: [0,0,0,2], columnGap: 2, 
-                    columns: imgarr2,
-                    
-        },];
+            margin: [0,0,0,2], columnGap: 2, 
+                        columns: imgarr1,
+            },
+            {
+            margin: [0,0,0,2], columnGap: 2, 
+                        columns: imgarr2,
+                        
+            },];
     }
+    
     addtripcost = _.chunk(addtripcost, 3);
-   //return false;
+
     let docDefinition = {
         watermark: { text: 'déjà-vu', color: 'navy', opacity: 0.1, bold: false, italics: true,fontSize: 200 },
-     
           footer: {
             columns: [
               {text:'www.dejavutours.in',margin: [20, 10, 20, 80]},
@@ -297,7 +287,6 @@ exports.postgeneratePdf = (req, res, next) => {
                 },
                 {
                     stack:[
-                        
                             {text: 'Payment', style: 'header2',margin: [0, 10, 0, 10]},
                             {
                               columns: [ 
@@ -369,7 +358,6 @@ exports.postgeneratePdf = (req, res, next) => {
                 }
         ],
         styles: {
-            
             bb:{
                 bold:false
             },
@@ -390,7 +378,7 @@ exports.postgeneratePdf = (req, res, next) => {
                 alignment:'center'
             }
         }	
-    }
+    };
     var pdfDoc = printer.createPdfKitDocument(docDefinition);
     var filename = 'PdfTrip.pdf';
     if(req.body.filename != undefined && req.body.filename != ''){
