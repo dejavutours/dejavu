@@ -4,6 +4,8 @@ const Tours = require("../models/tours");
 
 const toursController = require("../controllers/tours");
 
+const makepdfController = require("../controllers/makepdf");
+
 const isAuth = require('../middleware/is-auth');
 
 const router = express.Router();
