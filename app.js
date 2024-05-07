@@ -81,14 +81,16 @@ const csrfProtection = csrf();
   app.set("view engine", "ejs");
   app.set("views", "views");
 
-  const tourRoutes = require("./routes/tours");
 
   //app.use(helmet());
   app.use(compression());
 
   app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(bodyParser.json());
 
- // app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single("image"));
+  const tourRoutes = require("./routes/tours");
+
+// app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single("image"));
   app.use(multer({ storage: fileStorage , fileFilter: fileFilter}).array("image",12));
 
   // app.use(async(req, res, next) => {
