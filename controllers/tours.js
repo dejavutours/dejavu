@@ -57,11 +57,11 @@ exports.getIndexPage = async(req, res, next) => {
 exports.getAddTours = (req, res, next) => {
     var config = require('../json/statecities.json');
     let state_arr = [config];
-    let states_arr = ''
+    let states_arr = [];
     for(var key of state_arr) {
        states_arr = Object.keys(key);
     }
-    res.render('pages/Addtours', { message : null,states_arr : states_ar });
+    res.render('pages/Addtours', { message : null,states_arr : states_arr });
 };
 
 exports.postAddTours = async(req, res, next) => {
@@ -1222,6 +1222,31 @@ exports.getcalculateCosting = async(req, res, next) => {
 exports.getStayCost = async(req, res, next) => {
   const result =  await Staycost.find();
   res.render('pages/staycostadd', {stays: result, message: null });
+};
+
+exports.postStayCost = async(req, res, next) => {
+  const destination = req.body.destination;
+  const stayname = req.body.stayname;
+  const category = req.body.category;
+  const staycost = req.body.staycost;
+  const staycostsearch = await Staycost.find({stay_name: stayname});
+  if(req.body.submit == 'edit'){
+    const staycostsearch = await Staycost.findById(req.body.stay_id);
+    staycostsearch.category = category;
+    staycostsearch.destination = destination;
+    staycostsearch.stay_cost = staycost;
+    staycostsearch.stay_name = stayname;
+    staycostsearch.save();
+  }else{
+    const addcosting = new Staycost({
+      category: category,
+      destination: destination,
+      stay_cost: staycost,
+      stay_name: stayname,
+    });
+    addcosting.save();
+  }
+  res.redirect("/admin/getStayCost");
 };
 
 exports.deleteStay = async(req, res, next) => {
