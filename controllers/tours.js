@@ -1229,7 +1229,6 @@ exports.postStayCost = async(req, res, next) => {
   const stayname = req.body.stayname;
   const category = req.body.category;
   const staycost = req.body.staycost;
-  const staycostsearch = await Staycost.find({stay_name: stayname});
   if(req.body.submit == 'edit'){
     const staycostsearch = await Staycost.findById(req.body.stay_id);
     staycostsearch.category = category;
