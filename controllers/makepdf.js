@@ -37,6 +37,7 @@ exports.getstateCities =  (req, res, next) => {
 };
 
 exports.postgeneratePdf = (req, res, next) => {
+    res.send(req.body);return false;
     let _ = require("lodash");
     var file_obj = req.files;
     var flag = ''; var add_month = '';
