@@ -5,7 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <%- include('../partials/headtag'); %>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
@@ -42,7 +42,13 @@
         <div class="container-fluid">
             <div class="col-md-4">
                 <label for="state" class="form-label">State</label>
-                <select class="form-select" name="state" id="state" required="">
+                <select class="form-control select2" name="state" id="state"  data-placeholder="Select a State" style="width: 100%;" required="">
+                    <option value="" selected hidden>Select State</option>
+                        <% for (var i = 0; i < states_arr.length; i++) { %>
+                            <option value="<%= states_arr[i] %>"><%= states_arr[i] %></option>
+                        <% } %>
+                </select>
+            <!--    <select class="form-select" name="state" id="state" required="">
                     <option name="default" value="">Choose...</option>
                     <option name="Gujarat" value="Gujarat">Gujarat</option>
                     <option name="Maharashtra" value="Maharashtra">Maharashtra</option>
@@ -50,7 +56,7 @@
                     <option name="Rajasthan" value="Rajasthan">Rajasthan</option>
                     <option name="North-East" value="North-East">North-East</option>
                     <option name="South-India" value="South-India">South-India</option>
-                </select>
+                </select> -->
 
             </div>
         </div>
@@ -106,65 +112,73 @@
         <div class="container-fluid">
             <div class="col-sm-6">
                 <label for="About" class="form-label">About</label>
-                <textarea row="10" type="text-area" class="form-control" name="about" id="about" placeholder="" value="" required="">
-                </textarea>
+                <textarea class="form-control about" name="about" id="about" contenteditable="true"></textarea>
+               <!-- <textarea row="10" type="text-area" class="form-control" name="about" id="about" placeholder="" value="" required="">
+                </textarea> -->
             </div>
         </div>
 
         <div class="container-fluid">
             <div class="col-sm-6">
                 <label for="placestovisit" class="form-label">Places To Visit</label>
-                <textarea row="10" type="text-area" class="form-control" name="placestovisit" id="placestovisit" placeholder="" value="" required="">
-                </textarea>
+                <textarea class="form-control placestovisit" name="placestovisit" id="placestovisit" contenteditable="true"></textarea>
+             <!--   <textarea row="10" type="text-area" class="form-control" name="placestovisit" id="placestovisit" placeholder="" value="" required="">
+                </textarea> -->
             </div>
         </div>
 
         <div class="container-fluid">
             <div class="col-sm-6">
                 <label for="activities" class="form-label">Activities & Attraction</label>
-                <textarea row="10" type="text-area" class="form-control" name="activities" id="activities" placeholder="" value=""
+                <textarea class="form-control activities" name="activities" id="activities" contenteditable="true"></textarea>
+            <!--    <textarea row="10" type="text-area" class="form-control" name="activities" id="activities" placeholder="" value=""
                     required="">
-                </textarea>
+                </textarea> -->
             </div>
         </div>
 
         <div class="container-fluid">
             <div class="col-sm-6">
                 <label for="itinerary" class="form-label">Itinerary</label>
-                <textarea rows="10" type="text-area" class="form-control" name="itinerary" id="itinerary" placeholder="" value="" required="">
-                </textarea>
+                <textarea class="form-control itinerary" name="itinerary" id="itinerary" contenteditable="true"></textarea>
+              <!--  <textarea rows="10" type="text-area" class="form-control" name="itinerary" id="itinerary" placeholder="" value="" required="">
+                </textarea> -->
             </div>
         </div>
 
         <div class="container-fluid">
             <div class="col-sm-6">
                 <label for="things_to_carry" class="form-label">Things to Carry</label>
-                <textarea rows="10" type="text-area" class="form-control" name="things_to_carry" id="things_to_carry" placeholder="" value="" required="">
-                </textarea>
+                <textarea class="form-control things_to_carry" name="things_to_carry" id="things_to_carry" contenteditable="true"></textarea>
+               <!-- <textarea rows="10" type="text-area" class="form-control" name="things_to_carry" id="things_to_carry" placeholder="" value="" required="">
+                </textarea> -->
             </div>
         </div>
 
         <div class="container-fluid">
             <div class="col-sm-6">
                 <label for="includenexclude" class="form-label">Include & Exclude</label>
-                <textarea rows="10" type="text-area" class="form-control" name="includenexclude" id="includenexclude" placeholder="" value="" required="">
-                </textarea>
+                <textarea class="form-control includenexclude" name="includenexclude" id="includenexclude" contenteditable="true"></textarea>
+              <!--  <textarea rows="10" type="text-area" class="form-control" name="includenexclude" id="includenexclude" placeholder="" value="" required="">
+                </textarea> -->
             </div>
         </div>
 
         <div class="container-fluid">
             <div class="col-sm-6">
                 <label for="package_cost" class="form-label">Package Cost</label>
-                <textarea rows="10" type="text-area" class="form-control" name="package_cost" id="package_cost" placeholder="" value="" required="">
-                </textarea>
+                <textarea class="form-control package_cost" name="package_cost" id="package_cost" contenteditable="true"></textarea>
+             <!--   <textarea rows="10" type="text-area" class="form-control" name="package_cost" id="package_cost" placeholder="" value="" required="">
+                </textarea> -->
             </div>
         </div>
 
         <div class="container-fluid">
             <div class="col-sm-6">
                 <label for="infonfaq" class="form-label">Info & FAQs</label>
-                <textarea rows="10" type="text-area" class="form-control" name="infonfaq" id="infonfaq" placeholder="" value="" required="">
-                </textarea>
+                <textarea class="form-control infonfaq" name="infonfaq" id="infonfaq" contenteditable="true"></textarea>
+             <!--   <textarea rows="10" type="text-area" class="form-control" name="infonfaq" id="infonfaq" placeholder="" value="" required="">
+                </textarea> -->
             </div>
         </div>
 
@@ -172,16 +186,18 @@
         <div class="container-fluid">
             <div class="col-sm-6">
                 <label for="Bookncancel" class="form-label">Booking & Cancellation</label>
-                <textarea rows="10" type="text-area" class="form-control" name="Bookncancel" id="Bookncancel" placeholder="" value="" required="">
-                </textarea>
+                <textarea class="form-control Bookncancel" name="Bookncancel" id="Bookncancel" contenteditable="true"></textarea>
+             <!--   <textarea rows="10" type="text-area" class="form-control" name="Bookncancel" id="Bookncancel" placeholder="" value="" required="">
+                </textarea> -->
             </div>
         </div>
 
         <div class="container-fluid">
             <div class="col-sm-6">
                 <label for="guidelines" class="form-label">Travel Guidelines</label>
-                <textarea rows="10" type="text-area" class="form-control" name="guidelines" id="guidelines" placeholder="" value="" required="">
-                </textarea>
+                <textarea class="form-control guidelines" name="guidelines" id="guidelines" contenteditable="true"></textarea>
+              <!--  <textarea rows="10" type="text-area" class="form-control" name="guidelines" id="guidelines" placeholder="" value="" required="">
+                </textarea> -->
             </div>
         </div>
 
@@ -195,7 +211,16 @@
     
     </form>
 
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/select2/select2.min.js"></script>
+    <script src="/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
 
 </body>
-
+    <script>
+        $(document).ready(function(){
+                $('.select2').select2();
+                $('.about ,.guidelines, .Bookncancel,.infonfaq, .package_cost ,.includenexclude,.things_to_carry, .itinerary,.activities,.placestovisit').jqte();           
+        });
+    </script>
 </html>
