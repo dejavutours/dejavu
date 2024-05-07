@@ -73,7 +73,7 @@
         <div class="container-fluid">
             <div class="col-sm-6">
                 <br>
-                <center><button type="submit"  id="cal" class="btn btn-primary">Submit</button></center>
+                <center><button type="submit"  id="cal" name="submit" value="submit" class="btn btn-primary">Submit</button></center>
             </div>
         </div>
         
@@ -86,6 +86,8 @@
             <th>Stay Name</th>
             <th>Category</th>
             <th>Stay Cost</th>
+            <th>Delete</th>
+            <th>Edit</th>
         </thead>
         <tbody>
             <% if (stays.length > 0) { 
@@ -96,6 +98,18 @@
                <td><%= stay.stay_name %></td>
                <td><%= stay.category %></td>
                <td><%= stay.stay_cost %></td>
+                <td>
+                <form method="POST" action="/admin/deleteStay">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <input type="hidden" name="stayid" value="<%= stay._id %>">
+                    <button type="submit"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                </form>
+               </td>
+               <td>
+                <a href=# id="editstay" name="editstay" onclick='return getedit("<%= stay._id %>","<%= stay.destination %>","<%= stay.stay_name %>","<%= stay.category %>","<%= stay.stay_cost %>")'>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                </a>
+               </td>
             </tr>
             <% }}  %>
         </tbody>
@@ -111,7 +125,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="/vendor/jquery/jquery.min.js"></script>
     <script>
- 
+         function getedit(id,dest,name,cat,cost){
+            $('#cal').attr('value','edit');
+            $('#category').val(cat); $('#destination').val(dest);
+            $('#stayname').val(name); 
+            $('#staycost').val(cost);$('#stay_id').val(id);
+        }
     </script>
 </body>
 
