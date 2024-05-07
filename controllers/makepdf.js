@@ -380,13 +380,17 @@ exports.postMakePdf = async(req, res, next) => {
             }
         }	
     };
-    var pdfDoc = printer.createPdfKitDocument(docDefinition);
     var filename = 'PdfTrip.pdf';
     if(req.body.filename != undefined && req.body.filename != ''){
         filename = req.body.filename;
     }
-    pdfDoc.pipe(fs.createWriteStream('images/trippdfs/'+filename));
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'inline; filename="'+ filename +'"');
+    var pdfDoc = printer.createPdfKitDocument(docDefinition);
+    pdfDoc.pipe(fs.createWriteStream(filename));
+//    pdfDoc.pipe(fs.createWriteStream('images/trippdfs/'+filename));
     pdfDoc.end();
     console.log("file generated!  "+filename);
-    res.redirect("../images/trippdfs/"+filename);   
+    res.redirect("/admin/makepdf");   
+   // res.redirect("../images/trippdfs/"+filename);   
 };
