@@ -1249,14 +1249,3 @@ exports.postStayCost = async(req, res, next) => {
   }
   res.redirect("/admin/getStayCost");
 };
-
-exports.deleteStay = async(req, res, next) => {
-  const stayid = req.body.stayid;
-  Staycost.findByIdAndDelete(stayid)
-  .then(() => {
-    res.redirect("/admin/getStayCost");
-  })
-  .catch(err => {
-    console.log(err);
-  })
-}
