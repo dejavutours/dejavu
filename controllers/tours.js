@@ -1225,27 +1225,27 @@ exports.getStayCost = async(req, res, next) => {
 };
 
 exports.postStayCost = async(req, res, next) => {
-    const destination = req.body.destination;
-    const stayname = req.body.stayname;
-    const category = req.body.category;
-    const staycost = req.body.staycost;
-    const staycostsearch = await Staycost.find({stay_name: stayname});
-    if(req.body.submit == 'edit'){
-      const staycostsearch = await Staycost.findById(req.body.stay_id);
-      staycostsearch.category = category;
-      staycostsearch.destination = destination;
-      staycostsearch.stay_cost = staycost;
-      staycostsearch.stay_name = stayname;
-      staycostsearch.save();
-    }else{
-      const addcosting = new Staycost({
-        category: category,
-        destination: destination,
-        stay_cost: staycost,
-        stay_name: stayname,
-        addcosting.save();
-      });
-    }
+  const destination = req.body.destination;
+  const stayname = req.body.stayname;
+  const category = req.body.category;
+  const staycost = req.body.staycost;
+  const staycostsearch = await Staycost.find({stay_name: stayname});
+  if(req.body.submit == 'edit'){
+    const staycostsearch = await Staycost.findById(req.body.stay_id);
+    staycostsearch.category = category;
+    staycostsearch.destination = destination;
+    staycostsearch.stay_cost = staycost;
+    staycostsearch.stay_name = stayname;
+    staycostsearch.save();
+  }else{
+    const addcosting = new Staycost({
+      category: category,
+      destination: destination,
+      stay_cost: staycost,
+      stay_name: stayname,
+      addcosting.save();
+    });
+  }
   res.redirect("/admin/getStayCost");
 };
 
