@@ -40,7 +40,7 @@
     <form action="/admin/getStayCost" method="POST" enctype="multipart/form-data">
 
        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-
+       <input type="hidden" name="stay_id"  id="stay_id" value="">
         <div class="container-fluid">
             <div class="col-sm-6">
                 <label for="destination" class="form-label">Destination </label>
