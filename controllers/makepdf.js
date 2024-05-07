@@ -1,13 +1,3 @@
-var PdfPrinter = require('pdfmake');
-var fonts = {
-    Roboto: {
-        normal: 'fonts/Roboto-Regular.ttf',
-        bold: 'fonts/Roboto-Medium.ttf',
-        italics: 'fonts/Roboto-Italic.ttf',
-        bolditalics: 'fonts/Roboto-MediumItalic.ttf'
-    }
-};
-var printer = new PdfPrinter(fonts);
 var fs = require('fs');
 
 exports.maketripPdf = (req, res, next) => {
