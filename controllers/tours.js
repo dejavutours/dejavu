@@ -1244,8 +1244,8 @@ exports.postStayCost = async(req, res, next) => {
         stay_cost: staycost,
         stay_name: stayname,
         addcosting.save();
-    });
-  }
+      });
+    }
   res.redirect("/admin/getStayCost");
 };
 
