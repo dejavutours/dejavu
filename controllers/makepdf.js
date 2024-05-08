@@ -1,9 +1,9 @@
 var fonts = {
     Roboto: {
-        normal: '../fonts/Roboto-Regular.ttf',
-        bold: '../fonts/Roboto-Medium.ttf',
-        italics: '../fonts/Roboto-Italic.ttf',
-        bolditalics: '../fonts/Roboto-MediumItalic.ttf'
+        normal: 'fonts/Roboto-Regular.ttf',
+        bold: 'fonts/Roboto-Medium.ttf',
+        italics: 'fonts/Roboto-Italic.ttf',
+        bolditalics: 'fonts/Roboto-MediumItalic.ttf'
     }
 };
 var PdfPrinter = require('pdfmake');
@@ -37,7 +37,7 @@ exports.getstateCities =  (req, res, next) => {
 };
 
 exports.postMakePdf = async(req, res, next) => {
-   // res.send(req.body);return false;
+       res.send(req.body);return false;
     let _ = require("lodash");
     var file_obj = req.files;
     var flag = ''; var add_month = '';
@@ -384,13 +384,13 @@ exports.postMakePdf = async(req, res, next) => {
     if(req.body.filename != undefined && req.body.filename != ''){
         filename = req.body.filename;
     }
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'inline; filename="'+ filename +'"');
-    var pdfDoc = printer.createPdfKitDocument(docDefinition);
-    pdfDoc.pipe(fs.createWriteStream(filename));
-//    pdfDoc.pipe(fs.createWriteStream('images/trippdfs/'+filename));
+    var options = {};
+    res.setHeader('Content-Type', 'application/pdf'); res.setHeader('Content-Disposition', 'inline; filename="'+ filename +'"');
+    var pdfDoc = printer.createPdfKitDocument(docDefinition,options);
+    //pdfDoc.pipe(fs.createWriteStream(filename));
+    pdfDoc.pipe(fs.createWriteStream('images/'+filename));
     pdfDoc.end();
     console.log("file generated!  "+filename);
-    res.redirect("/admin/makepdf");   
-   // res.redirect("../images/trippdfs/"+filename);   
+    //res.redirect("/admin/makepdf");   
+    res.redirect("../images/"+filename);   
 };
