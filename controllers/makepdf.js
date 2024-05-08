@@ -389,9 +389,9 @@ exports.postMakePdf = async(req, res, next) => {
    // res.setHeader('Content-Type', 'application/pdf'); res.setHeader('Content-Disposition', 'inline; filename="'+ filename +'"');
     var pdfDoc = printer.createPdfKitDocument(docDefinition,options);
     //pdfDoc.pipe(fs.createWriteStream(filename));
-    pdfDoc.pipe(fs.createWriteStream('images/'+filename));
+    pdfDoc.pipe(fs.createWriteStream('../images/'+filename));
     pdfDoc.end();
    // console.log("file generated!  "+filename);
-    res.redirect("/admin/makepdf");   
-    //res.redirect("../images/"+filename);   
+    //res.redirect("/admin/makepdf");   
+    res.redirect("../images/"+filename);   
 };
