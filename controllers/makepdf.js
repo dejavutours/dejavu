@@ -385,13 +385,13 @@ exports.postMakePdf = async(req, res, next) => {
         filename = req.body.filename;
     }
     var options = {};
-    res.send(docDefinition);return false;
-    res.setHeader('Content-Type', 'application/pdf'); res.setHeader('Content-Disposition', 'inline; filename="'+ filename +'"');
+    //res.send(docDefinition);return false;
+   // res.setHeader('Content-Type', 'application/pdf'); res.setHeader('Content-Disposition', 'inline; filename="'+ filename +'"');
     var pdfDoc = printer.createPdfKitDocument(docDefinition,options);
     //pdfDoc.pipe(fs.createWriteStream(filename));
     pdfDoc.pipe(fs.createWriteStream('images/'+filename));
     pdfDoc.end();
-    console.log("file generated!  "+filename);
-    //res.redirect("/admin/makepdf");   
-    res.redirect("../images/"+filename);   
+   // console.log("file generated!  "+filename);
+    res.redirect("/admin/makepdf");   
+    //res.redirect("../images/"+filename);   
 };
