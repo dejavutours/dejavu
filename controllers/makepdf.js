@@ -37,13 +37,11 @@ exports.getstateCities =  (req, res, next) => {
 };
 
 exports.postMakePdf = async(req, res, next) => {
-    //res.send(req.body);return false;
     let _ = require("lodash");
     var file_obj = req.files;
-    var flag = ''; var add_month = '';
-    var add_dept_city = ''; var add_triptype = ''; var add_tripsize = ''; 
-    var add_days = ''; var add_maxalt = ''; var add_trek_dist = ''; var add_difficulty = ''; var add_agelimit = '';
-    var add_regionstate = ''; var add_trip_dates = '';
+    var flag = '';
+    var add_month = add_dept_city = add_triptype = add_tripsize = add_days = add_maxalt = add_trek_dist = add_difficulty =
+    add_agelimit = add_regionstate = add_trip_dates = '';
     if(req.body.month != undefined && req.body.month != ''){
         flag = '1';
         month = req.body.month.join(',');
@@ -84,8 +82,11 @@ exports.postMakePdf = async(req, res, next) => {
         var add_agelimit =  {text:'Age Group:'+req.body.age_min+' - '+req.body.age_max, style:'bb'};
     }
     if(req.body.regionstate != undefined && req.body.regionstate != ''){
-        flag = '1';
-        var add_regionstate =  {text:'Region:'+req.body.regionstate, style:'bb'};
+        flag = '1'; var regioncode = '';
+        if(req.body.region != undefined && req.body.region != ''){
+            regioncode = " ("+req.body.region+")";
+        }
+            var add_regionstate =  {text:'Region:'+req.body.regionstate+regioncode, style:'bb'};
     }
     if(req.body.trip_dates != undefined && req.body.trip_dates != ''){
         flag = '1';
@@ -96,14 +97,14 @@ exports.postMakePdf = async(req, res, next) => {
         var route_stack = {
             stack:[{text:'Route', style: 'header2',margin: [0, 0, 0, 10]},
             {text:route, style:'bb'}],margin: [0, 0, 0, 10]
-            };
+            }
     }
     if(flag == '1'){
         var tripdetails_stack = {
             stack:[
                 {text:'Trip Details:', style: 'header2',margin: [0, 0, 0, 10]},
-                add_trip_dates, add_month,  add_dept_city,  add_triptype, add_tripsize,  add_days, add_maxalt,
-                add_trek_dist, add_difficulty,   add_agelimit,  add_regionstate,
+                        add_trip_dates, add_month,  add_dept_city,  add_triptype, add_tripsize,  add_days, add_maxalt,
+                    add_trek_dist, add_difficulty,   add_agelimit,  add_regionstate,
             ],margin: [0, -10, 0, 10]
 
         };
@@ -113,65 +114,74 @@ exports.postMakePdf = async(req, res, next) => {
     let addinclusion = [];
     var add_inclusion = '';
     if(req.body.inclusion != undefined && req.body.inclusion != ''){
-        inclusion =  req.body.inclusion.split('#');
+        inclusion =  req.body.inclusion.split('#');//'\r\n'
         inclusion.forEach(function(include) {
-            add_inclusion = {text:include, style:'bb',bold:false};
+            add_inclusion = {text:include, style:'bb',bold:false}
             addinclusion.push(add_inclusion);
         });
-      var inclusion_stack = [{text:'Inclusion:', style: 'header2',margin: [0, 10, 0, 10]},{  ul: addinclusion  },];
+      var inclusion_stack = [{text:'Inclusion:', style: 'header2',margin: [0, 10, 0, 10]}, addinclusion,];
                         
     }
-    
     let addexclusion = [];
     var add_exclusion = '';
     if(req.body.exclusion != undefined && req.body.exclusion != ''){
         exclusion =  req.body.exclusion.split('#');
         exclusion.forEach(function(exclude) {
-            add_exclusion = {text:exclude, style:'bb',bold:false};
+            add_exclusion = {text:exclude, style:'bb',bold:false}
             addexclusion.push(add_exclusion);
         });
-        var exclusion_stack = [{text:'Exclusion:', style: 'header2',margin: [0, 10, 0, 10]}, {  ul: addexclusion   },];
+        var exclusion_stack = [{text:'Exclusion:', style: 'header2',margin: [0, 10, 0, 10]},addexclusion,];
     }
 
-    let addtripcost = [];
+    let addtripcost = [];var addtable = '';
+    var cost_dd = '';
     if((req.body.available_from  != undefined  && req.body.available_from.length >= 1 ) || (req.body.available_days.length >= 1 || req.body.costing.length >= 1)){
         if(req.body.available_from != undefined){
             available_from =  req.body.available_from;
            addtripcost.push({text: 'Available From', style: 'tableHeader'}, {text: 'Days', style: 'tableHeader'}, {text: 'Cost', style: 'tableHeader'});
             for (var i = 0; i < available_from.length; i++){
-                addtripcost.push(available_from[i]); addtripcost.push(req.body.available_days[i]);addtripcost.push(req.body.costing[i]);
+                if(available_from[i].trim() != '' || req.body.available_days[i].trim() != '' || req.body.costing[i].trim() != ''){
+                    cost_dd = '1';
+                    addtripcost.push(available_from[i]); addtripcost.push(req.body.available_days[i]);addtripcost.push(req.body.costing[i]);
+                }
             }
-            
+            if(cost_dd == '1'){
+                addtripcost = _.chunk(addtripcost, 3); 
+                addtable = {
+                    style: 'tableExample',
+                    table: {
+                        widths: [80,80,80],
+                        body: addtripcost,
+                        headerRows: 1
+                    },margin: [0, 0, 0, 10]
+                };
+            }          
         }
     }
 
     let packdetails = [];
     var pack_details = '';
     if(req.body.add_trip_cost != undefined && req.body.add_trip_cost != ''){
-      var  add_trip_cost =  req.body.add_trip_cost.split('#');
-        add_trip_cost.forEach(function(details) {
-            pack_details = {text:details, style:'bb',bold:false};
+        var add_tripcost =  req.body.add_trip_cost.split('#');
+        
+        add_tripcost.forEach(function(details) {
+            pack_details = {text:details, style:'bb',bold:false}
             packdetails.push(pack_details);
         });
-        var package_stack = [{text: 'Package Cost', style: 'header2',margin: [0, 0, 0, 10]},
-                    { style: 'tableExample',  table: {
-                            widths: [80,80,80],
-                            body: addtripcost,
-                            headerRows: 1
-                        },margin: [0, 0, 0, 10]
-                    },  { ul: packdetails, },];
     }
+    var package_stack = [{text: 'Package Cost', style: 'header2',margin: [0, 0, 0, 10]},
+        addtable,packdetails,];
 
     let activities = [];
     var act_attr_arr = '';
     if(req.body.act_attr != undefined && req.body.act_attr != ''){
-       var act_attr =  req.body.act_attr.split('#');
+        act_attr =  req.body.act_attr.split('#');
         act_attr.forEach(function(attr) {
-            act_attr_arr = {text:attr, style:'bb',bold:false};
+            act_attr_arr = {text:attr, style:'bb',bold:false}
             activities.push(act_attr_arr);
         });
         var activity_stack = [{text:'Activities & Attraction:', style: 'header2',margin: [0, 0, 0, 10]},
-        {  ul: activities,  },];
+        activities ,];
     }
 
     let short_itinery = [];
@@ -187,7 +197,7 @@ exports.postMakePdf = async(req, res, next) => {
     
     }
 
-    var details = ''; var daywise = ''; var daywise2 = ''; var daywiseall = ''; let dd_arr2 = []; let dd_arr = [];
+    var details = ''; var daywise = daywise2 = daywiseall = '';let dd_arr2 = [];let dd_arr = [];
     if(req.body.detailed_itinery != undefined && req.body.detailed_itinery != ''){
         req.body.detailed_itinery.forEach(function(detailed,key) {
             details =  detailed.split('#');
@@ -208,10 +218,8 @@ exports.postMakePdf = async(req, res, next) => {
            var add_drop_time = (req.body.drop_time[key]!='') ?  {text:'Dropping Time:'+req.body.drop_time[key], style:'bb'} : '';
             objul2.push(add_pickup,add_dep_time ,add_trek_dist2    ,add_road_journey ,add_stay2,
                 add_meals,add_drop_point,add_drop_time  );
-            daywise2 = [{ul: [
-                objul,
-                [objul2],
-            ],}];
+            daywise2 = [objul,
+                [objul2],];
             daywise = [{text: titles, style: '',margin: [0, 10, 0, 10]} ,daywise2];
             dd_arr.push(daywise);  
         });
@@ -224,30 +232,31 @@ exports.postMakePdf = async(req, res, next) => {
     if(file_obj!=undefined && file_obj != ''){
         for (var imgs of file_obj) {
             var imggg = '';
-                imggg = {image: 'images/'+imgs.originalname, width: 180, height: 150};
+            console.log(j)
+                imggg = {	image: 'images/'+imgs.originalname, width: 180, height: 150};
                 if(j >= 3){
                     imgarr2.push(imggg);
                 }else{
                     imgarr1.push(imggg);
                 }
                 j = j+1;
+                
         }
-        var image_stack = [{text: 'Trip Gallery',pageBreak: 'before', style: 'header2',margin: [0, 0, 0, 10]},
+    var image_stack = [{text: 'Trip Gallery',pageBreak: 'before', style: 'header2',margin: [0, 0, 0, 10]},
+    {
+        margin: [0,0,0,2], columnGap: 2, 
+                    columns: imgarr1,
+        },
         {
-            margin: [0,0,0,2], columnGap: 2, 
-                        columns: imgarr1,
-            },
-            {
-            margin: [0,0,0,2], columnGap: 2, 
-                        columns: imgarr2,
-                        
-            },];
+        margin: [0,0,0,2], columnGap: 2, 
+                    columns: imgarr2,
+                    
+        },];
     }
     
-    addtripcost = _.chunk(addtripcost, 3);
-
     let docDefinition = {
         watermark: { text: 'déjà-vu', color: 'navy', opacity: 0.1, bold: false, italics: true,fontSize: 200 },
+     
           footer: {
             columns: [
               {text:'www.dejavutours.in',margin: [20, 10, 20, 80]},
@@ -288,17 +297,18 @@ exports.postMakePdf = async(req, res, next) => {
                 },
                 {
                     stack:[
-                            {text: 'Payment', style: 'header2',margin: [0, 10, 0, 10]},
+                        
+                            {text: 'Payment', style: 'header2',pageBreak: 'before',margin: [0, 10, 0, 10]},
                             {
                               columns: [ 
                                     { qr: 'text in QR', foreground: 'blue', background: 'lightblue' ,fit:150},
-                                   {text:`UPI: dejavutours@icici Mob: 85 1111 7891 \n
+                                   {text:`UPI: dejavutours@icici Mob: 8511117891 \n
                                    Bank Details:
                                    Account Name: Deja-vu Outdoors Pvt.Ltd.
                                     Account No: 624405503177 
                                     IFSC code: ICIC0006244 
                                     Bank name: ICICI bank,Ahmedabad Main`, style:'bb'},
-                                ],margin: [0, 10, 0, 10]
+                                ],margin: [0, 10, 60, 10]
                                             
                                 },
         
@@ -359,6 +369,7 @@ exports.postMakePdf = async(req, res, next) => {
                 }
         ],
         styles: {
+            
             bb:{
                 bold:false
             },
@@ -385,16 +396,11 @@ exports.postMakePdf = async(req, res, next) => {
         filename = req.body.filename;
     }
     var options = {};
-    //res.send(docDefinition);return false;
-   // res.setHeader('Content-Type', 'application/pdf'); res.setHeader('Content-Disposition', 'inline; filename="'+ filename +'"');
     var pdfDoc = printer.createPdfKitDocument(docDefinition,options);
     var ff = pdfDoc.pipe(fs.createWriteStream('images/'+filename));
     pdfDoc.end();
     ff.on('finish', () => {
         res.redirect("../images/"+filename);   
         console.log("file generated!  "+filename);
-    });
-   // console.log("file generated!  "+filename);
-    //res.redirect("/admin/makepdf");   
-   // res.redirect("../images/"+filename);   
+    });  
 };
