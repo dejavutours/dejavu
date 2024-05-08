@@ -43,6 +43,15 @@
                                         <li><a href="/about">About</a></li>
                                         <li><a href="/contact">Contact</a></li>
                                         <li><a href="/blog">Travel Stories</a></li>
+                                        <% if (isAuthenticated) { %>
+                                          <li>
+                                            <form action="/admin/logout" method="post">
+                                              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                              <button type="submit" class="btn btn-danger">Logout</button>
+                                            </form>
+                                          </li>
+                                          <li><a type="button" class="btn btn-primary" style="border-color:blue;padding: 3px;"  href="/admin/login">Back to Admin</a></li>
+                                        <% } %> 
                                     </ul>
                                 </nav>
                             </div>
