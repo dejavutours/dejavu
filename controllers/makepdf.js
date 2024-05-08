@@ -37,7 +37,7 @@ exports.getstateCities =  (req, res, next) => {
 };
 
 exports.postMakePdf = async(req, res, next) => {
-       res.send(req.body);return false;
+    //res.send(req.body);return false;
     let _ = require("lodash");
     var file_obj = req.files;
     var flag = ''; var add_month = '';
@@ -385,6 +385,7 @@ exports.postMakePdf = async(req, res, next) => {
         filename = req.body.filename;
     }
     var options = {};
+    res.send(docDefinition);return false;
     res.setHeader('Content-Type', 'application/pdf'); res.setHeader('Content-Disposition', 'inline; filename="'+ filename +'"');
     var pdfDoc = printer.createPdfKitDocument(docDefinition,options);
     //pdfDoc.pipe(fs.createWriteStream(filename));
