@@ -33,7 +33,7 @@
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label for="trip_title">Trip Title</label>
-                        <input type="text" name="trip_title"  class="form-control" id="trip_title" placeholder="Title">
+                        <input type="text" name="trip_title"  class="form-control"  id="trip_title" placeholder="Title">
                     </div>
                 </div>
           <!--     <div class="col-sm-4">    
@@ -67,7 +67,7 @@
                 <div class="col-sm-4">
               <% let states_arrrr = states_arr  %>
                     <div class="form-group">
-                        <label>Select State</label>
+                        <label>Departure State</label>
                         <select class="form-control select2bs4" name="state" id="state" onchange="return getcities();" data-placeholder="Select a State" style="width: 100%;">
                         <option value="">Select State</option>
                             <% for (var i = 0; i < states_arr.length; i++) { 
@@ -79,7 +79,7 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        <label>Select City</label>
+                        <label>Departure City</label>
                         <select class="select2" name="deptcity[]" multiple="multiple" id="deptcity" data-placeholder="Select City" style="width: 100%;">
                             
                         </select>
@@ -209,34 +209,27 @@
 
             <div class="row">
                 <div class="col-sm-12">
-                    <div class="form-group" >
-                        <label for="detailed_itinery">Detailed Itinery</label><br/>
-                        <div class="detailedinfo"><br/>
-                            <p><input type="text" name="short_itinery[]" id="short_itinery"  style="width:100%" placeholder="Add Title"/></input></p>
+                    <div class="form-group detail_info" id="detail_info">
+                        <div class="detailedinfos detailinfo" id="detailinfo"><br/>
+                            <p><input type="text" name="short_itinery[]" id="short_itinery"   style="width:100%" placeholder="Add Title"/></input></p>
                             <textarea class="form-control" rows="3" name="detailed_itinery[]" placeholder="Add Details"></textarea><br/>
-                            <input class="form-control extra_details" name="stay[]" placeholder="Enter Stay"></input>
+                            <input class="form-control extra_details"  name="stay[]" placeholder="Enter Stay"></input>
                             <input class="form-control extra_details"  name="meals[]" placeholder="Enter Meals"></input>
-                            <input class="form-control extra_details"  name="drop_point[]" placeholder="Enter drop point"></input>
-                            <input class="form-control extra_details" name="pickup[]" placeholder="Enter pickup"></input>
-                            <input class="form-control extra_details"  name="dep_time[]" placeholder="Enter departure time"></input>
-                            <input class="form-control extra_details" name="trek_dist2[]" placeholder="Enter trek distance"></input>
-                            <input class="form-control extra_details" name="road_journey[]" placeholder="Enter road journey"></input>
-                            <input class="form-control extra_details" name="drop_time[]" placeholder="Enter drop time"></input>
+                            <input class="form-control extra_details"   name="drop_point[]" placeholder="Enter drop point"></input>
+                            <input class="form-control extra_details"   name="pickup[]" placeholder="Enter pickup"></input>
+                            <input class="form-control extra_details"   name="dep_time[]" placeholder="Enter departure time"></input>
+                            <input class="form-control extra_details"  name="trek_dist2[]" placeholder="Enter trek distance"></input>
+                            <input class="form-control extra_details"  name="road_journey[]" placeholder="Enter road journey"></input>
+                            <input class="form-control extra_details"  name="drop_time[]" placeholder="Enter drop time"></input>
+                            <input type="button" id="details" value="DELETE" onclick="return deldetails(this)" class="btn btn-primary"/>
                             <br/>
                         </div>
-                        &nbsp;&nbsp;<input type="button" class="btn btn-primary" onclick="return addInfo()" value="ADD">
                     </div>
                 </div>
             </div> 
+            <br/>
+            <input type="button" class="btn btn-primary" onclick="return addInfo()" value="ADD Details">
 
-
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="form-group" id="detail_info">
-                    
-                    </div>
-                </div>
-            </div> 
             <br/>
             <div class="row">
                 <div class="col-sm-4">
@@ -268,22 +261,23 @@
                     </div>
                 </div>
             </div>
-            <div class="row parent package_cost">
-                <div class="col-sm-12 ">
-                    <div class="form-group">
-                        <label for="trip_cost">Package Cost</label></br>
-                        <input class="form-control package_details" name="available_from[]" placeholder="Enter Available From"></input>
-                        <input class="form-control package_details"  name="available_days[]" placeholder="Enter Avaiable Days"></input>
-                        <input class="form-control package_details"  name="costing[]" placeholder="Enter Cost"></input>
+     
+            <div class="parent" id="extra_package_cost">
+                <div class="row parent package_costss">
+                     <div class="form-group maindiv" id="demo">
+                        <div class="form-group maindiv" id="demo"><br/>
+                            <label for="trip_cost">Package Cost</label></br>
+                            <input class="form-control package_details" name="available_from[]" placeholder="Enter Available From"></input>
+                            <input class="form-control package_details"  name="available_days[]" placeholder="Enter Avaiable Days"></input>
+                            <input class="form-control package_details"  name="costing[]" placeholder="Enter Cost"></input>
+                            <input type="button" id="delbtn" value="DELETE" onclick="return delrow(this)" class="btn btn-primary"/>
+                        </div>
                     </div>
                 </div>
-            </div><br/>
-            <input type="button" value="ADD ROW" onclick="return addrow(1)" class="btn btn-primary"/>
-
-            <div class="parent" id="extra_package_cost">
-              
             </div>
             <br/>
+            <input type="button" value="ADD Package ROW" onclick="return addrow(1)" class="btn btn-primary"/>
+
             <div class="row">
                 <div class="form-group">
                     <label>Filename (Add only name)</label>
@@ -295,26 +289,24 @@
                 <div class="container-fluid">
                     <div class="col-sm-6">
                         <label for="imageurlmain" class="form-label">Upload Images</label><br>
-                        <input type="file" accept="image/*" name="image" id="image" enctype="multipart/form-data" multiple>                               
+                        <input type="file" accept="image/*" name="image" id="image" enctype="multipart/form-data" multiple >                               
                     </div>
                 </div>
 
             </div>
             <div class="card-footer">
                 <button type="submit" class="btn btn-primary"><i class="fas fa-download"></i> Generate PDF</button>
+                <button class="btn btn-warning"><a href="/admin/getViewPdfdetails %>">GO Back <i class="fa fa-arrow"></i></a></button>
             </div>
         </div>   
      
     
     </form>
-
-
-
+    
 <script src="/vendor/jquery/jquery.min.js"></script>
 <script src="/vendor/select2/select2.min.js"></script>
 
 <script>
-    //console.log(json)
     $(function () {
    //Initialize Select2 Elements
        $('.select2').select2();
@@ -324,27 +316,35 @@
        })
     });
 
-   function addInfo(){
-       console.log("function click");
-       var ht = $('.detailedinfo').clone();
-       console.log(ht);
-       var add = $('.detailedinfo').clone()
-       $('#detail_info').html(add);
-
+    function addInfo(){
+        const node = document.getElementById("detailinfo");
+        const clone = node.cloneNode(true);
+        $('.detail_info').append(clone);
    }
 
-   function addrow(i){
-       console.log("function click");
-       var ht = $('.package_cost').clone();
-       var dd = i++;
-       var id = 'delrow'+dd;
-       $('#extra_package_cost').html( $('.package_cost').clone());
+   function deldetails(obj){
+    obj.closest("#detailinfo").remove();
+    //$('#detail_info .detailinfo ').last('.detailinfo').remove();
+   }
 
+  
+   function addrow(){
+        const node = document.getElementById("demo");
+        const clone = node.cloneNode(true);
+        //var tt = '<input type="button" id="delbtn" value="DELETE" onclick="return delrow(this)" class="btn btn-primary"/>';
+        $('.package_costss').append(clone);//.append(tt);
+   }
+
+   function delrow(obj){
+        if($('#extra_package_cost .package_costss .maindiv').length == 2){
+           // $('#delbtn').remove();
+        }
+        obj.closest("#demo").remove();
+        //$('#extra_package_cost .package_costss .maindiv ').last('.maindiv').remove();
    }
 
    image.onchange = evt => {
        const file = image.files
-       console.log(file)
        var images = '';
        jQuery.each( file, function( key, value ) {
            images += ' | '+value.name +' | ';
@@ -355,13 +355,11 @@
 
     function getcities(){
        var state = $('#state').val();
-      console.log(state);
       $.ajax({
             url: "/getstateCities",
             type:'POST',
             data:{'_csrf':"<%= csrfToken %>",state:state},
             success: function(result){
-                console.log(result)
                 var city = '';
                 jQuery.each(result, function( key, value ) {
                     value.forEach((value2,index,arr)=>{
@@ -374,6 +372,7 @@
         });
      
     }
+  
 </script>
 </body>
 </html>
