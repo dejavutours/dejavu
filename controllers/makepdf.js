@@ -43,15 +43,14 @@ exports.postMakePdf = (req, res, next) => {
 
 function createPDF(req,files='',res,type){
     let _ = require("lodash");
-    //var file_obj = files;
-    let file_obj =[];
+    let fileobj =[];
     files.forEach(function(val,key) {
-        file_obj.push(val.originalname)
+        fileobj.push(val.originalname)
     });
     if(req.imgu != undefined && req.imgu !=''){
-        file_obj.push(req.imgu);
+        fileobj.push(req.imgu);
     }
-    
+    let file_obj = fileobj.flat();
     var flag = '';
     var add_month = add_dept_city = add_triptype = add_tripsize = add_days = add_maxalt = add_trek_dist = add_difficulty =
     add_agelimit = add_regionstate = add_trip_dates = '';
