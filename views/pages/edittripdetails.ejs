@@ -328,7 +328,7 @@
                 <div class="row parent package_costss">
                     <div class="col-sm-12 ">
                         <%
-                            var avail_days = tripdetails.available_days.split("");
+                            var avail_days = tripdetails.available_days.split(",");
                             var avail_from = (tripdetails.available_from != undefined && tripdetails.available_from != '') ? tripdetails.available_from.split(",") : '';
                             var avail_cost = tripdetails.cost.split(",");
                             avail_from.forEach(function(val,index) {
