@@ -134,4 +134,12 @@ router.post("/admin/makepdf" ,isAuth, makepdfController.postMakePdf);
 
 router.post("/getstateCities" , makepdfController.getstateCities);
 
+router.get("/admin/getViewPdfdetails" ,isAuth, makepdfController.getViewPdfdetails);
+
+router.post("/admin/editpdftrip",isAuth, makepdfController.editPdfDetails);
+
+router.post("/admin/updatetrip",isAuth, makepdfController.updatePdfDetails);
+
+router.post("/admin/deletetrip",isAuth, makepdfController.deletePdftrip);
+
 module.exports = router; 
