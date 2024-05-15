@@ -36,12 +36,89 @@
                         <input type="text" name="trip_title"  class="form-control"  id="trip_title" placeholder="Title">
                     </div>
                 </div>
+            </div> 
+            <hr>
+            
           <!--     <div class="col-sm-4">    
                     <div class="form-group">
                         <label for="trip_subtitle">Trip Sub Title</label>
                         <input type="text" name="trip_subtitle"  class="form-control" id="trip_subtitle" placeholder="Sub Title">
                     </div>
                 </div>--> 
+
+            <!-- Custom Trip Details 
+            <div class="row">
+                <p><h5>Custom Trip Fields</h5></p>
+            </div> --> 
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="guest_name">Guest Name</label>
+                        <input type="text" name="guest_name"  class="form-control" id="guest_name" placeholder="Guest Name">
+                    </div>
+                </div>
+                <div class="col-sm-4">    
+                    <div class="form-group">
+                        <label for="guest_contact">Contact</label>
+                        <input type="text" name="guest_contact"  class="form-control" id="guest_contact" placeholder="Contact">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="travel_date">Travel Date</label>
+                        <div class="input-group">
+                            <input type="text" name="travel_date" class="form-control float-right" id="reservation">
+                        </div>
+                    </div>
+                </div>
+                
+            </div> 
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="guest_adult">Adult</label>
+                        <input type="text" name="guest_adult"  class="form-control" id="guest_adult" placeholder="Adult">
+                    </div>
+                </div>
+                <div class="col-sm-4">    
+                    <div class="form-group">
+                        <label for="guest_child">Child</label>
+                        <input type="text" name="guest_child"  class="form-control" id="guest_child" placeholder="Child">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="guest_infant">Infant</label>
+                        <input type="text" name="guest_infant"  class="form-control" id="guest_infant" placeholder="Infant">
+                    </div>
+                </div>
+                
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="guest_rooms">Number Of Rooms</label>
+                        <input type="text" name="guest_rooms"  class="form-control" id="guest_rooms" placeholder="Number Of Rooms">
+                    </div>
+                </div>
+                <div class="col-sm-4">    
+                    <div class="form-group">
+                        <label for="guest_meals">Meals</label>
+                        <input type="text" name="guest_meals"  class="form-control" id="guest_meals" placeholder="Meals">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="vehicle">Vehicle</label>
+                        <input type="text" name="vehicle"  class="form-control" id="vehicle" placeholder="Vehicle">
+                    </div>
+                </div>
+                
+            </div>
+
+            <hr>
+                <!-- Custom Trip Details End -->
+            <div class="row">
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label for="route">Route</label>
@@ -220,7 +297,7 @@
                             <input class="form-control extra_details"   name="dep_time[]" placeholder="Enter departure time"></input>
                             <input class="form-control extra_details"  name="trek_dist2[]" placeholder="Enter trek distance"></input>
                             <input class="form-control extra_details"  name="road_journey[]" placeholder="Enter road journey"></input>
-                            <input class="form-control extra_details"  name="drop_time[]" placeholder="Enter drop time"></input>
+                            <input class="form-control extra_details"  name="drop_time[]" placeholder="Enter drop time"></input><br/>
                             <input type="button" id="details" value="DELETE" onclick="return deldetails(this)" class="btn btn-primary"/>
                             <br/>
                         </div>
@@ -228,7 +305,7 @@
                 </div>
             </div> 
             <br/>
-            <input type="button" class="btn btn-primary" onclick="return addInfo()" value="ADD Details">
+            <input type="button" class="btn btn-primary" onclick="return addInfo()" value="Add Details">
 
             <br/>
             <div class="row">
@@ -269,14 +346,14 @@
                             <label for="trip_cost">Package Cost</label></br>
                             <input class="form-control package_details" name="available_from[]" placeholder="Enter Available From"></input>
                             <input class="form-control package_details"  name="available_days[]" placeholder="Enter Avaiable Days"></input>
-                            <input class="form-control package_details"  name="costing[]" placeholder="Enter Cost"></input>
+                            <input class="form-control package_details"  name="costing[]" placeholder="Enter Cost"></input><br/>
                             <input type="button" id="delbtn" value="DELETE" onclick="return delrow(this)" class="btn btn-primary"/>
                         </div>
                     </div>
                 </div>
             </div>
             <br/>
-            <input type="button" value="ADD Package ROW" onclick="return addrow(1)" class="btn btn-primary"/>
+            <input type="button" value="Add Package Row" onclick="return addrow(1)" class="btn btn-primary"/>
 
             <div class="row">
                 <div class="form-group">

@@ -37,6 +37,82 @@
                         <input type="text" name="trip_title"  class="form-control" id="trip_title" value="<%= tripdetails.title %>" placeholder="Title">
                     </div>
                 </div>
+            </div>
+            <hr>
+                <!-- Custom Trip Details 
+            <div class="row">
+                <p><h5>Custom Trip Fields</h5></p>
+            </div> -->
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="guest_name">Guest Name</label>
+                        <input type="text" name="guest_name"  class="form-control" value="<%= tripdetails.guest_name %>" id="guest_name" placeholder="Guest Name">
+                    </div>
+                </div>
+                <div class="col-sm-4">    
+                    <div class="form-group">
+                        <label for="guest_contact">Contact</label>
+                        <input type="text" name="guest_contact"  class="form-control" value="<%= tripdetails.guest_contact %>" id="guest_contact" placeholder="Contact">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="travel_date">Travel Date</label>
+                        <div class="input-group">
+                            <input type="text" name="travel_date" value="<%= tripdetails.travel_date %>" class="form-control float-right" id="reservation">
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="guest_adult">Adult</label>
+                        <input type="text" name="guest_adult"  class="form-control"  value="<%= tripdetails.guest_adult %>" id="guest_adult" placeholder="Adult">
+                    </div>
+                </div>
+                <div class="col-sm-4">    
+                    <div class="form-group">
+                        <label for="guest_child">Child</label>
+                        <input type="text" name="guest_child"  class="form-control" value="<%= tripdetails.guest_child %>" id="guest_child" placeholder="Child">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="guest_infant">Infant</label>
+                        <input type="text" name="guest_infant"  class="form-control" value="<%= tripdetails.guest_infant %>" id="guest_infant" placeholder="Infant">
+                    </div>
+                </div>
+                
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="guest_rooms">Number Of Rooms</label>
+                        <input type="text" name="guest_rooms"  class="form-control" value="<%= tripdetails.guest_rooms %>" id="guest_rooms" placeholder="Number Of Rooms">
+                    </div>
+                </div>
+                <div class="col-sm-4">    
+                    <div class="form-group">
+                        <label for="guest_meals">Meals</label>
+                        <input type="text" name="guest_meals"  class="form-control" value="<%= tripdetails.guest_meals %>" id="guest_meals" placeholder="Meals">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="vehicle">Vehicle</label>
+                        <input type="text" name="vehicle"  class="form-control" value="<%= tripdetails.vehicle %>" id="vehicle" placeholder="Vehicle">
+                    </div>
+                </div>
+                
+            </div>
+
+            <hr>
+                <!-- Custom Trip Details End -->
+            <hr>
+
+            <div  class="row">
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label for="route">Route</label>
@@ -44,6 +120,7 @@
                     </div>
                 </div>
             </div>
+            
 
             <div class="row">
                 <%
@@ -291,7 +368,7 @@
                 </div>
             </div>
             <br/> 
-            <input type="button" class="btn btn-primary" onclick="return addInfo()" value="ADD">
+            <input type="button" class="btn btn-primary" onclick="return addInfo()" value="Add Details">
             <br/>
             <div class="row">
                 <div class="col-sm-4">
@@ -329,7 +406,7 @@
                     <div class="col-sm-12 ">
                         <%
                             var avail_days = tripdetails.available_days.split(",");
-                            var avail_from = (tripdetails.available_from != undefined && tripdetails.available_from != '') ? tripdetails.available_from.split(",") : '';
+                            var avail_from = (tripdetails.available_from != undefined && tripdetails.available_from != '') ? tripdetails.available_from.split(",") : [];
                             var avail_cost = tripdetails.cost.split(",");
                             avail_from.forEach(function(val,index) {
                         %>
@@ -345,7 +422,7 @@
                 </div>
             </div>
             <br/>
-            <input type="button" value="ADD ROW" onclick="return addrow(1)" class="btn btn-primary"/>
+            <input type="button" value="Add Package Row" onclick="return addrow(1)" class="btn btn-primary"/>
             <br/>
             <div class="row">
                 <div class="form-group">
@@ -381,7 +458,8 @@
 
             
             <div class="card-footer">
-                <button type="submit" class="btn btn-primary" value="edittrip"><i class="fas fa-download"></i> Generate PDF</button>
+                <button type="submit" class="btn btn-primary" name="submit" value="saveedittrip"><i class="fas fa-download"></i>Save Details</button>
+                <button type="submit" class="btn btn-primary" name="submit" value="edittrip"><i class="fas fa-download"></i>Save & Generate PDF</button>
                 <button class="btn btn-warning"><a href="/admin/getViewPdfdetails %>">GO Back <i class="fa fa-arrow"></i></a></button>
             </div>
         </div>   
