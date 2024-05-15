@@ -37,12 +37,14 @@ exports.getstateCities =  (req, res, next) => {
     res.json({ cities: states_arr });
     };
 
+
 exports.postMakePdf = (req, res, next) => {
     var makepdf = createPDF(req.body,req.files,res,'create');
 };
 
 function createPDF(req,files='',res,type){
     let _ = require("lodash");
+    //var file_obj = files;
     let fileobj =[];
     files.forEach(function(val,key) {
         fileobj.push(val.originalname)
@@ -51,11 +53,63 @@ function createPDF(req,files='',res,type){
         fileobj.push(req.imgu);
     }
     let file_obj = fileobj.flat();
-    var flag = '';
+    var flag = ''; var guest_flag = '';
     var add_month = add_dept_city = add_triptype = add_tripsize = add_days = add_maxalt = add_trek_dist = add_difficulty =
     add_agelimit = add_regionstate = add_trip_dates = '';
+    var add_guest_name = add_guest_contact = add_travel_date = add_guest_adult = add_guest_child = add_guest_infant = add_guest_rooms = add_guest_meals = add_vehicle =''; 
    // return false;
-    if(req.month != undefined && req.month != ''){
+
+  // guest_name guest_contact travel_date guest_adult guest_child guest_infant guest_rooms guest_meals vehicle
+   if(req.guest_name != undefined && req.guest_name != ''){
+        guest_flag = '1';
+        add_guest_name = {text:'Guest Name: '+req.guest_name, style:'bb'};
+   }
+   if(req.guest_contact != undefined && req.guest_contact != ''){
+        guest_flag = '1';
+        add_guest_contact = {text:'Contact: '+req.guest_contact, style:'bb'};
+    }
+    if(req.travel_date != undefined && req.travel_date != ''){
+        guest_flag = '1';
+        add_travel_date = {text:'Travel Date: '+req.travel_date , style:'bb'};
+    }
+    if(req.guest_adult != undefined && req.guest_adult != ''){
+        guest_flag = '1';
+        add_guest_adult = {text:'Adult: '+req.guest_adult, style:'bb'};
+    }
+    if(req.guest_child != undefined && req.guest_child != ''){
+        guest_flag = '1';
+        add_guest_child = {text:'Child: '+req.guest_child, style:'bb'};
+    }
+    if(req.guest_infant != undefined && req.guest_infant != ''){
+        guest_flag = '1';
+        add_guest_infant = {text:'Infant: '+req.guest_infant, style:'bb'};
+    }
+    if(req.guest_rooms != undefined && req.guest_rooms != ''){
+        guest_flag = '1';
+        add_guest_rooms = {text:'Number Of Rooms: '+req.guest_rooms, style:'bb'};
+    }
+    if(req.guest_meals != undefined && req.guest_meals != ''){
+        guest_flag = '1';
+        add_guest_meals = {text:'Meals: '+req.guest_meals, style:'bb'};
+    }
+    if(req.vehicle != undefined && req.vehicle != ''){
+        guest_flag = '1';
+        add_vehicle = {text:'Vehicle: '+req.vehicle, style:'bb'};
+    }
+
+    if(guest_flag == '1'){
+        var guest_details_stack = {
+            stack:[
+                {text:'Guest Details:', style: 'header2',margin: [0, 0, 0, 10]},
+                add_guest_name, add_guest_contact,  add_travel_date,  add_guest_adult, add_guest_child,  add_guest_infant, add_guest_rooms,
+                add_guest_meals, add_vehicle,
+            ],margin: [0, -10, 0, 10]
+
+        };
+
+    }
+
+   if(req.month != undefined && req.month != ''){
         flag = '1';
         month = req.month.join(',');
         var add_month = {text:'Best Season (Month):'+month, style:'bb'};
@@ -118,7 +172,7 @@ function createPDF(req,files='',res,type){
                 {text:'Trip Details:', style: 'header2',margin: [0, 0, 0, 10]},
                         add_trip_dates, add_month,  add_dept_city,  add_triptype, add_tripsize,  add_days, add_maxalt,
                     add_trek_dist, add_difficulty,   add_agelimit,  add_regionstate,
-            ],margin: [0, -10, 0, 10]
+            ],margin: [0, 0, 0, 10]
 
         };
 
@@ -147,29 +201,30 @@ function createPDF(req,files='',res,type){
     }
 
     let addtripcost = [];var addtable = '';
-
-    if((req.available_from  != undefined  && req.available_from.length >= 1 ) || (req.available_days.length >= 1 || req.costing.length >= 1)){
-        if(req.available_from != undefined){
-            available_from =  req.available_from;
-           addtripcost.push({text: 'Available From', style: 'tableHeader'}, {text: 'Days', style: 'tableHeader'}, {text: 'Cost', style: 'tableHeader'});
-            for (var i = 0; i < available_from.length; i++){
-                var cost_dd = '';
-                if(available_from[i].trim() != '' || req.available_days[i].trim() != '' || req.costing[i].trim() != ''){
-                    cost_dd = '1';
-                    addtripcost.push(available_from[i]); addtripcost.push(req.available_days[i]);addtripcost.push(req.costing[i]);
+    if(req.available_from  != undefined){
+        if((req.available_from.length >= 1 ) || (req.available_days.length >= 1 || req.costing.length >= 1)){
+            if(req.available_from != undefined){
+                available_from =  req.available_from;
+            addtripcost.push({text: 'Available From', style: 'tableHeader'}, {text: 'Days', style: 'tableHeader'}, {text: 'Cost', style: 'tableHeader'});
+                for (var i = 0; i < available_from.length; i++){
+                    var cost_dd = '';
+                    if(available_from[i].trim() != '' || req.available_days[i].trim() != '' || req.costing[i].trim() != ''){
+                        cost_dd = '1';
+                        addtripcost.push(available_from[i]); addtripcost.push(req.available_days[i]);addtripcost.push(req.costing[i]);
+                    }
                 }
+                if(cost_dd == '1'){
+                    addtripcost = _.chunk(addtripcost, 3); 
+                    addtable = {
+                        style: 'tableExample',
+                        table: {
+                            widths: [80,80,80],
+                            body: addtripcost,
+                            headerRows: 1
+                        },margin: [0, 0, 0, 10]
+                    };
+                }          
             }
-            if(cost_dd == '1'){
-                addtripcost = _.chunk(addtripcost, 3); 
-                addtable = {
-                    style: 'tableExample',
-                    table: {
-                        widths: [80,80,80],
-                        body: addtripcost,
-                        headerRows: 1
-                    },margin: [0, 0, 0, 10]
-                };
-            }          
         }
     }
 
@@ -298,6 +353,7 @@ function createPDF(req,files='',res,type){
                     style: 'header'
                     
                 },
+                guest_details_stack,
                 tripdetails_stack,                
                 route_stack,
                 short_it_stack,
@@ -429,6 +485,16 @@ function createPDF(req,files='',res,type){
 
 function addtripdetails(req,files=[]){
        const title = req.trip_title;
+       const guest_name = req.guest_name;
+       const guest_contact = req.guest_contact;
+       const travel_date = req.travel_date;
+       const guest_adult = req.guest_adult;
+       const guest_child = req.guest_child;
+       const guest_infant = req.guest_infant;
+       const guest_rooms = req.guest_rooms;
+       const guest_meals = req.guest_meals;
+       const vehicle = req.vehicle;
+
        const route = req.route;
        const deptstate = req.state;
        const deptcity = (req.deptcity != undefined && req.deptcity!='') ? req.deptcity.toString() : '';
@@ -469,6 +535,15 @@ function addtripdetails(req,files=[]){
        const imageurl = (files != undefined && files!='') ? imgurl.toString() : '';
        const trip = new Tripdetails({
            title : title,
+           guest_name : guest_name,
+           guest_contact : guest_contact,
+           travel_date : travel_date,
+           guest_adult : guest_adult,
+           guest_child : guest_child,
+           guest_infant : guest_infant,
+           guest_rooms : guest_rooms,
+           guest_meals : guest_meals,
+           vehicle : vehicle,
            route : route,
            deptstate : deptstate,
            deptcity : deptcity,
@@ -538,11 +613,20 @@ exports.editPdfDetails = async(req, res, next) => {
     catch(err){
       console.log(err);
     }
-  };
+};
 
-  exports.updatePdfDetails = async(req, res, next) => {
+exports.updatePdfDetails = async(req, res, next) => {
     try{
             const title = req.body.trip_title;
+            const guest_name = req.body.guest_name;
+            const guest_contact = req.body.guest_contact;
+            const travel_date = req.body.travel_date;
+            const guest_adult = req.body.guest_adult;
+            const guest_child = req.body.guest_child;
+            const guest_infant = req.body.guest_infant;
+            const guest_rooms = req.body.guest_rooms;
+            const guest_meals = req.body.guest_meals;
+            const vehicle = req.body.vehicle;
             const route = req.body.route;
             const deptstate = req.body.state;
             const deptcity = (req.body.deptcity != undefined && req.body.deptcity!='') ? req.body.deptcity.toString() : '';
@@ -588,6 +672,15 @@ exports.editPdfDetails = async(req, res, next) => {
         Tripdetails.findById({_id: tripid })
         .then(trip => {
             trip.title = title;
+            trip.guest_name = guest_name;
+            trip.guest_contact = guest_contact;
+            trip.travel_date = travel_date;
+            trip.guest_adult = guest_adult;
+            trip.guest_child = guest_child;
+            trip.guest_infant = guest_infant;
+            trip.guest_rooms = guest_rooms;
+            trip.guest_meals = guest_meals;
+            trip.vehicle = vehicle;
             trip.route = route;
             trip.deptstate = deptstate;
             trip.deptcity = deptcity;
@@ -623,8 +716,11 @@ exports.editPdfDetails = async(req, res, next) => {
             trip.filename = filename; 
             trip.imageurl = imageurl;
          return trip.save().then(result => {
-            var makepdf = createPDF(req.body,req.files,res,'edit');
-            //res.redirect("/admin/getViewPdfdetails");   
+            if(req.body.submit == 'edittrip'){
+                var makepdf = createPDF(req.body,req.files,res,'edit');
+            }else{
+                res.redirect("/admin/getViewPdfdetails");   
+            }
          });
         })
         .catch(err => {
@@ -634,9 +730,9 @@ exports.editPdfDetails = async(req, res, next) => {
     catch(err){
       console.log(err);
     }
-  };
+};
 
-  exports.deletePdftrip = (req, res, next) => {
+exports.deletePdftrip = (req, res, next) => {
     const tripid = req.body.tripid;
     Tripdetails.findOneAndDelete({ _id : tripid })
     .then((result) => {
