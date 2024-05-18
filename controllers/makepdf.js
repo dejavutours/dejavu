@@ -103,11 +103,23 @@ function createPDF(req,files='',res,type){
                 {text:'Guest Details:', style: 'header2',margin: [0, 0, 0, 10]},
                 add_guest_name, add_guest_contact,  add_travel_date,  add_guest_adult, add_guest_child,  add_guest_infant, add_guest_rooms,
                 add_guest_meals, add_vehicle,
-            ],margin: [0, -10, 0, 10]
+            ],margin: [0, 0, 0, 10]
 
         };
 
     }
+
+    if(req.about_trip != undefined && req.about_trip != ''){
+        
+        var about_trip_stack = {
+            stack:[
+                {text:'About Trip:', style: 'header2',margin: [0, 0, 0, 10]},
+                {text:req.about_trip,  style:'bb'},
+            ],margin: [0, -10, 0, 10]
+
+        };
+    }
+
 
    if(req.month != undefined && req.month != ''){
         flag = '1';
@@ -210,15 +222,20 @@ function createPDF(req,files='',res,type){
                     var cost_dd = '';
                     if(available_from[i].trim() != '' || req.available_days[i].trim() != '' || req.costing[i].trim() != ''){
                         cost_dd = '1';
-                        addtripcost.push(available_from[i]); addtripcost.push(req.available_days[i]);addtripcost.push(req.costing[i]);
+                       var avai_from = {text:available_from[i],alignment:'center'};
+                       var avai_days = {text:req.available_days[i],alignment:'center'};
+                       var avai_cost = {text:req.costing[i],alignment:'center'};
+
+                        addtripcost.push(avai_from); addtripcost.push(avai_days);addtripcost.push(avai_cost);
                     }
                 }
+               // console.log(addtripcost);return false;
                 if(cost_dd == '1'){
                     addtripcost = _.chunk(addtripcost, 3); 
                     addtable = {
                         style: 'tableExample',
                         table: {
-                            widths: [80,80,80],
+                            widths: [150,100,100],
                             body: addtripcost,
                             headerRows: 1
                         },margin: [0, 0, 0, 10]
@@ -353,6 +370,7 @@ function createPDF(req,files='',res,type){
                     style: 'header'
                     
                 },
+                about_trip_stack,
                 guest_details_stack,
                 tripdetails_stack,                
                 route_stack,
@@ -481,7 +499,7 @@ function createPDF(req,files='',res,type){
             console.log("file generated!  "+filename);
         }
     });
-}
+};
 
 function addtripdetails(req,files=[]){
        const title = req.trip_title;
