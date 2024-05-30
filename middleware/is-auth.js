@@ -1,5 +1,5 @@
 module.exports = (req, res, next) => {
-    if (!req.session.isLoggedIn) {
+    if (res.locals.profile.email !== process.env.GMAIL_ADMIN ) {
         return res.redirect('/');
     }
     next();

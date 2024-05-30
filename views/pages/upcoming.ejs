@@ -39,23 +39,25 @@
                                 </div>
                                 <div class="place_info">
                                     <a href="/tripdetails/<%= trips.name %>"><h3><%= trips.name %></h3></a>
-                                    <% if (!isAuthenticated) { %>
+                                    <% if (!profile || profile?.email !== process.env.GMAIL_ADMIN) { %>
                                         <% for (var i = 0; i < trips.upcomingtrip.length; i++) { %>
                                     <form style ='display:inline-block;' action="/bookdate" method="POST">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <input type="hidden" value="<%= trips.name %>" id="tripname" name="tripname">
+                                        <input type="hidden" value="<%= trips.price %>" id="triprate" name="triprate">
                                         <input type="hidden" value="<%= trips.upcomingtrip[i] %>" id="tripdate" name="tripdate">
                                         <button class="btn btn-success mt-2" type="submit"><%= trips.upcomingtrip[i] %></button>
                                     </form>
                                         <% } %>
-                                    <% } %>
-                                    <% if (isAuthenticated) { %>
+                                        <% } %>
+                                    
+                                    <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
                                         <% for (var i = 0; i < trips.upcomingtrip.length; i++) { %>
                                         <form style ='display:inline-block;' action="/admin/deleteupcomingdate" method="POST">
                                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                             <input type="hidden" value="<%= trips._id %>" id="tripid" name="tripid">
                                             <input type="hidden" value="<%= i %>" id="tripdateindex" name="tripdateindex">
-                                            <!-- <button class="btn btn-info mt-2" type="submit">Del&nbsp;<%= trips.upcomingtrip[i] %></button> -->
+                                            <button class="btn btn-info mt-2" type="submit">Del&nbsp;<%= trips.upcomingtrip[i] %></button>
                                         </form>
                                         <% } %>
                                     <% } %>
@@ -74,7 +76,7 @@
                                             <i class="fa fa-clock-o"></i>
                                             <a href="#"><%= trips.days %> Days</a>
                                         </div>
-                                            <!-- <% if (isAuthenticated) { %>
+                                            <!-- <% if (profile) { %>
                                         <div>
                                             <form action="/admin/deleteupcoming" method="POST">
                                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">

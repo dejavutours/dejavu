@@ -55,7 +55,7 @@
                                     <li><a href="<%= blog.facebook %>"><i class="fa fa-lg fa-facebook"></i></a></li>
                                     <li><p>- Blog by <%= blog.blogger %></p></li>
                                 </ul>
-                                <% if (isAuthenticated) { %>
+                                <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
                                     <div>
                                         <form style="display: inline;float: left;" action="/admin/deleteblog" method="POST">
                                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">

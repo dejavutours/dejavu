@@ -62,7 +62,7 @@
                                     <i class="fa fa-clock-o"></i>
                                     <a href="#"><%= accods.days %> Days</a>
                                 </div>
-                                <% if (isAuthenticated) { %>
+                                <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
                                 <div>
                                     <form action="/admin/accod/edit" method="POST">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">

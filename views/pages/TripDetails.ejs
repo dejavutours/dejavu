@@ -134,7 +134,8 @@
           <form action="/getbooktrip" method="POST">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <input type="hidden" name="tripname" id="tripname" value="<%= trips.name %>">
-            <button class="boxed-btn4 mt-2" type="submit">Book Now</button>
+            <input type="hidden" name="triprate" id="triprate" value="<%= trips.price %>">
+            <button class="boxed-btn4 mt-2" type="submit">Please Login/SignUp to book<br>Book Now</button>
           </form>
           <% if(trips.youtubeUrl.length > 0){ %>
           <a href="#myModal" class="play-btn" data-toggle="modal"></a>
@@ -150,7 +151,7 @@
                           <% if (trips.upcomingtrip.length > 0) { %>
                           <h3>Book For Upcoming Trip</h3>
                           <% } %>
-                          <% if (!isAuthenticated) { %>
+                          <% if (!profile) { %>
                             <% for (var i = 0; i < trips.upcomingtrip.length; i++) { %>
                             <form style ='display:inline-block;' action="/bookdate" method="POST">
                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -160,7 +161,7 @@
                             </form>
                             <% } %>
                         <% } %>
-                        <% if (isAuthenticated) { %>
+                        <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
                             <% for (var i = 0; i < trips.upcomingtrip.length; i++) { %>
                             <form style ='display:inline-block;' action="/admin/deleteupcomingdate" method="POST">
                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">

@@ -48,7 +48,7 @@
                                         <a href="#"><%= trips.days %> Days</a>
                                     </div>
                                     
-                                    <% if (isAuthenticated) { %>
+                                    <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
                                         <div>
                                             <form action="/admin/edit" method="POST">
                                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -96,7 +96,7 @@
                                         <% } %>
                                    
                                 </div>
-                                <% if (isAuthenticated) { %>
+                                <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
                                     <br>
                                 <div>
                                     <form action="/admin/addupcoming" method="POST">

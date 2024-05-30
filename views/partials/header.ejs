@@ -1,267 +1,274 @@
 <header>
-    <div class="header-area ">
-        <div id="sticky-header" class="main-header-area">
-            <div class="container-fluid">
-                <div class="header_bottom_border">
-                    <div class="row align-items-center">
-                        <div class="col-xl-2 col-lg-2">
-                            <div class="logo">
-                                <a href="/">
-                                    <img src="/images/logo.png" alt="">
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-xl-7 col-lg-7">
-                            <div class="main-menu  d-none d-lg-block">
-                                <nav>
-                                    <ul id="navigation">
-                                        <li><a class="active" href="/">Home</a></li>
-                                        <li><a href="/upcomingtrips">Upcoming<i class="ti-angle-down"></i></a>
-                                            <!--<ul class="submenu">
-                                                    <li><a href="destination_details.html">Destinations details</a></li>
-                                                    <li><a href="elements.html">elements</a></li>
-                                            </ul>-->
-                                        </li>
-                                        <li><a class="destination-link">Tour Packages <i class="ti-angle-down"></i></a>
+  <div class="header-area ">
+      <div id="sticky-header" class="main-header-area">
+          <div class="container-fluid">
+              <div class="header_bottom_border">
+                  <div class="row align-items-center">
+                      <div class="col-xl-2 col-lg-2">
+                          <div class="logo">
+                              <a href="/">
+                                  <img src="/images/logo.png" alt="">
+                              </a>
+                          </div>
+                      </div>
+                      <div class="col-xl-7 col-lg-7">
+                          <div class="main-menu  d-none d-lg-block">
+                              <nav>
+                                  <ul id="navigation">
+                                      <li><a class="active" href="/">Home</a></li>
+                                      <li><a href="/upcomingtrips">Upcoming<i class="ti-angle-down"></i></a>
+                                      </li>
+                                      <li><a class="destination-link">Tour Packages <i class="ti-angle-down"></i></a>
+                                          <ul class="submenu">
+                                              <li><a href="/filters/Gujarat">Gujarat </a></li>
+                                              <li><a href="/filters/Maharashtra">Maharashtra </a></li>
+                                              <li><a href="/filters/Himalayan">Himalayas </a></li>
+                                              <li><a href="/filters/Rajasthan">Rajasthan </a></li>
+                                              <li><a href="/filters/North-East">North-East </a></li>
+                                              <li><a href="/filters/South-India">South-India </a></li>
+                                          </ul>
+                                      </li>
+                                      <li><a href="/accomodation">accomodation</a></li>
+                                      <li><a class="destination-link">More<i class="ti-angle-down"></i></a>
+                                        <ul class="submenu">
+                                          <li><a href="/blog">Travel Stories</a></li>
+                                          <li><a href="/about">About</a></li>
+                                          <li><a href="/contact">Contact</a></li>
+                                        </ul>
+                                      </li>
+                                      <% if(profile?.email) { %>
+                                          <li><i class="fa fa-user-o fa-sm"></i>&nbsp;<a class="destination-link"><%= profile.name || profile.email %></a>
                                             <ul class="submenu">
-                                                <li><a href="/filters/Gujarat">Gujarat </a></li>
-                                                <li><a href="/filters/Maharashtra">Maharashtra </a></li>
-                                                <li><a href="/filters/Himalayan">Himalayas </a></li>
-                                                <li><a href="/filters/Rajasthan">Rajasthan </a></li>
-                                                <li><a href="/filters/North-East">North-East </a></li>
-                                                <li><a href="/filters/South-India">South-India </a></li>
-                                                    <!--<li><a href="destination_details.html">Destinations details</a></li>
-                                                    <li><a href="elements.html">elements</a></li>-->
+                                              <% if(profile?.email === process.env.GMAIL_ADMIN) { %>
+                                              <li><a href="/admin/login">Admin</a></li>
+                                              <% } %> 
+                                                <li><a href="#">Profile</a></li>
+                                                <li><a href="#">My Trips</a></li>
+                                                <!-- <li><a href="/logout">Sign Out</a></li> -->
+                                                <li><form id="my_form" action="/logout" method="post">
+                                                  <!-- <a href="#" type="submit">Sign Out</a> -->
+                                                  <!-- <button class="btn btn-light" type="submit"><a>Sign out</a></button> -->
+                                                  <a href="javascript:{}" onclick="document.getElementById('my_form').submit();">Sign Out</a>
+                                                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                </form>
+                                    </li>
                                             </ul>
-                                        </li>
-                                        <li><a href="/accomodation">accomodation<i class="ti-angle-down"></i></a>
-                                            <!--<ul class="submenu">
-                                                    <li><a href="destination_details.html">Destinations details</a></li>
-                                                    <li><a href="elements.html">elements</a></li>
-                                            </ul>-->
-                                        </li>
-                                        <li><a href="/about">About</a></li>
-                                        <li><a href="/contact">Contact</a></li>
-                                        <li><a href="/blog">Travel Stories</a></li>
-                                        <% if (isAuthenticated) { %>
-                                          <li>
-                                            <form action="/admin/logout" method="post">
-                                              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                              <button type="submit" class="btn btn-danger">Logout</button>
-                                            </form>
                                           </li>
-                                          <li><a type="button" class="btn btn-primary" style="border-color:blue;padding: 3px;"  href="/admin/login">Back to Admin</a></li>
+                                        <%} else { %>
+                                          <li>
+                                            <button class="btn btn-sm btn-primary"><a href="/login/federated/google" style="color: white;">Sign in with Google</a></button>
+                                          </li>
                                         <% } %> 
-                                    </ul>
-                                </nav>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-lg-3 d-none d-lg-block">
-                            <div class="social_wrap d-flex align-items-center justify-content-end">
-                                <div class="number">
-                                    <p>+91 851111 7891</p>
-                                </div>
-                                <div class="social_links d-none d-xl-block">
-                                    <ul>
-                                        <li><a href="https://www.instagram.com/dejavutours/" target="_blank" rel="nofollow noopener"> <i class="fa fa-instagram"></i> </a></li>
-                                        <li><a href="https://www.youtube.com/watch?v=56-u7Pv-cQg" target="_blank" rel="nofollow noopener"> <i class="fa fa-youtube-play"></i> </a></li>
-                                        <li><a href="https://www.facebook.com/dejavutours.in" target="_blank" rel="nofollow noopener"> <i class="fa fa-facebook"></i> </a></li>
-                                        <!-- <li><a href="https://twitter.com/dejavutours_in" target="_blank" rel="nofollow noopener"> <i class="fa fa-twitter"></i> </a></li> -->
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="seach_icon">
-                            <a data-toggle="modal" data-target="#exampleModalCenter" href="#">
-                                <i class="fa fa-search"></i>
-                            </a>
-                        </div>
-                        <div class="col-12">
-                            <div class="mobile_menu d-block d-lg-none"></div>
-                        </div>
-                    </div>
-                </div>
+                                  </ul>
+                              </nav>
+                          </div>
+                      </div>
+                      <div class="col-xl-3 col-lg-3 d-none d-lg-block">
+                          <div class="social_wrap d-flex align-items-center justify-content-end">
+                              <div class="number">
+                                  <p>+91 851111 7891</p>
+                              </div>
+                              <div class="social_links d-none d-xl-block">
+                                  <ul>
+                                      <li><a href="https://www.instagram.com/dejavutours/" target="_blank" rel="nofollow noopener"> <i class="fa fa-instagram"></i> </a></li>
+                                      <li><a href="https://www.youtube.com/watch?v=56-u7Pv-cQg" target="_blank" rel="nofollow noopener"> <i class="fa fa-youtube-play"></i> </a></li>
+                                      <li><a href="https://www.facebook.com/dejavutours.in" target="_blank" rel="nofollow noopener"> <i class="fa fa-facebook"></i> </a></li>
+                                      <!-- <li><a href="https://twitter.com/dejavutours_in" target="_blank" rel="nofollow noopener"> <i class="fa fa-twitter"></i> </a></li> -->
+                                  </ul>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="seach_icon">
+                          <a data-toggle="modal" data-target="#exampleModalCenter" href="#">
+                              <i class="fa fa-search"></i>
+                          </a>
+                      </div>
+                      <div class="col-12">
+                          <div class="mobile_menu d-block d-lg-none"></div>
+                      </div>
+                  </div>
+              </div>
 
-            </div>
-        </div>
-    </div>
+          </div>
+      </div>
+  </div>
 </header>
 <!-- header-end -->
 <style>
-    * {
-      box-sizing: border-box;
-    }
-    
-    body {
-      font: 16px Arial;  
-    }
-    
-    /*the container must be positioned relative:*/
-    .autocomplete {
-      position: relative;
-      display: inline-block;
-    }
-    
-    input {
-      border: 1px solid transparent;
-      background-color: #f1f1f1;
-      padding: 10px;
-      font-size: 16px;
-    }
-    
-    input[type=text] {
-      background-color: #f1f1f1;
-      width: 100%;
-    }
-    
-    input[type=submit] {
-      background-color: DodgerBlue;
-      color: #fff;
-      cursor: pointer;
-    }
-    
-    .autocomplete-items {
-      position: absolute;
-      border: 1px solid #d4d4d4;
-      border-bottom: none;
-      border-top: none;
-      z-index: 99;
-      /*position the autocomplete items to be the same width as the container:*/
-      top: 100%;
-      left: 0;
-      right: 0;
-    }
-    
-    .autocomplete-items div {
-      padding: 10px;
-      cursor: pointer;
-      background-color: #fff; 
-      border-bottom: 1px solid #d4d4d4; 
-    }
-    
-    /*when hovering an item:*/
-    .autocomplete-items div:hover {
-      background-color: #e9e9e9; 
-    }
-    
-    /*when navigating through the items using the arrow keys:*/
-    .autocomplete-active {
-      background-color: DodgerBlue !important; 
-      color: #ffffff; 
-    }
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    font: 16px Arial;  
+  }
+  
+  /*the container must be positioned relative:*/
+  .autocomplete {
+    position: relative;
+    display: inline-block;
+  }
+  
+  input {
+    border: 1px solid transparent;
+    background-color: #f1f1f1;
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  input[type=text] {
+    background-color: #f1f1f1;
+    width: 100%;
+  }
+  
+  input[type=submit] {
+    background-color: DodgerBlue;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  .autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 100%;
+    left: 0;
+    right: 0;
+  }
+  
+  .autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff; 
+    border-bottom: 1px solid #d4d4d4; 
+  }
+  
+  /*when hovering an item:*/
+  .autocomplete-items div:hover {
+    background-color: #e9e9e9; 
+  }
+  
+  /*when navigating through the items using the arrow keys:*/
+  .autocomplete-active {
+    background-color: DodgerBlue !important; 
+    color: #ffffff; 
+  }
 </style>
-  <!-- Modal -->
-  <div class="modal fade custom_search_pop" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="serch_form">
-            <form action="/search/trip" method="POST">
-              <input type="text" placeholder="Search" autocomplete="off" id="SearchTrip" name="SearchTrip" >
-              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                <button type="submit">search</button>
-            </form>
-        </div>
+<!-- Modal -->
+<div class="modal fade custom_search_pop" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="serch_form">
+          <form action="/search/trip" method="POST">
+            <input type="text" placeholder="Search" autocomplete="off" id="SearchTrip" name="SearchTrip" >
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit">search</button>
+          </form>
       </div>
     </div>
   </div>
-  <script>
-    function autocomplete(inp, arr) {
-      /*the autocomplete function takes two arguments,
-      the text field element and an array of possible autocompleted values:*/
-      var currentFocus;
-      /*execute a function when someone writes in the text field:*/
-      inp.addEventListener("input", function(e) {
-          var a, b, i, val = this.value;
-          /*close any already open lists of autocompleted values*/
-          closeAllLists();
-          if (!val) { return false;}
-          currentFocus = -1;
-          /*create a DIV element that will contain the items (values):*/
-          a = document.createElement("DIV");
-          a.setAttribute("id", this.id + "autocomplete-list");
-          a.setAttribute("class", "autocomplete-items");
-          /*append the DIV element as a child of the autocomplete container:*/
-          this.parentNode.appendChild(a);
-          /*for each item in the array...*/
-          for (i = 0; i < arr.length; i++) {
-            /*check if the item starts with the same letters as the text field value:*/
-            if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
-              /*create a DIV element for each matching element:*/
-              b = document.createElement("DIV");
-              /*make the matching letters bold:*/
-              b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
-              b.innerHTML += arr[i].substr(val.length);
-              /*insert a input field that will hold the current array item's value:*/
-              b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
-              /*execute a function when someone clicks on the item value (DIV element):*/
-              b.addEventListener("click", function(e) {
-                  /*insert the value for the autocomplete text field:*/
-                  inp.value = this.getElementsByTagName("input")[0].value;
-                  /*close the list of autocompleted values,
-                  (or any other open lists of autocompleted values:*/
-                  closeAllLists();
-              });
-              a.appendChild(b);
-            }
-          }
-      });
-      /*execute a function presses a key on the keyboard:*/
-      inp.addEventListener("keydown", function(e) {
-          var x = document.getElementById(this.id + "autocomplete-list");
-          if (x) x = x.getElementsByTagName("div");
-          if (e.keyCode == 40) {
-            /*If the arrow DOWN key is pressed,
-            increase the currentFocus variable:*/
-            currentFocus++;
-            /*and and make the current item more visible:*/
-            addActive(x);
-          } else if (e.keyCode == 38) { //up
-            /*If the arrow UP key is pressed,
-            decrease the currentFocus variable:*/
-            currentFocus--;
-            /*and and make the current item more visible:*/
-            addActive(x);
-          } else if (e.keyCode == 13) {
-            /*If the ENTER key is pressed, prevent the form from being submitted,*/
-            e.preventDefault();
-            if (currentFocus > -1) {
-              /*and simulate a click on the "active" item:*/
-              if (x) x[currentFocus].click();
-            }
-          }
-      });
-      function addActive(x) {
-        /*a function to classify an item as "active":*/
-        if (!x) return false;
-        /*start by removing the "active" class on all items:*/
-        removeActive(x);
-        if (currentFocus >= x.length) currentFocus = 0;
-        if (currentFocus < 0) currentFocus = (x.length - 1);
-        /*add class "autocomplete-active":*/
-        x[currentFocus].classList.add("autocomplete-active");
-      }
-      function removeActive(x) {
-        /*a function to remove the "active" class from all autocomplete items:*/
-        for (var i = 0; i < x.length; i++) {
-          x[i].classList.remove("autocomplete-active");
-        }
-      }
-      function closeAllLists(elmnt) {
-        /*close all autocomplete lists in the document,
-        except the one passed as an argument:*/
-        var x = document.getElementsByClassName("autocomplete-items");
-        for (var i = 0; i < x.length; i++) {
-          if (elmnt != x[i] && elmnt != inp) {
-            x[i].parentNode.removeChild(x[i]);
+</div>
+<script>
+  function autocomplete(inp, arr) {
+    /*the autocomplete function takes two arguments,
+    the text field element and an array of possible autocompleted values:*/
+    var currentFocus;
+    /*execute a function when someone writes in the text field:*/
+    inp.addEventListener("input", function(e) {
+        var a, b, i, val = this.value;
+        /*close any already open lists of autocompleted values*/
+        closeAllLists();
+        if (!val) { return false;}
+        currentFocus = -1;
+        /*create a DIV element that will contain the items (values):*/
+        a = document.createElement("DIV");
+        a.setAttribute("id", this.id + "autocomplete-list");
+        a.setAttribute("class", "autocomplete-items");
+        /*append the DIV element as a child of the autocomplete container:*/
+        this.parentNode.appendChild(a);
+        /*for each item in the array...*/
+        for (i = 0; i < arr.length; i++) {
+          /*check if the item starts with the same letters as the text field value:*/
+          if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+            /*create a DIV element for each matching element:*/
+            b = document.createElement("DIV");
+            /*make the matching letters bold:*/
+            b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+            b.innerHTML += arr[i].substr(val.length);
+            /*insert a input field that will hold the current array item's value:*/
+            b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+            /*execute a function when someone clicks on the item value (DIV element):*/
+            b.addEventListener("click", function(e) {
+                /*insert the value for the autocomplete text field:*/
+                inp.value = this.getElementsByTagName("input")[0].value;
+                /*close the list of autocompleted values,
+                (or any other open lists of autocompleted values:*/
+                closeAllLists();
+            });
+            a.appendChild(b);
           }
         }
-      }
-      /*execute a function when someone clicks in the document:*/
-      document.addEventListener("click", function (e) {
-          closeAllLists(e.target);
-      });
+    });
+    /*execute a function presses a key on the keyboard:*/
+    inp.addEventListener("keydown", function(e) {
+        var x = document.getElementById(this.id + "autocomplete-list");
+        if (x) x = x.getElementsByTagName("div");
+        if (e.keyCode == 40) {
+          /*If the arrow DOWN key is pressed,
+          increase the currentFocus variable:*/
+          currentFocus++;
+          /*and and make the current item more visible:*/
+          addActive(x);
+        } else if (e.keyCode == 38) { //up
+          /*If the arrow UP key is pressed,
+          decrease the currentFocus variable:*/
+          currentFocus--;
+          /*and and make the current item more visible:*/
+          addActive(x);
+        } else if (e.keyCode == 13) {
+          /*If the ENTER key is pressed, prevent the form from being submitted,*/
+          e.preventDefault();
+          if (currentFocus > -1) {
+            /*and simulate a click on the "active" item:*/
+            if (x) x[currentFocus].click();
+          }
+        }
+    });
+    function addActive(x) {
+      /*a function to classify an item as "active":*/
+      if (!x) return false;
+      /*start by removing the "active" class on all items:*/
+      removeActive(x);
+      if (currentFocus >= x.length) currentFocus = 0;
+      if (currentFocus < 0) currentFocus = (x.length - 1);
+      /*add class "autocomplete-active":*/
+      x[currentFocus].classList.add("autocomplete-active");
     }
+    function removeActive(x) {
+      /*a function to remove the "active" class from all autocomplete items:*/
+      for (var i = 0; i < x.length; i++) {
+        x[i].classList.remove("autocomplete-active");
+      }
+    }
+    function closeAllLists(elmnt) {
+      /*close all autocomplete lists in the document,
+      except the one passed as an argument:*/
+      var x = document.getElementsByClassName("autocomplete-items");
+      for (var i = 0; i < x.length; i++) {
+        if (elmnt != x[i] && elmnt != inp) {
+          x[i].parentNode.removeChild(x[i]);
+        }
+      }
+    }
+    /*execute a function when someone clicks in the document:*/
+    document.addEventListener("click", function (e) {
+        closeAllLists(e.target);
+    });
+  }
 
-   var countries = <%-JSON.stringify(test) %> ;
-    autocomplete(document.getElementById("SearchTrip"), countries);
-    </script>
+ var countries = <%-JSON.stringify(test) %> ;
+  autocomplete(document.getElementById("SearchTrip"), countries);
+  </script>

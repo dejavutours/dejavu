@@ -34,7 +34,7 @@
                                     </div>
                                     <div class="place_info">
                                         <a href="/tripdetails/<%= trips.name %>"><h3><%= trips.name %></h3></a>
-                                        <% if (!isAuthenticated) { %>
+                                        <% if (!profile) { %>
                                             <% for (var i = 0; i < trips.upcomingtrip.length; i++) { %>
                                         <form style ='display:inline-block;' action="/bookdate" method="POST">
                                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -59,7 +59,7 @@
                                                 <i class="fa fa-clock-o"></i>
                                                 <a href="#"><%= trips.days %> Days</a>
                                             </div>
-                                            <% if (isAuthenticated) { %>
+                                            <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
                                             <div>
                                                 <form action="/admin/edit" method="POST">
                                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -106,7 +106,7 @@
                                             </div>
                                             <% } %>
                                         </div>
-                                        <% if (isAuthenticated) { %>
+                                        <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
                                             <br>
                                         <div>
                                             <form action="/admin/addupcoming" method="POST">
@@ -159,7 +159,7 @@
                                     <div class="place_info">
                                         <a href="/tripdetails/<%= trips.name %>"><h3><%= trips.name %></h3></a>
                                         <h6><%= trips.upcomingtrip %></h6>
-                                        <% if (!isAuthenticated) { %>
+                                        <% if (!profile) { %>
                                             <% for (var i = 0; i < trips.upcomingtrip.length; i++) { %>
                                         <form style ='display:inline-block;' action="/bookdate" method="POST">
                                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -184,7 +184,7 @@
                                                 <i class="fa fa-clock-o"></i>
                                                 <a href="#"><%= trips.days %> Days</a>
                                             </div>
-                                            <% if (isAuthenticated) { %>
+                                            <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
                                             <div>
                                                 <form action="/admin/edit" method="POST">
                                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -231,7 +231,7 @@
                                             </div>
                                             <% } %>
                                         </div>
-                                        <% if (isAuthenticated) { %>
+                                        <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
                                             <br>
                                         <div>
                                             <form action="/admin/addupcoming" method="POST">

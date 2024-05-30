@@ -51,6 +51,7 @@ exports.getIndexPage = async(req, res, next) => {
       Tours: alltours,
       accomodations: allaccomodations,
       test: tests,
+      user: req.user,
     });
   }; 
 
@@ -204,6 +205,9 @@ exports.getBookTrip = async(req, res, next) => {
   const tests = await Tours.find().distinct('name');
   res.render("pages/booktrip", {
     tripname : req.body.tripname,
+    triprate : req.body.triprate,
+    username: req.user.name,
+    useremail: req.user.email,
     tripdate : null,
     test: tests,
   });
@@ -240,6 +244,7 @@ exports.postBookTrip = (req, res, next) => {
 
   addbookings.save()
   .then(result => {
+    console.log("saved2");
     res.render("pages/booktrip", {
       msg : "yes",
       tripname : userdestination ,
@@ -768,7 +773,8 @@ exports.postAdminLogin = (req, res, next) => {
 
 exports.postLogout = (req, res, next) => {
   req.session.destroy(err => {
-    res.redirect('/admin/login');
+    res.redirect('/');
+    // res.redirect('/admin/login');
   });
 };
 
@@ -1032,6 +1038,9 @@ exports.postBookDate = async(req, res,next) => {
   const tests = await Tours.find().distinct('name');
   res.render("pages/booktrip", {
     tripname : tripnames,
+    triprate : req.body.triprate,
+    username: req.user.name,
+    useremail: req.user.email,
     tripdate : tripdates,
     test: tests,
   });

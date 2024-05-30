@@ -1,6 +1,8 @@
 const path = require("path");
-
+require('dotenv').config();
 const express = require("express");
+const cookieParser = require('cookie-parser');
+const passport = require('passport');
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
@@ -82,11 +84,14 @@ const csrfProtection = csrf();
   app.set("views", "views");
 
   const tourRoutes = require("./routes/tours");
+  const authRoutes = require("./routes/auth");
+  const paymentRoutes = require("./routes/payments");
 
   //app.use(helmet());
   app.use(compression());
-
+  app.use(express.json());
   app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(cookieParser());
   //app.use(bodyParser.json());
 
 // app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single("image"));
@@ -119,10 +124,19 @@ app.use(
   })
 );
 app.use(csrfProtection);
+app.use(passport.authenticate('session'));
+app.use((req, res, next) => {
+  var msgs = req.session.messages || [];
+  res.locals.messages = msgs;
+  res.locals.hasMessages = !! msgs.length;
+  req.session.messages = [];
+  next();
+});
 
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
   res.locals.csrfToken = req.csrfToken();
+  res.locals.profile = req.user || null;
   if(req.files !== undefined){
     req.file = req.files[0];
   }
@@ -148,6 +162,8 @@ app.use((req, res, next) => {
 });
 
 app.use(tourRoutes);
+app.use(authRoutes);
+app.use('/payment', paymentRoutes);
 
 mongoose
   .connect(MONGODB_URI, { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false })

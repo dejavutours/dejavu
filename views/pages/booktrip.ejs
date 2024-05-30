@@ -24,6 +24,11 @@
 
     <!-- Main CSS-->
     <link href="css/reg.css" rel="stylesheet" media="all">
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"
+  />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 </head>
 
 <body>
@@ -43,14 +48,21 @@
                     <form method="POST" action="/booktrip">
                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         <div class="input-group">
-                            <input class="input--style-1" type="email" placeholder="EMAIL" name="email" id="email" required>
+                            <p>Name</p>
+                            <input class="input--style-1" type="text" placeholder="NAME" name="name" id="name" value="<%= username %>" required >
                         </div>
                         <div class="input-group">
-                            <input class="input--style-1" type="text" placeholder="NAME" name="name" id="name" required>
+                            <p>Email</p>
+                            <input class="input--style-1" type="email" placeholder="EMAIL" name="email" id="email" value="<%= useremail %>" required >
                         </div>
                         <div class="input-group">
+                            <p>Number of Travellers</p>
                             <!-- <input class="input--style-1" type="number" placeholder="NUMBER OF CO-TRAVELLERS" name="travellers" id="travellers" required> -->
-                            <input class="input--style-1" type="number" min="1" max="5" placeholder="NUMBER OF CO-TRAVELLERS (MAX 5)" name="travellers" id="travellers" />
+                            <input class="input--style-1" type="number" min="1" max="5" placeholder="NUMBER OF CO-TRAVELLERS" name="travellers" id="travellers" value="1" onchange="pricecalculator()" />
+                        </div>
+                        <div class="input-group">
+                            <p>Total Cost</p>
+                            <input class="input--style-1" type="number" placeholder="COST" name="cost" id="cost" value="<%= triprate %>" required readonly>
                         </div>
                         <div class="input-group">
                             <div class="rs-select2 js-select-simple select--no-search">
@@ -68,7 +80,7 @@
                             <input type="date" placeholder="BIRTHDATE" name="birthday" id="birthday" required>
                         </div>
                         <div class="input-group">
-                            <input class="input--style-1" type="number" placeholder="CONTACT" name="contact" id="contact" required>
+                            <input class="input--style-1" type="tel" placeholder="CONTACT" name="contact" id="contact" required>
                         </div>
                         <div class="input-group">
                             <input class="input--style-1" type="text" placeholder="DESTINATION" name="destination" id="destination" value="<%= tripname %>" required readonly>
@@ -85,7 +97,7 @@
 
 
                         <div class="p-t-20">
-                            <button class="btn btn--radius btn--green" type="submit">Submit</button>
+                            <button class="btn btn--radius btn--green" type="submit">Proceed to Payment</button>
                         </div>
                     </form>
                 </div>
@@ -103,6 +115,25 @@
 
     <!-- Main JS-->
     <script src="js/global.js"></script>
+    <script>
+        const pricecalculator = ()=>{
+            let elmvalue = document.getElementById("travellers").value;
+            let triprate = <%- JSON.stringify(triprate) %>;
+            console.log(elmvalue, triprate);
+            document.getElementById("cost").value = Number(elmvalue) * Number(triprate);   
+        } ;
+        const phoneInputField = document.querySelector("#contact");
+   const phoneInput = window.intlTelInput(phoneInputField, {  initialCountry: "auto",
+  geoIpLookup: callback => {
+    fetch("https://ipapi.co/json")
+      .then(res => res.json())
+      .then(data => callback(data.country_code))
+      .catch(() => callback("us"));
+  },
+     utilsScript:
+       "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+   });
+    </script>
 
 </body><!-- This templates was made by Colorlib (https://colorlib.com) -->
 
