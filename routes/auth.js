@@ -15,7 +15,7 @@ const gmailuser = require("../models/gmailuser");
 passport.use(new GoogleStrategy({
   clientID: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
-  callbackURL: '/oauth2/redirect/google',
+  callbackURL: 'https://www.dejavutours.in/oauth2/redirect/google',
   scope: [ 'profile', 'email' ]
 }, async function verify(issuer, profile, cb) {
   var user = {
