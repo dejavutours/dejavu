@@ -18,6 +18,11 @@ const GmailUserSchema = new Schema({
     email:{
       type: String,
       required: true
+    },
+
+    paymentids:{
+      type: Array,
+      required: true
     }
 
       

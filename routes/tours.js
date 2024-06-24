@@ -148,4 +148,8 @@ router.post("/admin/updatetrip", ensureLoggedIn, isAuth, makepdfController.updat
 
 router.post("/admin/deletetrip", ensureLoggedIn, isAuth, makepdfController.deletePdftrip);
 
+router.get("/mytrips", ensureLoggedIn, toursController.getmytrips );
+
+router.get("/profile", ensureLoggedIn, toursController.getprofile )
+
 module.exports = router; 

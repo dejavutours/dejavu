@@ -25,7 +25,31 @@ const paymentDetailsSchema = new mongoose.Schema({
 	},
 	status: {
 		type: String
-	}
+	},
+	name: {
+		type: String
+	},
+	email: {
+		type: String
+	},
+	travellers: {
+		type: String
+	},
+	cost: {
+		type: Number
+	},
+	dob: {
+		type: String
+	},
+	contact: {
+		type: Number
+	},
+	destination: {
+		type: String
+	},
+	tripdate: {
+		type: Date
+	},
 })
 
 module.exports = mongoose.model('PaymentDetail', paymentDetailsSchema)

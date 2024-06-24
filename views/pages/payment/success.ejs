@@ -1,0 +1,44 @@
+<html>
+	<head>
+		<%- include('../../partials/headtag'); %>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+	</head>
+	<body>
+		<%- include('../../partials/header'); %>
+		
+		<div class="row d-flex justify-content-center">
+			<div class="col-sm-10 col-md-8 col-lg-5">
+				<div>
+					<div class="card my-5">
+						<h5 class="card-header">Confirm Trip</h5>
+			
+						<div class="card-body">
+							<p class="card-text">Thank you for Booking Trip.</p>
+			
+							<dl class="row mt-2">
+								<dt class="col-sm-3">Order ID</dt>
+								<dd class="col-sm-9" id="orderId"><%- paymentDetail.orderId %>  </dd>
+													
+								<dt class="col-sm-3">Transaction ID</dt>
+								<dd class="col-sm-9" id="orderId"><%- paymentDetail.paymentId %>  </dd>
+			
+								<dt class="col-sm-3">Signature</dt>
+								<dd class="col-sm-9" id="orderId"><%- paymentDetail.signature %>  </dd>
+			
+								<dt class="col-sm-3">Amount</dt>
+								<dd class="col-sm-9"><%- paymentDetail.amount/100 %> Rs. </dd>
+							</dl>
+			
+							<a href="/" type="button" class="btn btn-primary">Go Home</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<%- include('../../partials/footer'); %>
+    	<%- include('../../partials/scripttag'); %>
+	</body>
+</html>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+

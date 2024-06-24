@@ -15,13 +15,13 @@ const gmailuser = require("../models/gmailuser");
 passport.use(new GoogleStrategy({
   clientID: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
-  callbackURL: 'https://www.dejavutours.in/oauth2/redirect/google',
+  callbackURL: process.env.CALL_BACK_URL,
   scope: [ 'profile', 'email' ]
 }, async function verify(issuer, profile, cb) {
   var user = {
     id: profile.id,
     name: profile.displayName,
-    email: profile.emails[0].value
+    email: profile.emails[0].value,
   };
   const filter = { email: user.email };
 

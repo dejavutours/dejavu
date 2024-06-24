@@ -20,6 +20,8 @@ const Blogs = require("../models/blog");
 
 const User = require("../models/user");
 
+const PaymentDetail = require("../models/payment-detail");
+
 const fileHelper = require('../util/file');
 
 const PDFDocument = require("pdfkit");
@@ -1267,6 +1269,25 @@ exports.deleteStay = async(req, res, next) => {
       console.log(err);
     });
 };
+
+exports.getmytrips = async(req, res, next) =>{
+// console.log('1272', req.user);
+const mytrips = await PaymentDetail.find({'email' : req.user.email, 'status': 'paid'});
+// console.log(mytrips);
+// console.log(mytrips.length);
+const tests = await Tours.find().distinct('name');
+res.render('pages/mytrips', {test: tests, mytrips: mytrips });
+// console.log(tests);
+};
+
+exports.getprofile = async(req, res, next) =>{
+  // console.log('1272', req.user);
+  // console.log(mytrips);
+  // console.log(mytrips.length);
+  const tests = await Tours.find().distinct('name');
+  res.render('pages/profile', {test: tests });
+  // console.log(tests);
+  };
 
 
 

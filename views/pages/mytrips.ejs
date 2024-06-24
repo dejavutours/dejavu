@@ -1,0 +1,73 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <%- include('../partials/headtag'); %>
+</head>
+
+<body>
+    <%- include('../partials/header'); %>
+    <% for (var i = 0; i < mytrips.length; i++) { %>
+    <div class="row">
+        <div class="col-8 mx-auto">
+        <div class="card my-2 border-2 rounded shadow-lg">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <!-- <div class="row">
+                            <div class="col-4" style="text-align: left;"><p>NAME</p></div>
+                            <div class="col-6" style="text-align: left;"><p><%= mytrips[i].name %></p></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4" style="text-align: left;"><p>EMAIL</div>
+                            <div class="col-6" style="text-align: left;"><p><%= mytrips[i].email %></p></div>
+                        </div> -->
+                        <div class="row">
+                            <div class="col-4" style="text-align: left;"><p>AMOUNT</div>
+                            <div class="col-6" style="text-align: left;"><p><%= mytrips[i].amount/100 %></p></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4" style="text-align: left;"><p>TRIP DATE</div>
+                            <div class="col-6" style="text-align: left;"><p><%= mytrips[i].tripdate.toDateString() %></p></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4" style="text-align: left;"><p>PAYMENT STATUS</div>
+                            <div class="col-6" style="text-align: left;"><p><%= mytrips[i].status %></p></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4" style="text-align: left;"><p>TRAVELLERS</div>
+                            <div class="col-6" style="text-align: left;"><p><%= mytrips[i].travellers %></p></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4" style="text-align: left;"><p>CONTACT</div>
+                            <div class="col-6" style="text-align: left;"><p><%= mytrips[i].contact %></p></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4" style="text-align: left;"><p>PAYMENTID</div>
+                            <div class="col-6" style="text-align: left;"><p><%= mytrips[i].paymentId %></p></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4" style="text-align: left;"><p>ORDERID</div>
+                            <div class="col-6" style="text-align: left;"><p><%= mytrips[i].orderId %></p></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4" style="text-align: left;"><p>RECEIPTID</div>
+                            <div class="col-6" style="text-align: left;"><p><%= mytrips[i].receiptId %></p></div>
+                        </div>
+                        <div class="row">
+                            <form action="tripdetails/<%= mytrips[i].destination %>">
+                                <button class="btn btn-success"><%= mytrips[i].destination %> </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <% } %>  
+    <%- include('../partials/footer'); %>
+    <%- include('../partials/scripttag'); %>
+</body>
+
+</html>

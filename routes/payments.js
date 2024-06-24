@@ -15,12 +15,12 @@ let razorPayInstance = new Razorpay({
  * Make Donation Page
  * 
  */
-router.get('/', function(req, res, next) {
-	// Render form for accepting amount
-	res.render('pages/payment/order', { 
-		title: 'Donate for Animals'
-	});
-});
+// router.get('/', function(req, res, next) {
+// 	// Render form for accepting amount
+// 	res.render('pages/payment/order', { 
+// 		title: 'Donate for Animals'
+// 	});
+// });
 
 /**
  * Checkout Page
@@ -28,7 +28,7 @@ router.get('/', function(req, res, next) {
  */
 router.post('/order', function(req, res, next) {
 	params = {
-		amount: req.body.amount * 100,
+		amount: req.body.cost * 100,
 		currency: "INR",
 		receipt: nanoid(),
 		payment_capture: "1"
@@ -43,7 +43,15 @@ router.post('/order', function(req, res, next) {
 			amount: response.amount,
 			currency: response.currency,
 			createdAt: response.created_at,
-			status: response.status
+			status: response.status,
+			name: req.body.name,
+			email: req.body.email,
+			travellers: req.body.travellers,
+			cost: req.body.cost,
+			dob: req.body.dob,
+			contact: req.body.contact,
+			destination: req.body.destination,
+			tripdate: req.body.tripdate,
 		})
 		try {
 			// Render Order Confirmation page if saved succesfully
@@ -51,7 +59,8 @@ router.post('/order', function(req, res, next) {
 			res.render('pages/payment/checkout', {
 				title: "Confirm Order",
 				razorpayKeyId: razorpayKeyId,
-				paymentDetail : paymentDetail
+				paymentDetail : paymentDetail,
+				test: []
 			})
 		} catch (err) {
 			// Throw err if failed to save
@@ -94,7 +103,8 @@ router.post('/verify', async function(req, res, next) {
 				// Render payment success page, if saved succeffully
 				res.render('pages/payment/success', {
 					title: "Payment verification successful",
-					paymentDetail: doc
+					paymentDetail: doc,
+					test: []
 				})
 			}
 		);
