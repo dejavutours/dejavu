@@ -138,6 +138,7 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
   res.locals.csrfToken = req.csrfToken();
+  res.locals.accessToken = req.cookies.accessToken || null;
   res.locals.profile = req.user || null;
   if(req.files !== undefined){
     req.file = req.files[0];

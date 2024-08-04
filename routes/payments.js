@@ -49,7 +49,7 @@ router.post('/order', function(req, res, next) {
 			travellers: req.body.travellers,
 			cost: req.body.cost,
 			dob: req.body.dob,
-			contact: req.body.contact,
+			contact: Number(req.body.contact.replaceAll(/\s/g,'')),
 			destination: req.body.destination,
 			tripdate: req.body.tripdate,
 		})

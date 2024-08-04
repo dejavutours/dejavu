@@ -22,6 +22,8 @@ const User = require("../models/user");
 
 const PaymentDetail = require("../models/payment-detail");
 
+const Mobileuser = require("../models/mobileuser");
+
 const fileHelper = require('../util/file');
 
 const PDFDocument = require("pdfkit");
@@ -29,6 +31,18 @@ const PDFDocument = require("pdfkit");
 const fs = require('fs');
 
 const nodemailer = require('nodemailer');
+
+const otpGenerator = require('otp-generator');
+
+const AWS = require('aws-sdk');
+
+const jwt = require('jsonwebtoken');
+
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_SMS,
+  secretAccessKey: process.env.AWS_SECERET_ACCESS_KEY_SMS,
+  region: process.env.AWS_REGION
+});
 
 const { DeleteFileGallery , DeleteFileProofs , getFileStream } = require('../s3');
 const { AsyncLocalStorage } = require("async_hooks");
@@ -203,13 +217,14 @@ exports.getAbout = async(req, res, next) => {
 };
 
 exports.getBookTrip = async(req, res, next) => {
-
+  
   const tests = await Tours.find().distinct('name');
   res.render("pages/booktrip", {
     tripname : req.body.tripname,
     triprate : req.body.triprate,
-    username: req.user.name,
-    useremail: req.user.email,
+    username: req.user?.name || null,
+    useremail: req.user?.email || null,
+    phonenumber: req.verifiedPhoneNumber ? '+' + req.verifiedPhoneNumber : null,
     tripdate : null,
     test: tests,
   });
@@ -1272,7 +1287,14 @@ exports.deleteStay = async(req, res, next) => {
 
 exports.getmytrips = async(req, res, next) =>{
 // console.log('1272', req.user);
-const mytrips = await PaymentDetail.find({'email' : req.user.email, 'status': 'paid'});
+
+let mytrips;
+if(res.locals.accessToken){
+   mytrips = await PaymentDetail.find({'contact' : Number(req.verifiedPhoneNumber.length === 12 ? req.verifiedPhoneNumber.toString().slice(2) : req.verifiedPhoneNumber), 'status': 'paid'});
+}else{
+   mytrips = await PaymentDetail.find({'email' : req.user.email, 'status': 'paid'});
+}
+
 // console.log(mytrips);
 // console.log(mytrips.length);
 const tests = await Tours.find().distinct('name');
@@ -1288,6 +1310,64 @@ exports.getprofile = async(req, res, next) =>{
   res.render('pages/profile', {test: tests });
   // console.log(tests);
   };
+
+exports.getotp = async(req, res, next)=>{
+    const otp = otpGenerator.generate(4, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false, digits: true });
+    console.log(otp);
+    const phone = `+91${req.body.phone}`;
+    const sns = new AWS.SNS();
+    const params = {
+      Message: `Your OTP for verification is: ${otp}`,
+      PhoneNumber: phone
+    };
+    try {
+      // Store OTP and expiration in MongoDB
+    const user = await Mobileuser.findOneAndUpdate(
+      { phoneNumber: phone },
+      {
+          otp: otp,
+          otpExpiration: new Date(Date.now() + 5 * 60 * 1000), // OTP expires in 5 minutes
+      },
+      { upsert: true, new: true }
+    );
+      // Send SMS
+      const data = await sns.publish(params).promise();
+      // console.log("OTP sent successfully:", data.MessageId);
+      // res.render('verifyOTP', { phoneNumber: req.body.phone, otpSent: true });
+      return res.send(true); // Return OTP in case you need to verify it later
+    } catch (err) {
+      console.error("Error sending OTP:", err);
+      return res.send(false);
+      throw err;
+    }
+  };
+
+exports.verifyotp = async(req, res, next) =>{
+  const { phone2, otp } = req.body;
+  try {
+    const user = await Mobileuser.findOne({ phoneNumber: '91' + phone2 });
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    // Verify OTP
+    if (user.otp === Number(otp) && user.otpExpiration > new Date()) {
+      // OTP is valid and not expired
+      // Implement session management or JWT token creation for authentication
+        // Generate JWT token
+      const accessToken = jwt.sign(user.phoneNumber, process.env.JWT_TOKEN);
+      // res.send(accessToken);
+      res.json({ accessToken });
+      // res.send('OTP verified successfully');
+    } else {
+      res.status(401).send('Invalid OTP or OTP expired');
+    }
+  } catch (err) {
+    console.error("Error verifying OTP:", err);
+    res.status(500).send('Failed to verify OTP');
+  }
+};
+
 
 
 

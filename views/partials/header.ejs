@@ -36,27 +36,35 @@
                                           <li><a href="/contact">Contact</a></li>
                                         </ul>
                                       </li>
-                                      <% if(profile?.email) { %>
-                                          <li><i class="fa fa-user-o fa-sm"></i>&nbsp;<a class="destination-link"><%= profile.name || profile.email %></a>
-                                            <ul class="submenu">
-                                              <% if(profile?.email === process.env.GMAIL_ADMIN) { %>
+                                      <% if(profile?.email || accessToken) { %>
+                                        <li><i class="fa fa-user-o fa-sm"></i>&nbsp;<a class="destination-link">
+                                          <%= profile?.name || profile?.email || atob(accessToken.split('.')[1]) %>
+                                      </a>
+                                      <ul class="submenu">
+                                          <% if(profile?.email===process.env.GMAIL_ADMIN) { %>
                                               <li><a href="/admin/login">Admin</a></li>
-                                              <% } %> 
-                                                <!-- <li><a href="/profile">Profile</a></li> -->
-                                                <li><a href="/mytrips">My Trips</a></li>
-                                                <!-- <li><a href="/logout">Sign Out</a></li> -->
-                                                <li><form id="my_form" action="/logout" method="post">
-                                                  <!-- <a href="#" type="submit">Sign Out</a> -->
-                                                  <!-- <button class="btn btn-light" type="submit"><a>Sign out</a></button> -->
-                                                  <a href="javascript:{}" onclick="document.getElementById('my_form').submit();">Sign Out</a>
-                                                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                                </form>
-                                    </li>
-                                            </ul>
-                                          </li>
+                                              <% } %>
+                                                  <!-- <li><a href="/profile">Profile</a></li> -->
+                                                  <li><a href="/mytrips">My Trips</a></li>
+                                                  <!-- <li><a href="/logout">Sign Out</a></li> -->
+                                                  <li>
+                                                      <form id="my_form" action="/logout" method="post">
+                                                          <!-- <a href="#" type="submit">Sign Out</a> -->
+                                                          <!-- <button class="btn btn-light" type="submit"><a>Sign out</a></button> -->
+                                                      <a href="javascript:{}" onclick="signout(accessTokens)">Sign Out</a>
+                                                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                      </form>
+                                                  </li>
+                                      </ul>
+                                  </li>
                                         <%} else { %>
-                                          <li>
+                                          <!-- <li>
                                             <button class="btn btn-sm btn-primary"><a href="/login/federated/google" style="color: white;">SignIn with Google</a></button>
+                                          </li> -->
+                                          <li>
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                                              Sign In
+                                            </button>
                                           </li>
                                         <% } %> 
                                   </ul>
@@ -92,8 +100,122 @@
           </div>
       </div>
   </div>
+  <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Sign In</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       <div class="row">
+        <div class="col"> 
+          <button class="btn">
+          <a href="/login/federated/google"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4="> Sign in with Google</a>
+          </button>
+        </div>
+        <div class="col">
+          <button class="btn btn-primary" >
+            Sign In With Phone OTP
+          </button>
+        </div>
+       </div>
+       <form id="getotp">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="form-group mt-2">
+            <label for="phone">Phone Number</label>
+            <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter Phone Number">
+          </div>
+          <button type="submit" class="btn btn-primary">GET OTP</button>
+        </form>
+        <form id="verifyotp" style="display: none;">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="form-group mt-2">
+            <label for="otp">OTP</label>
+            <input type="hidden" class="form-control" id="phone2" name="phone2" placeholder="Enter Phone Number">
+            <input type="number" class="form-control" id="otp" name="otp" placeholder="Enter OTP">
+          </div>
+          <button type="submit"class="btn btn-primary">Verify OTP</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 </header>
 <!-- header-end -->
+ <script>
+  async function  signout(accessToken){
+    if(accessToken){
+      sessionStorage.removeItem('accessToken');
+      // cookies.remove({name: 'accessToken'}).then((data=> console.log('cookiedata', data)));
+      cookieStore.getAll().then(p => p.forEach(c => cookieStore.delete(c)));
+      if (caches) {
+  const names = await caches.keys();
+  await Promise.all(names.map(name => caches.delete(name)));
+}
+window.location.reload();
+    }else{
+      document.getElementById('my_form').submit();
+    }
+  }
+ </script>
+<script>
+  var accessTokens = '<%= accessToken %>';
+document.getElementById('getotp').addEventListener('submit', function(event) {
+  event.preventDefault(); // Prevent the default form submission
+  // Serialize the form data
+  var formData = new FormData(this);
+  // Fetch request
+  document.getElementById('phone2').value = document.getElementById('phone').value;
+  fetch('/getotp', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    // Handle response from server
+    if(data){
+    document.getElementById("getotp").style.display = "none";
+    document.getElementById("verifyotp").style.display = "block";
+    }
+  })
+  .catch(error => {
+    // Handle errors
+    console.log('Error:', error);
+  });
+});
+</script>
+<script>
+  document.getElementById('verifyotp').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the default form submission
+    // Serialize the form data
+    var formData = new FormData(this);
+    // Fetch request
+    // document.getElementById('phone2').value = document.getElementById('phone').value;
+    fetch('/verifyotp', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Handle response from server
+      if(data){
+      // console.log('token',data.accessToken);
+      sessionStorage.setItem('accessToken', data.accessToken);
+      // console.log(atob(data.accessToken.split('.')[1]));
+      document.cookie = `accessToken=${data.accessToken}`;
+      window.location.href = "/";
+      }
+    })
+    .catch(error => {
+      // Handle errors
+      console.log('Error:', error);
+    });
+  });
+  </script>
 <style>
   * {
     box-sizing: border-box;
@@ -156,7 +278,7 @@
     background-color: DodgerBlue !important; 
     color: #ffffff; 
   }
-</style>
+  </style>
 <!-- Modal -->
 <div class="modal fade custom_search_pop" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">

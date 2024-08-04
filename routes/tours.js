@@ -12,7 +12,25 @@ const makepdfController = require("../controllers/makepdf");
 
 const isAuth = require('../middleware/is-auth');
 
+const isPhoneAuth = require('../middleware/is-phone-auth');
+
+const jwt = require('jsonwebtoken');
+
 const router = express.Router();
+
+const ensuremultiplelogin = (req, res, next)=>{
+    console.log(res.locals.accessToken);
+    if(res.locals.accessToken){
+        jwt.verify(res.locals.accessToken, process.env.JWT_TOKEN, (err, verifiedPhoneNumber) => {
+            console.log(err, req.verifiedPhoneNumber);
+            if (err) return res.sendStatus(403); // If token is invalid, respond with 403
+            req.verifiedPhoneNumber = verifiedPhoneNumber; // Add the user to the request object
+             // Proceed to the next middleware or route handler
+          });
+          return next();
+    }
+    return ensureLoggedIn(req, res, next);
+}
 
 router.get("/login" , (req, res, next)=>{res.redirect("/")});
 
@@ -32,9 +50,9 @@ router.post("/contact", toursController.postContact);
 
 router.get("/about", toursController.getAbout);
 
-router.post("/getbooktrip", ensureLoggedIn, toursController.getBookTrip);
+router.post("/getbooktrip",ensuremultiplelogin, toursController.getBookTrip);
 
-router.post("/booktrip", toursController.postBookTrip);
+router.post("/booktrip",ensuremultiplelogin, toursController.postBookTrip);
 
 router.post("/admin/delete", ensureLoggedIn, isAuth, toursController.postDelete);
 
@@ -102,7 +120,7 @@ router.post("/admin/accod/BannerImageAdded", ensureLoggedIn, isAuth, toursContro
 
 router.post("/admin/deleteupcomingdate", ensureLoggedIn, isAuth, toursController.postDeleteUpcomingDate);
 
-router.post("/bookdate", ensureLoggedIn, toursController.postBookDate);
+router.post("/bookdate", ensuremultiplelogin, toursController.postBookDate);
 
 router.post("/admin/deleteregistration", toursController.postDeleteRegistration);
 
@@ -148,8 +166,12 @@ router.post("/admin/updatetrip", ensureLoggedIn, isAuth, makepdfController.updat
 
 router.post("/admin/deletetrip", ensureLoggedIn, isAuth, makepdfController.deletePdftrip);
 
-router.get("/mytrips", ensureLoggedIn, toursController.getmytrips );
+router.get("/mytrips", ensuremultiplelogin, toursController.getmytrips );
 
-router.get("/profile", ensureLoggedIn, toursController.getprofile )
+router.get("/profile", ensuremultiplelogin, toursController.getprofile );
+
+router.post("/getotp", toursController.getotp );
+
+router.post("/verifyotp", toursController.verifyotp );
 
 module.exports = router; 
