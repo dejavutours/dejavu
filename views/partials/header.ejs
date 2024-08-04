@@ -38,7 +38,7 @@
                                       </li>
                                       <% if(profile?.email || accessToken) { %>
                                         <li><i class="fa fa-user-o fa-sm"></i>&nbsp;<a class="destination-link">
-                                          <%= profile?.name || profile?.email || atob(accessToken.split('.')[1]) %>
+                                          <%= profile?.name || profile?.email || Buffer.from(accessToken.split('.')[1], 'base64').toString() %>
                                       </a>
                                       <ul class="submenu">
                                           <% if(profile?.email===process.env.GMAIL_ADMIN) { %>
