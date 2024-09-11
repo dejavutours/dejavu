@@ -2,364 +2,409 @@
 <html class="no-js" lang="zxx">
 
 <head>
-    <%- include('../partials/headtag'); %>
+  <%- include('../partials/headtag'); %>
     <style>
-        .bs-example{
-            margin: 20px;
-        }
-        .modal-dialog iframe{
-            margin: 0 auto;
-            display: block;
-        }
-        .play-btn {
-          width: 100px;
-          height: 100px;
-          background: radial-gradient( rgba(35, 235, 142, 0.8) 60%, rgba(255, 255, 255, 1) 62%);
-          border-radius: 50%;
-          position: relative;
-          display: block;
-          margin: 100px auto;
-          box-shadow: 0px 0px 25px 3px rgba(35, 235, 142, 0.8);
-        }
+      .bs-example {
+        margin: 20px;
+      }
 
-/* triangle */
-        .play-btn::after {
-          content: "";
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          -webkit-transform: translateX(-40%) translateY(-50%);
-          transform: translateX(-40%) translateY(-50%);
-          transform-origin: center center;
-          width: 0;
-          height: 0;
-          border-top: 15px solid transparent;
-          border-bottom: 15px solid transparent;
-          border-left: 25px solid #fff;
-          z-index: 100;
-          -webkit-transition: all 400ms cubic-bezier(0.55, 0.055, 0.675, 0.19);
-          transition: all 400ms cubic-bezier(0.55, 0.055, 0.675, 0.19);
-        }
+      .modal-dialog iframe {
+        margin: 0 auto;
+        display: block;
+      }
 
-/* pulse wave */
-        .play-btn:before {
-          content: "";
-          position: absolute;
-          width: 150%;
-          height: 150%;
-          -webkit-animation-delay: 0s;
-          animation-delay: 0s;
-          -webkit-animation: pulsate1 2s;
-          animation: pulsate1 2s;
-          -webkit-animation-direction: forwards;
-          animation-direction: forwards;
-          -webkit-animation-iteration-count: infinite;
-          animation-iteration-count: infinite;
-          -webkit-animation-timing-function: steps;
-          animation-timing-function: steps;
+      .play-btn {
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(rgba(35, 235, 142, 0.8) 60%, rgba(255, 255, 255, 1) 62%);
+        border-radius: 50%;
+        position: relative;
+        display: block;
+        margin: 100px auto;
+        box-shadow: 0px 0px 25px 3px rgba(35, 235, 142, 0.8);
+      }
+
+      /* triangle */
+      .play-btn::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        -webkit-transform: translateX(-40%) translateY(-50%);
+        transform: translateX(-40%) translateY(-50%);
+        transform-origin: center center;
+        width: 0;
+        height: 0;
+        border-top: 15px solid transparent;
+        border-bottom: 15px solid transparent;
+        border-left: 25px solid #fff;
+        z-index: 100;
+        -webkit-transition: all 400ms cubic-bezier(0.55, 0.055, 0.675, 0.19);
+        transition: all 400ms cubic-bezier(0.55, 0.055, 0.675, 0.19);
+      }
+
+      /* pulse wave */
+      .play-btn:before {
+        content: "";
+        position: absolute;
+        width: 150%;
+        height: 150%;
+        -webkit-animation-delay: 0s;
+        animation-delay: 0s;
+        -webkit-animation: pulsate1 2s;
+        animation: pulsate1 2s;
+        -webkit-animation-direction: forwards;
+        animation-direction: forwards;
+        -webkit-animation-iteration-count: infinite;
+        animation-iteration-count: infinite;
+        -webkit-animation-timing-function: steps;
+        animation-timing-function: steps;
+        opacity: 1;
+        border-radius: 50%;
+        border: 5px solid rgba(255, 255, 255, .75);
+        top: -30%;
+        left: -30%;
+        background: rgba(198, 16, 0, 0);
+      }
+
+      @-webkit-keyframes pulsate1 {
+        0% {
+          -webkit-transform: scale(0.6);
+          transform: scale(0.6);
           opacity: 1;
-          border-radius: 50%;
-          border: 5px solid rgba(255, 255, 255, .75);
-          top: -30%;
-          left: -30%;
-          background: rgba(198, 16, 0, 0);
+          box-shadow: inset 0px 0px 25px 3px rgba(255, 255, 255, 0.75), 0px 0px 25px 10px rgba(255, 255, 255, 0.75);
         }
 
-        @-webkit-keyframes pulsate1 {
-          0% {
-            -webkit-transform: scale(0.6);
-            transform: scale(0.6);
-            opacity: 1;
-            box-shadow: inset 0px 0px 25px 3px rgba(255, 255, 255, 0.75), 0px 0px 25px 10px rgba(255, 255, 255, 0.75);
-          }
-          100% {
-            -webkit-transform: scale(1);
-            transform: scale(1);
-            opacity: 0;
-            box-shadow: none;
+        100% {
+          -webkit-transform: scale(1);
+          transform: scale(1);
+          opacity: 0;
+          box-shadow: none;
 
-          }
+        }
+      }
+
+      @keyframes pulsate1 {
+        0% {
+          -webkit-transform: scale(0.6);
+          transform: scale(0.6);
+          opacity: 1;
+          box-shadow: inset 0px 0px 25px 3px rgba(255, 255, 255, 0.75), 0px 0px 25px 10px rgba(255, 255, 255, 0.75);
         }
 
-        @keyframes pulsate1 {
-          0% {
-            -webkit-transform: scale(0.6);
-            transform: scale(0.6);
-            opacity: 1;
-            box-shadow: inset 0px 0px 25px 3px rgba(255, 255, 255, 0.75), 0px 0px 25px 10px rgba(255, 255, 255, 0.75);
-          }
-          100% {
-            -webkit-transform: scale(1, 1);
-            transform: scale(1);
-            opacity: 0;
-            box-shadow: none;
+        100% {
+          -webkit-transform: scale(1, 1);
+          transform: scale(1);
+          opacity: 0;
+          box-shadow: none;
 
-          }
         }
+      }
     </style>
     <script>
-    $(document).ready(function(){
+      $(document).ready(function () {
         /* Get iframe src attribute value i.e. YouTube video url
         and store it in a variable */
         var url = $("#cartoonVideo").attr('src');
-        
+
         /* Assign empty url value to the iframe src attribute when
         modal hide, which stop the video playing */
-        $("#myModal").on('hide.bs.modal', function(){
-            $("#cartoonVideo").attr('src', '');
+        $("#myModal").on('hide.bs.modal', function () {
+          $("#cartoonVideo").attr('src', '');
         });
-        
+
         /* Assign the initially stored url back to the iframe src
         attribute when modal is displayed again */
-        $("#myModal").on('show.bs.modal', function(){
-            $("#cartoonVideo").attr('src', url);
+        $("#myModal").on('show.bs.modal', function () {
+          $("#cartoonVideo").attr('src', url);
         });
-    });
+      });
     </script>
 </head>
 
 <body>
-    
-    <%- include('../partials/header'); %>
-    
-      <% if(trips.bannerimage == null){ %>
-        <div class="destination_banner_wrap overlay" style="background-image: url('/images/<%= trips.imageurl %>');">
-      <% } else{ %>  
-        <div class="destination_banner_wrap overlay" style="background-image: url('/images/<%= trips.bannerimage %>');">
-      <% } %>
-      <div class="destination_text text-center">
-          <h3><%= trips.name %></h3>
-          <p><%= trips.tag %></p>
-          <p>₹<%= trips.price %> &nbsp; <%= trips.destinations %></p>
-          <form action="/getbooktrip" method="POST">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <input type="hidden" name="tripname" id="tripname" value="<%= trips.name %>">
-            <input type="hidden" name="triprate" id="triprate" value="<%= trips.price %>">
-            <button class="boxed-btn4 mt-2" type="submit">Please Login/SignUp to book<br>Book Now</button>
-          </form>
-          <% if(trips.youtubeUrl.length > 0){ %>
-          <a href="#myModal" class="play-btn" data-toggle="modal"></a>
-          <% } %>
-      </div>
-    </div>
 
-    <div class="destination_details_info">
-        <div class="container">
-            <div class="row justify-content-center">
+  <%- include('../partials/header'); %>
+
+    <% if(trips.bannerimage==null){ %>
+      <div class="destination_banner_wrap overlay" style="background-image: url('/images/<%= trips.imageurl %>');">
+        <% } else{ %>
+          <div class="destination_banner_wrap overlay"
+            style="background-image: url('/images/<%= trips.bannerimage %>');">
+            <% } %>
+              <div class="destination_text text-center">
+                <h3>
+                  <%= trips.name %>
+                </h3>
+                <p>
+                  <%= trips.tag %>
+                </p>
+                <p>₹<%= trips.price %> &nbsp; <%= trips.destinations %>
+                </p>
+                <form action="/getbooktrip" method="POST">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="tripname" id="tripname" value="<%= trips.name %>">
+                  <input type="hidden" name="triprate" id="triprate" value="<%= trips.price %>">
+                  <button class="boxed-btn4 mt-2" type="submit">Please Login/SignUp to book<br>Book Now</button>
+                </form>
+                <% if(trips.youtubeUrl.length> 0){ %>
+                  <a href="#myModal" class="play-btn" data-toggle="modal"></a>
+                  <% } %>
+              </div>
+          </div>
+
+          <div class="destination_details_info">
+            <div class="container">
+              <div class="row justify-content-center">
                 <div class="col-lg-8 col-md-9">
-                   <div class="destination_info">
-                          <% if (trips.upcomingtrip.length > 0) { %>
-                          <h3>Book For Upcoming Trip</h3>
-                          <% } %>
-                          <% if (!profile) { %>
-                            <% for (var i = 0; i < trips.upcomingtrip.length; i++) { %>
-                            <form style ='display:inline-block;' action="/bookdate" method="POST">
-                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                <input type="hidden" value="<%= trips.name %>" id="tripname" name="tripname">
-                                <input type="hidden" value="<%= trips.upcomingtrip[i] %>" id="tripdate" name="tripdate">
-                                <button class="btn btn-success mt-2" type="submit"><%= trips.upcomingtrip[i] %></button>
+                  <div class="destination_info">
+                    <% if (trips.upcomingtrip.length> 0) { %>
+                      <h3>Book For Upcoming Trip</h3>
+                      <% } %>
+                        <% if (!profile || profile?.email !==process.env.GMAIL_ADMIN) { %>
+                          <% for (var i=0; i < trips.upcomingtrip.length; i++) { %>
+                            <form style='display:inline-block;' action="/bookdate" method="POST">
+                              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                              <input type="hidden" value="<%= trips.name %>" id="tripname" name="tripname">
+                              <input type="hidden" value="<%= trips.price %>" id="triprate" name="triprate">
+                              <input type="hidden" value="<%= trips.upcomingtrip[i] %>" id="tripdate" name="tripdate">
+                              <button class="btn btn-success mt-2" type="submit">
+                                <%= trips.upcomingtrip[i] %>
+                              </button>
                             </form>
                             <% } %>
-                        <% } %>
-                        <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
-                            <% for (var i = 0; i < trips.upcomingtrip.length; i++) { %>
-                            <form style ='display:inline-block;' action="/admin/deleteupcomingdate" method="POST">
-                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                <input type="hidden" value="<%= trips._id %>" id="tripid" name="tripid">
-                                <input type="hidden" value="<%= i %>" id="tripdateindex" name="tripdateindex">
-                                <button class="btn btn-info mt-2" type="submit">Del&nbsp;<%= trips.upcomingtrip[i] %></button>
-                            </form>
-                            <% } %>
-                        <% } %>
-                        <br><br>
-                        <h3>About <%= trips.name %></h3>
-                        <%- trips.about %>
-                        
-                        <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item">
-                          <a class="nav-link active" id="tab1-tab" data-toggle="tab" href="#tab1" role="tab" aria-controls="tab1" aria-selected="true">Places To Visit</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" id="tab2-tab" data-toggle="tab" href="#tab2" role="tab" aria-controls="tab2" aria-selected="false">Activities & Attraction</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" id="tab3-tab" data-toggle="tab" href="#tab3" role="tab" aria-controls="tab3" aria-selected="false">Itinerary</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" id="tab4-tab" data-toggle="tab" href="#tab4" role="tab" aria-controls="tab4" aria-selected="false">Things to Carry</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" id="tab5-tab" data-toggle="tab" href="#tab5" role="tab" aria-controls="tab5" aria-selected="false">Include & Exclude</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" id="tab6-tab" data-toggle="tab" href="#tab6" role="tab" aria-controls="tab6" aria-selected="false">Package Cost</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" id="tab7-tab" data-toggle="tab" href="#tab7" role="tab" aria-controls="tab7" aria-selected="false">Info & FAQs</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" id="tab8-tab" data-toggle="tab" href="#tab8" role="tab" aria-controls="tab8" aria-selected="false">Booking & Cancellation</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" id="tab9-tab" data-toggle="tab" href="#tab9" role="tab" aria-controls="tab9" aria-selected="false">Travel Guidelines</a>
-                        </li>
-                      </ul>
-                      
-                      <div class="tab-content" id="myTabContent">
-                        <!-- Tab 1 content -->
-                        <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
-                          <div class="single_destination mt-3 ml-3">
-                              
-                            <%- trips.placestovisit %>
-                            
-                          </div>
-                        </div>
-                        <!-- Tab 2 content -->
-                        <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
-                          <div class="single_destination mt-3 ml-3">
-                         
-                            <%- trips.activities %>
+                              <% } %>
+                                <% if (profile?.email===process.env.GMAIL_ADMIN) { %>
+                                  <% for (var i=0; i < trips.upcomingtrip.length; i++) { %>
+                                    <form style='display:inline-block;' action="/admin/deleteupcomingdate"
+                                      method="POST">
+                                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                      <input type="hidden" value="<%= trips._id %>" id="tripid" name="tripid">
+                                      <input type="hidden" value="<%= i %>" id="tripdateindex" name="tripdateindex">
+                                      <button class="btn btn-info mt-2" type="submit">Del&nbsp;<%= trips.upcomingtrip[i]
+                                          %></button>
+                                    </form>
+                                    <% } %>
+                                      <% } %>
+                                        <br><br>
+                                        <h3>About <%= trips.name %>
+                                        </h3>
+                                        <%- trips.about %>
 
-                          </div>
-                        </div>
-                        <!-- Tab 3 content -->
-                        <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
-                          <div class="single_destination mt-3 ml-3">
-                          
-                            <%- trips.itinerary %>
+                                          <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                            <li class="nav-item">
+                                              <a class="nav-link active" id="tab1-tab" data-toggle="tab" href="#tab1"
+                                                role="tab" aria-controls="tab1" aria-selected="true">Places To Visit</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="tab2-tab" data-toggle="tab" href="#tab2"
+                                                role="tab" aria-controls="tab2" aria-selected="false">Activities &
+                                                Attraction</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="tab3-tab" data-toggle="tab" href="#tab3"
+                                                role="tab" aria-controls="tab3" aria-selected="false">Itinerary</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="tab4-tab" data-toggle="tab" href="#tab4"
+                                                role="tab" aria-controls="tab4" aria-selected="false">Things to
+                                                Carry</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="tab5-tab" data-toggle="tab" href="#tab5"
+                                                role="tab" aria-controls="tab5" aria-selected="false">Include &
+                                                Exclude</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="tab6-tab" data-toggle="tab" href="#tab6"
+                                                role="tab" aria-controls="tab6" aria-selected="false">Package Cost</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="tab7-tab" data-toggle="tab" href="#tab7"
+                                                role="tab" aria-controls="tab7" aria-selected="false">Info & FAQs</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="tab8-tab" data-toggle="tab" href="#tab8"
+                                                role="tab" aria-controls="tab8" aria-selected="false">Booking &
+                                                Cancellation</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="tab9-tab" data-toggle="tab" href="#tab9"
+                                                role="tab" aria-controls="tab9" aria-selected="false">Travel
+                                                Guidelines</a>
+                                            </li>
+                                          </ul>
 
-                          </div>
-                        </div>
-                        <!-- Tab 4 content -->
-                        <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="tab4-tab">
-                          <div class="single_destination mt-3 ml-3">
-                          
-                            <%- trips.things_to_carry %>
+                                          <div class="tab-content" id="myTabContent">
+                                            <!-- Tab 1 content -->
+                                            <div class="tab-pane fade show active" id="tab1" role="tabpanel"
+                                              aria-labelledby="tab1-tab">
+                                              <div class="single_destination mt-3 ml-3">
 
-                          </div>
-                        </div>
-                        <!-- Tab 5 content -->
-                        <div class="tab-pane fade" id="tab5" role="tabpanel" aria-labelledby="tab5-tab">
-                          <div class="single_destination mt-3 ml-3">
-                         
-                            <%- trips.includenexclude %>
+                                                <%- trips.placestovisit %>
 
-                          </div>
-                        </div>
-                        <!-- Tab 6 content -->
-                        <div class="tab-pane fade" id="tab6" role="tabpanel" aria-labelledby="tab6-tab">
-                          <div class="single_destination mt-3 ml-3">
-                          
-                            <%- trips.package_cost %>
+                                              </div>
+                                            </div>
+                                            <!-- Tab 2 content -->
+                                            <div class="tab-pane fade" id="tab2" role="tabpanel"
+                                              aria-labelledby="tab2-tab">
+                                              <div class="single_destination mt-3 ml-3">
 
-                          </div>
-                        </div>
-                        <!-- Tab 7 content -->
-                        <div class="tab-pane fade" id="tab7" role="tabpanel" aria-labelledby="tab7-tab">
-                          <div class="single_destination mt-3 ml-3">
-                          
-                            <%- trips.infonfaq %>
+                                                <%- trips.activities %>
 
-                          </div>
-                        </div>
-                        <!-- Tab 8 content -->
-                        <div class="tab-pane fade" id="tab8" role="tabpanel" aria-labelledby="tab8-tab">
-                          <div class="single_destination mt-3 ml-3">
-                          
-                            <%- trips.Bookncancel %>
+                                              </div>
+                                            </div>
+                                            <!-- Tab 3 content -->
+                                            <div class="tab-pane fade" id="tab3" role="tabpanel"
+                                              aria-labelledby="tab3-tab">
+                                              <div class="single_destination mt-3 ml-3">
 
-                          </div>
-                        </div>
-                        <!-- Tab 9 content -->
-                        <div class="tab-pane fade" id="tab9" role="tabpanel" aria-labelledby="tab9-tab">
-                          <div class="single_destination mt-3 ml-3">
-                          
-                            <%- trips.guidelines %>
+                                                <%- trips.itinerary %>
 
-                          </div>
-                        </div>
+                                              </div>
+                                            </div>
+                                            <!-- Tab 4 content -->
+                                            <div class="tab-pane fade" id="tab4" role="tabpanel"
+                                              aria-labelledby="tab4-tab">
+                                              <div class="single_destination mt-3 ml-3">
+
+                                                <%- trips.things_to_carry %>
+
+                                              </div>
+                                            </div>
+                                            <!-- Tab 5 content -->
+                                            <div class="tab-pane fade" id="tab5" role="tabpanel"
+                                              aria-labelledby="tab5-tab">
+                                              <div class="single_destination mt-3 ml-3">
+
+                                                <%- trips.includenexclude %>
+
+                                              </div>
+                                            </div>
+                                            <!-- Tab 6 content -->
+                                            <div class="tab-pane fade" id="tab6" role="tabpanel"
+                                              aria-labelledby="tab6-tab">
+                                              <div class="single_destination mt-3 ml-3">
+
+                                                <%- trips.package_cost %>
+
+                                              </div>
+                                            </div>
+                                            <!-- Tab 7 content -->
+                                            <div class="tab-pane fade" id="tab7" role="tabpanel"
+                                              aria-labelledby="tab7-tab">
+                                              <div class="single_destination mt-3 ml-3">
+
+                                                <%- trips.infonfaq %>
+
+                                              </div>
+                                            </div>
+                                            <!-- Tab 8 content -->
+                                            <div class="tab-pane fade" id="tab8" role="tabpanel"
+                                              aria-labelledby="tab8-tab">
+                                              <div class="single_destination mt-3 ml-3">
+
+                                                <%- trips.Bookncancel %>
+
+                                              </div>
+                                            </div>
+                                            <!-- Tab 9 content -->
+                                            <div class="tab-pane fade" id="tab9" role="tabpanel"
+                                              aria-labelledby="tab9-tab">
+                                              <div class="single_destination mt-3 ml-3">
+
+                                                <%- trips.guidelines %>
+
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <form action="/getbooktrip" method="POST">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <input type="hidden" name="tripname" id="tripname"
+                                              value="<%= trips.name %>">
+                                            <button class="boxed-btn4 mt-2" type="submit">Book Now</button>
+                                          </form>
+                                          <!--- Image Gallary Section start --->
+                                          <div class="section-top-border">
+                                            <% if(trips.imageUrlAll.length> 0){ %>
+                                              <h3>Image Gallery</h3>
+                                              <% } %>
+                                                <div class="row gallery-item">
+                                                  <% for (var i=0; i < trips.imageUrlAll.length; i++) { %>
+                                                    <div class="col-md-6">
+                                                      <a href="/images/<%= trips.imageUrlAll[i] %>" class="img-pop-up">
+                                                        <div class="single-gallery-image"
+                                                          style="background: url('/images/<%= trips.imageUrlAll[i] %>');">
+                                                        </div>
+                                                      </a>
+                                                    </div>
+                                                    <% } %>
+                                                </div>
+                                          </div>
+                                          <!--- Image Gallary Section End --->
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Modal HTML -->
+            <div id="myModal" class="modal fade">
+              <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">
+                      <%= trips.name %>
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="embed-responsive embed-responsive-16by9">
+                      <iframe id="cartoonVideo" class="embed-responsive-item" width="560" height="315"
+                        src="<%= trips.youtubeUrl[0] %>?autoplay=1&mute=1" allowfullscreen></iframe>
                     </div>
-                        <form action="/getbooktrip" method="POST">
-                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                          <input type="hidden" name="tripname" id="tripname" value="<%= trips.name %>">
-                          <button class="boxed-btn4 mt-2" type="submit">Book Now</button>
-                        </form>
-                          <!--- Image Gallary Section start --->
-                        <div class="section-top-border">
-                          <% if(trips.imageUrlAll.length > 0){ %>
-                          <h3>Image Gallery</h3>
-                          <% } %>
-                          <div class="row gallery-item">
-                            <% for (var i = 0; i < trips.imageUrlAll.length; i++) { %>
-                           <div class="col-md-6">
-                                <a href="/images/<%= trips.imageUrlAll[i] %>" class="img-pop-up">
-                                    <div class="single-gallery-image" style="background: url('/images/<%= trips.imageUrlAll[i] %>');"></div>
-                                </a>
-                            </div>
-                            <% } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- newletter_area_start  -->
+            <div class="newletter_area overlay">
+              <div class="container">
+                <div class="row justify-content-center align-items-center">
+                  <div class="col-lg-10">
+                    <div class="row align-items-center">
+                      <div class="col-lg-5">
+                        <div class="newsletter_text">
+                          <h4>Subscribe Our Newsletter</h4>
+                          <p>Subscribe newsletter to get offers and about
+                            new places to discover.</p>
                         </div>
                       </div>
-                      <!--- Image Gallary Section End --->
-                </div>
-            </div>
-        </div>
-    </div>
-                            <!-- Modal HTML -->
-                            <div id="myModal" class="modal fade">
-                              <div class="modal-dialog modal-lg modal-dialog-centered">
-                                  <div class="modal-content">
-                                      <div class="modal-header">
-                                          <h5 class="modal-title"><%= trips.name %></h5>
-                                          <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                      </div>
-                                      <div class="modal-body">
-                                        <div class="embed-responsive embed-responsive-16by9">
-                                          <iframe id="cartoonVideo" class="embed-responsive-item" width="560" height="315" src="<%= trips.youtubeUrl[0] %>?autoplay=1&mute=1" allowfullscreen ></iframe>
-                                        </div>
-                                      </div>
-                                  </div>
+                      <div class="col-lg-7">
+                        <div class="mail_form">
+                          <form method="POST" action="/newsletter">
+                            <div class="row no-gutters">
+                              <div class="col-lg-9 col-md-8">
+                                <div class="newsletter_field">
+                                  <input type="email" placeholder="Your mail" name="emailid" id="emailid">
+                                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                </div>
                               </div>
-                          </div>
-    <!-- newletter_area_start  -->
-    <div class="newletter_area overlay">
-        <div class="container">
-            <div class="row justify-content-center align-items-center">
-                <div class="col-lg-10">
-                    <div class="row align-items-center">
-                        <div class="col-lg-5">
-                            <div class="newsletter_text">
-                                <h4>Subscribe Our Newsletter</h4>
-                                <p>Subscribe newsletter to get offers and about
-                                    new places to discover.</p>
+                              <div class="col-lg-3 col-md-4">
+                                <div class="newsletter_btn">
+                                  <button class="boxed-btn4 " type="submit">Subscribe</button>
+                                </div>
+                              </div>
                             </div>
+                          </form>
                         </div>
-                        <div class="col-lg-7">
-                            <div class="mail_form">
-                                <form method="POST" action="/newsletter">
-                                    <div class="row no-gutters">
-                                        <div class="col-lg-9 col-md-8">
-                                            <div class="newsletter_field">
-                                                <input type="email" placeholder="Your mail" name="emailid" id="emailid" >
-                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-md-4">
-                                            <div class="newsletter_btn">
-                                                <button class="boxed-btn4 " type="submit" >Subscribe</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                      </div>
                     </div>
+                  </div>
                 </div>
+              </div>
             </div>
-        </div>
-    </div>
-    <!-- newletter_area_end  -->
-    <%- include('../partials/footer'); %>
-    <%- include('../partials/scripttag'); %>
+            <!-- newletter_area_end  -->
+            <%- include('../partials/footer'); %>
+              <%- include('../partials/scripttag'); %>
 </body>
 
 </html>
