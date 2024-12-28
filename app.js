@@ -1,4 +1,5 @@
 require('dotenv').config();
+console.log(`Loaded environment variables from ${process.env.NODE_ENV === 'production' ? '.env.production' : '.env'}`);
 const path = require("path");
 const express = require("express");
 const cookieParser = require('cookie-parser');
