@@ -1,7 +1,15 @@
 const path = require("path");
-if(process.env.NODE_ENV !== 'production'){
-	require('dotenv').config()
-}
+const dotenv = require('dotenv');
+
+// Determine the environment
+const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env';
+// Load the appropriate .env file
+dotenv.config({ path: path.resolve(__dirname, envFile) });
+console.log(`Loaded environment variables from ${envFile}`);
+
+// if(process.env.NODE_ENV !== 'production'){
+// 	require('dotenv').config()
+// }
 const express = require("express");
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
