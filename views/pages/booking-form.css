@@ -1,0 +1,274 @@
+.booking_form .left_part {
+  flex-basis: 60%;
+}
+
+.booking_form .booking_summary {
+  flex-basis: 40%;
+}
+
+.booking_form label {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  margin-bottom: 5px;
+  display: block;
+  color: #464f60;
+}
+
+.booking_form select {
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 20px;
+  color: #464f60;
+  border: 1px solid #868fa029;
+}
+
+.booking_form input[type='date'],
+.booking_form input[type='tel'],
+.booking_form input[type='number'],
+.booking_form input[type='text'] {
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 20px;
+  color: #464f60;
+  border: 1px solid #868fa029;
+  outline: none;
+  width: 100%;
+}
+
+.booking_form .form_fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.booking_form .qty_action {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid lightgray;
+}
+
+.booking_form .additional_services details .content {
+  gap: 40px;
+}
+
+.booking_form .additional_services {
+  border-top: 1px solid lightgray;
+  margin-top: 40px;
+  padding-top: 20px;
+}
+
+.booking_form .additional_services p {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.booking_form .age_block {
+  padding-bottom: 30px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.booking_form .additional_services .service span {
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.booking_form .additional_services .content {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f3f4f6;
+  max-width: fit-content;
+}
+
+.booking_form .person_text p {
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.booking_form .booking_summary h2.title {
+  font-size: 16px;
+  line-height: 19px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.booking_form .joining_from {
+  gap: 20px;
+}
+
+.booking_form .additional_services .content .qty {
+  gap: 15px;
+}
+
+.booking_form .booking_summary .total_fare p,
+.booking_form .booking_summary .final_pickup p,
+.booking_form .booking_summary .trip_destination p,
+.booking_form .booking_summary .trip_destination h3 {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.booking_form .booking_summary .pay_now-button {
+  width: 100%;
+  background-color: #1a3c6c;
+  outline: none;
+  border: none;
+  padding: 10px 0;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.booking_form .age_block {
+  gap: 10px;
+}
+
+.booking_form .age_block .qty {
+  gap: 10px;
+}
+
+.booking_form .booking_summary .view_breakdown-btn {
+  font-size: 14px;
+  line-height: 20px;
+  margin-bottom: 20px;
+}
+
+.booking_form .booking_summary .payment_tabs {
+  background-color: lightgray;
+  border-radius: 6px;
+  display: flex;
+}
+
+.booking_form .booking_summary .payment_tabs button {
+  background-color: transparent;
+  border: none;
+  width: 50%;
+}
+
+.booking_form .booking_summary .payment_tabs button.active {
+  box-shadow: 0px 2px 6px 0px #00000040;
+  background-color: white;
+  border-radius: 4px;
+  margin: 2px;
+}
+
+.booking_form .booking_summary .modal {
+  max-width: 526px;
+  display: block;
+  max-height: max-content;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+@media (max-width: 749px) {
+  .booking_form {
+    flex-wrap: wrap;
+  }
+
+  .booking_form .booking_summary,
+  .booking_form .left_part {
+    flex-basis: 100%;
+  }
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  width: 400px;
+  padding: 10px;
+  z-index: 1001;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 19px;
+}
+
+.modal-header button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.pickup-info,
+.cost-details,
+.subtotal,
+.total,
+.note {
+  margin: 10px 0;
+}
+
+.cost-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.cost-row span {
+  font-size: 16px;
+}
+
+.subtotal p,
+.total {
+  font-size: 16px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.total {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.note {
+  margin-top: 10px;
+  background-color: #fdf3e5;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 14px;
+  color: #ff9f00;
+}
+
+.modal .modal-content .trip_info h3 {
+  font-size: 16px;
+  line-height: 19px;
+  font-weight: 700;
+}
+
+.modal .modal-content .cost-details h4 {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 19px;
+}

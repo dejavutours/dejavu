@@ -1,0 +1,196 @@
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MetaData</title>
+
+    <%- include('../partials/headtag'); %>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+            }
+
+            .array-item {
+                margin: 5px 0;
+            }
+        </style>
+</head>
+
+<body class="bg-light text-dark">
+    <header>
+        <div class="header-area ">
+            <div id="sticky-header" class="main-header-area">
+                <div class="container-fluid">
+                    <div class="header_bottom_border">
+                        <div class="row align-items-center">
+                            <div class="col-xl-2 col-lg-2">
+                                <div class="logo">
+                                    <a href="index.html">
+                                        <img src="/images/logo.png" alt="">
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-xl-7 col-lg-7">
+                                <div class="main-menu  d-none d-lg-block">
+                                    <nav>
+                                        <ul id="navigation">
+                                            <li>
+                                                <a href="/">Home</a>
+                                            </li>
+                                            <% if (profile?.email===process.env.GMAIL_ADMIN) { %>
+                                                <li>
+                                                    <a href="/admin/addtours">AddTours</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/admin/addaccomodation">AddAccod</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/admin/accoddetails">Accod</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/admin/viewregistration">Reg</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/admin/viewmails">Mail</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/admin/code">Code</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/admin/addblog">Blog</a>
+                                                </li>
+                                                <li>
+                                                    <form action="/admin/logout" method="post">
+                                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                        <button type="submit" class="btn btn-primary">Logout</button>
+                                                    </form>
+                                                </li>
+
+                                                <% } %>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-lg-3 d-none d-lg-block">
+                                <div class="social_wrap d-flex align-items-center justify-content-end">
+                                    <!-- <div class="number">
+                                            <p> <i class="fa fa-phone"></i>+91 851111 7891</p>
+                                        </div> -->
+                                    <div class="social_links d-none d-xl-block">
+                                        <ul>
+                                            <li><a href="https://www.instagram.com/dejavutours/"> <i
+                                                        class="fa fa-instagram"></i> </a></li>
+                                            <li><a href="https://www.youtube.com/watch?v=56-u7Pv-cQg"> <i
+                                                        class="fa fa-youtube-play"></i> </a></li>
+                                            <li><a href="https://www.facebook.com/dejavutours.in"> <i
+                                                        class="fa fa-facebook"></i> </a></li>
+                                            <li><a href="https://twitter.com/dejavutours_in"> <i
+                                                        class="fa fa-twitter"></i>
+                                                </a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="seach_icon">
+                                <a data-toggle="modal" data-target="#exampleModalCenter" href="#">
+                                    <i class="fa fa-search"></i>
+                                </a>
+                            </div>
+                            <div class="col-12">
+                                <div class="mobile_menu d-block d-lg-none"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="row">
+        <div class="col">
+            <h4>Edit Tour category</h4>
+            <button class="btn btn-primary" id="add-item">Add Item</button>
+            <form id="gettc" style="display: inline;">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn btn-primary" id="save-array">Save Tour Category</button>
+            </form>
+            <div id="array-container"></div>
+        </div>
+        <div class="col">
+            <h4>Edit cities</h4>
+            <button class="btn btn-primary" id="add-item">Add Item</button>
+            <form id="gettc" style="display: inline;">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn btn-primary" id="save-array">Save cities</button>
+            </form>
+            <div id="array-container"></div>
+        </div>
+    </div>
+
+
+</body>
+<script>
+    let array = JSON.parse('<%- JSON.stringify(data)%>')[0].tourcategory
+
+    function updatearr(event, index) {
+        console.log(index)
+        console.log(event.target.value)
+        array[index] = event.target.value
+
+    }
+
+    function renderArray() {
+        const container = document.getElementById('array-container');
+        container.innerHTML = ''; // Clear the container
+        array.forEach((item, index) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'array-item';
+            itemDiv.innerHTML = `
+                        <input type="text" onChange="updatearr(event, ${index})" value="${item}" id="item-${index}">
+                        <button class="btn btn-primary" onclick="removeItem(${index})">Remove</button>
+                    `;
+            container.appendChild(itemDiv);
+        });
+    }
+
+
+    function addItem() {
+        console.log(array);
+        array.push(`Item ${array.length + 1}`);
+        console.log(array);
+        renderArray();
+    }
+
+    function removeItem(index) {
+        array.splice(index, 1);
+        renderArray();
+    }
+
+    function saveArray(event) {
+        event.preventDefault(); // Prevent the default form submission
+        var formData = new FormData(document.getElementById("gettc"));
+        formData.append('id', JSON.parse('<%- JSON.stringify(data)%>')[0]._id)
+        array.forEach((item) => formData.append("tourcategory[]", item))
+        // formData.append('tourcategory', array);
+        // for (let i = 0; i < array.length; i++) {
+        //     const inputValue = document.getElementById(`item-${i}`).value;
+        //     array[i] = inputValue;
+        // }
+        console.log(formData)
+        fetch('/admin/updatetourcategory', {
+            method: 'POST',
+            body: formData,
+        });
+        alert('Array saved: ' + JSON.stringify(array));
+    }
+
+    document.getElementById('add-item').addEventListener('click', addItem);
+    document.getElementById('save-array').addEventListener('click', saveArray);
+
+    // Initial render
+    renderArray();
+</script>
+
+</html>

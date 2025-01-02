@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <title>Document</title> -->
+    <!-- <link rel="stylesheet" href="member-profile.css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <style>
+        .d-none-list {
+            display: none !important;
+            /* Use !important to ensure it overrides */
+        }
+
+        .member_profile-container .left_bar p.active {
+            background-color: #f3f4f6;
+            border-left: 4px solid #1a3c6c;
+        }
+
+        .member_profile-container {
+            gap: 30px;
+        }
+
+        .member_profile-container .trip_details {
+            gap: 15px;
+        }
+
+        .member_profile-container .trip_card-expanded .inner-content {
+            gap: 15px;
+        }
+
+        .member_profile-container .left_bar p {
+            padding: 10px 15px;
+            margin: 0;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+
+        .member_profile-container .left_bar {
+            min-width: 300px;
+        }
+
+        .member_profile-container .right_block .form-container h2 {
+            text-align: left;
+            margin-bottom: 20px;
+            font-size: 18px;
+            line-height: 28px;
+            color: #111827;
+        }
+
+        .member_profile-container .right_block .form-group {
+            margin-bottom: 15px;
+        }
+
+        .member_profile-container .right_block .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            /* font-weight: bold; */
+            font-size: 14px;
+            line-height: 20px;
+        }
+
+        .member_profile-container .right_block .form-group input,
+        .member_profile-container .right_block .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #868fa029;
+            border-radius: 6px;
+        }
+
+        .member_profile-container .right_block .form-group input[type="date"] {
+            padding: 8px;
+        }
+
+        .member_profile-container .right_block .form-row {
+            display: flex;
+            gap: 25px;
+        }
+
+        .member_profile-container .right_block .form-row .form-group {
+            flex: 1;
+        }
+
+        .member_profile-container .right_block .upload-section {
+            align-items: center;
+            gap: 10px;
+        }
+
+        .member_profile-container .right_block .upload-section input[type="file"] {
+            display: none;
+        }
+
+        .member_profile-container .right_block .upload-section label {
+            cursor: pointer;
+        }
+
+        .member_profile-container .right_block .form-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .member_profile-container .right_block .form-group button:hover {
+            background-color: #0056b3;
+        }
+
+        .member_profile-container .right_block .upload-section .upload-label {
+            border: 1px dotted #687182;
+            padding: 8px 20px;
+            border-radius: 12px;
+            display: block;
+            max-width: max-content;
+        }
+
+        .member_profile-container .right_block {
+            width: 700px;
+        }
+
+        .member_profile-container .single_trip-card h4 {
+            font-size: 20px;
+            line-height: 28px;
+            font-weight: 700;
+            letter-spacing: -0.25px;
+        }
+
+        .member_profile-container .trip_details p {
+            font-size: 14px;
+        }
+
+        @media (max-width: 1024px) {
+            .member_profile-container {
+                flex-wrap: wrap;
+            }
+
+            .member_profile-container .trip_card-expanded {
+                margin-top: 20px !important;
+            }
+
+            .member_profile-container .booking_history .search_bar input {
+                min-width: 100% !important;
+            }
+        }
+
+        .member_profile-container .single_trip-card {
+            border-radius: 16px;
+            gap: 10px;
+        }
+
+        .member_profile-container .trip_card-expanded {
+            margin-top: 50px;
+        }
+
+        .member_profile-container p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .member_profile-container .booking_history .search_bar input {
+            min-width: 500px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: 0;
+            box-shadow: none;
+            border: 1px solid #868fa029;
+        }
+    </style>
+    <%- include('../partials/headtag'); %>
+</head>
+
+<body>
+    <%- include('../partials/header'); %>
+        <main>
+            <div class="container my-5">
+                <div class="d-flex gap-4 member_profile-container">
+                    <div class="left_bar">
+                        <p class="active" data-tab-index="1">Profile</p>
+                        <p data-tab-index="2">Upcoming trips</p>
+                        <p data-tab-index="3">Booking history</p>
+                    </div>
+                    <div class="right_block">
+                        <div class="profile_block" data-block-index="1">
+                            <div class="form-container">
+                                <h2 class="text-left">Personal details</h2>
+
+                                <form action="/userprofile/update" method="POST">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <label for="FirstName">First Name*</label>
+                                            <input type="text" id="FirstName" name="FirstName" placeholder="First name"
+                                                value="<%= profileformdata.details.FirstName ? profileformdata.details.FirstName : null %>">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="LastName">Last Name*</label>
+                                            <input type="text" id="LastName" name="LastName" placeholder="LastName"
+                                                value="<%= profileformdata.details.LastName ? profileformdata.details.LastName : null %>">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="BirthDate">Birth date*</label>
+                                            <input type="date" id="BirthDate" name="BirthDate"
+                                                value="<%= profileformdata.details.BirthDate ? profileformdata.details.BirthDate : null %>">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="gender">Gender*</label>
+                                            <select id="gender" name="gender">
+                                                <option value="male" <%=profileformdata.details.gender=='male'
+                                                    ? 'selected' : '' %>>
+                                                    Male</option>
+                                                <option value="female" <%=profileformdata.details.gender=='female'
+                                                    ? 'selected' : '' %>>
+
+                                                    Female</option>
+                                                <option value="other" <%=profileformdata.details.gender=='other'
+                                                    ? 'selected' : '' %>>
+                                                    Other</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="MobileNumber">Mobile number*</label>
+                                            <input type="tel" id="MobileNumber" name="MobileNumber"
+                                                placeholder="MobileNumber"
+                                                value="<%= profileformdata.details.MobileNumber ? profileformdata.details.MobileNumber : null %>">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="AlternateNumber">Alternative number</label>
+                                            <input type="tel" id="AlternateNumber" name="AlternateNumber"
+                                                placeholder="+91 Enter your mobile number"
+                                                value="<%= profileformdata.details.AlternateNumber ? profileformdata.details.AlternateNumber : null %>">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="email">Email id</label>
+                                        <input type="email" id="email" name="email" placeholder="example@gmail.com"
+                                            value="<%= profileformdata.details.email ? profileformdata.details.email : null %>">
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="state">State</label>
+                                            <select id="state" name="state">
+                                                <option value="gujarat" <%=profileformdata.details.state=='gujarat'
+                                                    ? 'selected' : '' %>>Gujarat</option>
+                                                <option value="maharashtra"
+                                                    <%=profileformdata.details.state=='maharashtra' ? 'selected' : '' %>
+                                                    >Maharashtra</option>
+                                                <option value="rajasthan" <%=profileformdata.details.state=='rajasthan'
+                                                    ? 'selected' : '' %>>Rajasthan</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="city">City</label>
+                                            <input type="text" id="city" name="city" placeholder="City"
+                                                value="<%= profileformdata.details.city ? profileformdata.details.city : null %>">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group upload-section">
+                                        <label for="idproof">Your ID proof (Aadhar card/ Driving licence/
+                                            Passport)</label>
+                                        <label for="idproof" class="upload-label"><span><svg width="16" height="16"
+                                                    viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M2 11V12.5C2 12.8978 2.15804 13.2794 2.43934 13.5607C2.72064 13.842 3.10218 14 3.5 14H12.5C12.8978 14 13.2794 13.842 13.5607 13.5607C13.842 13.2794 14 12.8978 14 12.5V11M5 5L8 2M8 2L11 5M8 2V11"
+                                                        stroke="#687182" stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round" />
+                                                </svg>
+                                            </span><span>Upload</span></label>
+                                        <input type="file" id="idproof" name="idproof"
+                                            value="<%= profileformdata.details.idproof ? profileformdata.details.idproof : null %>">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button type="submit">Submit</button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+
+                        <div class="upcoming_trips d-none" data-block-index="2">
+                            <% for (let i=0; i < mytrips.length; i++) { %>
+                                <% if (mytrips[i].tripdate>= new Date() ) { %>
+                                    <div
+                                        class="single_trip-card d-flex gap-4 border order-1 border-opacity-10 p-3 mt-3">
+                                        <div>
+                                            <a href="/tripdetails/<%=mytrips[i].destination %>"><img
+                                                    src="../../images/<%= `${imageurl[i]}` %>" width="150"></a>
+                                        </div>
+                                        <div>
+                                            <h4 class="trip_title">
+                                                <%=mytrips[i].destination %>
+                                            </h4>
+                                            <p class="trip_date mb-2"><span><svg width="20" height="20"
+                                                        viewBox="0 0 20 20" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M5.625 2.5V4.375M14.375 2.5V4.375M2.5 15.625V6.25C2.5 5.75272 2.69754 5.27581 3.04917 4.92417C3.40081 4.57254 3.87772 4.375 4.375 4.375H15.625C16.1223 4.375 16.5992 4.57254 16.9508 4.92417C17.3025 5.27581 17.5 5.75272 17.5 6.25V15.625M2.5 15.625C2.5 16.1223 2.69754 16.5992 3.04917 16.9508C3.40081 17.3025 3.87772 17.5 4.375 17.5H15.625C16.1223 17.5 16.5992 17.3025 16.9508 16.9508C17.3025 16.5992 17.5 16.1223 17.5 15.625M2.5 15.625V9.375C2.5 8.87772 2.69754 8.40081 3.04917 8.04917C3.40081 7.69754 3.87772 7.5 4.375 7.5H15.625C16.1223 7.5 16.5992 7.69754 16.9508 8.04917C17.3025 8.40081 17.5 8.87772 17.5 9.375V15.625M10 10.625H10.0067V10.6317H10V10.625ZM10 12.5H10.0067V12.5067H10V12.5ZM10 14.375H10.0067V14.3817H10V14.375ZM8.125 12.5H8.13167V12.5067H8.125V12.5ZM8.125 14.375H8.13167V14.3817H8.125V14.375ZM6.25 12.5H6.25667V12.5067H6.25V12.5ZM6.25 14.375H6.25667V14.3817H6.25V14.375ZM11.875 10.625H11.8817V10.6317H11.875V10.625ZM11.875 12.5H11.8817V12.5067H11.875V12.5ZM11.875 14.375H11.8817V14.3817H11.875V14.375ZM13.75 10.625H13.7567V10.6317H13.75V10.625ZM13.75 12.5H13.7567V12.5067H13.75V12.5Z"
+                                                            stroke="#4B5563" stroke-width="1.5" stroke-linecap="round"
+                                                            stroke-linejoin="round" />
+                                                    </svg>
+                                                </span>
+                                                <%= mytrips[i].tripdate %>
+                                            </p>
+
+                                            <div class="d-flex column-gap-4 row-gap-2 trip_details flex-wrap">
+                                                <div class="orderId">
+                                                    <p class="m-0">Order ID</p>
+                                                    <p class="m-0">
+                                                        <%= mytrips[i].orderId %>
+                                                    </p>
+                                                </div>
+                                                <div class="travellers">
+                                                    <p class="m-0">Co-Travellers</p>
+                                                    <p class="m-0">
+                                                        <%= mytrips[i].travellers %>
+                                                    </p>
+                                                </div>
+                                                <div class="cost">
+                                                    <p class="m-0">Cost</p>
+                                                    <p class="m-0">
+                                                        <%= mytrips[i].cost %>
+                                                    </p>
+                                                </div>
+                                                <!-- <div class="receiptId">
+                                                    <p class="m-0">Receipt ID</p>
+                                                    <p class="m-0">
+                                                        <%= mytrips[i].receiptId %>
+                                                    </p>
+                                                </div> -->
+                                                <div class="booking_status">
+                                                    <p class="m-0">Booking</p>
+                                                    <p
+                                                        class="<%= mytrips[i].status==='paid' ? 'm-0  text-success' : 'm-0 text-danger' %>">
+
+                                                        <%= mytrips[i].status==="paid" ? "Reserved" : "Pending" %>
+                                                    </p>
+                                                </div>
+                                                <div class="payment_status">
+                                                    <p class="m-0">Payment</p>
+                                                    <p
+                                                        class="<%= mytrips[i].status==='paid' ? 'm-0  text-success' : 'm-0 text-danger' %>">
+                                                        <%= mytrips[i].status %>
+                                                    </p>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <% } %>
+                                        <% } %>
+
+                        </div>
+
+                        <div class="booking_history d-none" id="booking_history" data-block-index="3">
+                            <div class="search_bar mb-4">
+                                <input type="search" id="searchInput"
+                                    placeholder="Try searching place name, region, category" class="rounded-8">
+                            </div>
+                            <% for (let i=0; i < mytrips.length; i++) { %>
+                                <% if (mytrips[i].tripdate < new Date() ) { %>
+                                    <div class="searching">
+                                        <div
+                                            class="single_trip-card d-flex gap-4 border order-1 border-opacity-10 p-3 mb-3 flex-wrap">
+                                            <div>
+                                                <a href="/tripdetails/<%=mytrips[i].destination %>"><img
+                                                        src="../../images/<%= `${imageurl[i]}` %>" width="150"></a>
+                                            </div>
+                                            <div class="searchfilter">
+
+                                                <h4 class="trip_title">
+                                                    <%=mytrips[i].destination %>
+                                                </h4>
+                                                <p class="trip_date mb-2"><span><svg width="20" height="20"
+                                                            viewBox="0 0 20 20" fill="none"
+                                                            xmlns="http://www.w3.org/2000/svg">
+                                                            <path
+                                                                d="M5.625 2.5V4.375M14.375 2.5V4.375M2.5 15.625V6.25C2.5 5.75272 2.69754 5.27581 3.04917 4.92417C3.40081 4.57254 3.87772 4.375 4.375 4.375H15.625C16.1223 4.375 16.5992 4.57254 16.9508 4.92417C17.3025 5.27581 17.5 5.75272 17.5 6.25V15.625M2.5 15.625C2.5 16.1223 2.69754 16.5992 3.04917 16.9508C3.40081 17.3025 3.87772 17.5 4.375 17.5H15.625C16.1223 17.5 16.5992 17.3025 16.9508 16.9508C17.3025 16.5992 17.5 16.1223 17.5 15.625M2.5 15.625V9.375C2.5 8.87772 2.69754 8.40081 3.04917 8.04917C3.40081 7.69754 3.87772 7.5 4.375 7.5H15.625C16.1223 7.5 16.5992 7.69754 16.9508 8.04917C17.3025 8.40081 17.5 8.87772 17.5 9.375V15.625M10 10.625H10.0067V10.6317H10V10.625ZM10 12.5H10.0067V12.5067H10V12.5ZM10 14.375H10.0067V14.3817H10V14.375ZM8.125 12.5H8.13167V12.5067H8.125V12.5ZM8.125 14.375H8.13167V14.3817H8.125V14.375ZM6.25 12.5H6.25667V12.5067H6.25V12.5ZM6.25 14.375H6.25667V14.3817H6.25V14.375ZM11.875 10.625H11.8817V10.6317H11.875V10.625ZM11.875 12.5H11.8817V12.5067H11.875V12.5ZM11.875 14.375H11.8817V14.3817H11.875V14.375ZM13.75 10.625H13.7567V10.6317H13.75V10.625ZM13.75 12.5H13.7567V12.5067H13.75V12.5Z"
+                                                                stroke="#4B5563" stroke-width="1.5"
+                                                                stroke-linecap="round" stroke-linejoin="round" />
+                                                        </svg>
+                                                    </span>
+                                                    <%= mytrips[i].tripdate %>
+                                                </p>
+
+                                                <div class="d-flex column-gap-4 row-gap-2 trip_details flex-wrap">
+                                                    <div class="trip_code">
+                                                        <p class="m-0">Trip code</p>
+                                                        <p class="m-0">KTC022205</p>
+                                                    </div>
+                                                    <div class="booking_number">
+                                                        <p class="m-0">Booking number</p>
+                                                        <p class="m-0">DJV220048</p>
+                                                    </div>
+                                                    <div class="booking_status">
+                                                        <p class="m-0">Booking</p>
+                                                        <p class="m-0">Reserved</p>
+                                                    </div>
+                                                    <div class="payment_status">
+                                                        <p class="m-0">Payment</p>
+                                                        <p class="m-0">Done</p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="trip_card-expanded">
+                                                    <div class="d-flex gap-4 mb-4 inner-content">
+                                                        <div class="pickup_details">
+                                                            <p class="pickup-from">Pickup from:</p>
+                                                            <p class="pickup_city">Ahemdabad</p>
+                                                        </div>
+                                                        <div class="travel_date">
+                                                            <p>Travel date:</p>
+                                                            <p class="date_from">8 May 2024 to 16 May 2024</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex gap-4 mb-4 inner-content">
+                                                        <div class="person_details">
+                                                            <p class="mb-1">Total person</p>
+                                                            <p class="adults">Adults : 10</p>
+                                                            <p class="childs">Childs : 03</p>
+                                                        </div>
+                                                        <div class="total_costs">
+                                                            <p class="mb-1">Total costs</p>
+                                                            <p>₹77,689</p>
+                                                        </div>
+                                                        <div class="Due Payment">
+                                                            <p class="mb-1">Due Payment</p>
+                                                            <p class="text-danger">30000</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="person_names">
+                                                        <details>
+                                                            <summary>View person’s details <span><svg width="14"
+                                                                        height="15" viewBox="0 0 14 15" fill="none"
+                                                                        xmlns="http://www.w3.org/2000/svg">
+                                                                        <path d="M11.375 5.3125L7 9.6875L2.625 5.3125"
+                                                                            stroke="#111827" stroke-width="1.5"
+                                                                            stroke-linecap="round"
+                                                                            stroke-linejoin="round" />
+                                                                    </svg>
+                                                                </span></summary>
+                                                            <ul>
+                                                                <li>Albert Flores (27)</li>
+                                                                <li>Darrell Steward (24)</li>
+                                                                <li>Annette Black (12)</li>
+                                                                <li>Cameron Williamson (28)</li>
+                                                                <li>Jerome Bell (29)</li>
+                                                            </ul>
+                                                        </details>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% } %>
+                                        <% } %>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <%- include('../partials/footer'); %>
+            <%- include('../partials/scripttag'); %>
+                <!-- <script src="member-profile.js"></script> -->
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const memberTabList = document.querySelectorAll('.member_profile-container .left_bar p');
+                        const memberBlocks = document.querySelectorAll('.member_profile-container [data-block-index]')
+                        memberTabList.forEach(function (tab) {
+                            tab.addEventListener('click', function (e) {
+                                const dataIndex = e.target.getAttribute('data-tab-index');
+                                console.log('clickedd', dataIndex)
+                                memberTabList.forEach((tab) => tab.classList.remove('active'))
+                                memberBlocks.forEach((block) => block.classList.add('d-none'));
+
+                                memberBlocks.forEach((block) => {
+                                    if (dataIndex == block.getAttribute('data-block-index')) {
+                                        block.classList.remove('d-none')
+                                        e.target.classList.add('active')
+                                    }
+                                })
+                            })
+                        })
+                    })
+                </script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+                    integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+                    crossorigin="anonymous"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+                <script>
+                    // Filter function
+                    document.getElementById('searchInput').addEventListener('keyup', function () {
+                        const filter = this.value.toLowerCase();
+                        const items = document.querySelectorAll('#booking_history .searching');
+                        console.log(items);
+                        items.forEach(item => {
+                            console.log(item)
+                            const nestedText = item.querySelector('.searchfilter').textContent.toLowerCase();
+                            console.log(nestedText)
+
+                            if (nestedText.includes(filter)) {
+                                item.classList.remove('d-none-list') // Show item
+                            } else {
+                                item.classList.add('d-none-list'); // Hide item
+                            }
+                        });
+                    });
+                </script>
+
+</body>
+
+<style>
+    body,
+    html {
+        font-family: 'Inter';
+    }
+</style>
+
+</html>

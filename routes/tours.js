@@ -1,14 +1,14 @@
-const express = require("express");
+const express = require('express');
 
 const ensureLogIn = require('connect-ensure-login').ensureLoggedIn;
 
 const ensureLoggedIn = ensureLogIn();
 
-const Tours = require("../models/tours");
+const Tours = require('../models/tours');
 
-const toursController = require("../controllers/tours");
+const toursController = require('../controllers/tours');
 
-const makepdfController = require("../controllers/makepdf");
+const makepdfController = require('../controllers/makepdf');
 
 const isAuth = require('../middleware/is-auth');
 
@@ -18,160 +18,387 @@ const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
-const ensuremultiplelogin = (req, res, next)=>{
-    console.log(res.locals.accessToken);
-    if(res.locals.accessToken){
-        jwt.verify(res.locals.accessToken, process.env.JWT_TOKEN, (err, verifiedPhoneNumber) => {
-            console.log(err, req.verifiedPhoneNumber);
-            if (err) return res.sendStatus(403); // If token is invalid, respond with 403
-            req.verifiedPhoneNumber = verifiedPhoneNumber; // Add the user to the request object
-             // Proceed to the next middleware or route handler
-          });
-          return next();
-    }
-    return ensureLoggedIn(req, res, next);
-}
+const ensuremultiplelogin = (req, res, next) => {
+  // console.log(res.locals.accessToken);
+  if (res.locals.accessToken) {
+    jwt.verify(
+      res.locals.accessToken,
+      process.env.JWT_TOKEN,
+      (err, verifiedPhoneNumber) => {
+        console.log(err, req.verifiedPhoneNumber);
+        if (err) return res.sendStatus(403); // If token is invalid, respond with 403
+        req.verifiedPhoneNumber = verifiedPhoneNumber; // Add the user to the request object
+        // Proceed to the next middleware or route handler
+      }
+    );
+    return next();
+  }
+  return ensureLoggedIn(req, res, next);
+};
 
-router.get("/login" , (req, res, next)=>{res.redirect("/")});
+router.get('/login', (req, res, next) => {
+  res.redirect('/');
+});
 
-router.get("/" , toursController.getIndexPage);
+router.get('/', toursController.getIndexPage);
 
-router.get("/admin/addtours" , ensureLoggedIn, isAuth, toursController.getAddTours);
+router.get(
+  '/admin/addtours',
+  ensureLoggedIn,
+  isAuth,
+  toursController.getAddTours
+);
 
-router.post("/admin/addtours", ensureLoggedIn, isAuth,  toursController.postAddTours);
+router.post(
+  '/admin/addtours',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postAddTours
+);
 
-router.get("/tripdetails/:token" , toursController.getTourDetails);
+router.get('/tripdetails/:token', toursController.getTourDetails);
 
-router.post("/newsletter" , toursController.postNewsletter);
+router.post('/newsletter', toursController.postNewsletter);
 
-router.get("/contact", toursController.getContact);
+router.get('/contact', toursController.getContact);
 
-router.post("/contact", toursController.postContact);
+router.post('/contact', toursController.postContact);
 
-router.get("/about", toursController.getAbout);
+router.get('/about', toursController.getAbout);
 
-router.post("/getbooktrip",ensuremultiplelogin, toursController.getBookTrip);
+router.post('/getbooktrip', ensuremultiplelogin, toursController.getBookTrip);
 
-router.post("/booktrip",ensuremultiplelogin, toursController.postBookTrip);
+router.post('/booktrip', ensuremultiplelogin, toursController.postBookTrip);
 
-router.post("/admin/delete", ensureLoggedIn, isAuth, toursController.postDelete);
+router.post(
+  '/admin/delete',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postDelete
+);
 
-router.post("/admin/edit", ensureLoggedIn, isAuth, toursController.postEdit);
+router.post('/admin/edit', ensureLoggedIn, isAuth, toursController.postEdit);
 
-router.post("/admin/addeditedtours", ensureLoggedIn, isAuth, toursController.postAddeditedtours);
+router.post(
+  '/admin/addeditedtours',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postAddeditedtours
+);
 
-router.post("/admin/addupcoming", ensureLoggedIn, isAuth, toursController.postAddUpcoming);
+router.post(
+  '/admin/addupcoming',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postAddUpcoming
+);
 
-router.get("/upcomingtrips", toursController.getUpcomingTrips);
+router.get('/upcomingtrips', toursController.getUpcomingTrips);
 
 //router.post("/admin/deleteupcoming", isAuth, toursController.postDeleteUpcomingtrips);
 
-router.get("/accomodation", toursController.getAccomodation);
+router.get('/accomodation', toursController.getAccomodation);
 
-router.get("/admin/addaccomodation", ensureLoggedIn, isAuth, toursController.getAddAccomodation);
+router.get(
+  '/admin/addaccomodation',
+  ensureLoggedIn,
+  isAuth,
+  toursController.getAddAccomodation
+);
 
-router.post("/admin/addaccomodation", ensureLoggedIn, isAuth, toursController.postAddAccomodation);
+router.post(
+  '/admin/addaccomodation',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postAddAccomodation
+);
 
-router.post("/admin/accod/delete", ensureLoggedIn, isAuth, toursController.postDeleteAccomodations);
+router.post(
+  '/admin/accod/delete',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postDeleteAccomodations
+);
 
-router.post("/admin/accod/edit", ensureLoggedIn, isAuth, toursController.postEditAccomodations);
+router.post(
+  '/admin/accod/edit',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postEditAccomodations
+);
 
-router.post("/admin/accod/addededit", ensureLoggedIn, isAuth, toursController.postAddEditAccomodations);
+router.post(
+  '/admin/accod/addededit',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postAddEditAccomodations
+);
 
-router.get("/accomodationdetails/:token", toursController.getAccomodationsDetails);
+router.get(
+  '/accomodationdetails/:token',
+  toursController.getAccomodationsDetails
+);
 
-router.get("/filters/:token", toursController.getStateFilters);
+router.get('/filters/:token', toursController.getStateFilters);
 
-router.post("/admin/AddImage", ensureLoggedIn, isAuth, toursController.getToursAddimage);
+router.post(
+  '/admin/AddImage',
+  ensureLoggedIn,
+  isAuth,
+  toursController.getToursAddimage
+);
 
-router.post("/admin/ImageAdded", ensureLoggedIn, isAuth, toursController.postImageAdded);
+router.post(
+  '/admin/ImageAdded',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postImageAdded
+);
 
-router.post("/admin/BannerImageAdded", ensureLoggedIn, isAuth, toursController.postBannerImageAdded);
+router.post(
+  '/admin/BannerImageAdded',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postBannerImageAdded
+);
 
-router.post("/admin/deleteimage", ensureLoggedIn, isAuth, toursController.postDeleteimage);
+router.post(
+  '/admin/deleteimage',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postDeleteimage
+);
 
-router.get("/admin/login", toursController.getAdminLogin);
+router.get('/admin/metadata', ensureLoggedIn, isAuth, toursController.metadata);
 
-router.post("/admin/login", toursController.postAdminLogin);
+router.post(
+  '/admin/updatetourcategory',
+  ensureLoggedIn,
+  isAuth,
+  toursController.updatetourcategory
+);
 
-router.post("/admin/logout", ensureLoggedIn, isAuth, toursController.postLogout);
+router.get('/admin/login', toursController.getAdminLogin);
 
-router.post("/accod/queryform", toursController.postAccodQuery);
+router.post('/admin/login', toursController.postAdminLogin);
 
-router.get("/admin/accoddetails", ensureLoggedIn, isAuth, toursController.getAccodDetails);
+router.post(
+  '/admin/logout',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postLogout
+);
 
-router.get("/admin/viewregistration", ensureLoggedIn, isAuth, toursController.getViewRegistration);
+router.post('/accod/queryform', toursController.postAccodQuery);
 
-router.get("/admin/viewmails" , ensureLoggedIn, isAuth, toursController.getViewEmails);
+router.get(
+  '/admin/accoddetails',
+  ensureLoggedIn,
+  isAuth,
+  toursController.getAccodDetails
+);
 
-router.post("/admin/delaccoddetails", ensureLoggedIn, isAuth, toursController.postDeleteAccod);
+router.get(
+  '/admin/viewregistration',
+  ensureLoggedIn,
+  isAuth,
+  toursController.getViewRegistration
+);
 
-router.get("/admin/downloadpdf/:regid", ensureLoggedIn, isAuth, toursController.getDownloadPDF);
+router.get(
+  '/admin/viewmails',
+  ensureLoggedIn,
+  isAuth,
+  toursController.getViewEmails
+);
 
-router.get("/admin/code", ensureLoggedIn, isAuth, toursController.getAdminCode);
+router.post(
+  '/admin/delaccoddetails',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postDeleteAccod
+);
 
-router.post("/admin/accod/AddImage", ensureLoggedIn, isAuth, toursController.getAccodAddImage);
+router.get(
+  '/admin/downloadpdf/:regid',
+  ensureLoggedIn,
+  isAuth,
+  toursController.getDownloadPDF
+);
 
-router.post("/admin/accod/ImageAdded", ensureLoggedIn, isAuth, toursController.postAccodImageAdded);
+router.get('/admin/code', ensureLoggedIn, isAuth, toursController.getAdminCode);
 
-router.post("/admin/accod/deleteimage", ensureLoggedIn, isAuth, toursController.postDeleteAccodImage);
+router.post(
+  '/admin/accod/AddImage',
+  ensureLoggedIn,
+  isAuth,
+  toursController.getAccodAddImage
+);
 
-router.post("/admin/accod/BannerImageAdded", ensureLoggedIn, isAuth, toursController.postAccodBannerImageAdded);
+router.post(
+  '/admin/accod/ImageAdded',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postAccodImageAdded
+);
 
-router.post("/admin/deleteupcomingdate", ensureLoggedIn, isAuth, toursController.postDeleteUpcomingDate);
+router.post(
+  '/admin/accod/deleteimage',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postDeleteAccodImage
+);
 
-router.post("/bookdate", ensuremultiplelogin, toursController.postBookDate);
+router.post(
+  '/admin/accod/BannerImageAdded',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postAccodBannerImageAdded
+);
 
-router.post("/admin/deleteregistration", toursController.postDeleteRegistration);
+router.post(
+  '/admin/deleteupcomingdate',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postDeleteUpcomingDate
+);
 
-router.get("/blog", toursController.getBlog);
+router.post('/bookdate', ensuremultiplelogin, toursController.postBookDate);
 
-router.get("/blogDetails/:id/:title", toursController.getSingleBlog);
+router.post(
+  '/admin/deleteregistration',
+  toursController.postDeleteRegistration
+);
 
-router.get("/admin/addblog", ensureLoggedIn, isAuth, toursController.getAddBlog);
+router.get('/blog', toursController.getBlog);
 
-router.post("/admin/addblog", ensureLoggedIn, isAuth, toursController.postAddBlog);
+router.get('/blogDetails/:id/:title', toursController.getSingleBlog);
 
-router.get("/tags/:id", toursController.getTagFilter);
+router.get(
+  '/admin/addblog',
+  ensureLoggedIn,
+  isAuth,
+  toursController.getAddBlog
+);
 
-router.post("/search/trip", toursController.getSearchTrip);
+router.post(
+  '/admin/addblog',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postAddBlog
+);
 
-router.post("/search/blog", toursController.getSearchBlog);
+router.get('/tags/:id', toursController.getTagFilter);
 
-router.post("/admin/deleteblog", ensureLoggedIn, isAuth, toursController.postDeleteBlog);
+router.post('/search/trip', toursController.getSearchTrip);
 
-router.post("/admin/editblog", ensureLoggedIn, isAuth, toursController.getEditBlog);
+router.post('/search/blog', toursController.getSearchBlog);
 
-router.post("/admin/addEditedblog", ensureLoggedIn, isAuth, toursController.postEditblog);
+router.post(
+  '/admin/deleteblog',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postDeleteBlog
+);
 
-router.get("/admin/costingcal", ensureLoggedIn, isAuth, toursController.getcalculateCosting);
+router.post(
+  '/admin/editblog',
+  ensureLoggedIn,
+  isAuth,
+  toursController.getEditBlog
+);
 
-router.get("/admin/getStayCost", ensureLoggedIn, isAuth, toursController.getStayCost);
+router.post(
+  '/admin/addEditedblog',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postEditblog
+);
 
-router.post("/admin/getStayCost", ensureLoggedIn, isAuth, toursController.postStayCost);
+router.get(
+  '/admin/costingcal',
+  ensureLoggedIn,
+  isAuth,
+  toursController.getcalculateCosting
+);
 
-router.post("/admin/deleteStay", ensureLoggedIn, isAuth, toursController.deleteStay);
+router.get(
+  '/admin/getStayCost',
+  ensureLoggedIn,
+  isAuth,
+  toursController.getStayCost
+);
 
-router.get("/admin/makepdf" , ensureLoggedIn, isAuth, makepdfController.getMakePdf);
+router.post(
+  '/admin/getStayCost',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postStayCost
+);
 
-router.post("/admin/makepdf" , ensureLoggedIn, isAuth, makepdfController.postMakePdf);
+router.post(
+  '/admin/deleteStay',
+  ensureLoggedIn,
+  isAuth,
+  toursController.deleteStay
+);
 
-router.post("/getstateCities" , makepdfController.getstateCities);
+router.get(
+  '/admin/makepdf',
+  ensureLoggedIn,
+  isAuth,
+  makepdfController.getMakePdf
+);
 
-router.get("/admin/getViewPdfdetails" , ensureLoggedIn, isAuth, makepdfController.getViewPdfdetails);
+router.post(
+  '/admin/makepdf',
+  ensureLoggedIn,
+  isAuth,
+  makepdfController.postMakePdf
+);
 
-router.post("/admin/editpdftrip", ensureLoggedIn, isAuth, makepdfController.editPdfDetails);
+router.post('/getstateCities', makepdfController.getstateCities);
 
-router.post("/admin/updatetrip", ensureLoggedIn, isAuth, makepdfController.updatePdfDetails);
+router.get(
+  '/admin/getViewPdfdetails',
+  ensureLoggedIn,
+  isAuth,
+  makepdfController.getViewPdfdetails
+);
 
-router.post("/admin/deletetrip", ensureLoggedIn, isAuth, makepdfController.deletePdftrip);
+router.post(
+  '/admin/editpdftrip',
+  ensureLoggedIn,
+  isAuth,
+  makepdfController.editPdfDetails
+);
 
-router.get("/mytrips", ensuremultiplelogin, toursController.getmytrips );
+router.post(
+  '/admin/updatetrip',
+  ensureLoggedIn,
+  isAuth,
+  makepdfController.updatePdfDetails
+);
 
-router.get("/profile", ensuremultiplelogin, toursController.getprofile );
+router.post(
+  '/admin/deletetrip',
+  ensureLoggedIn,
+  isAuth,
+  makepdfController.deletePdftrip
+);
 
-router.post("/getotp", toursController.getotp );
+router.get('/mytrips', ensuremultiplelogin, toursController.getmytrips);
 
-router.post("/verifyotp", toursController.verifyotp );
+router.get('/profile', ensuremultiplelogin, toursController.getprofile);
 
-module.exports = router; 
+router.post('/getotp', toursController.getotp);
+
+router.post('/verifyotp', toursController.verifyotp);
+
+router.post(
+  '/userprofile/update',
+  ensuremultiplelogin,
+  toursController.updateuserprofile
+);
+
+module.exports = router;
