@@ -444,8 +444,15 @@
           <div class="d-flex gap-4 book_now-block justify-content-between align-items-center flex-wrap">
             <div>
               <span>Starts from</span>
-              <p class="m-0">₹ <%= trips.citydetails.reduce((minItem, currentItem)=> {
-                  return currentItem.prices < minItem.prices ? currentItem : minItem; }).prices %> / person</p>
+              <p class="m-0">₹
+                <% if (trips.citydetails.length> 0) { %>
+                  <%= trips.citydetails.reduce((minItem, currentItem)=> {
+                    return currentItem.prices < minItem.prices ? currentItem : minItem; }).prices %>
+                      <% } else { %>
+                        <span>No prices available</span>
+                        <% } %>
+                          / person
+              </p>
             </div>
             <form action="/getbooktrip" method="POST">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -523,8 +530,12 @@
               <div>
                 <label>Duration</label>
                 <p class="m-0">
-                  <%= trips.citydetails.reduce((minItem, currentItem)=> {
-                    return currentItem.prices < minItem.prices ? currentItem : minItem; }).nodays %> Days
+                  <% if (trips.citydetails.length> 0) { %>
+                    <%= trips.citydetails.reduce((minItem, currentItem)=> {
+                      return currentItem.prices < minItem.prices ? currentItem : minItem; }).nodays %> Days
+                        <% } else { %>
+                          <span>No duration available</span>
+                          <% } %>
                 </p>
               </div>
             </div>
@@ -773,46 +784,49 @@
                 <% const monthNames=[ "January" , "February" , "March" , "April" , "May" , "June" , "July" , "August"
                   , "September" , "October" , "November" , "December" ]; %>
                   <div class="tabs" id="monthtab">
-
-                    <% [...new Set(trips.citydetails[0].Dates.split(",").map(date=>
-                      new Date(date).getMonth()))].forEach(function(date, index) { %>
-                      <% if (index==0) { %>
-                        <button class="tab-button active" onclick="openMonth(event, '<%= monthNames[date] %>')">
-                          <%= monthNames[date] %>
-                        </button>
-
-                        <% } else { %>
-                          <button class="tab-button" onclick="openMonth(event, '<%= monthNames[date] %>')">
-                            <%= monthNames[date] %>
-                          </button>
-                          <% } %>
-
-                            <% }) %>
-                              <!-- <button class="tab-button active" onclick="openMonth(event, 'May')">May</button>
-                            <button class="tab-button" onclick="openMonth(event, 'June')">June</button>
-                            <button class="tab-button" onclick="openMonth(event, 'July')">July</button> -->
+                    <% if (trips.citydetails.length> 0) { %>
+                      <% const dates=trips.citydetails[0].Dates.split(",").map(date=> new Date(date).getMonth()); %>
+                        <% [...new Set(dates)].forEach(function(date, index) { %>
+                          <% if (index==0) { %>
+                            <button class="tab-button active" onclick="openMonth(event, '<%= monthNames[date] %>')">
+                              <%= monthNames[date] %>
+                            </button>
+                            <% } else { %>
+                              <button class="tab-button" onclick="openMonth(event, '<%= monthNames[date] %>')">
+                                <%= monthNames[date] %>
+                              </button>
+                              <% } %>
+                                <% }) %>
+                                  <% } else { %>
+                                    <p>No dates available</p>
+                                    <% } %>
                   </div>
 
-                  <% [...new Set(trips.citydetails[0].Dates.split(",").map(date=>
-                    new Date(date).getMonth()))].forEach(function(monthindex, index) { %>
-                    <% if (index==0) { %>
-                      <div id="<%= monthNames[monthindex] %>" class="dates active">
-                        <% trips.citydetails[0].Dates.split(",").filter(date=> new Date(date).getMonth() ===
-                          monthindex).forEach(function(date, index) { %>
-                          <button class="date-button" onclick="selectDate(this)">
-                            <%= new Date(date).getDate() %>
-                          </button>
-                          <% }) %>
-                      </div>
-                      <% } else { %>
-                        <div id="<%= monthNames[monthindex] %>" class="dates">
-                          <button class="date-button" onclick="selectDate(this)">3</button>
-                          <button class="date-button" onclick="selectDate(this)">10</button>
-                          <button class="date-button" onclick="selectDate(this)">17</button>
-                          <button class="date-button" onclick="selectDate(this)">24</button>
-                        </div>
+                  <div class="dates-container">
+                    <% if (trips.citydetails.length > 0) { %>
+                      <% const monthIndices = [...new Set(trips.citydetails[0].Dates.split(",").map(date => new Date(date).getMonth()))]; %>
+                      <% monthIndices.forEach(function(monthindex, index) { %>
+                        <% if (index == 0) { %>
+                          <div id="<%= monthNames[monthindex] %>" class="dates active">
+                            <% trips.citydetails[0].Dates.split(",").filter(date => new Date(date).getMonth() === monthindex).forEach(function(date) { %>
+                              <button class="date-button" onclick="selectDate(this)">
+                                <%= new Date(date).getDate() %>
+                              </button>
+                            <% }) %>
+                          </div>
+                        <% } else { %>
+                          <div id="<%= monthNames[monthindex] %>" class="dates">
+                            <button class="date-button" onclick="selectDate(this)">3</button>
+                            <button class="date-button" onclick="selectDate(this)">10</button>
+                            <button class="date-button" onclick="selectDate(this)">17</button>
+                            <button class="date-button" onclick="selectDate(this)">24</button>
+                          </div>
                         <% } %>
-                          <% }) %>
+                      <% }) %>
+                    <% } else { %>
+                      <p>No available dates</p>
+                    <% } %>
+                  </div>
 
 
                             <!-- Dates for July -->

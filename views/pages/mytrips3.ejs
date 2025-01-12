@@ -176,6 +176,29 @@
             box-shadow: none;
             border: 1px solid #868fa029;
         }
+
+            /* Add this to your existing styles */
+    .member_profile-container .right_block .form-group input,
+    .member_profile-container .right_block .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #868fa029;
+        border-radius: 6px;
+        background-color: #ffffff; /* Set background color to white */
+    }
+
+    .member_profile-container .right_block .upload-section .upload-label {
+        border: 1px dotted #687182;
+        padding: 8px 20px;
+        border-radius: 12px;
+        display: block;
+        max-width: max-content;
+        background-color: #ffffff; /* Set background color to white */
+    }
+
+    .member_profile-container .right_block .form-group select {
+        width: 100%; /* Ensure dropdowns are full width */
+    }
     </style>
     <%- include('../partials/headtag'); %>
 </head>
@@ -194,41 +217,36 @@
                         <div class="profile_block" data-block-index="1">
                             <div class="form-container">
                                 <h2 class="text-left">Personal details</h2>
-
-                                <form action="/userprofile/update" method="POST">
+                                <form id="profileUpdateForm" action="/userprofile/update" method="POST">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                     <div class="form-row">
                                         <div class="form-group">
-                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                             <label for="FirstName">First Name*</label>
-                                            <input type="text" id="FirstName" name="FirstName" placeholder="First name"
-                                                value="<%= profileformdata.details.FirstName ? profileformdata.details.FirstName : null %>">
+                                            <input type="text" id="FirstName" name="firstName" placeholder="First name"
+                                                value="<%= profileFormData.firstName %>" required>
                                         </div>
                                         <div class="form-group">
                                             <label for="LastName">Last Name*</label>
-                                            <input type="text" id="LastName" name="LastName" placeholder="LastName"
-                                                value="<%= profileformdata.details.LastName ? profileformdata.details.LastName : null %>">
+                                            <input type="text" id="LastName" name="lastName" placeholder="Last name"
+                                                value="<%= profileFormData.lastName %>" required>
                                         </div>
                                     </div>
 
                                     <div class="form-row">
                                         <div class="form-group">
                                             <label for="BirthDate">Birth date*</label>
-                                            <input type="date" id="BirthDate" name="BirthDate"
-                                                value="<%= profileformdata.details.BirthDate ? profileformdata.details.BirthDate : null %>">
+                                            <input type="date" id="BirthDate" name="birthDate"
+                                                value="<%= profileFormData.birthDate %>" required>
                                         </div>
                                         <div class="form-group">
                                             <label for="gender">Gender*</label>
-                                            <select id="gender" name="gender">
-                                                <option value="male" <%=profileformdata.details.gender=='male'
-                                                    ? 'selected' : '' %>>
-                                                    Male</option>
-                                                <option value="female" <%=profileformdata.details.gender=='female'
-                                                    ? 'selected' : '' %>>
-
-                                                    Female</option>
-                                                <option value="other" <%=profileformdata.details.gender=='other'
-                                                    ? 'selected' : '' %>>
-                                                    Other</option>
+                                            <select id="gender" name="gender" required>
+                                                <option value="male" <%=profileFormData.gender=='male' ? 'selected' : ''
+                                                    %>>Male</option>
+                                                <option value="female" <%=profileFormData.gender=='female' ? 'selected'
+                                                    : '' %>>Female</option>
+                                                <option value="other" <%=profileFormData.gender=='other' ? 'selected'
+                                                    : '' %>>Other</option>
                                             </select>
                                         </div>
                                     </div>
@@ -236,79 +254,64 @@
                                     <div class="form-row">
                                         <div class="form-group">
                                             <label for="MobileNumber">Mobile number*</label>
-                                            <input type="tel" id="MobileNumber" name="MobileNumber"
-                                                placeholder="MobileNumber"
-                                                value="<%= profileformdata.details.MobileNumber ? profileformdata.details.MobileNumber : null %>">
+                                            <input type="tel" id="MobileNumber" name="mobileNumber"
+                                                placeholder="Mobile Number" value="<%= profileFormData.mobileNumber %>"
+                                                required>
                                         </div>
                                         <div class="form-group">
                                             <label for="AlternateNumber">Alternative number</label>
-                                            <input type="tel" id="AlternateNumber" name="AlternateNumber"
+                                            <input type="tel" id="AlternateNumber" name="alternateNumber"
                                                 placeholder="+91 Enter your mobile number"
-                                                value="<%= profileformdata.details.AlternateNumber ? profileformdata.details.AlternateNumber : null %>">
+                                                value="<%= profileFormData.alternateNumber %>">
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="email">Email id</label>
                                         <input type="email" id="email" name="email" placeholder="example@gmail.com"
-                                            value="<%= profileformdata.details.email ? profileformdata.details.email : null %>">
+                                            value="<%= profileFormData.email %>" required>
                                     </div>
 
                                     <div class="form-row">
                                         <div class="form-group">
                                             <label for="state">State</label>
                                             <select id="state" name="state">
-                                                <option value="gujarat" <%=profileformdata.details.state=='gujarat'
-                                                    ? 'selected' : '' %>>Gujarat</option>
-                                                <option value="maharashtra"
-                                                    <%=profileformdata.details.state=='maharashtra' ? 'selected' : '' %>
-                                                    >Maharashtra</option>
-                                                <option value="rajasthan" <%=profileformdata.details.state=='rajasthan'
+                                                <option value="gujarat" <%=profileFormData.state=='gujarat' ? 'selected'
+                                                    : '' %>>Gujarat</option>
+                                                <option value="maharashtra" <%=profileFormData.state=='maharashtra'
+                                                    ? 'selected' : '' %>>Maharashtra</option>
+                                                <option value="rajasthan" <%=profileFormData.state=='rajasthan'
                                                     ? 'selected' : '' %>>Rajasthan</option>
                                             </select>
                                         </div>
                                         <div class="form-group">
                                             <label for="city">City</label>
                                             <input type="text" id="city" name="city" placeholder="City"
-                                                value="<%= profileformdata.details.city ? profileformdata.details.city : null %>">
+                                                value="<%= profileFormData.city %>">
                                         </div>
-                                    </div>
-
-                                    <div class="form-group upload-section">
-                                        <label for="idproof">Your ID proof (Aadhar card/ Driving licence/
-                                            Passport)</label>
-                                        <label for="idproof" class="upload-label"><span><svg width="16" height="16"
-                                                    viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path
-                                                        d="M2 11V12.5C2 12.8978 2.15804 13.2794 2.43934 13.5607C2.72064 13.842 3.10218 14 3.5 14H12.5C12.8978 14 13.2794 13.842 13.5607 13.5607C13.842 13.2794 14 12.8978 14 12.5V11M5 5L8 2M8 2L11 5M8 2V11"
-                                                        stroke="#687182" stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round" />
-                                                </svg>
-                                            </span><span>Upload</span></label>
-                                        <input type="file" id="idproof" name="idproof"
-                                            value="<%= profileformdata.details.idproof ? profileformdata.details.idproof : null %>">
                                     </div>
 
                                     <div class="form-group">
                                         <button type="submit">Submit</button>
                                     </div>
                                 </form>
-
+                                <div id="successAlert" class="alert alert-success d-none" role="alert">
+                                    Profile updated successfully!
+                                </div>
                             </div>
                         </div>
-
                         <div class="upcoming_trips d-none" data-block-index="2">
-                            <% for (let i=0; i < mytrips.length; i++) { %>
-                                <% if (mytrips[i].tripdate>= new Date() ) { %>
+                            <% for (let i=0; i < myTrips.length; i++) { %>
+                                <% if (myTrips[i].tripdate>= new Date() ) { %>
                                     <div
                                         class="single_trip-card d-flex gap-4 border order-1 border-opacity-10 p-3 mt-3">
                                         <div>
-                                            <a href="/tripdetails/<%=mytrips[i].destination %>"><img
+                                            <a href="/tripdetails/<%=myTrips[i].destination %>"><img
                                                     src="../../images/<%= `${imageurl[i]}` %>" width="150"></a>
                                         </div>
                                         <div>
                                             <h4 class="trip_title">
-                                                <%=mytrips[i].destination %>
+                                                <%=myTrips[i].destination %>
                                             </h4>
                                             <p class="trip_date mb-2"><span><svg width="20" height="20"
                                                         viewBox="0 0 20 20" fill="none"
@@ -319,47 +322,47 @@
                                                             stroke-linejoin="round" />
                                                     </svg>
                                                 </span>
-                                                <%= mytrips[i].tripdate %>
+                                                <%= myTrips[i].tripdate %>
                                             </p>
 
                                             <div class="d-flex column-gap-4 row-gap-2 trip_details flex-wrap">
                                                 <div class="orderId">
                                                     <p class="m-0">Order ID</p>
                                                     <p class="m-0">
-                                                        <%= mytrips[i].orderId %>
+                                                        <%= myTrips[i].orderId %>
                                                     </p>
                                                 </div>
                                                 <div class="travellers">
                                                     <p class="m-0">Co-Travellers</p>
                                                     <p class="m-0">
-                                                        <%= mytrips[i].travellers %>
+                                                        <%= myTrips[i].travellers %>
                                                     </p>
                                                 </div>
                                                 <div class="cost">
                                                     <p class="m-0">Cost</p>
                                                     <p class="m-0">
-                                                        <%= mytrips[i].cost %>
+                                                        <%= myTrips[i].cost %>
                                                     </p>
                                                 </div>
                                                 <!-- <div class="receiptId">
-                                                    <p class="m-0">Receipt ID</p>
-                                                    <p class="m-0">
-                                                        <%= mytrips[i].receiptId %>
-                                                    </p>
-                                                </div> -->
+                                                <p class="m-0">Receipt ID</p>
+                                                <p class="m-0">
+                                                    <%= myTrips[i].receiptId %>
+                                                </p>
+                                            </div> -->
                                                 <div class="booking_status">
                                                     <p class="m-0">Booking</p>
                                                     <p
-                                                        class="<%= mytrips[i].status==='paid' ? 'm-0  text-success' : 'm-0 text-danger' %>">
+                                                        class="<%= myTrips[i].status==='paid' ? 'm-0  text-success' : 'm-0 text-danger' %>">
 
-                                                        <%= mytrips[i].status==="paid" ? "Reserved" : "Pending" %>
+                                                        <%= myTrips[i].status==="paid" ? "Reserved" : "Pending" %>
                                                     </p>
                                                 </div>
                                                 <div class="payment_status">
                                                     <p class="m-0">Payment</p>
                                                     <p
-                                                        class="<%= mytrips[i].status==='paid' ? 'm-0  text-success' : 'm-0 text-danger' %>">
-                                                        <%= mytrips[i].status %>
+                                                        class="<%= myTrips[i].status==='paid' ? 'm-0  text-success' : 'm-0 text-danger' %>">
+                                                        <%= myTrips[i].status %>
                                                     </p>
                                                 </div>
 
@@ -378,19 +381,19 @@
                                 <input type="search" id="searchInput"
                                     placeholder="Try searching place name, region, category" class="rounded-8">
                             </div>
-                            <% for (let i=0; i < mytrips.length; i++) { %>
-                                <% if (mytrips[i].tripdate < new Date() ) { %>
+                            <% for (let i=0; i < myTrips.length; i++) { %>
+                                <% if (myTrips[i].tripdate < new Date() ) { %>
                                     <div class="searching">
                                         <div
                                             class="single_trip-card d-flex gap-4 border order-1 border-opacity-10 p-3 mb-3 flex-wrap">
                                             <div>
-                                                <a href="/tripdetails/<%=mytrips[i].destination %>"><img
+                                                <a href="/tripdetails/<%=myTrips[i].destination %>"><img
                                                         src="../../images/<%= `${imageurl[i]}` %>" width="150"></a>
                                             </div>
                                             <div class="searchfilter">
 
                                                 <h4 class="trip_title">
-                                                    <%=mytrips[i].destination %>
+                                                    <%=myTrips[i].destination %>
                                                 </h4>
                                                 <p class="trip_date mb-2"><span><svg width="20" height="20"
                                                             viewBox="0 0 20 20" fill="none"
@@ -401,7 +404,7 @@
                                                                 stroke-linecap="round" stroke-linejoin="round" />
                                                         </svg>
                                                     </span>
-                                                    <%= mytrips[i].tripdate %>
+                                                    <%= myTrips[i].tripdate %>
                                                 </p>
 
                                                 <div class="d-flex column-gap-4 row-gap-2 trip_details flex-wrap">
@@ -485,8 +488,8 @@
         </main>
         <%- include('../partials/footer'); %>
             <%- include('../partials/scripttag'); %>
-                <!-- <script src="member-profile.js"></script> -->
                 <script>
+                    // Find meaning of it.
                     document.addEventListener('DOMContentLoaded', () => {
                         const memberTabList = document.querySelectorAll('.member_profile-container .left_bar p');
                         const memberBlocks = document.querySelectorAll('.member_profile-container [data-block-index]')
@@ -506,6 +509,29 @@
                             })
                         })
                     })
+
+                    document.getElementById('profileUpdateForm').addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        const formData = new FormData(e.target);
+                        const response = await fetch(e.target.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-CSRF-Token': formData.get('_csrf')
+                            }
+                        });
+                        const result = await response.json();
+                        if (response.ok) {
+                            document.getElementById('successAlert').classList.remove('d-none');
+                            setTimeout(() => {
+                                document.getElementById('successAlert').classList.add('d-none');
+                            }, 3000);
+                            // Update profile data on UI
+                            // You can also update the UI directly with result.updatedUser.details
+                        } else {
+                            alert(result.message || 'Failed to update profile');
+                        }
+                    });
                 </script>
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
                     integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
@@ -530,14 +556,13 @@
                         });
                     });
                 </script>
-
 </body>
 
 <style>
-    body,
+    /* body,
     html {
         font-family: 'Inter';
-    }
+    } */
 </style>
 
 </html>

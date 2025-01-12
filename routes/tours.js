@@ -18,6 +18,7 @@ const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
+// FYI: Same function available at middleware/validateLogin also.
 const ensuremultiplelogin = (req, res, next) => {
   // console.log(res.locals.accessToken);
   if (res.locals.accessToken) {
@@ -387,18 +388,10 @@ router.post(
   makepdfController.deletePdftrip
 );
 
-router.get('/mytrips', ensuremultiplelogin, toursController.getmytrips);
-
 router.get('/profile', ensuremultiplelogin, toursController.getprofile);
 
 router.post('/getotp', toursController.getotp);
 
 router.post('/verifyotp', toursController.verifyotp);
-
-router.post(
-  '/userprofile/update',
-  ensuremultiplelogin,
-  toursController.updateuserprofile
-);
 
 module.exports = router;

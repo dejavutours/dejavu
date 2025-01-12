@@ -13,10 +13,7 @@ const GmailUserSchema = new Schema({
     required: true,
   },
 
-  email: {
-    type: String,
-    required: true,
-  },
+  email: { type: String, required: true, unique: true },
 
   paymentids: {
     type: Array,
@@ -24,9 +21,16 @@ const GmailUserSchema = new Schema({
   },
 
   details: {
-    type: Object,
-    required: false,
+    firstName: String,
+    lastName: String,
+    email: String,
+    birthDate: Date,
+    gender: { type: String, enum: ['male', 'female', 'other'] },
+    mobileNumber: String,
+    alternateNumber: String,
+    state: String,
+    city: String,
   },
 });
 
-module.exports = mongoose.model('gmailuser', GmailUserSchema);
+module.exports = mongoose.model('Gmailuser', GmailUserSchema);

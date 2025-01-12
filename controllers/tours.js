@@ -159,13 +159,13 @@ exports.getTourDetails = async (req, res, next) => {
     // console.log(console.log(JSON.stringify(tripdetails, null, 2)));
     // console.log(tripdetails.citydetails);
     // console.log(tripdetails[0]);
-    const citydetailsfiltered = tripdetails[0].citydetails.reduce(
-      (acc, item) => {
-        acc[item.city] = item.Dates.split(','); // Use 'name' as key, 'age' as value
+    const citydetailsfiltered = tripdetails[0].citydetails
+      .toObject() // Convert Mongoose array to plain JavaScript array
+      .reduce((acc, item) => {
+        acc[item.city] = item.Dates.split(','); // Use 'city' as key and split 'Dates' into an array
         return acc;
-      },
-      {}
-    );
+      }, {}) || [];
+
     // console.log(citydetailsfiltered);
     // console.log(typeof citydetailsfiltered);
     // console.log(tripdetails[0]);
@@ -1276,58 +1276,6 @@ exports.deleteStay = async (req, res, next) => {
     });
 };
 
-exports.getmytrips = async (req, res, next) => {
-  // console.log('1272', req.user);
-
-  let mytrips;
-  if (res.locals.accessToken) {
-    mytrips = await PaymentDetail.find({
-      contact: Number(
-        req.verifiedPhoneNumber.length === 12
-          ? req.verifiedPhoneNumber.toString().slice(2)
-          : req.verifiedPhoneNumber
-      ),
-      status: 'paid',
-    });
-  } else {
-    mytrips = await PaymentDetail.find({
-      email: req.user.email,
-      status: 'paid',
-    });
-  }
-  // console.log(mytrips);
-  const tests = await Tours.find().distinct('name');
-  const alltours = await Tours.find();
-  // console.log(alltours[0]);
-  let imageurl = [];
-  console.log(typeof mytrips);
-  mytrips.forEach((value, index) => {
-    mytour = alltours.find((tour) => tour.name === value.destination);
-    imageurl.push(mytour.imageurl);
-  });
-  let profileformdata = {};
-  if (req.verifiedPhoneNumber) {
-    profileformdata = await Mobileuser.findOne({
-      phoneNumber: req.verifiedPhoneNumber,
-    });
-  }
-  if (req.user) {
-    profileformdata = await Gmailuser.findOne({ email: req.user.email });
-  }
-
-  if (!profileformdata.details) {
-    profileformdata.details = {};
-  }
-
-  res.render('pages/mytrips3', {
-    test: tests,
-    mytrips: mytrips,
-    profileformdata,
-    imageurl,
-  });
-  // console.log(tests);
-};
-
 exports.getprofile = async (req, res, next) => {
   // console.log('1272', req.user);
   // console.log(mytrips);
@@ -1376,7 +1324,7 @@ exports.getotp = async (req, res, next) => {
 exports.verifyotp = async (req, res, next) => {
   const { phone2, otp } = req.body;
   try {
-    const user = await Mobileuser.findOne({ phoneNumber: '91' + phone2 });
+    const user = await Mobileuser.findOne({ phoneNumber: '+91' + phone2 });
     if (!user) {
       return res.status(404).send('User not found');
     }
@@ -1397,24 +1345,4 @@ exports.verifyotp = async (req, res, next) => {
     console.error('Error verifying OTP:', err);
     res.status(500).send('Failed to verify OTP');
   }
-};
-
-exports.updateuserprofile = async (req, res, next) => {
-  const updatedUser = {};
-  if (req.verifiedPhoneNumber) {
-    updatedUser = await Mobileuser.findOneAndUpdate(
-      { phoneNumber: req.verifiedPhoneNumber }, // Conditions to find the user
-      { details: req.body }, // Update data
-      { new: true } // Return the updated document
-    );
-  }
-  if (req.user) {
-    updatedUser = await Gmailuser.findOneAndUpdate(
-      { email: req.user.email }, // Conditions to find the user
-      { details: req.body }, // Update data
-      { new: true } // Return the updated document
-    );
-  }
-  // Here we can share updatedUser details.
-  return res.send(true);
 };

@@ -3,10 +3,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const MobileUserSchema = new Schema({
-  phoneNumber: {
-    type: Number,
-    required: true,
-  },
+  phoneNumber: { type: String, required: true, unique: true },
 
   otpExpiration: {
     type: Date,
@@ -24,9 +21,16 @@ const MobileUserSchema = new Schema({
   },
 
   details: {
-    type: Object,
-    required: false,
+    firstName: String,
+    lastName: String,
+    email: String,
+    birthDate: Date,
+    gender: { type: String, enum: ['male', 'female', 'other'] },
+    mobileNumber: String,
+    alternateNumber: String,
+    state: String,
+    city: String,
   },
 });
 
-module.exports = mongoose.model('mobileuser', MobileUserSchema);
+module.exports = mongoose.model('Mobileuser', MobileUserSchema);

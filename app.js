@@ -93,6 +93,7 @@ const csrfProtection = csrf();
   app.set("views", "views");
 
   const tourRoutes = require("./routes/tours");
+  const profileRoutes = require("./routes/profileRoutes");
   const authRoutes = require("./routes/auth");
   const paymentRoutes = require("./routes/payments");
 
@@ -172,6 +173,7 @@ app.use((req, res, next) => {
 });
 
 app.use(tourRoutes);
+app.use(profileRoutes);
 app.use(authRoutes);
 app.use('/payment', paymentRoutes);
 
@@ -184,3 +186,67 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
+
+
+//   const AWS = require('aws-sdk');
+// const multer = require('multer');
+// const multerS3 = require('multer-s3');
+
+// // Configure AWS S3
+// const s3 = new AWS.S3({
+//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+//   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+//   region: process.env.AWS_REGION,
+// });
+
+// // Set up multer for S3
+// const upload = multer({
+//   storage: multerS3({
+//     s3: s3,
+//     bucket: process.env.AWS_BUCKET_NAME,
+//     acl: 'public-read', // Set the file to be publicly readable
+//     key: (req, file, cb) => {
+//       cb(null, `idproofs/${Date.now().toString()}_${file.originalname}`);
+//     },
+//   }),
+// });
+
+// // Update your profile route to include the file upload
+// exports.updateUserProfile = async (req, res, next) => {
+//   try {
+//     let updatedUser = null;
+
+//     // Handle file upload
+//     if (req.file) {
+//       req.body.idproof = req.file.location; // Store the file URL
+//     }
+
+//     if (req.verifiedPhoneNumber) {
+//       updatedUser = await Mobileuser.findOneAndUpdate(
+//         { phoneNumber: req.verifiedPhoneNumber },
+//         { details: req.body },
+//         { new: true }
+//       );
+//     }
+
+//     if (!updatedUser && req.user) {
+//       updatedUser = await Gmailuser.findOneAndUpdate(
+//         { email: req.user.email },
+//         { details: req.body },
+//         { new: true }
+//       );
+//     }
+
+//     if (!updatedUser) {
+//       return res.status(404).json({ message: 'User not found or update failed' });
+//     }
+
+//     res.status(200).json({ message: 'User profile updated successfully', updatedUser });
+//   } catch (error) {
+//     console.error('Error in updating user profile:', error);
+//     next(error);
+//   }
+// };
+
+// // Update your form to handle file uploads using multer
+// app.post('/userprofile/update', upload.single('idproof'), updateUserProfile);
