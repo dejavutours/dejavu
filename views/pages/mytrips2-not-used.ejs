@@ -1,0 +1,274 @@
+<!-- BT:: Current page is not in used, we can remove it. -->
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <%- include('../partials/headtag'); %>
+        <style>
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .tab-content {
+                margin-left: 20px;
+            }
+        </style>
+        <style>
+            .custom-dropdown {
+                position: relative;
+            }
+
+            .custom-dropdown .dropdown-menu {
+                display: none;
+                position: absolute;
+                background-color: white;
+                border: 1px solid #ccc;
+                z-index: 1000;
+                width: 100%;
+            }
+
+            .custom-dropdown.active .dropdown-menu {
+                display: block;
+            }
+
+            .custom-dropdown .dropdown-item {
+                padding: 8px 16px;
+                cursor: pointer;
+            }
+
+            .custom-dropdown .dropdown-item:hover {
+                background-color: #f8f9fa;
+            }
+        </style>
+        <style>
+            .custom-file-upload {
+                display: inline-block;
+                padding: 6px 12px;
+                cursor: pointer;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                background-color: #f8f9fa;
+                transition: background-color 0.3s ease;
+            }
+
+            .custom-file-upload:hover {
+                background-color: #e2e6ea;
+            }
+
+            input[type="file"] {
+                display: none;
+                /* Hide the default file input */
+            }
+
+            .file-label {
+                margin-top: 8px;
+                display: inline-block;
+            }
+        </style>
+        <style>
+            #searchInput {
+                margin-bottom: 15px;
+            }
+
+            .d-none-list {
+                display: none !important;
+                /* Use !important to ensure it overrides */
+            }
+        </style>
+
+</head>
+
+<body>
+    <%- include('../partials/header'); %>
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-3">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="cart-tab" data-toggle="tab" href="#cart" role="tab"
+                                aria-controls="cart" aria-selected="true">Booking History</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                                aria-controls="profile" aria-selected="false">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="orders-tab" data-toggle="tab" href="#orders" role="tab"
+                                aria-controls="orders" aria-selected="false">Upcoming Trips</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-9">
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active mb-2" id="cart" role="tabpanel"
+                            aria-labelledby="cart-tab">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Search for trips..">
+                            <div class="list-group" id="bookinglist">
+                                <% for (var i=0; i < mytrips.length; i++) { %>
+                                    <div class="list-group-item d-flex justify-content-between align-items-start">
+                                        <div class="d-flex align-items-start">
+
+                                            <img src="images/<%= imageurl[i] %>"
+                                                style="max-width: 30%; height: auto; min-width: 100px;"
+                                                class="rounded mr-3" alt="Product 1">
+                                            <div class="searchfilter">
+                                                <h5 class="mb-1">Product<%= i %>
+                                                </h5>
+                                                <p class="mb-1">Description of product 1 goes here.</p>
+                                                <small>Price: $19.99</small>
+                                                <form action="tripdetails/<%= mytrips[i].destination %>">
+                                                    <button class="btn btn-success">
+                                                        <%= mytrips[i].destination %>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% } %>
+
+                            </div>
+                        </div>
+                        <div class="tab-pane fade mb-2" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+
+                            <div class="container">
+                                <h2>Personal Details</h2>
+                                <form>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="firstName">First Name</label>
+                                            <input type="text" class="form-control" id="firstName"
+                                                placeholder="First Name" required>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="lastName">Last Name</label>
+                                            <input type="text" class="form-control" id="lastName"
+                                                placeholder="Last Name" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="birthDate">Birth Date</label>
+                                            <input type="date" class="form-control" id="birthDate" required>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="customSelect">Select Gender</label>
+                                            <div class="custom-dropdown">
+                                                <input type="text" id="customSelect" class="form-control"
+                                                    placeholder="Choose..." readonly onclick="toggleDropdown()">
+                                                <div class="dropdown-menu">
+                                                    <div class="dropdown-item" onclick="selectOption('Male')">Male</div>
+                                                    <div class="dropdown-item" onclick="selectOption('Female')">Female
+                                                    </div>
+                                                    <div class="dropdown-item" onclick="selectOption('Other')">Other
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="mobile">Mobile Number</label>
+                                            <input type="tel" class="form-control" id="mobile"
+                                                placeholder="Mobile Number" required>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="alternateNumber">Alternate Number</label>
+                                            <input type="tel" class="form-control" id="alternateNumber"
+                                                placeholder="Alternate Number">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="email">Email ID</label>
+                                            <input type="email" class="form-control" id="email" placeholder="Email ID"
+                                                required>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="state">State</label>
+                                            <input type="text" class="form-control" id="state" placeholder="State"
+                                                required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="city">City</label>
+                                            <input type="text" class="form-control" id="city" placeholder="City"
+                                                required>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="fileUpload">Your ID proof (Aadhar card/ Driving licence/
+                                                Passport)</label>
+                                            <label class="custom-file-upload">
+                                                <input type="file" id="fileUpload" required>
+                                                Choose File
+                                            </label>
+                                            <span class="file-label" id="fileName">No file chosen</span>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </form>
+                            </div>
+
+                        </div>
+                        <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+                            <h4>Orders Tab</h4>
+                            <p>Your past orders will be listed here.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include('../partials/footer'); %>
+
+            <%- include('../partials/scripttag'); %>
+                <script>
+                    function toggleDropdown() {
+                        const dropdown = document.querySelector('.custom-dropdown');
+                        dropdown.classList.toggle('active');
+                    }
+
+                    function selectOption(value) {
+                        const input = document.getElementById('customSelect');
+                        input.value = value;
+                        toggleDropdown(); // Close the dropdown
+                    }
+
+                    // Close dropdown if clicking outside
+                    window.onclick = function (event) {
+                        if (!event.target.matches('.form-control')) {
+                            const dropdown = document.querySelector('.custom-dropdown');
+                            dropdown.classList.remove('active');
+                        }
+                    };
+                </script>
+                <script>
+                    // Update file name label when a file is selected
+                    document.getElementById('fileUpload').addEventListener('change', function () {
+                        const fileName = this.files.length > 0 ? this.files[0].name : 'No file chosen';
+                        document.getElementById('fileName').textContent = fileName;
+                    });
+                </script>
+                <script>
+                    // Filter function
+                    document.getElementById('searchInput').addEventListener('keyup', function () {
+                        const filter = this.value.toLowerCase();
+                        const items = document.querySelectorAll('#bookinglist .list-group-item');
+                        console.log(items);
+                        items.forEach(item => {
+                            console.log(item)
+                            const nestedText = item.querySelector('.searchfilter').textContent.toLowerCase();
+                            console.log(nestedText)
+
+                            if (nestedText.includes(filter)) {
+                                item.classList.remove('d-none-list') // Show item
+                            } else {
+                                item.classList.add('d-none-list'); // Hide item
+                            }
+                        });
+                    });
+                </script>
+</body>
+
+</html>

@@ -1,7 +1,7 @@
 var express = require('express');
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oidc');
-const gmailuser = require("../models/gmailuser");
+const Gmailuser = require("../models/gmailuser");
 // var db = require('../db');
 
 
@@ -25,7 +25,7 @@ passport.use(new GoogleStrategy({
   };
   const filter = { email: user.email };
 
-const doc = await gmailuser.findOneAndUpdate(filter, user, {
+const doc = await Gmailuser.findOneAndUpdate(filter, user, {
   new: true,
   upsert: true // Make this update into an upsert
 });
