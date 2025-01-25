@@ -50,7 +50,7 @@ router.post("/order", function (req, res, next) {
         travellers: req.body.travellers,
         cost: req.body.cost,
         dob: req.body.dob,
-        contact: Number(req.body.contact.replaceAll(/\s/g, "")),
+        contact: Number(req.body.contact.replace(/\s/g, "")),
         destination: req.body.destination,
         tripdate: req.body.tripdate,
       });
@@ -70,7 +70,7 @@ router.post("/order", function (req, res, next) {
       }
     })
     .catch((err) => {
-      response.status(500).send(err);
+      res.status(500).send(err);
       // Throw err if failed to create order
       if (err) throw err;
     });

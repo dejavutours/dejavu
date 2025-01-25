@@ -46,11 +46,7 @@ exports.getMyTrips = async (req, res, next) => {
     const { verifiedPhoneNumber, user } = req;
 
     const contact = verifiedPhoneNumber
-      ? Number(
-          verifiedPhoneNumber.length === 12
-            ? verifiedPhoneNumber.slice(2)
-            : verifiedPhoneNumber
-        )
+      ? Number(verifiedPhoneNumber.slice(-10))
       : null;
 
     const filter = accessToken
