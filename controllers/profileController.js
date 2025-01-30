@@ -49,9 +49,7 @@ exports.getMyTrips = async (req, res, next) => {
       ? Number(verifiedPhoneNumber.slice(-10))
       : null;
 
-    const filter = accessToken
-      ? { contact, status: 'paid' }
-      : { email: user?.email, status: 'paid' };
+    const filter = accessToken ? { contact, status: 'paid' } : { email: user?.email, status: 'paid' };
 
     const myTrips = await PaymentDetail.find(filter);
     const tests = await Tours.find().distinct('name');
