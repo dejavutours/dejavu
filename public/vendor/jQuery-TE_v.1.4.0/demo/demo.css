@@ -45,10 +45,6 @@ a:link, a:visited {
 	background:#198CFF;
 	cursor:pointer
 }
-.footer, .footer * {
-	color:#802D00;
-	font-size:15px
-}
 
 .jqte-test {
 	display:block;
