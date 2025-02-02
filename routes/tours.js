@@ -378,7 +378,7 @@ router.post(
   makepdfController.deletePdftrip
 );
 
-router.get('/profile', ensuremultiplelogin, toursController.getprofile);
+// router.get('/profile', ensuremultiplelogin, toursController.getprofile);
 
 router.post('/getotp', toursController.getotp);
 

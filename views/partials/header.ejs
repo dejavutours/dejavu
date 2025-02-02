@@ -46,7 +46,7 @@
                         <li><a href="/admin/login">Admin</a></li>
                         <% } %>
                         <!-- <li><a href="/profile">Profile</a></li> -->
-                        <li><a href="/mytrips">Profile</a></li>
+                        <li><a href="/profile">Profile</a></li>
                         <!-- <li><a href="/logout">Sign Out</a></li> -->
                         <li>
                           <form id="my_form" action="/logout" method="post">
@@ -398,7 +398,4 @@
       closeAllLists(e.target);
     });
   }
-
-  var countries = <% -JSON.stringify(test) %>;
-  autocomplete(document.getElementById("SearchTrip"), countries);
 </script>
