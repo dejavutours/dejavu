@@ -16,7 +16,7 @@
             /* Use !important to ensure it overrides */
         }
 
-        .member_profile-container .left_bar p.active {
+        .member_profile-container .profile-left-bar p.active {
             background-color: #f3f4f6;
             border-left: 4px solid #1a3c6c;
         }
@@ -26,21 +26,21 @@
         }
 
         .member_profile-container .trip_details {
+            gap: 8px;
+        }
+
+        .member_profile-container .trip-card-expand .inner-content {
             gap: 15px;
         }
 
-        .member_profile-container .trip_card-expanded .inner-content {
-            gap: 15px;
-        }
-
-        .member_profile-container .left_bar p {
+        .member_profile-container .profile-left-bar p {
             padding: 10px 15px;
             margin: 0;
             cursor: pointer;
             border-left: 4px solid transparent;
         }
 
-        .member_profile-container .left_bar {
+        .member_profile-container .profile-left-bar {
             min-width: 300px;
         }
 
@@ -125,7 +125,7 @@
             width: 700px;
         }
 
-        .member_profile-container .single_trip-card h4 {
+        .member_profile-container .single-trip-card h4 {
             font-size: 20px;
             line-height: 28px;
             font-weight: 700;
@@ -141,7 +141,7 @@
                 flex-wrap: wrap;
             }
 
-            .member_profile-container .trip_card-expanded {
+            .member_profile-container .trip-card-expand {
                 margin-top: 20px !important;
             }
 
@@ -150,12 +150,12 @@
             }
         }
 
-        .member_profile-container .single_trip-card {
+        .member_profile-container .single-trip-card {
             border-radius: 16px;
             gap: 10px;
         }
 
-        .member_profile-container .trip_card-expanded {
+        .member_profile-container .trip-card-expand {
             margin-top: 50px;
         }
 
@@ -200,26 +200,52 @@
             width: 100%;
             /* Ensure dropdowns are full width */
         }
+
+        .orderId,
+        .travellers,
+        .booking_status {
+            border-right: 1px solid #ccc;
+            padding-right: 8px;
+        }
+
+        .pagination {
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            padding: 8px 16px;
+            margin: 4px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            color: black;
+        }
+
+        .pagination a:hover {
+            background-color: #ddd;
+        }
     </style>
-    <%- include('../partials/headtag'); %>
+    <%- include('../../partials/headtag'); %>
 </head>
 
 <body>
-    <%- include('../partials/header'); %>
+    <%- include('../../partials/header'); %>
     <main>
         <div class="container my-5">
             <div class="d-flex gap-4 member_profile-container">
-                <div class="left_bar">
+                <div class="profile-left-bar" onclick="handleProfileTabDivClick(event)">
                     <p class="active" data-tab-index="1">Profile</p>
                     <p data-tab-index="2">Upcoming trips</p>
                     <p data-tab-index="3">Booking history</p>
                 </div>
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <div class="right_block">
                     <div class="profile_block" data-block-index="1">
                         <div class="form-container">
                             <h2 class="text-left">Personal details</h2>
-                            <form id="profileUpdateForm" action="/userprofile/update" method="POST">
-                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <form id="profileUpdateForm" action="/profile/update" method="POST">
+
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label for="FirstName">First Name*</label>
@@ -292,204 +318,288 @@
                             </div>
                         </div>
                     </div>
-                    <div class="upcoming_trips d-none" data-block-index="2">
-                        <% for (let i=0; i < myTrips.length; i++) { %>
-                        <% if (myTrips[i].tripdate>= new Date() ) { %>
-                        <div class="single_trip-card d-flex gap-4 border order-1 border-opacity-10 p-3 mt-3">
-                            <div>
-                                <a href="/tripdetails/<%=myTrips[i].destination %>"><img src="../../images/<%= `${imageurl[i]}` %>" width="150"></a>
-                            </div>
-                            <div>
-                                <h4 class="trip_title">
-                                    <%=myTrips[i].destination %>
-                                </h4>
-                                <p class="trip_date mb-2"><span><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M5.625 2.5V4.375M14.375 2.5V4.375M2.5 15.625V6.25C2.5 5.75272 2.69754 5.27581 3.04917 4.92417C3.40081 4.57254 3.87772 4.375 4.375 4.375H15.625C16.1223 4.375 16.5992 4.57254 16.9508 4.92417C17.3025 5.27581 17.5 5.75272 17.5 6.25V15.625M2.5 15.625C2.5 16.1223 2.69754 16.5992 3.04917 16.9508C3.40081 17.3025 3.87772 17.5 4.375 17.5H15.625C16.1223 17.5 16.5992 17.3025 16.9508 16.9508C17.3025 16.5992 17.5 16.1223 17.5 15.625M2.5 15.625V9.375C2.5 8.87772 2.69754 8.40081 3.04917 8.04917C3.40081 7.69754 3.87772 7.5 4.375 7.5H15.625C16.1223 7.5 16.5992 7.69754 16.9508 8.04917C17.3025 8.40081 17.5 8.87772 17.5 9.375V15.625M10 10.625H10.0067V10.6317H10V10.625ZM10 12.5H10.0067V12.5067H10V12.5ZM10 14.375H10.0067V14.3817H10V14.375ZM8.125 12.5H8.13167V12.5067H8.125V12.5ZM8.125 14.375H8.13167V14.3817H8.125V14.375ZM6.25 12.5H6.25667V12.5067H6.25V12.5ZM6.25 14.375H6.25667V14.3817H6.25V14.375ZM11.875 10.625H11.8817V10.6317H11.875V10.625ZM11.875 12.5H11.8817V12.5067H11.875V12.5ZM11.875 14.375H11.8817V14.3817H11.875V14.375ZM13.75 10.625H13.7567V10.6317H13.75V10.625ZM13.75 12.5H13.7567V12.5067H13.75V12.5Z" stroke="#4B5563" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </span>
-                                    <%= myTrips[i].tripdate %>
-                                </p>
 
-                                <div class="d-flex column-gap-4 row-gap-2 trip_details flex-wrap">
-                                    <div class="orderId">
-                                        <p class="m-0">Order ID</p>
-                                        <p class="m-0">
-                                            <%= myTrips[i].orderId %>
-                                        </p>
-                                    </div>
-                                    <div class="travellers">
-                                        <p class="m-0">Co-Travellers</p>
-                                        <p class="m-0">
-                                            <%= myTrips[i].travellers %>
-                                        </p>
-                                    </div>
-                                    <div class="cost">
-                                        <p class="m-0">Cost</p>
-                                        <p class="m-0">
-                                            <%= myTrips[i].cost %>
-                                        </p>
-                                    </div>
-                                    <!-- <div class="receiptId">
-                                                <p class="m-0">Receipt ID</p>
-                                                <p class="m-0">
-                                                    <%= myTrips[i].receiptId %>
-                                                </p>
-                                            </div> -->
-                                    <div class="booking_status">
-                                        <p class="m-0">Booking</p>
-                                        <p class="<%= myTrips[i].status==='paid' ? 'm-0  text-success' : 'm-0 text-danger' %>">
-
-                                            <%= myTrips[i].status==="paid" ? "Reserved" : "Pending" %>
-                                        </p>
-                                    </div>
-                                    <div class="payment_status">
-                                        <p class="m-0">Payment</p>
-                                        <p class="<%= myTrips[i].status==='paid' ? 'm-0  text-success' : 'm-0 text-danger' %>">
-                                            <%= myTrips[i].status %>
-                                        </p>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <% } %>
-                        <% } %>
+                    <!-- Booking History/Upcoming Trips section -->
+                    <div class="upcoming_trips d-none" id="trip-section" data-block-index="2" onclick="handleTipCardExpand(event)">
+                        <!-- The DOM will be loaded from JavaScript. -->
 
                     </div>
 
-                    <div class="booking_history d-none" id="booking_history" data-block-index="3">
-                        <div class="search_bar mb-4">
-                            <input type="search" id="searchInput" placeholder="Try searching place name, region, category" class="rounded-8">
-                        </div>
-                        <% for (let i=0; i < myTrips.length; i++) { %>
-                        <% if (myTrips[i].tripdate < new Date() ) { %>
-                        <div class="searching">
-                            <div class="single_trip-card d-flex gap-4 border order-1 border-opacity-10 p-3 mb-3 flex-wrap">
-                                <div>
-                                    <a href="/tripdetails/<%=myTrips[i].destination %>"><img src="../../images/<%= `${imageurl[i]}` %>" width="150"></a>
-                                </div>
-                                <div class="searchfilter">
+                    <!-- booking history -->
+                    <div class="booking_history d-none" id="trip-section" data-block-index="3" onclick="handleTipCardExpand(event)">
+                        <!-- The DOM will be loaded from JavaScript. -->
+                    </div>
 
-                                    <h4 class="trip_title">
-                                        <%=myTrips[i].destination %>
-                                    </h4>
-                                    <p class="trip_date mb-2"><span><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <div class="pagination" id="pagination-container"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <%- include('../../partials/footer'); %>
+    <%- include('../../partials/scripttag'); %>
+    <script>
+        let crrLoadedTabIdx = "1";
+
+        function stopPropagationFn(event) {
+            // The purpose of writing this code is to prevent the card from expanding when clicking on link elements inside the card. 
+            // Note: Do not use "preventDefault" as we need to open the links based on the click event.
+            event.stopPropagation();
+        }
+
+        // Function to handle tab click event
+        async function handleProfileTabDivClick(event) {
+            // Get the clicked element
+            const clickedElement = event.target;
+            const newTabIndex = clickedElement.getAttribute('data-tab-index');
+
+            // Ensure the clicked element is a paragraph and is different from the currently active tab
+            if (clickedElement.tagName === 'P' && newTabIndex !== crrLoadedTabIdx) {
+                // Get the currently active tab and corresponding content block
+                const prevTabElement = document.querySelector(
+                    `[data-tab-index="${crrLoadedTabIdx}"]`
+                );
+                const prevDataElement = document.querySelector(
+                    `[data-block-index="${crrLoadedTabIdx}"]`
+                );
+
+                // Get the new tab and corresponding content block
+                const newDataElement = document.querySelector(
+                    `[data-block-index="${newTabIndex}"]`
+                );
+
+                if (prevTabElement && prevDataElement) {
+                    // Remove 'active' class from previous tab and hide its content
+                    prevTabElement.classList.remove('active');
+                    prevDataElement.classList.add('d-none');
+                }
+
+                if (clickedElement && newDataElement) {
+                    // Add 'active' class to new tab and show its content
+                    clickedElement.classList.add('active');
+                    newDataElement.classList.remove('d-none');
+                }
+
+                // Update the currently loaded tab index
+                crrLoadedTabIdx = newTabIndex;
+
+                if (newTabIndex > 1) {
+                    // Load data for the newly selected tab
+                    await loadTripData(newTabIndex);
+                }
+            }
+        }
+
+        // BT: ::Pending:: Move all Javascript helper function to separate file.
+        // Load upcoming/history trip data based on pagination.
+        async function loadTripData(newTabIndex, crrPage = 1) {
+            try {
+                const csrfToken = document.querySelector('input[name="_csrf"]').value;
+                const response = await fetch('/profile/getBookingHistoryItem', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken,
+                    },
+                    // BT: ::Pending:: Make Pagination dynamic.
+                    body: JSON.stringify({
+                        crrPage: crrPage,
+                        newTabIndex,
+                    }),
+                });
+
+                if (!response.ok) {
+                    // BT: ::Pending:: Handle Error by use common notification.
+                    throw new Error('Failed to fetch trip data');
+                }
+
+                const result = await response.json();
+
+                if (result.items && result.items.length > 0) {
+                    let myTrips = result.items;
+                    let tripContainer = document.querySelector(
+                        '.upcoming_trips[data-block-index="2"]'
+                    );
+                    tripContainer.innerHTML = ''; // Clear previous content
+
+                    myTrips.forEach((trip) => {
+                        let tripHTML = `
+                            <div class="single-trip-card d-flex gap-4 border order-1 border-opacity-10 p-3 mt-3">
+                                <div>
+                                    <!-- Image, updated based on trip.imageName -->
+                                    <!-- // We will implement redirection in in future flow.  --> 
+                                     <!-- // <a href="/tripdetails/${trip.toursSystemId}" onclick="stopPropagationFn(event)">  --> 
+                                        <img class="rounded-lg" src="../../../images/${
+                                        trip.imageName || 'ahmedabadcity-tour.jpg'
+                                        }" width="150">
+                                    <!-- // </a> --> 
+                                </div>
+                                <div>
+                                    <h4 class="trip_title">${trip.tripName}</h4>
+                                    <p class="trip_date mb-2 d-flex align-items-center">
+                                        <span class="me-2">
+                                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M5.625 2.5V4.375M14.375 2.5V4.375M2.5 15.625V6.25C2.5 5.75272 2.69754 5.27581 3.04917 4.92417C3.40081 4.57254 3.87772 4.375 4.375 4.375H15.625C16.1223 4.375 16.5992 4.57254 16.9508 4.92417C17.3025 5.27581 17.5 5.75272 17.5 6.25V15.625M2.5 15.625C2.5 16.1223 2.69754 16.5992 3.04917 16.9508C3.40081 17.3025 3.87772 17.5 4.375 17.5H15.625C16.1223 17.5 16.5992 17.3025 16.9508 16.9508C17.3025 16.5992 17.5 16.1223 17.5 15.625M2.5 15.625V9.375C2.5 8.87772 2.69754 8.40081 3.04917 8.04917C3.40081 7.69754 3.87772 7.5 4.375 7.5H15.625C16.1223 7.5 16.5992 7.69754 16.9508 8.04917C17.3025 8.40081 17.5 8.87772 17.5 9.375V15.625M10 10.625H10.0067V10.6317H10V10.625ZM10 12.5H10.0067V12.5067H10V12.5ZM10 14.375H10.0067V14.3817H10V14.375ZM8.125 12.5H8.13167V12.5067H8.125V12.5ZM8.125 14.375H8.13167V14.3817H8.125V14.375ZM6.25 12.5H6.25667V12.5067H6.25V12.5ZM6.25 14.375H6.25667V14.3817H6.25V14.375ZM11.875 10.625H11.8817V10.6317H11.875V10.625ZM11.875 12.5H11.8817V12.5067H11.875V12.5ZM11.875 14.375H11.8817V14.3817H11.875V14.375ZM13.75 10.625H13.7567V10.6317H13.75V10.625ZM13.75 12.5H13.7567V12.5067H13.75V12.5Z" stroke="#4B5563" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                             </svg>
-                                        </span>
-                                        <%= myTrips[i].tripdate %>
+                                        </span>&nbsp;
+                                        <!-- BT: ::Confirm:: if it needs to be shown in 'how many days, how many nights' format? -->
+                                        ${trip.tripStartDate} - ${trip.tripEndDate}
                                     </p>
-
-                                    <div class="d-flex column-gap-4 row-gap-2 trip_details flex-wrap">
-                                        <div class="trip_code">
+                                    <div class="d-flex column-gap-2 row-gap-2 trip_details flex-wrap">
+                                        <div class="orderId">
                                             <p class="m-0">Trip code</p>
-                                            <p class="m-0">KTC022205</p>
+                                            <p class="m-0">${trip.tripCode}</p>
                                         </div>
-                                        <div class="booking_number">
+                                        <div class="travellers">
                                             <p class="m-0">Booking number</p>
-                                            <p class="m-0">DJV220048</p>
+                                            <p class="m-0">${trip.bookingNumber}</p>
                                         </div>
                                         <div class="booking_status">
                                             <p class="m-0">Booking</p>
-                                            <p class="m-0">Reserved</p>
+                                            <p>${trip.bookingStatus}</p>
                                         </div>
                                         <div class="payment_status">
                                             <p class="m-0">Payment</p>
-                                            <p class="m-0">Done</p>
+                                            <p class="badge ${
+                                            trip.paymentStatus === 'Paid'
+                                                ? 'm-0 text-success'
+                                                : 'm-0 text-danger'
+                                            }">
+                                                ${trip.paymentStatus}
+                                            </p>
                                         </div>
                                     </div>
-
-                                    <div class="trip_card-expanded">
+                                    <div class="trip-card-expand d-none">
                                         <div class="d-flex gap-4 mb-4 inner-content">
                                             <div class="pickup_details">
-                                                <p class="pickup-from">Pickup from:</p>
-                                                <p class="pickup_city">Ahemdabad</p>
+                                                <p class="pickup-from">Joining from:</p>
+                                                <p class="pickup_city">${
+                                                trip.joiningFrom
+                                                }</p>
                                             </div>
                                             <div class="travel_date">
                                                 <p>Travel date:</p>
-                                                <p class="date_from">8 May 2024 to 16 May 2024</p>
+                                                <p class="date_from">${
+                                                trip.tripStartDate
+                                                } - ${trip.tripEndDate}</p>
                                             </div>
                                         </div>
                                         <div class="d-flex gap-4 mb-4 inner-content">
                                             <div class="person_details">
                                                 <p class="mb-1">Total person</p>
-                                                <p class="adults">Adults : 10</p>
-                                                <p class="childs">Childs : 03</p>
+                                                <p class="adults">Adults : ${
+                                                trip.totalPerson?.adult
+                                                }</p>
+                                                <p class="childs">Children : ${
+                                                trip.totalPerson?.child
+                                                }</p>
                                             </div>
                                             <div class="total_costs">
                                                 <p class="mb-1">Total costs</p>
-                                                <p>₹77,689</p>
-                                            </div>
-                                            <div class="Due Payment">
-                                                <p class="mb-1">Due Payment</p>
-                                                <p class="text-danger">30000</p>
-                                            </div>
+                                                <p>₹${trip.totalTripCost}</p>
+                                            </div>  
+                                            ${trip.duePayment > 0 ? `                                            
+                                                <div class="Due Payment">
+                                                    <p class="mb-1">Due Payment</p>
+                                                    <p class="text-danger">${
+                                                    trip.duePayment || 0
+                                                    }</p>
+                                                </div>
+                                            `:''}
                                         </div>
 
                                         <div class="person_names">
                                             <details>
-                                                <summary>View person’s details <span><svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M11.375 5.3125L7 9.6875L2.625 5.3125" stroke="#111827" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                                        </svg>
-                                                    </span></summary>
+                                                <summary onclick="stopPropagationFn(event)">View person’s details 
+                                                    <span><svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M11.375 5.3125L7 9.6875L2.625 5.3125" stroke="#111827" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                                    </svg></span>
+                                                </summary>
                                                 <ul>
-                                                    <li>Albert Flores (27)</li>
-                                                    <li>Darrell Steward (24)</li>
-                                                    <li>Annette Black (12)</li>
-                                                    <li>Cameron Williamson (28)</li>
-                                                    <li>Jerome Bell (29)</li>
+                                                    ${trip.personDetails
+                                                    ?.map(
+                                                        (person, index) =>
+                                                        `<li>${index + 1}. ${person.name} (${person.age})</li>`
+                                                    )
+                                                    .join('')}
                                                 </ul>
                                             </details>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <% } %>
-                        <% } %>
+                        `;
+                        tripContainer.insertAdjacentHTML('beforeend', tripHTML);
+                    });
+                    tripContainer.classList.remove('d-none');
+                } else {
+                    console.log('No trips found');
+                }
+                renderPagination(result.paginationDet);
+            } catch (error) {
+                console.error('Error fetching trip data:', error);
+            }
+        }
 
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-    <%- include('../partials/footer'); %>
-    <%- include('../partials/scripttag'); %>
-    <script>
-        // Find meaning of it.
-        document.addEventListener('DOMContentLoaded', () => {
-            const memberTabList = document.querySelectorAll('.member_profile-container .left_bar p');
-            const memberBlocks = document.querySelectorAll('.member_profile-container [data-block-index]')
-            memberTabList.forEach(function(tab) {
-                tab.addEventListener('click', function(e) {
-                    const dataIndex = e.target.getAttribute('data-tab-index');
-                    console.log('clickedd', dataIndex)
-                    memberTabList.forEach((tab) => tab.classList.remove('active'))
-                    memberBlocks.forEach((block) => block.classList.add('d-none'));
+        // Function to render the pagination buttons
+        function renderPagination(paginationDet) {
+            const paginationContainer = document.getElementById('pagination-container');
 
-                    memberBlocks.forEach((block) => {
-                        if (dataIndex == block.getAttribute('data-block-index')) {
-                            block.classList.remove('d-none')
-                            e.target.classList.add('active')
+            // Clear previous pagination buttons
+            paginationContainer.innerHTML = '';
+            if (paginationDet.totalPages > 1) {
+                for (let i = 1; i <= paginationDet.totalPages; i++) {
+                    const button = document.createElement('a');
+                    button.textContent = i;
+                    button.onclick = () => {
+                        // event.preventDefault();
+                        // event.stopPropagation();
+                        if (paginationDet.crrPage !== i) {
+                            const crrTabIndex = document.querySelector('.profile-left-bar .active')?.getAttribute('data-tab-index')
+                            loadTripData(crrTabIndex, i);
+                            document.getElementById('trip-section').scrollIntoView({
+                                behavior: 'smooth'
+                            });
                         }
-                    })
-                })
-            })
-        })
+                    };
 
+                    // Add an active class to the current page button
+                    if (i === paginationDet.crrPage) {
+                        button.style.backgroundColor = '#ddd';
+                    }
+
+                    paginationContainer.appendChild(button);
+                }
+            }
+        }
+
+        // Manage code for card collapse and expand.
+        function handleTipCardExpand(event) {
+            const expandedElement = document.querySelector("#trip-section .trip-card-expanded");
+            expandedElement?.classList.toggle("d-none");
+            expandedElement?.classList.toggle("trip-card-expanded");
+
+            const clickedCardElement = event.target.closest('.single-trip-card');
+            const crrElement = clickedCardElement.querySelector(".trip-card-expand");
+            if (expandedElement !== crrElement) {
+                crrElement?.classList.toggle("d-none");
+                crrElement?.classList.toggle("trip-card-expanded");
+            }
+        }
+
+        // Submit Form
         document.getElementById('profileUpdateForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
+            const csrfToken = document.querySelector('input[name="_csrf"]').value;
             const response = await fetch(e.target.action, {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-CSRF-Token': formData.get('_csrf')
+                    'X-CSRF-Token': csrfToken
                 }
             });
             const result = await response.json();
+            // BT: ::Pending:: Create Global notification bar.
             if (response.ok) {
                 document.getElementById('successAlert').classList.remove('d-none');
                 setTimeout(() => {
@@ -502,26 +612,27 @@
             }
         });
     </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script>
         // Filter function
-        document.getElementById('searchInput').addEventListener('keyup', function() {
-            const filter = this.value.toLowerCase();
-            const items = document.querySelectorAll('#booking_history .searching');
-            console.log(items);
-            items.forEach(item => {
-                console.log(item)
-                const nestedText = item.querySelector('.searchfilter').textContent.toLowerCase();
-                console.log(nestedText)
+        // document.getElementById('searchInput').addEventListener('keyup', function() {
+        //     const filter = this.value.toLowerCase();
+        //     const items = document.querySelectorAll('#booking_history .searching');
+        //     console.log(items);
+        //     items.forEach(item => {
+        //         console.log(item)
+        //         const nestedText = item.querySelector('.searchfilter').textContent.toLowerCase();
+        //         console.log(nestedText)
 
-                if (nestedText.includes(filter)) {
-                    item.classList.remove('d-none-list') // Show item
-                } else {
-                    item.classList.add('d-none-list'); // Hide item
-                }
-            });
-        });
+        //         if (nestedText.includes(filter)) {
+        //             item.classList.remove('d-none-list') // Show item
+        //         } else {
+        //             item.classList.add('d-none-list'); // Hide item
+        //         }
+        //     });
+        // });
     </script>
 </body>
 

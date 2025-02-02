@@ -4,10 +4,14 @@ const profileController = require('../controllers/profileController');
 const ensureMultipleLogin = require('../middleware/validateLogin');
 
 // Profile-related routes
-router.route('/mytrips').get(ensureMultipleLogin, profileController.getMyTrips);
+router.route('/profile').get(ensureMultipleLogin, profileController.getMyTrips);
 
 router
-  .route('/userprofile/update')
+  .route('/profile/update')
   .post(ensureMultipleLogin, profileController.updateUserProfile);
+
+router
+  .route('/profile/getBookingHistoryItem')
+  .post(ensureMultipleLogin, profileController.getBookingHistoryItem);
 
 module.exports = router;

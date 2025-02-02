@@ -1,7 +1,12 @@
 const mobileuser = require('../models/mobileuser');
 const gmailuser = require('../models/gmailuser');
+const TripBookingDetail = require('../models/TripBookingDetail');
 const PaymentDetail = require('../models/payment-detail');
 const Tours = require('../models/tours');
+const {
+  formatMongoDateForUIAsYYYYMMMDD,
+  formatMongoDateForUIAsYYYYMMDD,
+} = require('../util/UtilityService');
 
 // Handler to update the user's profile based on phone number or email
 exports.updateUserProfile = async (req, res, next) => {
@@ -39,28 +44,69 @@ exports.updateUserProfile = async (req, res, next) => {
   }
 };
 
-// Handler to fetch and display the user's trips
-exports.getMyTrips = async (req, res, next) => {
+// Fetch User's booked trips based on pagination.
+exports.getBookingHistoryItem = async (req, res, next) => {
   try {
     const { accessToken } = res.locals;
     const { verifiedPhoneNumber, user } = req;
+    const { crrPage = 1, pageLimit = 10, newTabIndex } = req.body;
+    const isUpcomingTrips = newTabIndex === '2';
 
-    const contact = verifiedPhoneNumber
-      ? Number(verifiedPhoneNumber.slice(-10))
-      : null;
+    const filter = {
+      tripStartDate: isUpcomingTrips
+        ? { $gte: new Date() }
+        : { $lt: new Date() },
+      tempUserID: accessToken
+        ? verifiedPhoneNumber
+          ? Number(verifiedPhoneNumber.slice(-10))
+          : null
+        : user?.email,
+    };
 
-    const filter = accessToken
-      ? { contact, status: 'paid' }
-      : { email: user?.email, status: 'paid' };
+    const items = await TripBookingDetail.find(filter)
+      .skip((crrPage - 1) * pageLimit)
+      .limit(pageLimit)
+      .sort({ tripStartDate: isUpcomingTrips ? 1 : -1 })
+      .select([
+        'userId',
+        'tempUserID',
+        'toursSystemId',
+        'tripName',
+        'tripCode',
+        'imageName',
+        'bookingNumber',
+        'totalPerson',
+        'personDetails',
+        'joiningFrom',
+        'bookingStatus',
+        'totalTripCost',
+        'duePayment',
+        'paymentStatus',
+        'tripStartDate',
+        'tripEndDate',
+      ])
+      .lean();
 
-    const myTrips = await PaymentDetail.find(filter);
-    const tests = await Tours.find().distinct('name');
-    const allTours = await Tours.find();
-
-    const imageUrls = myTrips.map((trip) => {
-      const tour = allTours.find(({ name }) => name === trip.destination);
-      return tour?.imageurl || null;
+    // Format date fields
+    items.forEach((item) => {
+      item.tripStartDate = formatMongoDateForUIAsYYYYMMMDD(item.tripStartDate);
+      item.tripEndDate = formatMongoDateForUIAsYYYYMMMDD(item.tripEndDate);
     });
+
+    const totalItems = await TripBookingDetail.countDocuments(filter);
+    const totalPages = Math.ceil(totalItems / pageLimit);
+
+    res.json({ items, paginationDet: { crrPage, totalPages } });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server Error' });
+  }
+};
+
+// Handler to fetch and display the user's trips
+exports.getMyTrips = async (req, res, next) => {
+  try {
+    const { verifiedPhoneNumber, user } = req;
 
     let profileFormData = {};
     if (verifiedPhoneNumber) {
@@ -71,26 +117,22 @@ exports.getMyTrips = async (req, res, next) => {
       profileFormData = await gmailuser.findOne({ email: user.email });
     }
 
-    // Ensure birthDate is formatted as YYYY-MM-DD
-    const formattedBirthDate =
-      profileFormData.details && profileFormData.details.birthDate
-        ? new Date(profileFormData.details.birthDate)
-            .toISOString()
-            .split('T')[0]
-        : '';
+    // Ensure birthDate is formatted as YYYY-MM-DD.
+    const formattedBirthDate = formatMongoDateForUIAsYYYYMMDD(
+      profileFormData?.details?.birthDate
+    );
 
     const details = {
       ...(profileFormData.details || {}),
       birthDate: formattedBirthDate,
     };
 
-    res.render('pages/mytrips', {
-      test: tests,
-      myTrips,
+    res.render('pages/profile/Profile', {
       profileFormData: details,
-      imageurl: imageUrls,
+      myTrips: [],
     });
   } catch (error) {
+    // BT: ::Pending:: improve Error handling flow.
     console.error('Error in getMyTrips:', error);
     next(error);
   }
