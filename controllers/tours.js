@@ -1223,14 +1223,14 @@ exports.deleteStay = async (req, res, next) => {
     });
 };
 
-exports.getprofile = async (req, res, next) => {
-  // console.log('1272', req.user);
-  // console.log(mytrips);
-  // console.log(mytrips.length);
-  const tests = await Tours.find().distinct('name');
-  res.render('pages/profile', { test: tests });
-  // console.log(tests);
-};
+// exports.getprofile = async (req, res, next) => {
+//   // console.log('1272', req.user);
+//   // console.log(mytrips);
+//   // console.log(mytrips.length);
+//   const tests = await Tours.find().distinct('name');
+//   res.render('pages/profile', { test: tests });
+//   // console.log(tests);
+// };
 
 exports.getotp = async (req, res, next) => {
   const otp = otpGenerator.generate(4, {
