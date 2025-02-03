@@ -28,8 +28,13 @@ const PORT = process.env.PORT || 5000;
 
 const Tours = require('./models/tours');
 const User = require('./models/user');
+const isProduction = process.env.NODE_ENV === 'production';
 
-const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.ogxnm.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`;
+
+const MONGODB_URI = isProduction
+  ? `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.ogxnm.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
+  : `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
+
 const app = express();
 const store = new MongoDBStore({
   uri: MONGODB_URI,
