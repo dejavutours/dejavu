@@ -1239,7 +1239,6 @@ exports.getotp = async (req, res, next) => {
     lowerCaseAlphabets: false,
     digits: true,
   });
-  console.log(otp);
   const phone = `+91${req.body.phone}`;
   const sns = new AWS.SNS();
   const params = {
@@ -1258,13 +1257,11 @@ exports.getotp = async (req, res, next) => {
     );
     // Send SMS
     const data = await sns.publish(params).promise();
-    // console.log("OTP sent successfully:", data.MessageId);
     // res.render('verifyOTP', { phoneNumber: req.body.phone, otpSent: true });
     return res.send(true); // Return OTP in case you need to verify it later
   } catch (err) {
     console.error('Error sending OTP:', err);
     return res.send(false);
-    throw err;
   }
 };
 
