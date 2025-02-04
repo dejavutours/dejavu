@@ -7095,7 +7095,7 @@ h6 {
   #exampleModal .btn-disabled {
     background-color: #e4e4e4;
     border: none;
-    color: #ffffff;
+    color: #000000;
     cursor: not-allowed;
   }
 
