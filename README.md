@@ -8,3 +8,8 @@ MongoDB:
 - Folder structure
     - FileNAme: Pascal case
     - Folder naae: kebab-case(also known as dash-case or hyphen-case)
+
+
+Toast
+showErrorToast() or showErrorToast('abcd')
+showSuccessToast() or showSuccessToast('xyz')
