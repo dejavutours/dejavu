@@ -224,10 +224,6 @@
       background-color: #ddd;
     }
 
-    body {
-      color: black;
-    }
-
     @media (min-width: 992px) {
 
       /* lg breakpoint */
@@ -475,11 +471,11 @@
                 <div class="col-6 col-md-7 border-right">
                     <div class="row mr-2 ">
                         <div class=" col-lg-6 orderId cm-border-right-lg mt-1">
-                            <p class="m-0">Trip code</p>
+                            <p class="m-0 text-secondary">Trip code</p>
                             <p class="m-0">${trip.tripCode}</p>
                         </div>
                         <div class=" col-lg-6 travellers mt-1">
-                            <p class="m-0">Booking number</p>
+                            <p class="m-0 text-secondary">Booking number</p>
                             <p class="m-0">${trip.bookingNumber}</p>
                         </div>
                     </div>
@@ -487,12 +483,12 @@
                 <div class="col-6 col-md-5">
                     <div class="row h-100">
                         <div class="col-lg-6 booking_status cm-border-right-lg mt-1">
-                            <p class="m-0">Booking</p>
+                            <p class="m-0 text-secondary">Booking</p>
                             <p>${trip.bookingStatus}</p>
                         </div>
                         <div class="col-lg-6 payment_status mt-1">
-                            <p class="m-0">Payment</p>
-                            <p class="badge ${trip.paymentStatus === 'Paid' ? 'text-success' : 'text-danger'}">
+                            <p class="m-0 text-secondary">Payment</p>
+                            <p class="badge ${trip.paymentStatus === 'Paid' ? 'text-success cm-bg-success-light' : 'text-danger cm-bg-danger-light'}">
                                 ${trip.paymentStatus}
                             </p>
                         </div>
@@ -503,28 +499,28 @@
         <div class="trip-card-expand d-none mt-3">
             <div class="row mb-3">
                 <div class="pickup_details col-4 ">
-                    <p class="pickup-from">Joining from:</p>
+                    <p class="pickup-from text-secondary">Joining from:</p>
                     <p class="pickup_city">${trip.joiningFrom}</p>
                 </div>
                 <div class="travel_date col-8">
-                    <p>Travel date:</p>
+                    <p class="text-secondary">Travel date:</p>
                     <p class="date_from">${trip.tripStartDate} - ${trip.tripEndDate}</p>
                 </div>
             </div>
             <div class="mb-3 row">
                 <div class="person_details col-4">
-                    <p class="mb-1">Total person</p>
+                    <p class="mb-1 text-secondary">Total person</p>
                     <p class="adults">Adults : ${trip.totalPerson?.adult}</p>
                     <p class="childs">Children : ${trip.totalPerson?.child}</p>
                 </div>
                 <div class="col row col-8">
-                    <div class="total_costs col-5">
-                        <p class="mb-1">Total costs</p>
+                    <div class="total_costs text-secondary col-5">
+                        <p class="mb-1 text-secondary">Total costs</p>
                         <p>₹${trip.totalTripCost}</p>
                     </div>
                     ${trip.duePayment > 0 ? `
                     <div class="due_payment cal-7">
-                        <p class="mb-1">Due Payment</p>
+                        <p class="mb-1 text-secondary">Due Payment</p>
                         <p class="text-danger">${trip.duePayment || 0}</p>
                     </div>` : ''}
                 </div>

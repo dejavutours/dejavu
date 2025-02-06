@@ -108,14 +108,14 @@ p {
   font-size: 16px;
   font-weight: 400;
   line-height: 28px;
-  color: #7A838B;
+  color: #181818;
   margin-bottom: 0px;
   font-family: "Rubik", sans-serif;
 }
 
 /* line 69, ../../Arafath/CL/December/231. Travel-02/HTML/scss/theme-default.scss */
 label {
-  color: #7e7e7e;
+  color: #181818;
   cursor: pointer;
   font-size: 14px;
   font-weight: 400;
@@ -7195,3 +7195,11 @@ h6 {
     text-decoration: underline;
   }
 
+
+.cm-bg-danger-light {
+  background-color : #dc354530;
+}
+
+.cm-bg-success-light {
+  background-color : #28a74530;
+}
