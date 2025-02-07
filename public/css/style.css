@@ -7191,6 +7191,14 @@ h6 {
     font-weight: 500;
   }
 
+  #verifyModal .resend-link.btn-disabled {
+    font-size: 14px;
+    color: #000000;
+    text-decoration: none;
+    background-color: whitesmoke;
+    font-weight: 500;
+  }
+
   #verifyModal .resend-link:hover {
     text-decoration: underline;
   }
