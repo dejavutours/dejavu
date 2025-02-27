@@ -1031,6 +1031,7 @@ h3 {
   font-family: "Rubik", sans-serif;
   position: relative;
   text-transform: capitalize;
+  text-decoration: none;
 }
 
 /* line 113, ../../Arafath/CL/December/231. Travel-02/HTML/scss/_header.scss */

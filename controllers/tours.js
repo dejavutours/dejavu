@@ -24,6 +24,8 @@ const PaymentDetail = require('../models/payment-detail');
 
 const Mobileuser = require('../models/mobileuser');
 
+const NewTours = require("../models/newTours"); 
+
 const fileHelper = require('../util/file');
 
 const PDFDocument = require('pdfkit');
@@ -1288,5 +1290,26 @@ exports.verifyotp = async (req, res, next) => {
   } catch (err) {
     console.error('Error verifying OTP:', err);
     res.status(500).send('Failed to verify OTP');
+  }
+};
+
+// Create a new tour
+exports.createNewTourse = async (req, res) => {
+  try {
+    const newTour = new NewTours(req.body); // Use NewTours instead of NewToursSchema
+    const savedTour = await newTour.save();
+    res.status(201).json(savedTour);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Fetch all tours
+exports.getTours = async (req, res) => {
+  try {
+    const tours = await NewTours.find(); // Use NewTours instead of NewToursSchema
+    res.json(tours);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };

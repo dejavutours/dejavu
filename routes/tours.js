@@ -384,4 +384,8 @@ router.post('/getotp', toursController.getotp);
 
 router.post('/verifyotp', toursController.verifyotp);
 
+router.get("/getNewTours", toursController.getTours);
+
+router.post("/createNewTours", toursController.createNewTourse); 
+
 module.exports = router;

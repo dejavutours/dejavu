@@ -1,9 +1,187 @@
-<!doctype html>
-<html class="no-js" lang="zxx">
-
-<head>
-  <%- include('../partials/headtag'); %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kedarnath - Tungnath Trek</title>
+    <%- include('../partials/headtag'); %>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
     <style>
+      :root {
+        --primary-blue: #1a4b8e;
+        --light-gray: #f8f9fa;
+      }
+
+      .image-slider {
+        width: 100%;
+        height: 300px;
+        border-radius: 12px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .image-slider .swiper-slide {
+        width: 100%;
+        height: 100%;
+      }
+
+      .image-slider img {
+        width: 100%;
+        min-height: 300px;
+        object-fit: cover;
+      }
+
+      .image-slider .swiper-button-next,
+      .image-slider .swiper-button-prev {
+        color: white;
+        background: rgba(0, 0, 0, 0.3);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+
+      .image-slider .swiper-button-next:after,
+      .image-slider .swiper-button-prev:after {
+        font-size: 20px;
+      }
+
+      .image-slider .swiper-pagination-bullet {
+        background: white;
+        opacity: 0.7;
+      }
+
+      .image-slider .swiper-pagination-bullet-active {
+        opacity: 1;
+      }
+
+      .trek-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 0;
+      }
+
+      .trek-title {
+        font-size: 20px;
+        margin: 0;
+      }
+
+      .trek-subtitle {
+        color: #6c757d;
+        font-size: 14px;
+      }
+
+      .btn-book-now {
+        background: var(--primary-blue);
+        color: white;
+        padding: 8px 24px;
+        border-radius: 10px;
+        text-decoration: none;
+        margin: 2px;
+      }
+
+      .image-slider {
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 24px;
+      }
+
+      .image-slider img {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+      }
+
+      .city-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .city-card.active {
+        border-color: var(--primary-blue);
+      }
+
+      .city-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .date-selector {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 8px 0;
+      }
+
+      .date-item {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .date-item.active {
+        background: var(--primary-blue);
+        color: white;
+        border-color: var(--primary-blue);
+      }
+
+      .itinerary-item {
+        border: none;
+        background: transparent;
+        width: 100%;
+        text-align: left;
+        padding: 12px;
+        border-radius: 8px;
+      }
+
+      .itinerary-item:hover {
+        background: var(--light-gray);
+      }
+
+      .package-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+      }
+
+      .package-table th {
+        background: var(--light-gray);
+        padding: 12px;
+      }
+
+      .package-table td {
+        padding: 12px;
+        border-top: 1px solid #dee2e6;
+      }
+
+      .link-icon {
+        text-decoration: none;
+        color: #6c757d;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
       .bs-example {
         margin: 20px;
       }
@@ -16,7 +194,10 @@
       .play-btn {
         width: 100px;
         height: 100px;
-        background: radial-gradient(rgba(35, 235, 142, 0.8) 60%, rgba(255, 255, 255, 1) 62%);
+        background: radial-gradient(
+          rgba(35, 235, 142, 0.8) 60%,
+          rgba(255, 255, 255, 1) 62%
+        );
         border-radius: 50%;
         position: relative;
         display: block;
@@ -61,7 +242,7 @@
         animation-timing-function: steps;
         opacity: 1;
         border-radius: 50%;
-        border: 5px solid rgba(255, 255, 255, .75);
+        border: 5px solid rgba(255, 255, 255, 0.75);
         top: -30%;
         left: -30%;
         background: rgba(198, 16, 0, 0);
@@ -72,7 +253,8 @@
           -webkit-transform: scale(0.6);
           transform: scale(0.6);
           opacity: 1;
-          box-shadow: inset 0px 0px 25px 3px rgba(255, 255, 255, 0.75), 0px 0px 25px 10px rgba(255, 255, 255, 0.75);
+          box-shadow: inset 0px 0px 25px 3px rgba(255, 255, 255, 0.75),
+            0px 0px 25px 10px rgba(255, 255, 255, 0.75);
         }
 
         100% {
@@ -80,7 +262,6 @@
           transform: scale(1);
           opacity: 0;
           box-shadow: none;
-
         }
       }
 
@@ -89,7 +270,8 @@
           -webkit-transform: scale(0.6);
           transform: scale(0.6);
           opacity: 1;
-          box-shadow: inset 0px 0px 25px 3px rgba(255, 255, 255, 0.75), 0px 0px 25px 10px rgba(255, 255, 255, 0.75);
+          box-shadow: inset 0px 0px 25px 3px rgba(255, 255, 255, 0.75),
+            0px 0px 25px 10px rgba(255, 255, 255, 0.75);
         }
 
         100% {
@@ -97,316 +279,573 @@
           transform: scale(1);
           opacity: 0;
           box-shadow: none;
-
         }
       }
+
+      /* City card styling */
+      .city-card {
+        width: 150px;
+        flex-shrink: 0;
+        text-align: center;
+        background: #747474;
+        padding: 10px;
+        border: 1px solid black;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      /* Scroll container styling */
+      #carouselTrack {
+        white-space: nowrap;
+        scroll-behavior: smooth;
+        scrollbar-width: none; /* Hides scrollbar (Firefox) */
+        -ms-overflow-style: none; /* Hides scrollbar (IE/Edge) */
+      }
+
+      /* Hide scrollbar for WebKit browsers */
+      #carouselTrack::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* Button positioning */
+      .carousel-control-prev,
+      .carousel-control-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+      }
+
+      .carousel-control-prev {
+        left: 10px;
+      }
+
+      .carousel-control-next {
+        right: 10px;
+      }
     </style>
-    <script>
-      $(document).ready(function () {
-        /* Get iframe src attribute value i.e. YouTube video url
-        and store it in a variable */
-        var url = $("#cartoonVideo").attr('src');
+  </head>
 
-        /* Assign empty url value to the iframe src attribute when
-        modal hide, which stop the video playing */
-        $("#myModal").on('hide.bs.modal', function () {
-          $("#cartoonVideo").attr('src', '');
-        });
+  <body>
+    <%- include('../partials/header'); %>
+    <div class="container py-4">
+      <!-- Header -->
+      <div class="trek-header">
+        <div>
+          <h1 class="trek-title">Kedarnath - Tungnath</h1>
+          <div class="trek-subtitle">with Chopta - Narkhola - Badrinath</div>
+        </div>
+        <div class="d-flex align-items-center gap-3 bg-light p-3">
+          <div class="fs-5">₹7499 <span class="fs-6">/person</span></div>
+          <a href="#" class="btn-book-now rounded-5">Book now</a>
+        </div>
+      </div>
+      <!-- Image Slider -->
+      <div class="swiper image-slider">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <img
+              src="https://www.chardham-pilgrimage-tour.com/assets/images/top-tourist-places-enroute-kedarnath-dham.webp"
+              alt="Kedarnath Temple View 1"
+            />
+          </div>
+          <div class="swiper-slide">
+            <img
+              src="https://www.chardham-pilgrimage-tour.com/assets/images/top-tourist-places-enroute-kedarnath-dham.webp"
+              alt="Kedarnath Temple View 2"
+            />
+          </div>
+          <div class="swiper-slide">
+            <img
+              src="https://www.chardham-pilgrimage-tour.com/assets/images/top-tourist-places-enroute-kedarnath-dham.webp"
+              alt="Kedarnath Temple View 3"
+            />
+          </div>
+        </div>
+        <!-- Add Pagination -->
+        <div class="swiper-pagination"></div>
+        <!-- Add Navigation -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+      </div>
 
-        /* Assign the initially stored url back to the iframe src
-        attribute when modal is displayed again */
-        $("#myModal").on('show.bs.modal', function () {
-          $("#cartoonVideo").attr('src', url);
-        });
-      });
-    </script>
-</head>
-
-<body>
-
-  <%- include('../partials/header'); %>
-
-    <% if(trips.bannerimage==null){ %>
-      <div class="destination_banner_wrap overlay" style="background-image: url('/images/<%= trips.imageurl %>');">
-        <% } else{ %>
-          <div class="destination_banner_wrap overlay"
-            style="background-image: url('/images/<%= trips.bannerimage %>');">
-            <% } %>
-              <div class="destination_text text-center">
-                <h3>
-                  <%= trips.name %>
-                </h3>
-                <p>
-                  <%= trips.tag %>
-                </p>
-                <p>₹<%= trips.price %> &nbsp; <%= trips.destinations %>
-                </p>
-                <form action="/getbooktrip" method="POST">
-                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                  <input type="hidden" name="tripname" id="tripname" value="<%= trips.name %>">
-                  <input type="hidden" name="triprate" id="triprate" value="<%= trips.price %>">
-                  <button class="boxed-btn4 mt-2" type="submit">Please Login/SignUp to book<br>Book Now</button>
-                </form>
-                <% if(trips.youtubeUrl.length> 0){ %>
-                  <a href="#myModal" class="play-btn" data-toggle="modal"></a>
-                  <% } %>
-              </div>
+      <!-- About Section -->
+      <div class="container my-5">
+        <div class="row">
+          <!-- Left Content -->
+          <div class="col-lg-7">
+            <h5 class="fw-bold">About</h5>
+            <p class="text-muted">
+              Explore a soul-stirring journey to the mystical Himalayan marvels
+              of Kedarnath and Tungnath. In Kedarnath, find solace at the
+              ancient temple of Lord Shiva amidst awe-inspiring landscapes.
+              Then, ascend to Tungnath, the highest Shiva temple globally, for
+              panoramic views that touch the soul. This expedition promises an
+              unforgettable blend of spirituality and natural beauty, a
+              testament to the captivating allure of the Himalayas.
+            </p>
+            <button class="btn btn-light border rounded-pill px-4 py-2">
+              <i class="bi bi-download"></i> Download Itinerary
+            </button>
           </div>
 
-          <div class="destination_details_info">
-            <div class="container">
-              <div class="row justify-content-center">
-                <div class="col-lg-8 col-md-9">
-                  <div class="destination_info">
-                    <% if (trips.upcomingtrip.length> 0) { %>
-                      <h3>Book For Upcoming Trip</h3>
-                      <% } %>
-                        <% if (!profile || profile?.email !==process.env.GMAIL_ADMIN) { %>
-                          <% for (var i=0; i < trips.upcomingtrip.length; i++) { %>
-                            <form style='display:inline-block;' action="/bookdate" method="POST">
-                              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                              <input type="hidden" value="<%= trips.name %>" id="tripname" name="tripname">
-                              <input type="hidden" value="<%= trips.price %>" id="triprate" name="triprate">
-                              <input type="hidden" value="<%= trips.upcomingtrip[i] %>" id="tripdate" name="tripdate">
-                              <button class="btn btn-success mt-2" type="submit">
-                                <%= trips.upcomingtrip[i] %>
-                              </button>
-                            </form>
-                            <% } %>
-                              <% } %>
-                                <% if (profile?.email===process.env.GMAIL_ADMIN) { %>
-                                  <% for (var i=0; i < trips.upcomingtrip.length; i++) { %>
-                                    <form style='display:inline-block;' action="/admin/deleteupcomingdate"
-                                      method="POST">
-                                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                      <input type="hidden" value="<%= trips._id %>" id="tripid" name="tripid">
-                                      <input type="hidden" value="<%= i %>" id="tripdateindex" name="tripdateindex">
-                                      <button class="btn btn-info mt-2" type="submit">Del&nbsp;<%= trips.upcomingtrip[i]
-                                          %></button>
-                                    </form>
-                                    <% } %>
-                                      <% } %>
-                                        <br><br>
-                                        <h3>About <%= trips.name %>
-                                        </h3>
-                                        <%- trips.about %>
-
-                                          <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                            <li class="nav-item">
-                                              <a class="nav-link active" id="tab1-tab" data-toggle="tab" href="#tab1"
-                                                role="tab" aria-controls="tab1" aria-selected="true">Places To Visit</a>
-                                            </li>
-                                            <li class="nav-item">
-                                              <a class="nav-link" id="tab2-tab" data-toggle="tab" href="#tab2"
-                                                role="tab" aria-controls="tab2" aria-selected="false">Activities &
-                                                Attraction</a>
-                                            </li>
-                                            <li class="nav-item">
-                                              <a class="nav-link" id="tab3-tab" data-toggle="tab" href="#tab3"
-                                                role="tab" aria-controls="tab3" aria-selected="false">Itinerary</a>
-                                            </li>
-                                            <li class="nav-item">
-                                              <a class="nav-link" id="tab4-tab" data-toggle="tab" href="#tab4"
-                                                role="tab" aria-controls="tab4" aria-selected="false">Things to
-                                                Carry</a>
-                                            </li>
-                                            <li class="nav-item">
-                                              <a class="nav-link" id="tab5-tab" data-toggle="tab" href="#tab5"
-                                                role="tab" aria-controls="tab5" aria-selected="false">Include &
-                                                Exclude</a>
-                                            </li>
-                                            <li class="nav-item">
-                                              <a class="nav-link" id="tab6-tab" data-toggle="tab" href="#tab6"
-                                                role="tab" aria-controls="tab6" aria-selected="false">Package Cost</a>
-                                            </li>
-                                            <li class="nav-item">
-                                              <a class="nav-link" id="tab7-tab" data-toggle="tab" href="#tab7"
-                                                role="tab" aria-controls="tab7" aria-selected="false">Info & FAQs</a>
-                                            </li>
-                                            <li class="nav-item">
-                                              <a class="nav-link" id="tab8-tab" data-toggle="tab" href="#tab8"
-                                                role="tab" aria-controls="tab8" aria-selected="false">Booking &
-                                                Cancellation</a>
-                                            </li>
-                                            <li class="nav-item">
-                                              <a class="nav-link" id="tab9-tab" data-toggle="tab" href="#tab9"
-                                                role="tab" aria-controls="tab9" aria-selected="false">Travel
-                                                Guidelines</a>
-                                            </li>
-                                          </ul>
-
-                                          <div class="tab-content" id="myTabContent">
-                                            <!-- Tab 1 content -->
-                                            <div class="tab-pane fade show active" id="tab1" role="tabpanel"
-                                              aria-labelledby="tab1-tab">
-                                              <div class="single_destination mt-3 ml-3">
-
-                                                <%- trips.placestovisit %>
-
-                                              </div>
-                                            </div>
-                                            <!-- Tab 2 content -->
-                                            <div class="tab-pane fade" id="tab2" role="tabpanel"
-                                              aria-labelledby="tab2-tab">
-                                              <div class="single_destination mt-3 ml-3">
-
-                                                <%- trips.activities %>
-
-                                              </div>
-                                            </div>
-                                            <!-- Tab 3 content -->
-                                            <div class="tab-pane fade" id="tab3" role="tabpanel"
-                                              aria-labelledby="tab3-tab">
-                                              <div class="single_destination mt-3 ml-3">
-
-                                                <%- trips.itinerary %>
-
-                                              </div>
-                                            </div>
-                                            <!-- Tab 4 content -->
-                                            <div class="tab-pane fade" id="tab4" role="tabpanel"
-                                              aria-labelledby="tab4-tab">
-                                              <div class="single_destination mt-3 ml-3">
-
-                                                <%- trips.things_to_carry %>
-
-                                              </div>
-                                            </div>
-                                            <!-- Tab 5 content -->
-                                            <div class="tab-pane fade" id="tab5" role="tabpanel"
-                                              aria-labelledby="tab5-tab">
-                                              <div class="single_destination mt-3 ml-3">
-
-                                                <%- trips.includenexclude %>
-
-                                              </div>
-                                            </div>
-                                            <!-- Tab 6 content -->
-                                            <div class="tab-pane fade" id="tab6" role="tabpanel"
-                                              aria-labelledby="tab6-tab">
-                                              <div class="single_destination mt-3 ml-3">
-
-                                                <%- trips.package_cost %>
-
-                                              </div>
-                                            </div>
-                                            <!-- Tab 7 content -->
-                                            <div class="tab-pane fade" id="tab7" role="tabpanel"
-                                              aria-labelledby="tab7-tab">
-                                              <div class="single_destination mt-3 ml-3">
-
-                                                <%- trips.infonfaq %>
-
-                                              </div>
-                                            </div>
-                                            <!-- Tab 8 content -->
-                                            <div class="tab-pane fade" id="tab8" role="tabpanel"
-                                              aria-labelledby="tab8-tab">
-                                              <div class="single_destination mt-3 ml-3">
-
-                                                <%- trips.Bookncancel %>
-
-                                              </div>
-                                            </div>
-                                            <!-- Tab 9 content -->
-                                            <div class="tab-pane fade" id="tab9" role="tabpanel"
-                                              aria-labelledby="tab9-tab">
-                                              <div class="single_destination mt-3 ml-3">
-
-                                                <%- trips.guidelines %>
-
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <form action="/getbooktrip" method="POST">
-                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                            <input type="hidden" name="tripname" id="tripname"
-                                              value="<%= trips.name %>">
-                                            <input type="hidden" name="triprate" id="triprate"
-                                              value="<%= trips.price %>">
-                                            <button class="boxed-btn4 mt-2" type="submit">Book Now</button>
-                                          </form>
-                                          <!--- Image Gallary Section start --->
-                                          <div class="section-top-border">
-                                            <% if(trips.imageUrlAll.length> 0){ %>
-                                              <h3>Image Gallery</h3>
-                                              <% } %>
-                                                <div class="row gallery-item">
-                                                  <% for (var i=0; i < trips.imageUrlAll.length; i++) { %>
-                                                    <div class="col-md-6">
-                                                      <a href="/images/<%= trips.imageUrlAll[i] %>" class="img-pop-up">
-                                                        <div class="single-gallery-image"
-                                                          style="background: url('/images/<%= trips.imageUrlAll[i] %>');">
-                                                        </div>
-                                                      </a>
-                                                    </div>
-                                                    <% } %>
-                                                </div>
-                                          </div>
-                                          <!--- Image Gallary Section End --->
-                  </div>
+          <!-- Right Content -->
+          <div class="col-lg-5 mt-4 mt-lg-0">
+            <div class="row g-3">
+              <div class="col-6 d-flex align-items-center">
+                <div class="icon-circle me-2">
+                  <i class="bi bi-calendar-event"></i>
+                </div>
+                <div>
+                  <small class="text-muted">Duration</small>
+                  <p class="mb-0 fw-semibold">6 days - 7 nights</p>
+                </div>
+              </div>
+              <div class="col-6 d-flex align-items-center">
+                <div class="icon-circle me-2">
+                  <i class="bi bi-bar-chart"></i>
+                </div>
+                <div>
+                  <small class="text-muted">Difficulty</small>
+                  <p class="mb-0 fw-semibold">Easy to Moderate</p>
+                </div>
+              </div>
+              <div class="col-6 d-flex align-items-center">
+                <div class="icon-circle me-2">
+                  <i class="bi bi-signpost"></i>
+                </div>
+                <div>
+                  <small class="text-muted">Altitude</small>
+                  <p class="mb-0 fw-semibold">12,000 ft</p>
+                </div>
+              </div>
+              <div class="col-6 d-flex align-items-center">
+                <div class="icon-circle me-2">
+                  <i class="bi bi-cloud-sun"></i>
+                </div>
+                <div>
+                  <small class="text-muted">Best season</small>
+                  <p class="mb-0 fw-semibold">May to October</p>
+                </div>
+              </div>
+              <div class="col-6 d-flex align-items-center">
+                <div class="icon-circle me-2">
+                  <i class="bi bi-geo-alt"></i>
+                </div>
+                <div>
+                  <small class="text-muted">Region</small>
+                  <p class="mb-0 fw-semibold">Uttarakhand, Himalaya</p>
                 </div>
               </div>
             </div>
-            <!-- Modal HTML -->
-            <div id="myModal" class="modal fade">
-              <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title">
-                      <%= trips.name %>
-                    </h5>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  </div>
-                  <div class="modal-body">
-                    <div class="embed-responsive embed-responsive-16by9">
-                      <iframe id="cartoonVideo" class="embed-responsive-item" width="560" height="315"
-                        src="<%= trips.youtubeUrl[0] %>?autoplay=1&mute=1" allowfullscreen></iframe>
-                    </div>
-                  </div>
-                </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid py-2 my-2 bg-light">
+      <!-- Departure City Section -->
+      <div class="container">
+        <h5 class="fw-bold my-3">Departure City</h5>
+        <div class="col-lg-8 col-md-6 col-sm-8 col-12">
+          <div class="position-relative">
+            <div class="d-flex gap-3 overflow-auto" id="carouselTrack">
+              <div class="city-card bg-light">
+                <img
+                  src="https://via.placeholder.com/150x100"
+                  alt="Ahmedabad"
+                />
+                <h6 class="mt-2 mb-1">Ahmedabad</h6>
+                <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
+                ><br />
+                <small class="fw-semibold text-dark">₹7499/person</small>
+              </div>
+              <div class="city-card bg-light">
+                <img src="https://via.placeholder.com/150x100" alt="Surat" />
+                <h6 class="mt-2 mb-1">Surat</h6>
+                <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
+                ><br />
+                <small class="fw-semibold text-dark">₹7499/person</small>
+              </div>
+              <div class="city-card bg-light">
+                <img src="https://via.placeholder.com/150x100" alt="Delhi" />
+                <h6 class="mt-2 mb-1">Delhi</h6>
+                <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
+                ><br />
+                <small class="fw-semibold text-dark">₹8499/person</small>
+              </div>
+              <div class="city-card bg-light">
+                <img src="https://via.placeholder.com/150x100" alt="Jaipur" />
+                <h6 class="mt-2 mb-1">Jaipur</h6>
+                <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
+                ><br />
+                <small class="fw-semibold text-dark">₹8999/person</small>
+              </div>
+              <div class="city-card bg-light">
+                <img src="https://via.placeholder.com/150x100" alt="Mumbai" />
+                <h6 class="mt-2 mb-1">Mumbai</h6>
+                <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
+                ><br />
+                <small class="fw-semibold text-dark">₹9499/person</small>
               </div>
             </div>
-            <!-- newletter_area_start  -->
-            <div class="newletter_area overlay">
-              <div class="container">
-                <div class="row justify-content-center align-items-center">
-                  <div class="col-lg-10">
-                    <div class="row align-items-center">
-                      <div class="col-lg-5">
-                        <div class="newsletter_text">
-                          <h4>Subscribe Our Newsletter</h4>
-                          <p>Subscribe newsletter to get offers and about
-                            new places to discover.</p>
-                        </div>
-                      </div>
-                      <div class="col-lg-7">
-                        <div class="mail_form">
-                          <form method="POST" action="/newsletter">
-                            <div class="row no-gutters">
-                              <div class="col-lg-9 col-md-8">
-                                <div class="newsletter_field">
-                                  <input type="email" placeholder="Your mail" name="emailid" id="emailid">
-                                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                </div>
-                              </div>
-                              <div class="col-lg-3 col-md-4">
-                                <div class="newsletter_btn">
-                                  <button class="boxed-btn4 " type="submit">Subscribe</button>
-                                </div>
-                              </div>
-                            </div>
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- newletter_area_end  -->
-            <%- include('../partials/footer'); %>
-              <%- include('../partials/scripttag'); %>
-</body>
 
+            <!-- Scroll Buttons (Hidden by Default) -->
+            <button
+              id="prevBtn"
+              class="carousel-control-prev d-none"
+              type="button"
+              onclick="slideLeft()"
+            >
+              <span
+                class="carousel-control-prev-icon"
+                aria-hidden="true"
+              ></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button
+              id="nextBtn"
+              class="carousel-control-next d-none"
+              type="button"
+              onclick="slideRight()"
+            >
+              <span
+                class="carousel-control-next-icon"
+                aria-hidden="true"
+              ></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Booking Form -->
+        <div class="col-lg-4 col-md-5 col-12 mt-3 mt-md-0">
+          <div class="card p-3">
+            <h6>Joining from</h6>
+            <select class="form-select mb-3" id="selectedCity">
+              <option>Ahmedabad</option>
+              <option>Surat</option>
+              <option>Delhi</option>
+            </select>
+            <h6>Tour date</h6>
+            <select class="form-select mb-3" id="selectedDate">
+              <option>8 May 2024 to 16 May 2024</option>
+            </select>
+            <button class="btn btn-primary w-100">Proceed to book</button>
+          </div>
+        </div>
+
+        <!-- Available Dates Section -->
+        <div class="mb-4">
+          <h5 class="mb-3">Available dates</h5>
+          <div class="date-selector">
+            <div class="date-item">1</div>
+            <div class="date-item active">6</div>
+            <div class="date-item">10</div>
+            <div class="date-item">14</div>
+            <div class="date-item">17</div>
+            <div class="date-item">18</div>
+            <div class="date-item">20</div>
+            <div class="date-item">28</div>
+            <div class="date-item">30</div>
+            <div class="date-item">31</div>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <h5 class="fw-bold my-3">Departure City</h5>
+        <div class="row">
+          <!-- Carousel Section -->
+          <div class="col-lg-8 col-md-7 col-12">
+            <div class="position-relative">
+              <div class="d-flex gap-3 overflow-auto" id="carouselTrack">
+                <div class="city-card bg-light">
+                  <img
+                    src="https://via.placeholder.com/150x100"
+                    alt="Ahmedabad"
+                  />
+                  <h6 class="mt-2 mb-1">Ahmedabad</h6>
+                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
+                  ><br />
+                  <small class="fw-semibold text-dark">₹7499/person</small>
+                </div>
+                <div class="city-card bg-light">
+                  <img src="https://via.placeholder.com/150x100" alt="Surat" />
+                  <h6 class="mt-2 mb-1">Surat</h6>
+                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
+                  ><br />
+                  <small class="fw-semibold text-dark">₹7499/person</small>
+                </div>
+                <div class="city-card bg-light">
+                  <img src="https://via.placeholder.com/150x100" alt="Delhi" />
+                  <h6 class="mt-2 mb-1">Delhi</h6>
+                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
+                  ><br />
+                  <small class="fw-semibold text-dark">₹8499/person</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Booking Section -->
+          <div class="col-lg-4 col-md-5 col-12 mt-3 mt-md-0">
+            <div class="card p-3">
+              <h6>Joining from</h6>
+              <select class="form-select mb-3" id="selectedCity">
+                <option>Ahmedabad</option>
+                <option>Surat</option>
+                <option>Delhi</option>
+              </select>
+              <h6>Tour date</h6>
+              <select class="form-select mb-3" id="selectedDate">
+                <option>8 May 2024 to 16 May 2024</option>
+              </select>
+              <button class="btn btn-primary w-100">Proceed to book</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Available Dates Section -->
+        <div class="mb-4 mt-4">
+          <h5 class="mb-3">Available dates</h5>
+          <div class="d-flex flex-wrap gap-2">
+            <div class="date-item">1</div>
+            <div class="date-item active">6</div>
+            <div class="date-item">10</div>
+            <div class="date-item">14</div>
+            <div class="date-item">17</div>
+            <div class="date-item">18</div>
+            <div class="date-item">20</div>
+            <div class="date-item">28</div>
+            <div class="date-item">30</div>
+            <div class="date-item">31</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <!-- Main Attractions -->
+      <div class="mb-4">
+        <h5 class="mb-3">Main attractions</h5>
+        <ul class="list-unstyled">
+          <li class="mb-2">• Ganga Aarti at Har ki Pauri (Hari)</li>
+          <li class="mb-2">• Shri Badrinath Temple</li>
+          <li class="mb-2">• Hanuman Tok (3,100 ft)</li>
+          <li class="mb-2">• River confluence at Devprayag and Rudraprayag</li>
+          <li class="mb-2">• Chopta and Tungnath - Highest Shiva Temple</li>
+          <li class="mb-2">• Chandrashila Summit (4,000 meter/12000 feet)</li>
+          <li class="mb-2">• Kedartal Valley - Nandadevi, Lammergeyer etc</li>
+        </ul>
+      </div>
+
+      <!-- Itinerary -->
+      <div class="mb-4">
+        <h5 class="mb-3">Itinerary</h5>
+        <div class="accordion" id="itineraryAccordion">
+          <div class="accordion-item border-0">
+            <h2 class="accordion-header">
+              <button
+                class="itinerary-item"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#day1"
+              >
+                <div class="d-flex justify-content-between">
+                  <span>Day 1: Journey starts from Ahmedabad</span>
+                  <span>(May 9 2024)</span>
+                </div>
+              </button>
+            </h2>
+            <div
+              id="day1"
+              class="accordion-collapse collapse"
+              data-bs-parent="#itineraryAccordion"
+            >
+              <div class="accordion-body">
+                <p>Reporting time: 10:15 AM</p>
+                <p>Boarding time: 11:00 AM</p>
+                <p>Location: Kalupur railway station (BTS)</p>
+                <ul>
+                  <li>More details goes here</li>
+                  <li>More details goes here with bullet points</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- More days... -->
+          <div class="accordion-item border-0">
+            <h2 class="accordion-header">
+              <button
+                class="itinerary-item"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#day2"
+              >
+                <div class="d-flex justify-content-between">
+                  <span>Day 2: Journey starts from Ahmedabad</span>
+                  <span>(May 9 2024)</span>
+                </div>
+              </button>
+            </h2>
+            <div
+              id="day2"
+              class="accordion-collapse collapse"
+              data-bs-parent="#itineraryAccordion"
+            >
+              <div class="accordion-body">
+                <p>Reporting time: 10:15 AM</p>
+                <p>Boarding time: 11:00 AM</p>
+                <p>Location: Kalupur railway station (BTS)</p>
+                <ul>
+                  <li>More details goes here</li>
+                  <li>More details goes here with bullet points</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- More Information -->
+      <div class="mb-4">
+        <ul class="nav nav-tabs" id="infoTabs" role="tablist">
+          <li class="nav-item">
+            <button
+              class="nav-link active"
+              data-bs-toggle="tab"
+              data-bs-target="#package"
+            >
+              Package cost
+            </button>
+          </li>
+          <li class="nav-item">
+            <button
+              class="nav-link"
+              data-bs-toggle="tab"
+              data-bs-target="#attractions"
+            >
+              Main attractions
+            </button>
+          </li>
+          <li class="nav-item">
+            <button
+              class="nav-link"
+              data-bs-toggle="tab"
+              data-bs-target="#carry"
+            >
+              Things to carry
+            </button>
+          </li>
+        </ul>
+        <div class="tab-content mt-3">
+          <div class="tab-pane fade show active" id="package">
+            <table class="package-table">
+              <tr>
+                <td>Delhi</td>
+                <td>5 days - 6 nights</td>
+                <td>₹4599/-</td>
+              </tr>
+              <tr>
+                <td>Ahmedabad, Vadodara</td>
+                <td>6 days - 7 nights</td>
+                <td>₹7499/-</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Links -->
+      <div class="d-flex gap-4">
+        <a href="#" class="link-icon">Cancellation policy</a>
+        <a href="#" class="link-icon">Inclusion & Exclusion</a>
+        <a href="#" class="link-icon">Terms & Conditions</a>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        new Swiper(".image-slider", {
+          loop: true,
+          navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+          },
+          pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+          },
+        });
+      });
+
+      // Initialize city selection
+      function selectCity(element, city, price) {
+        document
+          .querySelectorAll(".city-card")
+          .forEach((el) => el.classList.remove("active"));
+        element.classList.add("active");
+        document.getElementById("selectedCity").value = city;
+      }
+
+      // Initialize date selection
+      document.querySelectorAll(".date-item").forEach((date) => {
+        date.addEventListener("click", () => {
+          document
+            .querySelectorAll(".date-item")
+            .forEach((d) => d.classList.remove("active"));
+          date.classList.add("active");
+        });
+      });
+
+      // slider
+      function slideLeft() {
+        const container = document.getElementById("carouselTrack");
+        container.scrollBy({ left: -200, behavior: "smooth" });
+        checkSlideButtons();
+      }
+
+      function slideRight() {
+        const container = document.getElementById("carouselTrack");
+        container.scrollBy({ left: 200, behavior: "smooth" });
+        checkSlideButtons();
+      }
+
+      function checkSlideButtons() {
+        const container = document.getElementById("carouselTrack");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+
+        if (container.scrollWidth > container.clientWidth) {
+          prevBtn.classList.remove("d-none");
+          nextBtn.classList.remove("d-none");
+
+          if (container.scrollLeft === 0) {
+            prevBtn.classList.add("d-none");
+          }
+
+          if (
+            container.scrollLeft + container.clientWidth >=
+            container.scrollWidth
+          ) {
+            nextBtn.classList.add("d-none");
+          }
+        } else {
+          prevBtn.classList.add("d-none");
+          nextBtn.classList.add("d-none");
+        }
+      }
+
+      // Run on page load and resize
+      window.onload = checkSlideButtons;
+      window.onresize = checkSlideButtons;
+    </script>
+    <!-- newletter_area_end  -->
+    <%- include('../partials/footer'); %> <%- include('../partials/scripttag');
+    %>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+  </body>
 </html>
