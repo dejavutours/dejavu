@@ -1308,7 +1308,8 @@ exports.createNewTourse = async (req, res) => {
 exports.getTours = async (req, res) => {
   try {
     const tours = await NewTours.find(); // Use NewTours instead of NewToursSchema
-    res.json(tours);
+    //res.json(tours);
+    res.render('pages/tourlist',{ tourPackages: tours });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
