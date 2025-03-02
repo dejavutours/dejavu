@@ -1333,15 +1333,15 @@ exports.getTours = async (req, res) => {
         tripType: { $in: filters["Tour type"].map(type => new RegExp(`^${type}$`, "i")) },
       });
     }
-    if(req.query.search != null){
-      const regex = new RegExp(`${searchTerm}`, "i");
+    if(req.query.searchValue){
+      //const regex = new RegExp(".*" +`^${req.query.searchValue}$`+".*", "i")
+      const regex = new RegExp(".*" + req.query.searchValue.split(" ").join(".*") + ".*", "i");
       queryConditions.push({
         $or: [
           { name: regex },
           { state: regex },
           { destinations: regex },
           { route: regex },
-          { price: regex },
           { about: regex },
           { "deptcities.City": regex },
           { tripType: regex },
@@ -1371,7 +1371,7 @@ exports.getTours = async (req, res) => {
     const query = queryConditions.length > 0 ? { $and: queryConditions } : {};
     const tours = await NewTours.find(query); // Use NewTours instead of NewToursSchema  
     //res.json(tours);
-    res.render('pages/tourlist',{ tourPackages: tours,filterChips:Object.values(filters).flat()});
+    res.render('pages/tourlist',{ tourPackages: tours,filterChips:Object.values(filters).flat() ,Searchvalue: req.query.searchValue});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
