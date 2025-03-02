@@ -1397,8 +1397,71 @@ exports.createNewTourse = async (req, res) => {
 // Fetch all tours
 exports.getTours = async (req, res) => {
   try {
-    const tours = await NewTours.find(); // Use NewTours instead of NewToursSchema
-    res.json(tours);
+    let filters = [];
+    if(req && req.query && req.query.filterValue){
+      filters = JSON.parse(req.query.filterValue);
+    }
+    let queryConditions = [];
+
+    // Filter by departure city
+    if (filters["Departure city"] && filters["Departure city"].length > 0) {
+      queryConditions.push({
+        "deptcities.City": { $in: filters["Departure city"].map(city => new RegExp(`^${city}$`, "i")) },
+      });
+    }
+
+    // Filter by tour category (tags)
+    if (filters["Tour category"] && filters["Tour category"].length > 0) {
+      queryConditions.push({
+        tag: { $in: filters["Tour category"].map(tag => new RegExp(`^${tag}$`, "i")) },
+      });
+    }
+
+    // Filter by tour type
+    if (filters["Tour type"] && filters["Tour type"].length > 0) {
+      queryConditions.push({
+        tripType: { $in: filters["Tour type"].map(type => new RegExp(`^${type}$`, "i")) },
+      });
+    }
+    if(req.query.searchValue){
+      //const regex = new RegExp(".*" +`^${req.query.searchValue}$`+".*", "i")
+      const regex = new RegExp(".*" + req.query.searchValue.split(" ").join(".*") + ".*", "i");
+      queryConditions.push({
+        $or: [
+          { name: regex },
+          { state: regex },
+          { destinations: regex },
+          { route: regex },
+          { about: regex },
+          { "deptcities.City": regex },
+          { tripType: regex },
+          { tag: regex },
+          { "itinerary.description": regex },
+          { activities: regex },
+          { things_to_carry: regex },
+          { guidelines: regex },
+          { bookncancel: regex },
+          {placestovisit: regex}
+        ],
+      });
+    }
+
+    // Filter by departure date (only apply if dates are provided)
+    if (filters["Filter by departure date between"] && filters["Filter by departure date between"].length === 2) {
+      const [startDate, endDate] = filters["Filter by departure date between"];
+      queryConditions.push({
+        $or: [
+          { trip_dates: { $gte: new Date(startDate), $lte: new Date(endDate) } },
+          { upcomingtrip: { $gte: new Date(startDate), $lte: new Date(endDate) } },
+        ],
+      });
+    }
+
+    // Execute query with all filters applied
+    const query = queryConditions.length > 0 ? { $and: queryConditions } : {};
+    const tours = await NewTours.find(query); // Use NewTours instead of NewToursSchema  
+    //res.json(tours);
+    res.render('pages/tourlist',{ tourPackages: tours,filterChips:Object.values(filters).flat() ,Searchvalue: req.query.searchValue});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
