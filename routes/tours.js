@@ -56,6 +56,13 @@ router.post(
   toursController.postAddTours
 );
 
+router.post(
+  '/admin/postNewAddTours',
+  ensureLoggedIn,
+  isAuth,
+  toursController.postNewAddTours
+);
+
 router.get('/tripdetails/:token', toursController.getTourDetails);
 
 router.post('/newsletter', toursController.postNewsletter);
@@ -388,4 +395,5 @@ router.get("/getNewTours", toursController.getTours);
 
 router.post("/createNewTours", toursController.createNewTourse); 
 
+router.post("/uploadImage", toursController.uploadImage);
 module.exports = router;

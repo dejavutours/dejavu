@@ -135,6 +135,96 @@ exports.postAddTours = async (req, res, next) => {
   }
 };
 
+exports.postNewAddTours = async (req, res, next) => {
+  try {
+    const name = req.body.name;
+    const ifexist = await NewTours.find({ name: name });
+
+    if (ifexist.length > 0) {
+      if (req.files["image"]) {
+        fileHelper.deleteFile("images/" + req.files["image"][0].filename);
+      }
+      return res.render("pages/Addtours", { message: "Trip must be unique" });
+    }
+
+    // Parse itinerary field if it's a string
+    if (typeof req.body.itinerary === "string") {
+      req.body.itinerary = JSON.parse(req.body.itinerary);
+    } if(typeof req.body.deptcities === 'string'){
+      req.body.deptcities = JSON.parse(req.body.deptcities)
+    } if(typeof req.body.trip_dates ==='string'){
+      req.body.trip_dates= JSON.parse(req.body.trip_dates)
+    }
+
+    // Validate required fields
+    const requiredFields = [
+      "name",
+      "state",
+      "destinations",
+      "route",
+      "days",
+      "price",
+      "about",
+      "tripType",
+      "placestovisit",
+      "activities",
+      "things_to_carry",
+      "package_cost",
+    ];
+
+    const missingFields = requiredFields.filter((field) => !req.body[field]);
+
+    // if (missingFields.length > 0) {
+    //   return res.status(400).json({
+    //     error: `Missing required fields: ${missingFields.join(", ")}`,
+    //   });
+    // }
+
+
+    const state = req.body.state;
+    const image = req.files["image"] ? req.files["image"][0] : null;
+    const tripSlideImage = req.files["bannerImages"] || [];
+ 
+    const imageurl = image ? `/images/${image.filename}` : null;
+    const bannerImageUrls = tripSlideImage.map(img => `/images/${img.filename}`);
+    //const filePath = `/images/${req.files["image"].filename}`;  // Correct URL
+
+    const newTours = new NewTours({
+      name: name,
+      state: state,
+      imageurl: imageurl, // Single image
+      bannerImages: bannerImageUrls, // Array of multiple images
+      destinations: req.body.destinations,
+      route: req.body.route,
+      days: req.body.days,
+      tag: req.body.tag,
+      price: req.body.price,
+      tripType:req.body.tripType,
+      altitude:req.body.altitude,
+      bestSession:req.body.bestSession,
+      about: req.body.about,
+      placestovisit: req.body.placestovisit,
+      activities: req.body.activities,
+      itinerary: req.body.itinerary,
+      things_to_carry: req.body.things_to_carry,
+      includenexclude: req.body.includenexclude,
+      package_cost: req.body.package_cost,
+      infonfaq: req.body.infonfaq,
+      Bookncancel: req.body.Bookncancel,
+      guidelines: req.body.guidelines,
+      trip_dates:req.body.trip_dates,
+      deptcities:req.body.deptcities
+    });
+
+    await newTours.save();
+    res.json({ success: true, message: "Tour added successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+
 exports.getTourDetails = async (req, res, next) => {
   try {
     const token = req.params.token;
@@ -1374,5 +1464,22 @@ exports.getTours = async (req, res) => {
     res.render('pages/tourlist',{ tourPackages: tours,filterChips:Object.values(filters).flat() ,Searchvalue: req.query.searchValue});
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+// Newly created API for Upload image
+exports.uploadImage = async (req, res) => {
+  try {
+      if (!req.files || req.files.length === 0) {
+          return res.status(400).json({ success: false, message: "No file uploaded" });
+      }
+      
+    const filePath = `/images/${req.files.filename}`;  // Correct URL
+    res.json({ success: true, imageUrl: filePath });
+
+      // res.json({ success: true, imageUrl: `/images/${fileName}` });
+  } catch (error) {
+      console.error("Upload error:", error);
+      res.status(500).json({ success: false, message: "Server error" });
   }
 };
