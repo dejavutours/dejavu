@@ -450,116 +450,8 @@
       <!-- Departure City Section -->
       <div class="container">
         <h5 class="fw-bold my-3">Departure City</h5>
-        <div class="col-lg-8 col-md-6 col-sm-8 col-12">
-          <div class="position-relative">
-            <div class="d-flex gap-3 overflow-auto" id="carouselTrack">
-              <div class="city-card bg-light">
-                <img
-                  src="https://via.placeholder.com/150x100"
-                  alt="Ahmedabad"
-                />
-                <h6 class="mt-2 mb-1">Ahmedabad</h6>
-                <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
-                ><br />
-                <small class="fw-semibold text-dark">₹7499/person</small>
-              </div>
-              <div class="city-card bg-light">
-                <img src="https://via.placeholder.com/150x100" alt="Surat" />
-                <h6 class="mt-2 mb-1">Surat</h6>
-                <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
-                ><br />
-                <small class="fw-semibold text-dark">₹7499/person</small>
-              </div>
-              <div class="city-card bg-light">
-                <img src="https://via.placeholder.com/150x100" alt="Delhi" />
-                <h6 class="mt-2 mb-1">Delhi</h6>
-                <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
-                ><br />
-                <small class="fw-semibold text-dark">₹8499/person</small>
-              </div>
-              <div class="city-card bg-light">
-                <img src="https://via.placeholder.com/150x100" alt="Jaipur" />
-                <h6 class="mt-2 mb-1">Jaipur</h6>
-                <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
-                ><br />
-                <small class="fw-semibold text-dark">₹8999/person</small>
-              </div>
-              <div class="city-card bg-light">
-                <img src="https://via.placeholder.com/150x100" alt="Mumbai" />
-                <h6 class="mt-2 mb-1">Mumbai</h6>
-                <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
-                ><br />
-                <small class="fw-semibold text-dark">₹9499/person</small>
-              </div>
-            </div>
-
-            <!-- Scroll Buttons (Hidden by Default) -->
-            <button
-              id="prevBtn"
-              class="carousel-control-prev d-none"
-              type="button"
-              onclick="slideLeft()"
-            >
-              <span
-                class="carousel-control-prev-icon"
-                aria-hidden="true"
-              ></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button
-              id="nextBtn"
-              class="carousel-control-next d-none"
-              type="button"
-              onclick="slideRight()"
-            >
-              <span
-                class="carousel-control-next-icon"
-                aria-hidden="true"
-              ></span>
-              <span class="visually-hidden">Next</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Booking Form -->
-        <div class="col-lg-4 col-md-5 col-12 mt-3 mt-md-0">
-          <div class="card p-3">
-            <h6>Joining from</h6>
-            <select class="form-select mb-3" id="selectedCity">
-              <option>Ahmedabad</option>
-              <option>Surat</option>
-              <option>Delhi</option>
-            </select>
-            <h6>Tour date</h6>
-            <select class="form-select mb-3" id="selectedDate">
-              <option>8 May 2024 to 16 May 2024</option>
-            </select>
-            <button class="btn btn-primary w-100">Proceed to book</button>
-          </div>
-        </div>
-
-        <!-- Available Dates Section -->
-        <div class="mb-4">
-          <h5 class="mb-3">Available dates</h5>
-          <div class="date-selector">
-            <div class="date-item">1</div>
-            <div class="date-item active">6</div>
-            <div class="date-item">10</div>
-            <div class="date-item">14</div>
-            <div class="date-item">17</div>
-            <div class="date-item">18</div>
-            <div class="date-item">20</div>
-            <div class="date-item">28</div>
-            <div class="date-item">30</div>
-            <div class="date-item">31</div>
-          </div>
-        </div>
-      </div>
-      <div class="container">
-        <h5 class="fw-bold my-3">Departure City</h5>
         <div class="row">
-          <!-- Carousel Section -->
-          <div class="col-lg-8 col-md-7 col-12">
+          <div class="col-lg-8 col-md-6 col-sm-8 col-12">
             <div class="position-relative">
               <div class="d-flex gap-3 overflow-auto" id="carouselTrack">
                 <div class="city-card bg-light">
@@ -586,11 +478,51 @@
                   ><br />
                   <small class="fw-semibold text-dark">₹8499/person</small>
                 </div>
+                <div class="city-card bg-light">
+                  <img src="https://via.placeholder.com/150x100" alt="Jaipur" />
+                  <h6 class="mt-2 mb-1">Jaipur</h6>
+                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
+                  ><br />
+                  <small class="fw-semibold text-dark">₹8999/person</small>
+                </div>
+                <div class="city-card bg-light">
+                  <img src="https://via.placeholder.com/150x100" alt="Mumbai" />
+                  <h6 class="mt-2 mb-1">Mumbai</h6>
+                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
+                  ><br />
+                  <small class="fw-semibold text-dark">₹9499/person</small>
+                </div>
               </div>
+
+              <!-- Scroll Buttons (Hidden by Default) -->
+              <button
+                id="prevBtn"
+                class="carousel-control-prev d-none"
+                type="button"
+                onclick="slideLeft()"
+              >
+                <span
+                  class="carousel-control-prev-icon"
+                  aria-hidden="true"
+                ></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button
+                id="nextBtn"
+                class="carousel-control-next d-none"
+                type="button"
+                onclick="slideRight()"
+              >
+                <span
+                  class="carousel-control-next-icon"
+                  aria-hidden="true"
+                ></span>
+                <span class="visually-hidden">Next</span>
+              </button>
             </div>
           </div>
 
-          <!-- Booking Section -->
+          <!-- Booking Form -->
           <div class="col-lg-4 col-md-5 col-12 mt-3 mt-md-0">
             <div class="card p-3">
               <h6>Joining from</h6>
@@ -609,9 +541,9 @@
         </div>
 
         <!-- Available Dates Section -->
-        <div class="mb-4 mt-4">
+        <div class="mb-4">
           <h5 class="mb-3">Available dates</h5>
-          <div class="d-flex flex-wrap gap-2">
+          <div class="date-selector">
             <div class="date-item">1</div>
             <div class="date-item active">6</div>
             <div class="date-item">10</div>

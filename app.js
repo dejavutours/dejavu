@@ -28,7 +28,7 @@ const PORT = process.env.PORT || 5000;
 
 const Tours = require('./models/tours');
 const User = require('./models/user');
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === 'development';
 
 
 const MONGODB_URI = isProduction
@@ -95,6 +95,7 @@ const tourRoutes = require('./routes/tours');
 const profileRoutes = require('./routes/profileRoutes');
 const authRoutes = require('./routes/auth');
 const paymentRoutes = require('./routes/payments');
+const cityRoutes = require('./routes/cityRoutes');
 
 //app.use(helmet());
 app.use(compression());
@@ -105,7 +106,10 @@ app.use(cookieParser());
 
 // app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single("image"));
 app.use(
-  multer({ storage: fileStorage, fileFilter: fileFilter }).array('image', 12)
+  multer({ storage: fileStorage, fileFilter: fileFilter }).fields([
+    { name: "image", maxCount: 12 }, // Allows up to 12 images for "image" field
+    { name: "bannerImages", maxCount: 12 } // Allows up to 12 images for "bannerImages" field
+  ])
 );
 
 // app.use(async(req, res, next) => {
@@ -177,6 +181,7 @@ app.use(tourRoutes);
 app.use(profileRoutes);
 app.use(authRoutes);
 app.use('/payment', paymentRoutes);
+app.use(cityRoutes);
 
 mongoose
   .connect(MONGODB_URI, {

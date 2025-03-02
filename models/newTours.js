@@ -13,7 +13,7 @@ const newToursSchema = new Schema(
     imageurl: { type: String, required: true },
     // Purpose: Primary image URL representing the tour.
 
-    bannerimage: { type: [String], default: [] },
+    bannerimages: [{ type: String }],
     // Purpose: List of images used as banners for promotions.
 
     destinations: { type: String, required: true },
@@ -50,19 +50,24 @@ const newToursSchema = new Schema(
       {
         State: String, // Purpose: Departure state (e.g., "GJ").
         City: String, // Purpose: Departure city (e.g., "AHM").
-        Days: String, // Purpose: Duration from the specific city (e.g., "6 days, 7 nights").
+        //Days: String, // Purpose: Duration from the specific city (e.g., "6 days, 7 nights").
         PerPersonCost: Number, // Purpose: Cost per person for the package.
         dates: [
           {
             Month: String, // Purpose: Available month (e.g., "May").
-            dates: [String], // Purpose: Specific departure dates in that month.
+            dates: String, // Purpose: Specific departure dates in that month.
           },
         ],
       },
     ],
     // Purpose: List of departure cities, their cost, and available travel dates.
 
-    trip_dates: { type: [Date], default: [] },
+    trip_dates: [
+        {
+            Month: String,  // Available month (e.g., "May")
+            dates: String   // Specific departure dates in that month
+        }
+    ],
     // Purpose: List of upcoming trip start dates.
 
     placestovisit: { type: String, required: true },
@@ -74,8 +79,8 @@ const newToursSchema = new Schema(
     itinerary: [
       {
         day: String, // Purpose: Day number (e.g., "Day 1").
-        description: String, // Purpose: Activities and schedule for the day.
-        imageUrl: String, // Purpose: Image related to the itinerary.
+        header:String,
+        description: String, // Purpose: Activities and schedule for the day
       },
     ],
     // Purpose: Daily schedule and plan for the tour.
@@ -83,13 +88,7 @@ const newToursSchema = new Schema(
     things_to_carry: { type: String, required: true },
     // Purpose: List of recommended items to carry (e.g., "Sunscreen, Sunglasses, Swimsuit").
 
-    includenexclude: {
-      Included: { type: String, default: "" },
-      // Purpose: Items and services included in the package.
-
-      Excluded: { type: String, default: "" },
-      // Purpose: Items and services NOT included in the package.
-    },
+    includenexclude: { type: String, required: true },
 
     package_cost: { type: String, required: true },
     // Purpose: Final cost of the tour package, displayed in user-friendly format (e.g., "₹9,999").
