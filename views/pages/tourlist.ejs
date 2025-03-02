@@ -396,7 +396,7 @@
                                     <%= tour.name %>
                                 </strong></h3>
                             <p class="location">
-                                <%= tour.placestovisit %>
+                                <%- tour.placestovisit %>
                             </p>
                             <p class="region">
                                 <%= tour.state %>, <%= tour.deptstate %>
@@ -409,7 +409,7 @@
                             <div class="price-container">
                                 <span class="price-label">From</span>
                                 <span class="price">
-                                    <%= tour.package_cost %>
+                                    <%= tour.price %>
                                 </span>
                                 <span class="price-note">/person</span>
                             </div>
