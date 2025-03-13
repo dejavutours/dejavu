@@ -106,10 +106,7 @@ app.use(cookieParser());
 
 // app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single("image"));
 app.use(
-  multer({ storage: fileStorage, fileFilter: fileFilter }).fields([
-    { name: "image", maxCount: 12 }, // Allows up to 12 images for "image" field
-    { name: "bannerImages", maxCount: 12 } // Allows up to 12 images for "bannerImages" field
-  ])
+  multer({ storage: fileStorage, fileFilter: fileFilter }).array('image', 12)
 );
 
 // app.use(async(req, res, next) => {

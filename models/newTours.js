@@ -13,7 +13,7 @@ const newToursSchema = new Schema(
     imageurl: { type: String, required: true },
     // Purpose: Primary image URL representing the tour.
 
-    bannerimages: [{ type: String }],
+    bannerimages: { type: String },
     // Purpose: List of images used as banners for promotions.
 
     destinations: { type: String, required: true },
@@ -50,7 +50,7 @@ const newToursSchema = new Schema(
       {
         State: String, // Purpose: Departure state (e.g., "GJ").
         City: String, // Purpose: Departure city (e.g., "AHM").
-        //Days: String, // Purpose: Duration from the specific city (e.g., "6 days, 7 nights").
+        CityId:{ type: mongoose.Schema.Types.ObjectId, ref: "City"},
         PerPersonCost: Number, // Purpose: Cost per person for the package.
         dates: [
           {

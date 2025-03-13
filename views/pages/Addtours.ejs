@@ -13,18 +13,16 @@
   <!-- FilePond CSS & JS -->
   <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <!-- Date selector calender -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
   <!-- FilePond Plugins -->
   <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet" />
 
   <!-- Quill CSS -->
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-
-
-
-
   <title>Dejavu Add Tours Details</title>
-  <%- include('../partials/headtag'); %>
   <style>
     .form-container {
       background: #fff;
@@ -121,9 +119,6 @@
               </div>
               <div class="col-xl-3 col-lg-3 d-none d-lg-block">
                 <div class="social_wrap d-flex align-items-center justify-content-end">
-                  <!-- <div class="number">
-                                        <p> <i class="fa fa-phone"></i>+91 851111 7891</p>
-                                    </div> -->
                   <div class="social_links d-none d-xl-block">
                     <ul>
                       <li>
@@ -168,22 +163,17 @@
   <h1 class="text-primary">
     <center>Dejavu Tours&Treks : Add Trip</center>
   </h1>
-  <% if(message){ %>
-  <h4 class="text-danger">
-    <center><%= message %></center>
-  </h4>
-  <% } %>
-  <form action="" method="POST" enctype="multipart/form-data">
+  <form action="/admin/postNewAddTours" method="POST" id="addUpdateTripDetial" enctype="multipart/form-data">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     <div class="container-fluid">
       <div class="container form-container">
         <div class="row">
           <div class="col-12 col-lg-12 col-sm-12">
             <div class="mb-3">
-              <label for="TripName" class="form-label">Trip Name:-
-                <b class="text-success">* Trip name must be unique</b>
-              </label>
-              <input type="text" class="form-control" name="name" id="name" placeholder="" value="" required="" />
+              <h5 class="mt-3">Trip Name <b class="text-success">* Trip name must be unique</b></h5>
+              <input type="text" class="form-control" name="name" id="name" value="<%= trips.name %>" placeholder="Enter Trip Name" required />
+              <input type="hidden" class="form-control" name="tripId" id="tripId" value="<%= trips._id %>"" />
+              <small id=" nameError" class="text-danger d-none">Trip name already exists!</small>
             </div>
           </div>
         </div>
@@ -193,11 +183,9 @@
             <div class="mb-3">
               <label for="state" class="form-label">State</label>
               <select class="form-control select2" name="state" id="state" data-placeholder="Select a State" style="width: 100%" required>
-                <option value="" selected hidden>Select State</option>
+                <option value="<%= trips.state %>" selected hidden><%= trips.state %></option>
                 <% for (var i = 0; i < states_arr.length; i++) { %>
-                <option value="<%= states_arr[i] %>">
-                  <%= states_arr[i] %>
-                </option>
+                <option value="<%= states_arr[i] %>"><%= states_arr[i] %></option>
                 <% } %>
               </select>
             </div>
@@ -205,7 +193,7 @@
           <div class="col-12 col-md-6">
             <div class="mb-3">
               <label for="Destinations" class="form-label">Destinations</label>
-              <input type="text" class="form-control" name="destinations" id="destinations" placeholder="" value="" required />
+              <input type="text" class="form-control" name="destinations" id="destinations" placeholder="" value="<%= trips.destinations %>" required />
             </div>
           </div>
         </div>
@@ -216,8 +204,11 @@
             <div class="mb-3">
               <label for="file" class="form-label">Upload Image</label>
               <input type="file" accept="image/*" name="image" id="file" enctype="multipart/form-data" class="form-control">
-              <div class="preview-container" id="mainImagePreviewContainer" style="display: none;">
-                <img id="mainImagePreview" alt="Preview" data-bs-toggle="modal" data-bs-target="#imageModal">
+              <div class="preview-container position-relative" id="mainImagePreviewContainer" style="display: <%= trips.imageurl ? 'block' : 'none' %>;">
+                <img id="mainImagePreview" alt="Preview" data-bs-toggle="modal" src="<%= trips.imageurl ? trips.imageurl : '' %>" data-bs-target="#imageModal" style="display: <%= trips.imageurl ? 'block' : 'none' %>;">
+                <button type="button" class="btn btn-danger remove-image" id="removeMainImage" style="position: absolute; top: 5px; right: 5px; padding: 5px; display: <%= trips.imageurl ? 'block' : 'none' %>;">
+                  <i class="bi bi-x-circle-fill"></i> <!-- Bootstrap Icon -->
+                </button>
               </div>
             </div>
           </div>
@@ -234,13 +225,13 @@
           <div class="col-12 col-md-6">
             <div class="mb-3">
               <label for="Route" class="form-label">Route</label>
-              <input type="text" class="form-control" name="route" id="route" placeholder="" value="" required="" />
+              <input type="text" class="form-control" name="route" id="route" placeholder="" value="<%= trips.route %>" required="" />
             </div>
           </div>
           <div class="col-12 col-md-6">
             <div class="mb-3">
-              <label for="Route" class="form-label">Days</label>
-              <input type="text" class="form-control" name="days" id="days" placeholder="" value="" required="" />
+              <label for="Route" class="form-label">Trip Duration </label>
+              <input type="text" class="form-control" name="days" id="days" placeholder="" value="<%= trips.days %>" required="" />
             </div>
           </div>
         </div>
@@ -250,37 +241,37 @@
           <div class="col-12 col-md-6">
             <div class="mb-3">
               <label for="TagLine" class="form-label">Tag Line</label>
-              <input type="text" class="form-control" name="tag" id="tag" placeholder="" value="" required="" />
+              <input type="text" class="form-control" name="tag" id="tag" placeholder="" value="<%= trips.tag %>" required="" />
             </div>
           </div>
           <div class="col-12 col-md-6">
             <div class="mb-3">
-              <label for="Price" class="form-label">Price(Price per person)</label>
-              <input type="text" class="form-control" name="price" id="price" placeholder="" value="" required="" />
+              <label for="altitude" class="form-label">Altitude</label>
+              <input type="text" class="form-control" name="altitude" id="altitude" placeholder="" value="<%= trips.altitude %>" required="" />
             </div>
           </div>
         </div>
         <!-- Input field Difficulty and Altitude -->
         <div class="row">
-          <div class="col-12 col-md-6 border rounded">
+          <div class="col-12 col-md-6">
             <div class="mb-3">
-              <label for="tripType" class="form-label">Difficulty</label>
-              <input type="text" class="form-control" name="tripType" id="tripType" placeholder="" value="" required="" />
+              <label for="tripType" class="form-label">Difficulty</label>tripType
+              <input type="text" class="form-control" name="tripType" id="tripType" placeholder="" value="<%= trips.tripType %>" required="" />
             </div>
           </div>
-          <div class="col-12 col-md-6 border rounded">
+          <div class="col-12 col-md-6">
             <div class="mb-3">
-              <label for="altitude" class="form-label">Altitude</label>
-              <input type="text" class="form-control" name="altitude" id="altitude" placeholder="" value="" required="" />
+              <label for="Price" class="form-label">Price(Price per person)</label>
+              <input type="text" class="form-control" name="price" id="price" placeholder="" value="<%= trips.price %>" required="" />
             </div>
           </div>
         </div>
         <!-- Input field Best Session -->
         <div class="row">
-          <div class="col-12 col-md-12 border rounded">
+          <div class="col-12 col-md-12">
             <div class="mb-3">
               <label for="bestSession" class="form-label">Best Session</label>
-              <input type="text" class="form-control" name="bestSession" id="bestSession" placeholder="" value="" required="" />
+              <input type="text" class="form-control" name="bestSession" id="bestSession" placeholder="" value="<%= trips.bestSession %>" required="" />
             </div>
           </div>
         </div>
@@ -288,11 +279,16 @@
         <!-- Add departure city section -->
         <div class="row">
           <div class="col-12 border rounded mt-2">
-            <label for="deptcities" class="form-label"><b>Add Departure City</b>:
-              <b class="text-success">* Departure City must be unique</b>
-            </label>
+            <h5 class="mt-3">Add Departure City <b class="text-success">* Departure City must be unique</b></h5>
             <div id="cityContainer">
               <div class="city-entry">
+                <div class="row">
+                  <div class="col-12 text-end">
+                    <button type="button" class="btn btn-danger btn-sm remove-city d-none">
+                      <i class="bi bi-x-circle"></i> Remove Section
+                    </button>
+                  </div>
+                </div>
                 <div class="row">
                   <div class="col-12 col-md-6">
                     <div class="mb-3">
@@ -304,92 +300,162 @@
                   </div>
                   <div class="col-12 col-md-6">
                     <div class="mb-3">
-                      <label>State</label>
-                      <input type="text" class="form-control state-field" placeholder="State" readonly required>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                      <label>Per Person Cost</label>
-                      <input type="number" class="form-control cost-field" placeholder="Cost" required>
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
                       <label>City Image</label>
                       <img src="" class="img-fluid city-image" style="display: none; max-width: 100px;">
                     </div>
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-12 d-flex flex-wrap">
+                  <div class="col-12 col-md-6">
                     <div class="mb-3">
-                      <label>Available Dates</label>
-                      <div class="month-container d-flex flex-wrap gap-3">
-                        <div class="month-entry border rounded p-2 position-relative">
-                          <button type="button" class="btn btn-danger btn-sm remove-month position-absolute top-0 end-0 m-2 d-none">
-                            ✖
-                          </button>
-                          <div class="mb-2 p-1">
-                            <label>Month</label>
-                            <input type="month" class="form-control month-select" required>
-                          </div>
-                          <div class="mb-2 m-1">
-                            <label>Dates</label>
-                            <input type="text" class="form-control date-select" placeholder="e.g., 1,8,10" required>
-                          </div>
-                          <button type="button" class="btn btn-danger btn-sm remove-month mt-2 d-none">
-                            <i class="bi bi-trash"></i> Remove
-                          </button>
-                        </div>
-                      </div>
-                      <button type="button" class="btn btn-primary btn-sm m-2 add-month">
-                        <i class="bi bi-plus-circle"></i> Add Month
-                      </button>
+                      <label>State</label>
+                      <input type="text" class="form-control state-field" placeholder="State" readonly required>
                     </div>
+                  </div>
+                </div>
+                <h5 class="mt-3">Pricing Details</h5>
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                      <label for="basePrice" class="form-label">Base Price (Total trip cost)</label>
+                      <input type="number" class="form-control cost-field" id="basePrice" placeholder="Enter base price" required>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                      <label>Transfer Type</label>
+                      <input type="text" class="form-control transferType" name="transferType" placeholder="Transfer Type" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                      <label for="childPrice" class="form-label">Child Price</label>
+                      <input type="number" class="form-control" name="childPrice" id="childPrice" placeholder="Enter price per child" required />
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                      <label for="adultPrice" class="form-label">Adult Price</label>
+                      <input type="number" class="form-control adultPrice" id="adultPrice" placeholder="Enter price per adult" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                      <label for="infantPrice" class="form-label">Infant Price</label>
+                      <input type="number" class="form-control" name="infantPrice" id="infantPrice" placeholder="Enter price per infant (if applicable)" />
+                    </div>
+                  </div>
+                  <!-- Date Picker Input -->
+                  <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                      <h6 class="mt-3">Available Dates</h5>
+                        <div class="input-group">
+                          <input type="text" id="datePicker" class="form-control datePicker" placeholder="Select multiple dates">
+                          <button class="btn btn-danger clearDates" id="clearDates">Clear</button>
+                        </div>
+                        <small class="text-danger d-none error-msg" id="error-msg">Please select at least one date.</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <!-- Scrollable Table for Selected Dates -->
+                  <div class="col-12 col-md-12">
+                    <div class="mb-3">
+                      <label class="form-label fw-bold"></label>
+                      <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                        <table class="table table-bordered table-hover align-middle">
+                          <thead class="table-light sticky-top">
+                            <tr>
+                              <th class="text-center" style="width: 10%;">S.No.</th>
+                              <th class="text-center" style="width: 60%;">Selected Date</th>
+                              <th class="text-center" style="width: 30%;">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody id="datePreview">
+                            <!-- Dynamic Rows Will Be Inserted Here -->
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 d-flex mb-3">
+                    <button type="button" class="btn btn-primary btn-sm addCity" id="addCity">
+                      <i class="bi bi-plus-circle"></i> Add City
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <!-- Buttons for adding months and removing cities -->
-          <div class="row">
-            <div class="col-12 d-flex mb-3">
-              <button type="button" class="btn btn-primary btn-sm mt-2" id="addCity">
-                <i class="bi bi-plus-circle"></i> Add City
-              </button>
+        </div>
+        <div class="row">
+          <div class="col-12 col-md-12">
+            <div class="accordion mb-3" id="aboutAccordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="aboutHeading">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#aboutCollapse" aria-expanded="false" aria-controls="aboutCollapse">
+                    About Information
+                  </button>
+                </h2>
+                <div id="aboutCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
+                  <div class="accordion-body">
+                    <div class="editor-container mb-3" name="about" id="about-editor"><%- trips.about %></div>
+                    <small class="text-danger d-none" id="aboutError">About field is required (Max: 500 characters).</small>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-
         <div class="row">
-          <div class="col-12 col-md-12 border rounded">
-            <div class="mb-3 mt-2">
-              <label for="About" class="form-label">About</label>
-              <textarea class="form-control about" name="about" id="about" contenteditable="true"></textarea>
+          <div class="col-12 col-md-12">
+            <div class="accordion mb-3" id="placestovisitAccordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="placestovisitHeading">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#placestovisitCollapse" aria-expanded="false" aria-controls="placestovisitCollapse">
+                    Places To Visit
+                  </button>
+                </h2>
+                <div id="placestovisitCollapse" class="accordion-collapse collapse" aria-labelledby="placestovisitHeading" data-bs-parent="#placestovisitAccordion">
+                  <div class="accordion-body">
+                    <div class="editor-container mb-3" name="placestovisit" id="placestovisit-editor"><%- trips.placestovisit %></div>
+                    <small class="text-danger d-none" id="placestovisitError">placestovisit field is required (Max: 500 characters).</small>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         <div class="row">
-          <div class="col-12 col-md-12 border rounded">
-            <label for="placestovisit" class="form-label">Places To Visit</label>
-            <textarea class="form-control placestovisit" name="placestovisit" id="placestovisit" contenteditable="true"></textarea>
+          <div class="col-12 col-md-12">
+            <div class="accordion mb-3" id="aboutAccordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="aboutHeading">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#activitiesCollapse" aria-expanded="false" aria-controls="activitiesCollapse">
+                    Activities & Attraction
+                  </button>
+                </h2>
+                <div id="activitiesCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
+                  <div class="accordion-body">
+                    <div class="editor-container mb-3" name="activities" id="activities-editor"><%- trips.activities %></div>
+                    <small class="text-danger d-none" id="activitiesError">activities field is required (Max: 500 characters).</small>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="row">
-          <div class="col-12 col-md-12 border rounded">
-            <label for="activities" class="form-label">Activities & Attraction</label>
-            <textarea class="form-control activities" name="activities" id="activities" contenteditable="true"></textarea>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-12 col-md-12 border rounded">
+          <div class="col-12 col-md-12">
             <div class="mb-3">
               <label for="itinerary" class="form-label">Itinerary</label>
               <div class="d-flex justify-content-between mb-3">
@@ -399,7 +465,7 @@
 
               <!-- Container for multiple itinerary editors -->
               <div id="itinerary-container">
-                <div class="itinerary-day border rounded p-3 mb-3" data-day="1">
+                <div class="itinerary-day p-3 mb-3" data-day="1">
                   <h5>Day 1</h5>
                   <input type="text" class="form-control" name="itinerary-header" id="itinerary-header" placeholder="Enter Header" value="" required="" />
                   <div class="editor-container mb-3" id="editor-1"></div>
@@ -411,46 +477,122 @@
         </div>
 
         <div class="row">
-          <div class="col-12 col-md-12 border rounded">
-            <label for="things_to_carry" class="form-label">Things to Carry</label>
-            <textarea class="form-control things_to_carry" name="things_to_carry" id="things_to_carry" contenteditable="true"></textarea>
+          <div class="col-12 col-md-12">
+            <div class="accordion mb-3" id="aboutAccordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="aboutHeading">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#things_to_carryCollapse" aria-expanded="false" aria-controls="things_to_carryCollapse">
+                    Things to Carry
+                  </button>
+                </h2>
+                <div id="things_to_carryCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
+                  <div class="accordion-body">
+                    <div class="editor-container mb-3" name="things_to_carry" id="things_to_carry-editor"><%- trips.things_to_carry %></div>
+                    <small class="text-danger d-none" id="activitiesError">activities field is required (Max: 500 characters).</small>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="row">
-          <div class="col-12 col-md-12 border rounded">
-            <label for="includenexclude" class="form-label">Include & Exclude</label>
-            <textarea class="form-control includenexclude" name="includenexclude" id="includenexclude" contenteditable="true"></textarea>
+          <div class="col-12 col-md-12">
+            <div class="accordion mb-3" id="aboutAccordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="aboutHeading">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#includenexcludeCollapse" aria-expanded="false" aria-controls="includenexcludeCollapse">
+                    Include & Exclude
+                  </button>
+                </h2>
+                <div id="includenexcludeCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
+                  <div class="accordion-body">
+                    <div class="editor-container mb-3" name="includenexclude" id="includenexclude-editor"><%- trips.includenexclude %></div>
+                    <small class="text-danger d-none" id="activitiesError">includenexclude field is required (Max: 500 characters).</small>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="row">
-          <div class="col-12 col-md-12 border rounded">
-            <label for="package_cost" class="form-label">Package Cost</label>
-            <textarea class="form-control package_cost" name="package_cost" id="package_cost" contenteditable="true"></textarea>
+          <div class="col-12 col-md-12">
+            <div class="accordion mb-3" id="aboutAccordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="aboutHeading">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#package_costCollapse" aria-expanded="false" aria-controls="package_costCollapse">
+                    Package Cost
+                  </button>
+                </h2>
+                <div id="package_costCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
+                  <div class="accordion-body">
+                    <div class="editor-container mb-3" name="package_cost" id="package_cost-editor"><%- trips.package_cost %></div>
+                    <small class="text-danger d-none" id="package_costError">package cost field is required (Max: 500 characters).</small>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="row">
-          <div class="col-12 col-md-12 border rounded">
-            <label for="infonfaq" class="form-label">Info & FAQs</label>
-            <textarea class="form-control infonfaq" name="infonfaq" id="infonfaq" contenteditable="true"></textarea>
-
+          <div class="col-12 col-md-12">
+            <div class="accordion mb-3" id="aboutAccordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="aboutHeading">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#infonfaqCollapse" aria-expanded="false" aria-controls="infonfaqCollapse">
+                    Info & FAQs
+                  </button>
+                </h2>
+                <div id="infonfaqCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
+                  <div class="accordion-body">
+                    <div class="editor-container mb-3" name="infonfaq" id="infonfaq-editor"><%- trips.infonfaq %></div>
+                    <small class="text-danger d-none" id="infonfaqError">infonfaq field is required (Max: 500 characters).</small>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="row">
-          <div class="col-12 col-md-12 border rounded">
-            <label for="Bookncancel" class="form-label">Booking & Cancellation</label>
-            <textarea class="form-control Bookncancel" name="Bookncancel" id="Bookncancel" contenteditable="true"></textarea>
-
+          <div class="col-12 col-md-12">
+            <div class="accordion mb-3" id="aboutAccordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="aboutHeading">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bookncancelCollapse" aria-expanded="false" aria-controls="bookncancelCollapse">
+                    Booking & Cancellation
+                  </button>
+                </h2>
+                <div id="bookncancelCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
+                  <div class="accordion-body">
+                    <div class="editor-container mb-3" name="bookncancel" id="bookncancel-editor"><%- trips.bookncancel %></div>
+                    <small class="text-danger d-none" id="bookncancelError">bookncancel field is required (Max: 500 characters).</small>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="row">
-          <div class="col-12 col-md-12 border rounded">
-            <label for="guidelines" class="form-label">Travel Guidelines</label>
-            <textarea class="form-control guidelines" name="guidelines" id="guidelines" contenteditable="true"></textarea>
+          <div class="col-12 col-md-12">
+            <div class="accordion mb-3" id="aboutAccordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="aboutHeading">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#guidelinesCollapse" aria-expanded="false" aria-controls="guidelinesCollapse">
+                    Travel Guidelines
+                  </button>
+                </h2>
+                <div id="guidelinesCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
+                  <div class="accordion-body">
+                    <div class="editor-container mb-3" name="guidelines" id="guidelines-editor"><%- trips.guidelines %></div>
+                    <small class="text-danger d-none" id="guidelinesError">Guidelines field is required (Max: 500 characters).</small>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -477,7 +619,7 @@
     </div>
   </div>
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
   <script src="/vendor/jquery/jquery.min.js"></script>
   <script src="/vendor/select2/select2.min.js"></script>
   <script src="/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
@@ -490,201 +632,231 @@
 
   <!-- Quill JS -->
   <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-  <<!-- Image Resize Module (Correct Version) -->
-    <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
+  <!-- Image Resize Module (Correct Version) -->
+  <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
 
 
 
-    <script>
-      $(document).ready(function() {
-        $(".select2").select2();
-        $(
-          ".about ,.guidelines, .Bookncancel,.infonfaq, .package_cost ,.includenexclude,.things_to_carry, .itinerary,.activities,.placestovisit"
-        ).jqte();
+  <script>
+    $(document).ready(function() {
+      $(".select2").select2();
+    });
+
+    $("#imageModal").on("hidden.bs.modal", function() {
+      $(".modal-backdrop").remove();
+      $("body").removeClass("modal-open");
+    });
+    // Get CSRF token from hidden input field
+    const csrfToken = document.querySelector('input[name="_csrf"]').value;
+    // Form validation and  error message
+    $(document).ready(function() {
+      let lastCheckedName = ""; // Store last checked name to prevent duplicate requests
+
+      $("#name").on("blur", function() {
+        let tripName = $(this).val().trim();
+        const tripId = $('#tripId').val()
+        if (tripName === "" || tripName === lastCheckedName) return; // Skip if empty or already checked
+
+        lastCheckedName = tripName; // Update last checked name
+
+        $.ajax({
+          url: "/getCheckToursUnique",
+          type: "POST",
+          headers: {
+            "X-CSRF-Token": csrfToken, // Ensure CSRF token is correctly set
+          },
+          data: {
+            name: tripName,
+            tripId: tripId || undefined, // Send tripId if updating, otherwise undefined
+          },
+          success: function(response) {
+            if (response.exists) {
+              $("#nameError").removeClass("d-none"); // Show error message
+            } else {
+              $("#nameError").addClass("d-none"); // Hide error message
+            }
+          },
+          error: function() {
+            console.error("Error checking trip name.");
+          },
+        });
+      });
+    });
+
+    // common method to show error on field
+    function showError(input, message) {
+      input.classList.add("is-invalid");
+      let errorSpan = input.nextElementSibling;
+      if (!errorSpan || !errorSpan.classList.contains("invalid-feedback")) {
+        errorSpan = document.createElement("div");
+        errorSpan.className = "invalid-feedback";
+        input.parentNode.appendChild(errorSpan);
+      }
+      errorSpan.textContent = message;
+    }
+    // common method to remoe error from the field
+    function removeError(input) {
+      input.classList.remove("is-invalid");
+      let errorSpan = input.nextElementSibling;
+      if (errorSpan && errorSpan.classList.contains("invalid-feedback")) {
+        errorSpan.remove();
+      }
+    }
+
+    // Main image preview section : functionality - set image on priview and also add or update the image , remove the image from the source
+    document.addEventListener("DOMContentLoaded", function() {
+      // Main image preview
+      const mainImageInput = document.getElementById("file");
+      const mainImagePreview = document.getElementById("mainImagePreview");
+      const mainImagePreviewContainer = document.getElementById("mainImagePreviewContainer");
+      const removeMainImageButton = document.getElementById("removeMainImage");
+      mainImagePreviewContainer.style.display = "block";
+      mainImagePreviewContainer.style.maxWidth = "200px"
+
+      // Ensure preview container is hidden initially if no image exists
+      if (!mainImagePreview.src || mainImagePreview.src === window.location.href) {
+        mainImagePreviewContainer.style.display = "none";
+      } else {
+        mainImagePreviewContainer.style.display = "block";
+      };
+
+      mainImageInput.addEventListener("change", function() {
+        const file = this.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            mainImagePreview.src = e.target.result;
+            mainImagePreview.style.display = "block";
+            mainImagePreviewContainer.style.display = "block"; // Ensure it is visible
+            removeMainImageButton.style.display = "block"; // Show remove button
+          };
+          reader.readAsDataURL(file);
+        }
       });
 
-      $("#imageModal").on("hidden.bs.modal", function() {
-        $(".modal-backdrop").remove();
-        $("body").removeClass("modal-open");
+      // Clicking the preview image opens the modal
+      mainImagePreview.addEventListener("click", function() {
+        document.getElementById("fullSizeImage").src = this.src;
       });
 
-      // common method to show error on field
-      function showError(input, message) {
-        input.classList.add("is-invalid");
-        let errorSpan = input.nextElementSibling;
-        if (!errorSpan || !errorSpan.classList.contains("invalid-feedback")) {
-          errorSpan = document.createElement("div");
-          errorSpan.className = "invalid-feedback";
-          input.parentNode.appendChild(errorSpan);
-        }
-        errorSpan.textContent = message;
-      }
-      // common method to remoe error from the field
-      function removeError(input) {
-        input.classList.remove("is-invalid");
-        let errorSpan = input.nextElementSibling;
-        if (errorSpan && errorSpan.classList.contains("invalid-feedback")) {
-          errorSpan.remove();
-        }
-      }
+      // Banner images preview (multiple)
+      const bannerImageInput = document.getElementById("bannerImages");
+      const bannerPreviewContainer = document.getElementById("bannerPreviewContainer");
 
-
-      document.addEventListener("DOMContentLoaded", function() {
-        // Main image preview
-        const mainImageInput = document.getElementById("file");
-        const mainImagePreview = document.getElementById("mainImagePreview");
-        const mainImagePreviewContainer = document.getElementById("mainImagePreviewContainer");
-
-        mainImageInput.addEventListener("change", function() {
-          const file = this.files[0];
-          if (file) {
+      bannerImageInput.addEventListener("change", function() {
+        bannerPreviewContainer.innerHTML = "";
+        if (this.files) {
+          Array.from(this.files).forEach(file => {
             const reader = new FileReader();
             reader.onload = function(e) {
-              mainImagePreview.src = e.target.result;
-              mainImagePreviewContainer.style.display = "block";
-              mainImagePreviewContainer.style.maxWidth = "200px"
+              const img = document.createElement("img");
+              img.src = e.target.result;
+              img.classList.add("img-thumbnail");
+              img.setAttribute("data-bs-toggle", "modal");
+              img.setAttribute("data-bs-target", "#imageModal");
+              img.addEventListener("click", function() {
+                document.getElementById("fullSizeImage").src = this.src;
+              });
+              bannerPreviewContainer.appendChild(img);
             };
             reader.readAsDataURL(file);
-          }
-        });
-
-        // Clicking the preview image opens the modal
-        mainImagePreview.addEventListener("click", function() {
-          document.getElementById("fullSizeImage").src = this.src;
-        });
-
-        // Banner images preview (multiple)
-        const bannerImageInput = document.getElementById("bannerImages");
-        const bannerPreviewContainer = document.getElementById("bannerPreviewContainer");
-
-        bannerImageInput.addEventListener("change", function() {
-          bannerPreviewContainer.innerHTML = "";
-          if (this.files) {
-            Array.from(this.files).forEach(file => {
-              const reader = new FileReader();
-              reader.onload = function(e) {
-                const img = document.createElement("img");
-                img.src = e.target.result;
-                img.classList.add("img-thumbnail");
-                img.setAttribute("data-bs-toggle", "modal");
-                img.setAttribute("data-bs-target", "#imageModal");
-                img.addEventListener("click", function() {
-                  document.getElementById("fullSizeImage").src = this.src;
-                });
-                bannerPreviewContainer.appendChild(img);
-              };
-              reader.readAsDataURL(file);
-            });
-          }
-        });
-      });
-      // handle dynemic loaded city section 
-      document.addEventListener('DOMContentLoaded', function() {
-        const cityContainer = document.getElementById('cityContainer');
-        const addCityButton = document.getElementById('addCity');
-        let selectedCities = new Set();
-
-        // Fetch cities and populate dropdown
-        async function fetchCities() {
-          try {
-            const response = await fetch("/getCityList");
-            const data = await response.json();
-            if (data.success) {
-              return data.cities;
-            }
-          } catch (error) {
-            console.error("Error fetching cities:", error);
-          }
-          return [];
-        }
-
-        // Populate city dropdown
-        async function populateCityDropdown(selectElement) {
-          const cities = await fetchCities();
-          selectElement.innerHTML = '<option value="">Select City</option>';
-          cities.forEach(city => {
-            const option = document.createElement("option");
-            option.value = city.name;
-            option.textContent = city.name;
-            option.dataset.state = city.state;
-            option.dataset.image = city.image;
-            selectElement.appendChild(option);
           });
         }
+      });
+      // Remove main image
+      $("#removeMainImage").click(function() {
+        $("#mainImagePreview").attr("src", ""); // Clear src
+        $("#mainImagePreviewContainer").hide(); // Hide container
+        $("#file").val(""); // Reset file input
+      });
+    });
 
-        // Handle city selection
-        function handleCitySelection(event) {
+    document.addEventListener("DOMContentLoaded", function() {
+      const cityContainer = document.getElementById("cityContainer");
+      const addCityButton = document.getElementById("addCity");
+      let selectedCities = new Set();
+
+      // Fetch cities and populate dropdown
+      async function fetchCities() {
+        try {
+          const response = await fetch("/getCityList");
+          const data = await response.json();
+          return data.success ? data.cities : [];
+        } catch (error) {
+          console.error("Error fetching cities:", error);
+          return [];
+        }
+      }
+
+      // Populate city dropdown
+      async function populateCityDropdown(selectElement) {
+        const cities = await fetchCities();
+        selectElement.innerHTML = '<option value="">Select City</option>';
+        cities.forEach((city) => {
+          const option = document.createElement("option");
+          option.value = city.name;
+          option.textContent = city.name;
+          option.dataset.state = city.state;
+          option.dataset.image = city.image;
+          selectElement.appendChild(option);
+        });
+      }
+
+      // Handle city selection (event delegation)
+      cityContainer.addEventListener("change", function(event) {
+        if (event.target.classList.contains("city-select")) {
           const select = event.target;
           const selectedOption = select.options[select.selectedIndex];
           const cityName = selectedOption.value;
-          const cityEntry = select.closest('.city-entry');
-          const stateField = cityEntry.querySelector('.state-field');
-          const imageField = cityEntry.querySelector('.city-image');
+          const cityEntry = select.closest(".city-entry");
+          const stateField = cityEntry.querySelector(".state-field");
+          const imageField = cityEntry.querySelector(".city-image");
 
           if (cityName && !selectedCities.has(cityName)) {
             stateField.value = selectedOption.dataset.state;
             imageField.src = selectedOption.dataset.image;
-            imageField.style.display = 'block';
+            imageField.style.display = "block";
             selectedCities.add(cityName);
-            // setting preview section in modal
-            const cityImage = document.querySelector(".city-image");
-            const fullSizeImage = document.getElementById("fullSizeImage");
-            const imageModal = new bootstrap.Modal(document.getElementById("imageModal"));
-            if (cityImage) {
-              cityImage.addEventListener("click", function() {
-                if (this.src) {
-                  fullSizeImage.src = this.src; // Set the modal image src to clicked image src
-                  imageModal.show(); // Show the Bootstrap modal
-                }
-              });
-            }
           } else {
-            stateField.value = '';
-            imageField.src = '';
-            imageField.style.display = 'none';
+            stateField.value = "";
+            imageField.src = "";
+            imageField.style.display = "none";
             selectedCities.delete(cityName);
           }
         }
+      });
 
-        // Ensure month selection does not allow past months
-        function setMinMonth() {
-          const today = new Date();
-          const year = today.getFullYear();
-          const month = String(today.getMonth() + 1).padStart(2, '0');
-          document.querySelectorAll('.month-select').forEach(input => {
-            input.setAttribute('min', `${year}-${month}`);
-          });
-        }
+      // Handle click event for dynamically generated images
+      cityContainer.addEventListener("click", function(event) {
+        if (event.target.classList.contains("city-image")) {
+          const fullSizeImage = document.getElementById("fullSizeImage");
+          const imageModal = new bootstrap.Modal(document.getElementById("imageModal"));
 
-        // Validate and add a new city entry
-        function validateAndAddCity() {
-          const entries = document.querySelectorAll('.city-entry');
-          const cityContainer = document.getElementById('cityContainer');
-          let isValid = true;
-
-          entries.forEach(entry => {
-            if (!entry.querySelector('.city-select').value ||
-              !entry.querySelector('.cost-field').value ||
-              !entry.querySelector('.month-select').value ||
-              !entry.querySelector('.date-select').value) {
-              isValid = false;
-            }
-          });
-
-          if (isValid) {
-            removeError(cityContainer)
-            addCityEntry();
-          } else {
-            // alert('Please fill all required fields before adding another city.');
-            showError(cityContainer, 'Please fill all required fields before adding another city.');
+          if (event.target.src) {
+            fullSizeImage.src = event.target.src;
+            imageModal.show();
           }
         }
+      });
 
-        // Add a new city entry
-        async function addCityEntry() {
-          const cityDiv = document.createElement('div');
-          cityDiv.classList.add('city-entry');
-          cityDiv.innerHTML = `  <div class="row">
+      // Function to add a new city section
+      let newCityEntry = null;
+      async function addCitySection() {
+        newCityEntry = document.createElement("div");
+        newCityEntry.classList.add("city-entry", "mb-3");
+        newCityEntry.innerHTML = `
+               <div class="col-md-2">
+              <button class="btn btn-danger remove-city mt-4">Remove</button>
+              </div>
+              <div class="city-entry">
+                <div class="row">
+                  <div class="col-12 text-end">
+                    <button type="button" class="btn btn-danger btn-sm remove-city d-none">
+                      <i class="bi bi-x-circle"></i> Remove Section
+                    </button>
+                  </div>
+                </div>
+                <div class="row">
                   <div class="col-12 col-md-6">
                     <div class="mb-3">
                       <label>City</label>
@@ -695,518 +867,584 @@
                   </div>
                   <div class="col-12 col-md-6">
                     <div class="mb-3">
-                      <label>State</label>
-                      <input type="text" class="form-control state-field" placeholder="State" readonly required>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                      <label>Per Person Cost</label>
-                      <input type="number" class="form-control cost-field" placeholder="Cost" required>
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
                       <label>City Image</label>
                       <img src="" class="img-fluid city-image" style="display: none; max-width: 100px;">
                     </div>
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-12 d-flex flex-wrap">
+                  <div class="col-12 col-md-6">
                     <div class="mb-3">
-                      <label>Available Dates</label>
-                      <div class="month-container d-flex flex-wrap gap-3">
-                        <div class="month-entry border rounded p-2 position-relative">
-                          <button type="button" class="btn btn-danger btn-sm remove-month position-absolute top-0 end-0 m-2">
-                            ✖
-                          </button>
-                          <div class="mb-2 p-1">
-                            <label>Month</label>
-                            <input type="month" class="form-control month-select" required>
-                          </div>
-                          <div class="mb-2 m-1">
-                            <label>Dates</label>
-                            <input type="text" class="form-control date-select" placeholder="e.g., 1,8,10" required>
-                          </div>
-                        </div>
-                      </div>
-                      <button type="button" class="btn btn-primary btn-sm m-2 add-month">
-                        <i class="bi bi-plus-circle"></i> Add Month
-                      </button>
+                      <label>State</label>
+                      <input type="text" class="form-control state-field" placeholder="State" readonly required>
                     </div>
                   </div>
-                </div> `;
-
-          cityContainer.appendChild(cityDiv);
-          setMinMonth();
-          const newCitySelect = cityDiv.querySelector('.city-select');
-          await populateCityDropdown(newCitySelect);
-          newCitySelect.addEventListener('change', handleCitySelection);
-          cityDiv.querySelector('.remove-city').addEventListener('click', () => removeCityEntry(cityDiv));
-        }
-
-        // Remove city entry
-        function removeCityEntry(cityDiv) {
-          const citySelect = cityDiv.querySelector('.city-select');
-          selectedCities.delete(citySelect.value);
-          cityDiv.remove();
-        }
-
-        // Initial setup
-        async function initialize() {
-          const initialCitySelect = document.querySelector('.city-select');
-          await populateCityDropdown(initialCitySelect);
-          initialCitySelect.addEventListener('change', handleCitySelection);
-          setMinMonth();
-        }
-
-        addCityButton.addEventListener('click', validateAndAddCity);
-        initialize();
-      });
-
-
-      // To manage month card dynamicly and error refer below section
-      document.addEventListener("DOMContentLoaded", function() {
-        function validateFields(container) {
-          let isValid = true;
-
-          container.querySelectorAll(".month-entry").forEach(entry => {
-            const monthInput = entry.querySelector(".month-select");
-            const dateInput = entry.querySelector(".date-select");
-
-            if (!monthInput.value) {
-              showError(monthInput, "Please select a month");
-              isValid = false;
-            } else {
-              removeError(monthInput);
-            }
-
-            if (!dateInput.value.trim()) {
-              showError(dateInput, "Please enter dates");
-              isValid = false;
-            } else {
-              removeError(dateInput);
-            }
-          });
-
-          return isValid;
-        }
-
-        // method to handle the monther card
-        function handleRemoveButton(container) {
-          const monthEntries = container.querySelectorAll(".month-entry");
-
-          monthEntries.forEach(entry => {
-            const removeButton = entry.querySelector(".remove-month");
-            removeButton.classList.toggle("d-none", monthEntries.length === 1);
-          });
-        }
-
-        //onclick evnet for add new element
-        document.addEventListener("click", function(event) {
-          const target = event.target;
-
-          if (target.closest(".add-month")) {
-            const section = target.closest(".mb-3");
-            const container = section.querySelector(".month-container");
-
-            if (!validateFields(container)) {
-              return;
-            }
-
-            const newEntry = document.createElement("div");
-            newEntry.classList.add("month-entry", "border", "rounded", "p-2", "position-relative");
-
-            newEntry.innerHTML = `
-      <button type="button" class="btn btn-danger btn-sm remove-month position-absolute top-0 end-0 m-2">
-        ✖
-      </button>
-      <div class="mb-2">
-          <label>Month</label>
-          <input type="month" class="form-control month-select" required>
-      </div>
-      <div class="mb-2">
-          <label>Dates</label>
-          <input type="text" class="form-control date-select" placeholder="e.g., 1,8,10" required>
-      </div>
+                </div>
+                <h5 class="mt-3">Pricing Details</h5>
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                      <label for="basePrice" class="form-label">Base Price (Total trip cost)</label>
+                      <input type="number" class="form-control cost-field" id="basePrice" placeholder="Enter base price" required>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                      <label>Transfer Type</label>
+                      <input type="text" class="form-control transferType" name="transferType" placeholder="Transfer Type" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                      <label for="childPrice" class="form-label">Child Price</label>
+                      <input type="number" class="form-control" name="childPrice" id="childPrice" placeholder="Enter price per child" required />
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                      <label for="adultPrice" class="form-label">Adult Price</label>
+                      <input type="number" class="form-control adultPrice" id="adultPrice" placeholder="Enter price per adult" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                      <label for="infantPrice" class="form-label">Infant Price</label>
+                      <input type="number" class="form-control" name="infantPrice" id="infantPrice" placeholder="Enter price per infant (if applicable)" />
+                    </div>
+                  </div>
+                  <!-- Date Picker Input -->
+                  <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                      <h6 class="mt-3">Available Dates</h5>
+                        <div class="input-group">
+                          <input type="text" id="datePicker" class="form-control datePicker" placeholder="Select multiple dates">
+                          <button class="btn btn-danger clearDates" id="clearDates">Clear</button>
+                        </div>
+                        <small class="text-danger d-none error-msg" id="error-msg">Please select at least one date.</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <!-- Scrollable Table for Selected Dates -->
+                  <div class="col-12 col-md-12">
+                    <div class="mb-3">
+                      <label class="form-label fw-bold"></label>
+                      <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                        <table class="table table-bordered table-hover align-middle">
+                          <thead class="table-light sticky-top">
+                            <tr>
+                              <th class="text-center" style="width: 10%;">S.No.</th>
+                              <th class="text-center" style="width: 60%;">Selected Date</th>
+                              <th class="text-center" style="width: 30%;">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody id="datePreview">
+                            <!-- Dynamic Rows Will Be Inserted Here -->
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 d-flex mb-3">
+                    <button type="button" class="btn btn-primary btn-sm addCity" id="addCity">
+                      <i class="bi bi-plus-circle"></i> Add City
+                    </button>
+                  </div>
+                </div>
+              </div>
     `;
 
-            container.appendChild(newEntry);
-            handleRemoveButton(container);
+        cityContainer.appendChild(newCityEntry);
+        const newSelect = newCityEntry.querySelector(".city-select");
+        await populateCityDropdown(newSelect);
+        // Reinitialize flatpickr for the new date picker input
+        let datePickerInput = newCityEntry.querySelector(".datePicker");
+        flatpickr(datePickerInput, {
+          mode: "multiple",
+          dateFormat: "Y-m-d",
+          minDate: "today",
+          enableTime: false,
+          onClose: function(selectedDatesArr) {
+            let selectedDates = selectedDatesArr.map(date => date.toISOString().split("T")[0]);
+            updateDatePreview(datePickerInput, selectedDates);
           }
-
-          if (target.closest(".remove-month")) {
-            const entry = target.closest(".month-entry");
-            const container = entry.closest(".month-container");
-
-            entry.remove();
-            handleRemoveButton(container);
-          }
-        });
-
-        //onclick evnet for remove new element of calender
-        document.addEventListener("input", function(event) {
-          if (event.target.classList.contains("month-select") || event.target.classList.contains("date-select")) {
-            removeError(event.target);
-          }
-        });
-      });
-    </script>
-
-    <!-- internity day manage -->
-    <script>
-      let dayCount = 1;
-      let editors = {};
-      Quill.register('modules/imageResize', window.ImageResize.default);
-      // Function to initialize Quill editor
-      function initializeEditor(editorId) {
-        editors[editorId] = new Quill(`#${editorId}`, {
-          theme: "snow",
-          modules: {
-            toolbar: [
-              [{
-                'header': [1, 2, 3, 4, 5, 6, false]
-              }], // All header sizes
-              [{
-                'font': []
-              }], // Font family
-              [{
-                'size': ['small', false, 'large', 'huge']
-              }], // Font size
-              ['bold', 'italic', 'underline', 'strike'], // Text formatting
-              [{
-                'script': 'sub'
-              }, {
-                'script': 'super'
-              }], // Subscript & Superscript
-              [{
-                'list': 'ordered'
-              }, {
-                'list': 'bullet'
-              }], // Lists
-              [{
-                'indent': '-1'
-              }, {
-                'indent': '+1'
-              }], // Indentation
-              [{
-                'align': []
-              }], // Text align (left, center, right, justify)
-              [{
-                'color': []
-              }, {
-                'background': []
-              }], // Text & background color
-              ['blockquote', 'image', 'code-block'], // Blockquote & Code block
-              ['link', 'image', ], // Media tools
-              ['clean'] // Clear formatting
-            ],
-            imageResize: {
-              displayStyles: {
-                backgroundColor: 'black',
-                border: 'none',
-                color: 'white'
-              },
-              modules: ['Resize', 'DisplaySize', 'Toolbar']
-            }
-          }
-        });
-
-        // Sync content with hidden input field
-        editors[editorId].on("text-change", function() {
-          document.querySelector(`#${editorId}`).nextElementSibling.value = editors[editorId].root.innerHTML;
-        });
-
-        // Handle image selection & upload
-        editors[editorId].getModule('toolbar').addHandler('image', () => {
-          let input = document.createElement('input');
-          input.setAttribute('type', 'file');
-          input.setAttribute('accept', 'image/*');
-          input.click();
-
-          input.onchange = async () => {
-            const file = input.files[0];
-
-            if (!file) return;
-
-            // Validate file type
-            const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-            if (!allowedTypes.includes(file.type)) {
-              alert('Only JPG, JPEG, and PNG images are allowed.');
-              return;
-            }
-
-            // Validate file size (Max 2MB)
-            if (file.size > 2 * 1024 * 1024) {
-              alert('File size should not exceed 2MB.');
-              return;
-            }
-
-            let formData = new FormData();
-            // Get CSRF token from hidden input field
-            const csrfToken = document.querySelector('input[name="_csrf"]').value;
-            formData.append('_csrf', csrfToken);
-            const timestamp = new Date().toISOString().replace(/:/g, '-');
-            const fileName = `${timestamp}-${file.name}`;
-            file.originalname = fileName;
-            formData.append('image', file);
-
-            try {
-              const response = await fetch('/uploadImage', {
-                method: 'POST',
-                headers: {
-                  'X-CSRF-Token': csrfToken
-                },
-                body: formData
-              });
-
-              const result = await response.json();
-
-              if (response.ok && result.success) {
-                let range = editors[editorId].getSelection();
-                editors[editorId].insertEmbed(range.index, 'image', result.imageUrl);
-              } else {
-                alert(result.message || 'Failed to upload image.');
-              }
-            } catch (error) {
-              console.error('Upload Error:', error);
-              alert('Something went wrong while uploading the image.');
-            }
-          };
         });
       }
 
-      // Initialize first editor
-      initializeEditor("editor-1");
+      // Event listener to add a new city section
+      addCityButton.addEventListener("click", function() {
+        addCitySection();
+      });
 
-      // Add new itinerary day
-      document.getElementById("add-day").addEventListener("click", function() {
-        event.preventDefault(); // Prevent page scroll or refresh
-        dayCount++;
-        let newEditorId = `editor-${dayCount}`;
+      // Handle removing a city section
+      cityContainer.addEventListener("click", function(event) {
+        if (event.target.classList.contains("remove-city")) {
+          const cityEntry = event.target.closest(".city-entry");
+          if (cityEntry) {
+            cityContainer.removeChild(cityEntry);
+          }
+        }
+      });
 
-        let newDay = document.createElement("div");
-        newDay.classList.add("itinerary-day", "border", "rounded", "p-3", "mb-3");
-        newDay.setAttribute("data-day", dayCount);
-        newDay.innerHTML = `
+      // Initialize first dropdown
+      populateCityDropdown(document.querySelector(".city-select"));
+
+      let selectedDates = [];
+      let datePickerInput = cityContainer.querySelector(".datePicker");
+      flatpickr('#datePicker', {
+        mode: "multiple",
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        enableTime: false,
+        onClose: function(selectedDatesArr) {
+          let selectedDates = selectedDatesArr.map(date => date.toISOString().split("T")[0]);
+          updateDatePreview(datePickerInput, selectedDates);
+        }
+      });
+
+      function updateDatePreview(inputElement, selectedDates) {
+        let cityEntry = inputElement.closest(".city-entry");
+        let datePreviewEl = cityEntry.querySelector("#datePreview");
+
+        datePreviewEl.innerHTML = "";
+        selectedDates.forEach((date, index) => {
+          let row = `
+            <tr>
+                <td class="text-center">${index + 1}</td>
+                <td class="text-center">${date}</td>
+                <td class="text-center">
+                    <button class="btn btn-danger btn-sm remove-date" data-date="${date}">Remove</button>
+                </td>
+            </tr>
+        `;
+          datePreviewEl.innerHTML += row;
+        });
+
+        
+      }
+
+
+      document.querySelectorAll(".remove-btn").forEach(button => {
+        button.addEventListener("click", function() {
+          let dateToRemove = this.getAttribute("data-date");
+          removeDate(dateToRemove);
+        });
+      });
+
+      function removeDate(date) {
+        selectedDates = selectedDates.filter(d => d !== date);
+        fp.setDate(selectedDates, true);
+        updateDatePreview();
+      }
+
+      document.getElementById("clearDates").addEventListener("click", function(e) {
+        e.preventDefault();
+        selectedDates = [];
+        fp.clear();
+        updateDatePreview();
+      });
+
+      // Convert selectedDates to MongoDB Format
+      function formatForMongoDB() {
+        let groupedData = {};
+
+        selectedDates.forEach(date => {
+          let [year, month, day] = date.split("-");
+
+          let monthName = new Date(date).toLocaleString("en-US", {
+            month: "long"
+          });
+
+          if (!groupedData[`${year}-${monthName}`]) {
+            groupedData[`${year}-${monthName}`] = {
+              year: year,
+              month: monthName,
+              dates: []
+            };
+          }
+          groupedData[`${year}-${monthName}`].dates.push(day);
+        });
+        let formattedArray = Object.values(groupedData).map(entry => ({
+          year: entry.year,
+          month: entry.month,
+          dates: entry.dates.join(", ")
+        }));
+
+        return formattedArray;
+      }
+
+    });
+
+    //** Add calender date and other for manage months**
+    // function initializeFlatpickr(selector) {
+    //   return flatpickr(selector, {
+    //     mode: "multiple",
+    //     dateFormat: "Y-m-d",
+    //     minDate: "today",
+    //     enableTime: false,
+    //     onClose: function(selectedDatesArr, instance) {
+    //       let selectedDates = selectedDatesArr.map(date => date.toISOString().split("T")[0]);
+    //       updateDatePreview(selectedDates, instance.element);
+    //     }
+    //   });
+    // };
+
+    // **End  of the calender dateand other for manage monthes**
+
+    //** Mange about section and other section textEditor  **//
+    // Store all Quill editors
+    const editorsd = {};
+    // Define all section editor IDs
+    const editorIds = ["about-editor", "placestovisit-editor", "activities-editor", "things_to_carry-editor", "includenexclude-editor", "package_cost-editor", "infonfaq-editor", "guidelines-editor", "bookncancel-editor"];
+
+    // Loop through each section and create a Quill editor
+    editorIds.forEach(editorId => {
+      editorsd[editorId] = new Quill(`#${editorId}`, {
+        theme: "snow",
+        modules: {
+          toolbar: [
+            [{
+              'header': [1, 2, 3, 4, 5, 6, false]
+            }],
+            [{
+              'font': []
+            }],
+            [{
+              'size': ['small', false, 'large', 'huge']
+            }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{
+              'script': 'sub'
+            }, {
+              'script': 'super'
+            }],
+            [{
+              'list': 'ordered'
+            }, {
+              'list': 'bullet'
+            }],
+            [{
+              'indent': '-1'
+            }, {
+              'indent': '+1'
+            }],
+            [{
+              'align': []
+            }],
+            [{
+              'color': []
+            }, {
+              'background': []
+            }],
+            ['blockquote'],
+            ['link'],
+            ['clean']
+          ],
+          imageResize: {
+            displayStyles: {
+              backgroundColor: 'black',
+              border: 'none',
+              color: 'white'
+            },
+            modules: ['Resize', 'DisplaySize', 'Toolbar']
+          }
+        }
+      });
+    });
+    //** End of all type of textEditor section ** //
+
+    //** New Itinerary day section start from here **/
+    // Mange iternity section textEditor section config with image upload
+    let dayCount = 1;
+    let editors = {};
+    Quill.register('modules/imageResize', window.ImageResize.default);
+    // Function to initialize Quill editor
+    function initializeEditor(editorId) {
+      editors[editorId] = new Quill(`#${editorId}`, {
+        theme: "snow",
+        modules: {
+          toolbar: [
+            [{
+              'header': [1, 2, 3, 4, 5, 6, false]
+            }], // All header sizes
+            [{
+              'font': []
+            }], // Font family
+            [{
+              'size': ['small', false, 'large', 'huge']
+            }], // Font size
+            ['bold', 'italic', 'underline', 'strike'], // Text formatting
+            [{
+              'script': 'sub'
+            }, {
+              'script': 'super'
+            }], // Subscript & Superscript
+            [{
+              'list': 'ordered'
+            }, {
+              'list': 'bullet'
+            }], // Lists
+            [{
+              'indent': '-1'
+            }, {
+              'indent': '+1'
+            }], // Indentation
+            [{
+              'align': []
+            }], // Text align (left, center, right, justify)
+            [{
+              'color': []
+            }, {
+              'background': []
+            }], // Text & background color
+            ['blockquote'], // Blockquote & Code block
+            ['link', 'image', ], // Media tools
+            ['clean'] // Clear formatting
+          ],
+          imageResize: {
+            displayStyles: {
+              backgroundColor: 'black',
+              border: 'none',
+              color: 'white'
+            },
+            modules: ['Resize', 'DisplaySize', 'Toolbar']
+          }
+        }
+      });
+
+      // Sync content with hidden input field
+      editors[editorId].on("text-change", function() {
+        document.querySelector(`#${editorId}`).nextElementSibling.value = editors[editorId].root.innerHTML;
+      });
+
+      // Handle image selection & upload
+      editors[editorId].getModule('toolbar').addHandler('image', () => {
+        let input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.click();
+
+        input.onchange = async () => {
+          const file = input.files[0];
+
+          if (!file) return;
+
+          // Validate file type
+          const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+          if (!allowedTypes.includes(file.type)) {
+            alert('Only JPG, JPEG, and PNG images are allowed.');
+            return;
+          }
+
+          // Validate file size (Max 2MB)
+          if (file.size > 2 * 1024 * 1024) {
+            alert('File size should not exceed 2MB.');
+            return;
+          }
+
+          let formData = new FormData();
+          formData.append('_csrf', csrfToken);
+          const timestamp = new Date().toISOString().replace(/:/g, '-');
+          const fileName = `${timestamp}-${file.name}`;
+          file.originalname = fileName;
+          formData.append('image', file);
+
+          try {
+            const response = await fetch('/uploadImage', {
+              method: 'POST',
+              headers: {
+                'X-CSRF-Token': csrfToken
+              },
+              body: formData
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+              let range = editors[editorId].getSelection();
+              editors[editorId].insertEmbed(range.index, 'image', result.imageUrl);
+            } else {
+              alert(result.message || 'Failed to upload image.');
+            }
+          } catch (error) {
+            console.error('Upload Error:', error);
+            alert('Something went wrong while uploading the image.');
+          }
+        };
+      });
+    }
+    // Initialize first editor
+    initializeEditor("editor-1");
+
+    // Add new itinerary day
+    document.getElementById("add-day").addEventListener("click", function() {
+      event.preventDefault(); // Prevent page scroll or refresh
+      dayCount++;
+      let newEditorId = `editor-${dayCount}`;
+      let newDay = document.createElement("div");
+      newDay.classList.add("itinerary-day", "border", "rounded", "p-3", "mb-3");
+      newDay.setAttribute("data-day", dayCount);
+      newDay.innerHTML = `
             <h5>Day ${dayCount}</h5>
             <input type="text" class="form-control" name="itinerary-header" id="itinerary-header" placeholder="Enter Header" value="" required="" />
             <div class="editor-container mb-3" id="${newEditorId}"></div>
             <input type="hidden" name="content[]" class="quill-content">
         `;
+      document.getElementById("itinerary-container").appendChild(newDay);
+      initializeEditor(newEditorId);
 
-        document.getElementById("itinerary-container").appendChild(newDay);
-        initializeEditor(newEditorId);
+      // Enable remove button
+      document.getElementById("remove-day").disabled = false;
+    });
 
-        // Enable remove button
-        document.getElementById("remove-day").disabled = false;
-      });
+    // Remove last itinerary day
+    document.getElementById("remove-day").addEventListener("click", function() {
+      event.preventDefault(); // Prevent page scroll or refresh
+      if (dayCount > 1) {
+        let lastDay = document.querySelector(`.itinerary-day[data-day="${dayCount}"]`);
+        lastDay.remove();
+        delete editors[`editor-${dayCount}`]; // Remove editor instance
+        dayCount--;
+        // Disable remove button if only one editor remains
+        if (dayCount === 1) {
+          document.getElementById("remove-day").disabled = true;
+        }
+      }
+    });
 
-      // Remove last itinerary day
-      document.getElementById("remove-day").addEventListener("click", function() {
-        event.preventDefault(); // Prevent page scroll or refresh
-        if (dayCount > 1) {
-          let lastDay = document.querySelector(`.itinerary-day[data-day="${dayCount}"]`);
-          lastDay.remove();
-          delete editors[`editor-${dayCount}`]; // Remove editor instance
+    //** Itinerary day section end here **/
 
-          dayCount--;
-
-          // Disable remove button if only one editor remains
-          if (dayCount === 1) {
-            document.getElementById("remove-day").disabled = true;
-          }
+    //*** Submit form section logic **/
+    document.getElementById('addUpdateTripDetial').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const response = await fetch(e.target.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-CSRF-Token': csrfToken
         }
       });
+      // Collect basic trip details
+      // formData.append("name", $("#name").val());
+      // formData.append("state", $("#state").val());
+      // formData.append("destinations", $("#destinations").val());
+      // formData.append("route", $("#route").val());
+      // formData.append("days", $("#days").val());
+      // formData.append("tag", $("#tag").val());
+      // formData.append("price", $("#price").val());
+      // formData.append("tripType", $("#tripType").val());
+      // formData.append("altitude", $("#altitude").val());
+      // formData.append("bestSession", $("#bestSession").val());
+      // formData.append("placestovisit", $("#placestovisit").val());
+      // formData.append("activities", $("#activities").val());
+      // formData.append("includenexclude", $("#includenexclude").val());
+      // formData.append("package_cost", $("#package_cost").val());
+      // formData.append("Bookncancel", $("#Bookncancel").val());
+      // formData.append("guidelines", $("#guidelines").val());
+      // formData.append("infonfaq", $("#infonfaq").val());
 
+      // // Handle image uploads
+      // let mainImage = $("#file")[0].files[0];
+      // if (mainImage) {
+      //   formData.append("image", mainImage);
+      // }
 
-      // $(document).ready(function() {
-      //   $("#submitBtn").click(function() {
-      //     let depCityData = [];
+      // let bannerImages = $("#bannerImages")[0].files;
+      // let bannerImageArr = [];
+      // for (let i = 0; i < bannerImages.length; i++) {
+      //   formData.append("bannerImages", bannerImages[i]);
+      // }
 
-      //     $(".city-entry").each(function() {
-      //       let state = $(this).find(".state-field").val();
-      //       let city = $(this).find(".city-select").val();
-      //       let perPersonCost = $(this).find(".cost-field").val();
-      //       let days = "6 days, 7 nights"; // Set dynamically if available
-      //       let datesArray = [];
+      // Collect departure city data
+      // let depCityData = [];
+      // let datesArray = [];
 
-      //       $(this).find(".month-entry").each(function() {
-      //         let month = $(this).find(".month-select").val();
-      //         let dates = $(this).find(".date-select").val();
-      //         datesArray.push({
-      //           Month: month,
-      //           dates: dates
-      //         });
+      // $(".city-entry").each(function() {
+      //   let state = $(this).find(".state-field").val();
+      //   let city = $(this).find(".city-select").val();
+      //   let perPersonCost = $(this).find(".cost-field").val();
+
+      //   $(this).find(".month-entry").each(function() {
+      //     let month = $(this).find(".month-select").val();
+      //     let dates = $(this).find(".date-select").val();
+
+      //     if (month && dates) {
+      //       datesArray.push({
+      //         Month: month,
+      //         dates: dates
       //       });
+      //     }
+      //   });
 
-      //       if (state && city && perPersonCost) {
-      //         depCityData.push({
-      //           State: state,
-      //           City: city,
-      //           Days: days,
-      //           PerPersonCost: parseInt(perPersonCost),
-      //           dates: datesArray
-      //         });
-      //       }
+      //   if (state && city && perPersonCost) {
+      //     depCityData.push({
+      //       State: state,
+      //       City: city,
+      //       PerPersonCost: parseInt(perPersonCost),
+      //       dates: datesArray
       //     });
+      //   }
+      // });
 
-      //     let cityfinalData = {
-      //       "Dep_City": depCityData
-      //     };
+      // formData.append("deptcities", JSON.stringify(depCityData));
+      // // Append trip_dates separately
+      // formData.append("trip_dates", JSON.stringify(datesArray));
 
-      //     console.log(cityfinalData); // Send this data to the backend via AJAX or fetch API
+      // // Collect itinerary data
+      // let itineraryData = [];
+      // $(".itinerary-day").each(function() {
+      //   let day = "Day " + $(this).attr("data-day");
+      //   // ✅ Select input field by name (since ID is repeated)
+      //   let itinerarydayHeader = $(this).find("input[name='itinerary-header']").val() || "";
 
-      //     let itineraryData = [];
+      //   // ✅ Get editor ID and fetch Quill content safely
+      //   let editorId = $(this).find(".editor-container").attr("id");
+      //   let description = editorId && editors[editorId] ? editors[editorId].root.innerHTML : "";
 
-      //     $(".itinerary-day").each(function() {
-      //       let day = "Day " + $(this).attr("data-day");
-      //       let editorId = $(this).find(".editor-container").attr("id");
-      //       let description = editors[editorId].root.innerHTML; // Get HTML content from Quill
-      //       //let imageUrl = $(this).find(".image-url").val() || ""; // Image URL (if added)
-
-      //       itineraryData.push({
-      //         day: day,
-      //         description: description,
-      //         //imageUrl: imageUrl
-      //       });
-      //     });
-
-      //     let finalData = {
-      //       "itinerary": itineraryData
-      //     };
-
-      //     console.log(finalData, cityfinalData); // Send this data to the backend via AJAX or fetch API
-
+      //   itineraryData.push({
+      //     day: day,
+      //     header: itinerarydayHeader,
+      //     description: description,
       //   });
       // });
 
-      $(document).ready(function() {
-        $("#submitBtn").click(function(event) {
-          event.preventDefault(); // Prevent default form submission
+      // formData.append("itinerary", JSON.stringify(itineraryData));
+      // formData.append("about", $("#about").val());
+      // formData.append("inclusions", $("#inclusions").val());
+      // formData.append("exclusions", $("#exclusions").val());
+      // formData.append("shortItinerary", $("#shortItinerary").val());
+      // formData.append("things_to_carry", $("#things_to_carry").val());
+      // formData.append("termsConditions", $("#termsConditions").val());
+      // formData.append("faq", $("#faq").val());
 
-          let formData = new FormData();
-
-          // Collect basic trip details
-          formData.append("name", $("#name").val());
-          formData.append("state", $("#state").val());
-          formData.append("destinations", $("#destinations").val());
-          formData.append("route", $("#route").val());
-          formData.append("days", $("#days").val());
-          formData.append("tag", $("#tag").val());
-          formData.append("price", $("#price").val());
-          formData.append("tripType", $("#tripType").val());
-          formData.append("altitude", $("#altitude").val());
-          formData.append("bestSession", $("#bestSession").val());
-          formData.append("placestovisit", $("#placestovisit").val());
-          formData.append("activities", $("#activities").val());
-          formData.append("includenexclude", $("#includenexclude").val());
-          formData.append("package_cost", $("#package_cost").val());
-          formData.append("Bookncancel", $("#Bookncancel").val());
-          formData.append("guidelines", $("#guidelines").val());
-          formData.append("infonfaq", $("#infonfaq").val());
-          const csrfToken = document.querySelector('input[name="_csrf"]').value;
-          formData.append('_csrf', csrfToken);
-
-          // Handle image uploads
-          let mainImage = $("#file")[0].files[0];
-          if (mainImage) {
-            formData.append("image", mainImage);
-          }
-
-          let bannerImages = $("#bannerImages")[0].files;
-          let bannerImageArr = [];
-          for (let i = 0; i < bannerImages.length; i++) {
-            formData.append("bannerImages", bannerImages[i]);
-          }
-
-          // Collect departure city data
-          let depCityData = [];
-          let datesArray = [];
-
-          $(".city-entry").each(function() {
-            let state = $(this).find(".state-field").val();
-            let city = $(this).find(".city-select").val();
-            let perPersonCost = $(this).find(".cost-field").val();
-
-            $(this).find(".month-entry").each(function() {
-              let month = $(this).find(".month-select").val();
-              let dates = $(this).find(".date-select").val();
-
-              if (month && dates) {
-                datesArray.push({
-                  Month: month,
-                  dates: dates
-                });
-              }
-            });
-
-            if (state && city && perPersonCost) {
-              depCityData.push({
-                State: state,
-                City: city,
-                PerPersonCost: parseInt(perPersonCost),
-                dates: datesArray
-              });
-            }
-          });
-
-          formData.append("deptcities", JSON.stringify(depCityData));
-          // Append trip_dates separately
-          formData.append("trip_dates", JSON.stringify(datesArray));
-
-          // Collect itinerary data
-          let itineraryData = [];
-          $(".itinerary-day").each(function() {
-            let day = "Day " + $(this).attr("data-day");
-            // ✅ Select input field by name (since ID is repeated)
-            let itinerarydayHeader = $(this).find("input[name='itinerary-header']").val() || "";
-
-            // ✅ Get editor ID and fetch Quill content safely
-            let editorId = $(this).find(".editor-container").attr("id");
-            let description = editorId && editors[editorId] ? editors[editorId].root.innerHTML : "";
-
-            itineraryData.push({
-              day: day,
-              header: itinerarydayHeader,
-              description: description,
-            });
-          });
-
-          formData.append("itinerary", JSON.stringify(itineraryData));
-          formData.append("about", $("#about").val());
-          formData.append("inclusions", $("#inclusions").val());
-          formData.append("exclusions", $("#exclusions").val());
-          formData.append("shortItinerary", $("#shortItinerary").val());
-          formData.append("things_to_carry", $("#things_to_carry").val());
-          formData.append("termsConditions", $("#termsConditions").val());
-          formData.append("faq", $("#faq").val());
-
-          // AJAX call to API
-          $.ajax({
-            url: "/admin/postNewAddTours", // Change to your backend API URL
-            type: "POST",
-            headers: {
-              'X-CSRF-Token': csrfToken
-            },
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-              alert("Trip successfully added!");
-              console.log(response);
-            },
-            error: function(error) {
-              console.error("Error:", error);
-              alert("Something went wrong!");
-            }
-          });
-        });
-      });
-    </script>
+      // AJAX call to API
+      // $.ajax({
+      //   url: "/admin/postNewAddTours", // Change to your backend API URL
+      //   type: "POST",
+      //   headers: {
+      //     'X-CSRF-Token': csrfToken
+      //   },
+      //   data: formData,
+      //   processData: false,
+      //   contentType: false,
+      //   success: function(response) {
+      //     alert("Trip successfully added!");
+      //     console.log(response);
+      //   },
+      //   error: function(error) {
+      //     console.error("Error:", error);
+      //     alert("Something went wrong!");
+      //   }
+      // });
+    });
+  </script>
 </body>
 
 </html>

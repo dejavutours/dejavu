@@ -1,44 +1,47 @@
-const express = require('express');
+const express = require("express");
 
-const Tours = require('../models/tours');
+const Tours = require("../models/tours");
 
-const Staycost = require('../models/staycost');
+const Staycost = require("../models/staycost");
 
-const Newsletter = require('../models/newsletter');
+const Newsletter = require("../models/newsletter");
 
-const Contact = require('../models/contact');
+const Contact = require("../models/contact");
 
-const bookings = require('../models/registration');
+const bookings = require("../models/registration");
 
-const upcomingtrips = require('../models/upcoming');
+const upcomingtrips = require("../models/upcoming");
 
-const Accomodations = require('../models/accomodations');
+const Accomodations = require("../models/accomodations");
 
-const AccomodationsQuery = require('../models/accomodationquery');
+const AccomodationsQuery = require("../models/accomodationquery");
 
-const Blogs = require('../models/blog');
+const Blogs = require("../models/blog");
 
-const User = require('../models/user');
+const User = require("../models/user");
 
-const PaymentDetail = require('../models/payment-detail');
+const PaymentDetail = require("../models/payment-detail");
 
-const Mobileuser = require('../models/mobileuser');
+const Mobileuser = require("../models/mobileuser");
 
-const NewTours = require("../models/newTours"); 
+const NewTours = require("../models/newTours");
 
-const fileHelper = require('../util/file');
+const fileHelper = require("../util/file");
 
-const PDFDocument = require('pdfkit');
+const PDFDocument = require("pdfkit");
 
-const fs = require('fs');
+const fs = require("fs");
 
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
-const otpGenerator = require('otp-generator');
+const otpGenerator = require("otp-generator");
 
-const AWS = require('aws-sdk');
+const AWS = require("aws-sdk");
 
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
+
+const City = require("../models/citymst");
+const config = require("../json/statecities.json"); // Load state and city configuration
 
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_SMS,
@@ -46,11 +49,11 @@ AWS.config.update({
   region: process.env.AWS_REGION,
 });
 
-const { DeleteFileGallery, DeleteFileProofs, getFileStream } = require('../s3');
-const { AsyncLocalStorage } = require('async_hooks');
+const { DeleteFileGallery, DeleteFileProofs, getFileStream } = require("../s3");
+const { AsyncLocalStorage } = require("async_hooks");
 
 var transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: "gmail",
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_PASSWORD,
@@ -60,11 +63,14 @@ var transporter = nodemailer.createTransport({
   },
 });
 
+// Old: Need refector 
+// send all the require detail to main index page of the user
+// DM: need to update the Tourse scheam after changes are done
 exports.getIndexPage = async (req, res, next) => {
   const alltours = await Tours.find().sort({ updatedAt: -1 });
   const allaccomodations = await Accomodations.find().sort({ updatedAt: -1 });
-  const tests = await Tours.find().distinct('name');
-  res.render('pages/index', {
+  const tests = await Tours.find().distinct("name");
+  res.render("pages/index", {
     Tours: alltours,
     accomodations: allaccomodations,
     test: tests,
@@ -72,22 +78,66 @@ exports.getIndexPage = async (req, res, next) => {
   });
 };
 
-exports.getAddTours = (req, res, next) => {
-  var config = require('../json/statecities.json');
-  let state_arr = [config];
-  let states_arr = [];
-  for (var key of state_arr) {
-    states_arr = Object.keys(key);
+
+// Get the Add/Edit Tours detail page
+// - If no trip ID is provided, return the Add Tours page with required details
+// - If a trip ID is provided, fetch and return trip details for editing
+exports.getAddTours = async (req, res, next) => {
+  try {
+    // Extract states from configuration file
+    const states_arr = Object.keys(config);
+
+    // Check if request body contains a trip ID (for editing an existing tour)
+    const tripid = req.query.tripid
+    ;
+
+    if (tripid) {
+      // Validate if tripid is a valid MongoDB ObjectId
+      if (!tripid.match(/^[0-9a-fA-F]{24}$/)) {
+        return res.status(400).json({ error: "Invalid Trip ID format" });
+      }
+
+      try {
+        // Fetch trip details from the database
+        const tripdetails = await NewTours.findOne({ _id: tripid }).populate("CityId");
+
+        if (!tripdetails) {
+          return res.status(404).json({ error: "Trip not found" });
+        }
+
+        // Render Update Tours page with fetched trip details
+        return res.render("pages/Addtours", {
+          message: null,
+          trips: tripdetails,
+          states_arr,
+          csrfToken: req.csrfToken(),
+        });
+      } catch (err) {
+        console.error("Error fetching trip details:", err);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+    }
+
+    // If no trip ID is provided, render Add Tours page
+    return res.render("pages/Addtours", {
+      message: null,
+      trips: [],
+      states_arr,
+      csrfToken: req.csrfToken(),
+    });
+  } catch (err) {
+    console.error("Error processing request:", err);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
-  res.render('pages/Addtours', { message: null, states_arr: states_arr });
 };
+
 
 exports.postAddTours = async (req, res, next) => {
   const name = req.body.name;
   const ifexist = await Tours.find({ name: name });
   if (ifexist.length > 0) {
-    fileHelper.deleteFile('images/' + req.file.filename);
-    res.render('pages/Addtours', { message: 'Trip must be unique' });
+    fileHelper.deleteFile("images/" + req.file.filename);
+    res.render("pages/Addtours", { message: "Trip must be unique" });
   } else {
     const state = req.body.state;
     const image = req.file;
@@ -131,11 +181,41 @@ exports.postAddTours = async (req, res, next) => {
       guidelines: guidelines,
     });
     tours.save();
-    res.redirect('/');
+    res.redirect("/");
   }
 };
 
+// Validate unique tour name before adding or updating a tour
+exports.getCheckToursUnique = async (req, res, next) => {
+  try {
+    const { name, tripId } = req.body; // Extract name and tripId from request body
+
+    // Check if a tour with the given name already exists
+    const ifExist = await NewTours.findOne({ name });
+
+    if (ifExist) {
+      if (tripId) {
+        // Case: Updating an existing tour
+        // Allow update only if the found record is the same as the one being updated
+        if (ifExist._id.toString() !== tripId.toString()) {
+          return res.json({ exists: true, message: "Tour name already exists" });
+        }
+      } else {
+        // Case: Adding a new tour
+        return res.json({ exists: true, message: "Tour name must be unique" });
+      }
+    }
+    res.json({ exists: false }); // No duplicate found, tour name is unique
+  } catch (error) {
+    console.error("Error in getCheckToursUnique:", error);
+    res.status(500).json({ success: false, message: "Server error", error });
+  }
+};
+
+
+// New Trip detial add API using new collection
 exports.postNewAddTours = async (req, res, next) => {
+
   try {
     const name = req.body.name;
     const ifexist = await NewTours.find({ name: name });
@@ -144,64 +224,52 @@ exports.postNewAddTours = async (req, res, next) => {
       if (req.files["image"]) {
         fileHelper.deleteFile("images/" + req.files["image"][0].filename);
       }
-      return res.render("pages/Addtours", { message: "Trip must be unique" });
+      return res.json({ exists: false }, { message: "Trip must be unique" });
     }
 
     // Parse itinerary field if it's a string
     if (typeof req.body.itinerary === "string") {
       req.body.itinerary = JSON.parse(req.body.itinerary);
-    } if(typeof req.body.deptcities === 'string'){
-      req.body.deptcities = JSON.parse(req.body.deptcities)
-    } if(typeof req.body.trip_dates ==='string'){
-      req.body.trip_dates= JSON.parse(req.body.trip_dates)
+    }
+    if (typeof req.body.deptcities === "string") {
+      req.body.deptcities = JSON.parse(req.body.deptcities);
+    }
+    if (typeof req.body.trip_dates === "string") {
+      req.body.trip_dates = JSON.parse(req.body.trip_dates);
     }
 
     // Validate required fields
-    const requiredFields = [
-      "name",
-      "state",
-      "destinations",
-      "route",
-      "days",
-      "price",
-      "about",
-      "tripType",
-      "placestovisit",
-      "activities",
-      "things_to_carry",
-      "package_cost",
-    ];
+    const requiredFields = ["name","state","destinations","route","days","price","about","tripType","placestovisit","activities","things_to_carry","package_cost",];
 
     const missingFields = requiredFields.filter((field) => !req.body[field]);
 
-    // if (missingFields.length > 0) {
-    //   return res.status(400).json({
-    //     error: `Missing required fields: ${missingFields.join(", ")}`,
-    //   });
-    // }
-
+    if (missingFields.length > 0) {
+      return res.status(400).json({
+        error: `Missing required fields: ${missingFields.join(", ")}`,
+      });
+    }
 
     const state = req.body.state;
-    const image = req.files["image"] ? req.files["image"][0] : null;
-    const tripSlideImage = req.files["bannerImages"] || [];
- 
-    const imageurl = image ? `/images/${image.filename}` : null;
-    const bannerImageUrls = tripSlideImage.map(img => `/images/${img.filename}`);
+    const image = req.file ? req.file.filename : null;
+    // const tripSlideImage = req.files["bannerImages"] || [];
+
+    const imageurl = image ? `/images/${image}` : null;
+    // const bannerImageUrls = tripSlideImage.map(img => `/images/${img.filename}`);
     //const filePath = `/images/${req.files["image"].filename}`;  // Correct URL
 
     const newTours = new NewTours({
       name: name,
       state: state,
       imageurl: imageurl, // Single image
-      bannerImages: bannerImageUrls, // Array of multiple images
+      bannerImages: imageurl, // Array of multiple images
       destinations: req.body.destinations,
       route: req.body.route,
       days: req.body.days,
       tag: req.body.tag,
       price: req.body.price,
-      tripType:req.body.tripType,
-      altitude:req.body.altitude,
-      bestSession:req.body.bestSession,
+      tripType: req.body.tripType,
+      altitude: req.body.altitude,
+      bestSession: req.body.bestSession,
       about: req.body.about,
       placestovisit: req.body.placestovisit,
       activities: req.body.activities,
@@ -212,25 +280,26 @@ exports.postNewAddTours = async (req, res, next) => {
       infonfaq: req.body.infonfaq,
       Bookncancel: req.body.Bookncancel,
       guidelines: req.body.guidelines,
-      trip_dates:req.body.trip_dates,
-      deptcities:req.body.deptcities
+      trip_dates: req.body.trip_dates,
+      deptcities: req.body.deptcities,
     });
 
     await newTours.save();
-    res.json({ success: true, message: "Tour added successfully" });
+    res.redirect("/");
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Server error" });
+    res
+      .status(500)
+      .json({ success: false, message: "Server error", err: error });
   }
 };
-
 
 exports.getTourDetails = async (req, res, next) => {
   try {
     const token = req.params.token;
     const tripdetails = await Tours.find({ name: token });
-    const tests = await Tours.find().distinct('name');
-    res.render('pages/TripDetails', { trips: tripdetails[0], test: tests });
+    const tests = await Tours.find().distinct("name");
+    res.render("pages/TripDetails", { trips: tripdetails[0], test: tests });
   } catch (err) {
     console.log(err);
   }
@@ -247,15 +316,15 @@ exports.postNewsletter = async (req, res, next) => {
     });
 
     newsletter.save();
-    res.redirect('/');
+    res.redirect("/");
   } else {
-    res.redirect('/');
+    res.redirect("/");
   }
 };
 
 exports.getContact = async (req, res, next) => {
-  const tests = await Tours.find().distinct('name');
-  res.render('pages/contact', { test: tests });
+  const tests = await Tours.find().distinct("name");
+  res.render("pages/contact", { test: tests });
 };
 
 exports.postContact = async (req, res, next) => {
@@ -275,25 +344,25 @@ exports.postContact = async (req, res, next) => {
     });
 
     addcontact.save();
-    res.redirect('/');
+    res.redirect("/");
   } else {
-    res.redirect('/');
+    res.redirect("/");
   }
 };
 
 exports.getAbout = async (req, res, next) => {
-  const tests = await Tours.find().distinct('name');
-  res.render('pages/about', { test: tests });
+  const tests = await Tours.find().distinct("name");
+  res.render("pages/about", { test: tests });
 };
 
 exports.getBookTrip = async (req, res, next) => {
-  const tests = await Tours.find().distinct('name');
-  res.render('pages/booktrip', {
+  const tests = await Tours.find().distinct("name");
+  res.render("pages/booktrip", {
     tripname: req.body.tripname,
     triprate: req.body.triprate,
     username: req.user?.name || null,
     useremail: req.user?.email || null,
-    phonenumber: req.verifiedPhoneNumber ? '+' + req.verifiedPhoneNumber : null,
+    phonenumber: req.verifiedPhoneNumber ? "+" + req.verifiedPhoneNumber : null,
     tripdate: null,
     test: tests,
   });
@@ -324,48 +393,48 @@ exports.postBookTrip = (req, res, next) => {
   });
 
   addbookings.save().then((result) => {
-    console.log('saved2');
-    res.render('pages/booktrip', {
-      msg: 'yes',
+    console.log("saved2");
+    res.render("pages/booktrip", {
+      msg: "yes",
       tripname: userdestination,
       tripdate: null,
       test: null,
     });
     let regbody =
-      ' emailid: ' +
+      " emailid: " +
       mailid +
-      ' username: ' +
+      " username: " +
       username +
-      ' usergender: ' +
+      " usergender: " +
       usergender +
-      ' userbirth: ' +
+      " userbirth: " +
       userbirth +
-      ' usercontact: ' +
+      " usercontact: " +
       usercontact +
-      ' userdestination: ' +
+      " userdestination: " +
       userdestination +
-      'co-travellers: ' +
+      "co-travellers: " +
       notravellers +
-      ' usertripdate: ' +
+      " usertripdate: " +
       usertripdate;
     var mailOptions = {
       from: process.env.GMAIL_USER,
       to: `${process.env.GMAIL_USER},${mailid}`,
       subject: `Trip Registration for ${userdestination} on ${usertripdate}`,
       attachments: {
-        filename: 'TripDetails.png',
-        path: 'images/pdfheader.png',
-        cid: 'testunique@tim.ec',
+        filename: "TripDetails.png",
+        path: "images/pdfheader.png",
+        cid: "testunique@tim.ec",
       },
       html:
-        '<!DOCTYPE html>' +
-        '<html><head><title>Appointment</title>' +
-        '</head><body><div>' +
+        "<!DOCTYPE html>" +
+        "<html><head><title>Appointment</title>" +
+        "</head><body><div>" +
         '<img src="cid:testunique@tim.ec" alt="" width="700" height="200">' +
-        '<br><br>' +
+        "<br><br>" +
         `<b>Hi ${username},</b>` +
-        '<p>Thank you for Registering your Trip with Dejavu, we will make your trip a memorable one</p>' +
-        '<p>Please find your Registration Details:</p>' +
+        "<p>Thank you for Registering your Trip with Dejavu, we will make your trip a memorable one</p>" +
+        "<p>Please find your Registration Details:</p>" +
         `<p>Email: ${mailid}</p>` +
         `<p>Name: ${username}</p>` +
         `<p>Gender: ${usergender}</p>` +
@@ -374,17 +443,17 @@ exports.postBookTrip = (req, res, next) => {
         `<p>Destination: ${userdestination}</p>` +
         `<p>Co-travellers: ${notravellers}</p>` +
         `<p>Trip Date: ${usertripdate}</p>` +
-        '<br>' +
-        '<b>Regards,</b><br>' +
-        '<b>Dejavu</b>' +
-        '</div></body></html>',
+        "<br>" +
+        "<b>Regards,</b><br>" +
+        "<b>Dejavu</b>" +
+        "</div></body></html>",
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         console.log(error);
       } else {
-        console.log('Email sent: ' + info.response);
+        console.log("Email sent: " + info.response);
       }
     });
   });
@@ -394,20 +463,20 @@ exports.postEdit = async (req, res, next) => {
   try {
     const tripid = req.body.tripid;
     const tripdetails = await Tours.find({ _id: tripid });
-    const alltitles = await Tours.find().distinct('name');
+    const alltitles = await Tours.find().distinct("name");
     const index = alltitles.indexOf(tripdetails[0].name);
     console.log(alltitles);
     console.log(index);
     if (index > -1) {
       alltitles.splice(index, 1);
     }
-    var config = require('../json/statecities.json');
+    var config = require("../json/statecities.json");
     let state_arr = [config];
-    let states_arr = '';
+    let states_arr = "";
     for (var key of state_arr) {
       states_arr = Object.keys(key);
     }
-    res.render('pages/edittrip', {
+    res.render("pages/edittrip", {
       trips: tripdetails[0],
       alltrips: alltitles,
       states_arr: states_arr,
@@ -417,6 +486,11 @@ exports.postEdit = async (req, res, next) => {
   }
 };
 
+// DM get new edit trip detila based on trip id
+exports.getTripDetialById = async (req, res, next) => {
+
+};
+
 exports.postDelete = (req, res, next) => {
   const tripid = req.body.tripid;
   Tours.findById(tripid)
@@ -424,11 +498,11 @@ exports.postDelete = (req, res, next) => {
       const imgpath = tour.imageurl;
       const allimage = tour.imageUrlAll;
       allimage.forEach((item) => {
-        fileHelper.deleteFile('images/' + item);
+        fileHelper.deleteFile("images/" + item);
       });
-      fileHelper.deleteFile('images/' + imgpath);
+      fileHelper.deleteFile("images/" + imgpath);
       if (tour.bannerimage !== null) {
-        fileHelper.deleteFile('images/' + tour.bannerimage);
+        fileHelper.deleteFile("images/" + tour.bannerimage);
       }
     })
     .catch((err) => {
@@ -439,7 +513,7 @@ exports.postDelete = (req, res, next) => {
     if (err) {
       console.log(err);
     } else {
-      res.redirect('/');
+      res.redirect("/");
     }
   });
 };
@@ -496,12 +570,12 @@ exports.postAddeditedtours = (req, res, next) => {
       trip.guidelines = guidelines;
 
       if (image) {
-        fileHelper.deleteFile('images/' + trip.imageurl);
+        fileHelper.deleteFile("images/" + trip.imageurl);
         trip.imageurl = image.filename;
       }
       return trip.save().then((result) => {
         //console.log('UPDATED TRIP!');
-        res.redirect('/');
+        res.redirect("/");
       });
     })
     .catch((err) => {
@@ -517,7 +591,7 @@ exports.postAddUpcoming = (req, res, next) => {
     .then((trip) => {
       trip.upcomingtrip.push(trip_date);
       return trip.save().then((result) => {
-        res.redirect('/');
+        res.redirect("/");
       });
     })
     .catch((err) => {
@@ -529,8 +603,8 @@ exports.getUpcomingTrips = async (req, res, next) => {
   const nexttrips = await Tours.find({
     upcomingtrip: { $exists: true, $not: { $size: 0 } },
   });
-  const tests = await Tours.find().distinct('name');
-  res.render('pages/upcoming', {
+  const tests = await Tours.find().distinct("name");
+  res.render("pages/upcoming", {
     upcomingtrips: nexttrips,
     test: tests,
   });
@@ -552,24 +626,24 @@ exports.getUpcomingTrips = async (req, res, next) => {
 
 exports.getAccomodation = async (req, res, next) => {
   const allaccomodations = await Accomodations.find().sort({ updatedAt: -1 });
-  const tests = await Tours.find().distinct('name');
+  const tests = await Tours.find().distinct("name");
 
-  res.render('pages/accomodation', {
+  res.render("pages/accomodation", {
     accomodations: allaccomodations,
     test: tests,
   });
 };
 
 exports.getAddAccomodation = (req, res, next) => {
-  res.render('pages/Addaccomodation', { message: null });
+  res.render("pages/Addaccomodation", { message: null });
 };
 
 exports.postAddAccomodation = async (req, res, next) => {
   const name = req.body.name;
   const ifexist = await Accomodations.find({ name: name });
   if (ifexist.length > 0) {
-    fileHelper.deleteFile('images/' + req.file.filename);
-    res.render('pages/Addaccomodation', { message: 'Accomodation Exist' });
+    fileHelper.deleteFile("images/" + req.file.filename);
+    res.render("pages/Addaccomodation", { message: "Accomodation Exist" });
   } else {
     const state = req.body.state;
     const image = req.file;
@@ -606,7 +680,7 @@ exports.postAddAccomodation = async (req, res, next) => {
 
     accomodations.save();
 
-    res.redirect('/');
+    res.redirect("/");
   }
 };
 
@@ -617,11 +691,11 @@ exports.postDeleteAccomodations = (req, res, next) => {
       const imgpath = accod.imageurl;
       const allimage = accod.imageUrlAll;
       allimage.forEach((item) => {
-        fileHelper.deleteFile('images/' + item);
+        fileHelper.deleteFile("images/" + item);
       });
-      fileHelper.deleteFile('images/' + imgpath);
+      fileHelper.deleteFile("images/" + imgpath);
       if (accod.bannerimage !== null) {
-        fileHelper.deleteFile('images/' + accod.bannerimage);
+        fileHelper.deleteFile("images/" + accod.bannerimage);
       }
     })
     .catch((err) => {
@@ -632,7 +706,7 @@ exports.postDeleteAccomodations = (req, res, next) => {
     if (err) {
       console.log(err);
     } else {
-      res.redirect('/');
+      res.redirect("/");
     }
   });
 };
@@ -641,7 +715,7 @@ exports.postEditAccomodations = async (req, res, next) => {
   try {
     const accodid = req.body.accodid;
     const accoddetails = await Accomodations.find({ _id: accodid });
-    res.render('pages/editaccomodation', { accod: accoddetails[0] });
+    res.render("pages/editaccomodation", { accod: accoddetails[0] });
   } catch (err) {
     console.log(err);
   }
@@ -683,12 +757,12 @@ exports.postAddEditAccomodations = (req, res, next) => {
       trip.guidelines = guidelines;
 
       if (image) {
-        fileHelper.deleteFile('images/' + trip.imageurl);
+        fileHelper.deleteFile("images/" + trip.imageurl);
         trip.imageurl = image.filename;
       }
       return trip.save().then((result) => {
         //console.log('UPDATED TRIP!');
-        res.redirect('/');
+        res.redirect("/");
       });
     })
     .catch((err) => {
@@ -700,8 +774,8 @@ exports.getAccomodationsDetails = async (req, res, next) => {
   try {
     const token = req.params.token;
     const accoddetails = await Accomodations.find({ name: token });
-    const tests = await Tours.find().distinct('name');
-    res.render('pages/AccomodationsDetails', {
+    const tests = await Tours.find().distinct("name");
+    res.render("pages/AccomodationsDetails", {
       accod: accoddetails[0],
       test: tests,
     });
@@ -714,8 +788,8 @@ exports.getStateFilters = async (req, res, next) => {
   try {
     const token = req.params.token;
     const alltours = await Tours.find({ state: token });
-    const tests = await Tours.find().distinct('name');
-    res.render('pages/StateFilter', { Tours: alltours, test: tests });
+    const tests = await Tours.find().distinct("name");
+    res.render("pages/StateFilter", { Tours: alltours, test: tests });
   } catch (err) {
     console.log(err);
   }
@@ -724,22 +798,22 @@ exports.getStateFilters = async (req, res, next) => {
 exports.getToursAddimage = async (req, res, next) => {
   const tripid = req.body.tripid;
   const tripfilter = await Tours.findById({ _id: tripid });
-  const tests = await Tours.find().distinct('name');
-  res.render('pages/addimages', { trip: tripfilter, test: tests });
+  const tests = await Tours.find().distinct("name");
+  res.render("pages/addimages", { trip: tripfilter, test: tests });
 };
 
 exports.postImageAdded = async (req, res, next) => {
   const filter = req.body.filter;
-  if (filter == 'youtube') {
+  if (filter == "youtube") {
     const link = req.body.youtubeurl;
     const tripid = req.body.tripid;
     Tours.findById({ _id: tripid })
       .then((trip) => {
         trip.youtubeUrl[0] = link;
         //console.log(trip);
-        trip.markModified('youtubeUrl');
+        trip.markModified("youtubeUrl");
         return trip.save().then((result) => {
-          res.redirect('/');
+          res.redirect("/");
         });
       })
       .catch((err) => {
@@ -751,10 +825,10 @@ exports.postImageAdded = async (req, res, next) => {
     const tripid = req.body.tripid;
     Tours.findById({ _id: tripid }).then((trip) => {
       trip.imageUrlAll.push(imageurl);
-      trip.markModified('imageUrlAll');
+      trip.markModified("imageUrlAll");
       trip.save();
     });
-    res.redirect('/');
+    res.redirect("/");
   }
 };
 
@@ -764,17 +838,17 @@ exports.postBannerImageAdded = async (req, res, next) => {
   const tripid = req.body.tripid;
   Tours.findById({ _id: tripid }).then((trip) => {
     if (trip.bannerimage) {
-      fileHelper.deleteFile('images/' + trip.bannerimage);
+      fileHelper.deleteFile("images/" + trip.bannerimage);
       trip.bannerimage = imageurl;
-      trip.markModified('bannerimage');
+      trip.markModified("bannerimage");
       trip.save();
     } else {
       trip.bannerimage = imageurl;
-      trip.markModified('bannerimage');
+      trip.markModified("bannerimage");
       trip.save();
     }
   });
-  res.redirect('/');
+  res.redirect("/");
 };
 
 exports.postDeleteimage = async (req, res, next) => {
@@ -783,12 +857,12 @@ exports.postDeleteimage = async (req, res, next) => {
   const tripfilter = await Tours.findById({ _id: tripid });
   const name = tripfilter.imageUrlAll[imageindex];
   tripfilter.imageUrlAll.splice(imageindex, 1);
-  tripfilter.markModified('imageUrlAll');
+  tripfilter.markModified("imageUrlAll");
   tripfilter
     .save()
     .then((result) => {
-      fileHelper.deleteFile('images/' + name);
-      res.redirect('/');
+      fileHelper.deleteFile("images/" + name);
+      res.redirect("/");
     })
     .catch((err) => {
       console.log(err);
@@ -796,7 +870,7 @@ exports.postDeleteimage = async (req, res, next) => {
 };
 
 exports.getAdminLogin = (req, res, next) => {
-  res.render('pages/AdminPanel');
+  res.render("pages/AdminPanel");
 };
 
 exports.postAdminLogin = (req, res, next) => {
@@ -805,16 +879,16 @@ exports.postAdminLogin = (req, res, next) => {
   User.findOne({ username: uname })
     .then((user) => {
       if (!user) {
-        return res.redirect('/');
+        return res.redirect("/");
       }
       if (user.password == pwd) {
         req.session.isLoggedIn = true;
         req.session.user = user;
         return req.session.save((err) => {
-          res.redirect('/admin/login');
+          res.redirect("/admin/login");
         });
       } else {
-        return res.redirect('/');
+        return res.redirect("/");
       }
     })
     .catch((err) => {
@@ -824,7 +898,7 @@ exports.postAdminLogin = (req, res, next) => {
 
 exports.postLogout = (req, res, next) => {
   req.session.destroy((err) => {
-    res.redirect('/');
+    res.redirect("/");
     // res.redirect('/admin/login');
   });
 };
@@ -841,13 +915,13 @@ exports.postAccodQuery = (req, res, next) => {
   query
     .save()
     .then((err, data) => {
-      res.redirect('/');
+      res.redirect("/");
       let accodbody =
-        'name: ' + name + ' Phone: ' + phone + ' message: ' + message;
+        "name: " + name + " Phone: " + phone + " message: " + message;
       var mailOptions = {
         from: process.env.GMAIL_USER,
         to: process.env.GMAIL_USER,
-        subject: 'Accomodation Query',
+        subject: "Accomodation Query",
         html: accodbody,
       };
 
@@ -855,7 +929,7 @@ exports.postAccodQuery = (req, res, next) => {
         if (error) {
           console.log(error);
         } else {
-          console.log('Email sent: ' + info.response);
+          console.log("Email sent: " + info.response);
         }
       });
     })
@@ -867,7 +941,7 @@ exports.postAccodQuery = (req, res, next) => {
 exports.getAccodDetails = async (req, res, next) => {
   try {
     const accods = await AccomodationsQuery.find({});
-    res.render('pages/accomodationquery', {
+    res.render("pages/accomodationquery", {
       accomodations: accods.reverse(),
     });
   } catch (err) {
@@ -879,7 +953,7 @@ exports.getViewRegistration = (req, res, next) => {
   bookings
     .find({})
     .then((result) => {
-      res.render('pages/regquery', {
+      res.render("pages/regquery", {
         bookings: result,
       });
     })
@@ -891,7 +965,7 @@ exports.getViewRegistration = (req, res, next) => {
 exports.getViewEmails = (req, res, next) => {
   Newsletter.find({})
     .then((result) => {
-      res.render('pages/viewmail', {
+      res.render("pages/viewmail", {
         mails: result,
       });
     })
@@ -904,7 +978,7 @@ exports.postDeleteAccod = (req, res, next) => {
   const accodid = req.body.accodid;
   AccomodationsQuery.findOneAndDelete({ _id: accodid })
     .then((result) => {
-      res.redirect('/admin/login');
+      res.redirect("/admin/login");
     })
     .catch((err) => {
       console.log(err);
@@ -918,13 +992,13 @@ exports.getDownloadPDF = (req, res, next) => {
     .findById({ _id: regid })
     .then((data) => {
       const pdfDoc = new PDFDocument();
-      const fname = data.name + '.pdf';
+      const fname = data.name + ".pdf";
       //const imgpath = 'images/proofs/' + data.idproof;
       //console.log(imgpath);
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', 'inline; filename="' + fname + '"');
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", 'inline; filename="' + fname + '"');
       pdfDoc.pipe(res);
-      pdfDoc.image('images/pdfheader.png', 0, 0, { width: 620 });
+      pdfDoc.image("images/pdfheader.png", 0, 0, { width: 620 });
       pdfDoc.moveDown();
       pdfDoc.moveDown();
       pdfDoc.moveDown();
@@ -937,50 +1011,50 @@ exports.getDownloadPDF = (req, res, next) => {
       pdfDoc.moveDown();
       pdfDoc
         .fontSize(25)
-        .font('Times-Roman')
-        .fillColor('black')
-        .text('Trekker Details', { align: 'center' });
+        .font("Times-Roman")
+        .fillColor("black")
+        .text("Trekker Details", { align: "center" });
       pdfDoc
         .fontSize(15)
-        .text('-------------------------------------------------------', {
-          align: 'center',
+        .text("-------------------------------------------------------", {
+          align: "center",
         });
       pdfDoc.moveDown();
       pdfDoc
         .fontSize(12)
-        .fillColor('black')
-        .text('name :             ' + data.name, { align: 'left' });
+        .fillColor("black")
+        .text("name :             " + data.name, { align: "left" });
       pdfDoc.moveDown();
       pdfDoc
         .fontSize(12)
-        .fillColor('black')
-        .text('email :            ' + data.emailid, { align: 'left' });
+        .fillColor("black")
+        .text("email :            " + data.emailid, { align: "left" });
       pdfDoc.moveDown();
       pdfDoc
         .fontSize(12)
-        .fillColor('black')
-        .text('contact :          ' + data.contact, { align: 'left' });
+        .fillColor("black")
+        .text("contact :          " + data.contact, { align: "left" });
       pdfDoc.moveDown();
       pdfDoc
         .fontSize(12)
-        .fillColor('black')
-        .text('gender :           ' + data.gender, { align: 'left' });
+        .fillColor("black")
+        .text("gender :           " + data.gender, { align: "left" });
       pdfDoc.moveDown();
       pdfDoc
         .fontSize(12)
-        .fillColor('black')
-        .text('destination :      ' + data.destination, { align: 'left' });
+        .fillColor("black")
+        .text("destination :      " + data.destination, { align: "left" });
       pdfDoc.moveDown();
       pdfDoc
         .fontSize(12)
-        .fillColor('black')
-        .text('trip date :        ' + data.tripdate, { align: 'left' });
+        .fillColor("black")
+        .text("trip date :        " + data.tripdate, { align: "left" });
       pdfDoc.moveDown();
       pdfDoc
         .fontSize(12)
-        .fillColor('black')
-        .text('birth date :       ' + data.birthdate, { align: 'left' });
-      pdfDoc.image('images/pdffooter.png', 0, 700, { width: 620 });
+        .fillColor("black")
+        .text("birth date :       " + data.birthdate, { align: "left" });
+      pdfDoc.image("images/pdffooter.png", 0, 700, { width: 620 });
       // if(fs.existsSync(imgpath)){
       //   pdfDoc.moveDown();
       //   pdfDoc.fontSize(15).fillColor('green').text('-------------------------------------------------------', { align : 'center'});
@@ -996,19 +1070,19 @@ exports.getDownloadPDF = (req, res, next) => {
 };
 
 exports.getAdminCode = (req, res, next) => {
-  res.render('pages/code');
+  res.render("pages/code");
 };
 
 exports.getAccodAddImage = async (req, res, next) => {
-  const tests = await Tours.find().distinct('name');
+  const tests = await Tours.find().distinct("name");
   const accodid = req.body.accodid;
   const accodfilter = await Accomodations.findById({ _id: accodid });
-  res.render('pages/accodaddimages', { accod: accodfilter, test: tests });
+  res.render("pages/accodaddimages", { accod: accodfilter, test: tests });
 };
 
 exports.postAccodImageAdded = async (req, res, next) => {
   const filter = req.body.filter;
-  if (filter == 'youtube') {
+  if (filter == "youtube") {
     const link = req.body.youtubeurl;
     const accodid = req.body.accodid;
     Accomodations.findById({ _id: accodid })
@@ -1016,9 +1090,9 @@ exports.postAccodImageAdded = async (req, res, next) => {
         //console.log(accod);
         accod.youtubeUrl[0] = link;
         //console.log(trip);
-        accod.markModified('youtubeUrl');
+        accod.markModified("youtubeUrl");
         return accod.save().then((result) => {
-          res.redirect('/');
+          res.redirect("/");
         });
       })
       .catch((err) => {
@@ -1030,10 +1104,10 @@ exports.postAccodImageAdded = async (req, res, next) => {
     const accodid = req.body.accodid;
     Accomodations.findById({ _id: accodid }).then((accod) => {
       accod.imageUrlAll.push(imageurl);
-      accod.markModified('imageUrlAll');
+      accod.markModified("imageUrlAll");
       accod.save();
     });
-    res.redirect('/');
+    res.redirect("/");
   }
 };
 
@@ -1043,12 +1117,12 @@ exports.postDeleteAccodImage = async (req, res, next) => {
   const accodfilter = await Accomodations.findById({ _id: accodid });
   const name = accodfilter.imageUrlAll[imageindex];
   accodfilter.imageUrlAll.splice(imageindex, 1);
-  accodfilter.markModified('imageUrlAll');
+  accodfilter.markModified("imageUrlAll");
   accodfilter
     .save()
     .then((result) => {
-      fileHelper.deleteFile('images/' + name);
-      res.redirect('/');
+      fileHelper.deleteFile("images/" + name);
+      res.redirect("/");
     })
     .catch((err) => {
       console.log(err);
@@ -1061,17 +1135,17 @@ exports.postAccodBannerImageAdded = (req, res, next) => {
   const accodid = req.body.accodid;
   Accomodations.findById({ _id: accodid }).then((accod) => {
     if (accod.bannerimage) {
-      fileHelper.deleteFile('images/' + accod.bannerimage);
+      fileHelper.deleteFile("images/" + accod.bannerimage);
       accod.bannerimage = imageurl;
-      accod.markModified('bannerimage');
+      accod.markModified("bannerimage");
       accod.save();
     } else {
       accod.bannerimage = imageurl;
-      accod.markModified('bannerimage');
+      accod.markModified("bannerimage");
       accod.save();
     }
   });
-  res.redirect('/');
+  res.redirect("/");
 };
 
 exports.postDeleteUpcomingDate = async (req, res, next) => {
@@ -1080,11 +1154,11 @@ exports.postDeleteUpcomingDate = async (req, res, next) => {
   const tripfilter = await Tours.findById({ _id: tripid });
   const name = tripfilter.upcomingtrip[dateindex];
   tripfilter.upcomingtrip.splice(dateindex, 1);
-  tripfilter.markModified('upcomingtrip');
+  tripfilter.markModified("upcomingtrip");
   tripfilter
     .save()
     .then((result) => {
-      res.redirect('/');
+      res.redirect("/");
     })
     .catch((err) => {
       console.log(err);
@@ -1092,13 +1166,13 @@ exports.postDeleteUpcomingDate = async (req, res, next) => {
 };
 
 exports.postBookDate = async (req, res, next) => {
-  const tests = await Tours.find().distinct('name');
-  res.render('pages/booktrip', {
+  const tests = await Tours.find().distinct("name");
+  res.render("pages/booktrip", {
     tripname: req.body.tripname,
     triprate: req.body.triprate,
     username: req.user?.name || null,
     useremail: req.user?.email || null,
-    phonenumber: req.verifiedPhoneNumber ? '+' + req.verifiedPhoneNumber : null,
+    phonenumber: req.verifiedPhoneNumber ? "+" + req.verifiedPhoneNumber : null,
     tripdate: req.body.tripdate ? req.body.tripdate : null,
     test: tests,
   });
@@ -1112,7 +1186,7 @@ exports.postDeleteRegistration = (req, res, next) => {
       //fileHelper.deleteFile("images/proofs/" + req.body.idproof);
       //DeleteFileProofs(req.body.idproof);
       //console.log("deletedd");
-      res.redirect('/admin/login');
+      res.redirect("/admin/login");
     })
     .catch((err) => {
       console.log(err);
@@ -1121,9 +1195,9 @@ exports.postDeleteRegistration = (req, res, next) => {
 
 exports.getBlog = async (req, res, next) => {
   const allblogs = await Blogs.find().sort({ updatedAt: -1 });
-  const distinctTags = await Blogs.find().distinct('tag');
-  const tests = await Tours.find().distinct('name');
-  res.render('pages/blog', {
+  const distinctTags = await Blogs.find().distinct("tag");
+  const tests = await Tours.find().distinct("name");
+  res.render("pages/blog", {
     blogs: allblogs,
     tags: distinctTags,
     test: tests,
@@ -1134,9 +1208,9 @@ exports.getSingleBlog = async (req, res, next) => {
   const mdbid = req.params.id;
   const singleblog = await Blogs.findById({ _id: mdbid });
   const recentblog = await Blogs.find().sort({ updatedAt: -1 }).limit(3);
-  const distinctTags = await Blogs.find().distinct('tag');
-  const tests = await Tours.find().distinct('name');
-  res.render('pages/singleblog', {
+  const distinctTags = await Blogs.find().distinct("tag");
+  const tests = await Tours.find().distinct("name");
+  res.render("pages/singleblog", {
     blog: singleblog,
     blogs: recentblog,
     tags: distinctTags,
@@ -1145,7 +1219,7 @@ exports.getSingleBlog = async (req, res, next) => {
 };
 
 exports.getAddBlog = (req, res, next) => {
-  res.render('pages/addblog', { message: null });
+  res.render("pages/addblog", { message: null });
 };
 
 exports.postAddBlog = async (req, res, next) => {
@@ -1172,16 +1246,16 @@ exports.postAddBlog = async (req, res, next) => {
     blogger: name,
   });
   blog.save();
-  res.redirect('/');
+  res.redirect("/");
 };
 
 exports.getTagFilter = async (req, res, next) => {
   const tagid = req.params.id;
   const allblogs = await Blogs.find({ tag: tagid });
-  const distinctTags = await Blogs.find().distinct('tag');
+  const distinctTags = await Blogs.find().distinct("tag");
   const recentblog = await Blogs.find().sort({ updatedAt: -1 }).limit(3);
-  const tests = await Tours.find().distinct('name');
-  res.render('pages/blogfilter', {
+  const tests = await Tours.find().distinct("name");
+  res.render("pages/blogfilter", {
     blogs: allblogs,
     tags: distinctTags,
     recent: recentblog,
@@ -1192,8 +1266,8 @@ exports.getTagFilter = async (req, res, next) => {
 exports.getSearchTrip = async (req, res, next) => {
   const searchtext = req.body.SearchTrip;
   const searchresult = await Tours.find({ name: searchtext });
-  const tests = await Tours.find().distinct('name');
-  res.render('pages/search', {
+  const tests = await Tours.find().distinct("name");
+  res.render("pages/search", {
     Tours: searchresult,
     test: tests,
   });
@@ -1202,11 +1276,11 @@ exports.getSearchTrip = async (req, res, next) => {
 exports.getSearchBlog = async (req, res, next) => {
   const searchtext = req.body.searchblog;
   const searchresult = await Blogs.find({
-    title: { $regex: searchtext, $options: 'imxs' },
+    title: { $regex: searchtext, $options: "imxs" },
   });
-  const distinctTags = await Blogs.find().distinct('tag');
-  const tests = await Tours.find().distinct('name');
-  res.render('pages/blog', {
+  const distinctTags = await Blogs.find().distinct("tag");
+  const tests = await Tours.find().distinct("name");
+  res.render("pages/blog", {
     blogs: searchresult,
     tags: distinctTags,
     test: tests,
@@ -1218,7 +1292,7 @@ exports.postDeleteBlog = (req, res, next) => {
 
   Blogs.findById(dbid)
     .then((blog) => {
-      fileHelper.deleteFile('images/blog/' + blog.imageurl);
+      fileHelper.deleteFile("images/blog/" + blog.imageurl);
     })
     .catch((err) => {
       return console.log(err);
@@ -1228,7 +1302,7 @@ exports.postDeleteBlog = (req, res, next) => {
     if (err) {
       console.log(err);
     } else {
-      res.redirect('/');
+      res.redirect("/");
     }
   });
 };
@@ -1236,7 +1310,7 @@ exports.postDeleteBlog = (req, res, next) => {
 exports.getEditBlog = async (req, res, next) => {
   const dbid = req.body._id;
   const singleblog = await Blogs.findById(dbid);
-  res.render('pages/editblog', {
+  res.render("pages/editblog", {
     blog: singleblog,
     message: null,
   });
@@ -1255,13 +1329,13 @@ exports.postEditblog = (req, res, next) => {
       blog.facebook = req.body.facebk;
 
       if (req.file) {
-        fileHelper.deleteFile('images/blog/' + blog.imageurl);
+        fileHelper.deleteFile("images/blog/" + blog.imageurl);
         blog.imageurl = req.file.filename;
       }
 
       return blog.save().then((result) => {
         //console.log('UPDATED TRIP!');
-        res.redirect('/');
+        res.redirect("/");
       });
     })
     .catch((err) => {
@@ -1272,12 +1346,12 @@ exports.postEditblog = (req, res, next) => {
 exports.getcalculateCosting = async (req, res, next) => {
   const result = await Staycost.find(); //.distinct('stay_name');
   //console.log(result.length);return false;
-  res.render('pages/costingcal', { stays: result, message: '' });
+  res.render("pages/costingcal", { stays: result, message: "" });
 };
 
 exports.getStayCost = async (req, res, next) => {
   const result = await Staycost.find();
-  res.render('pages/staycostadd', { stays: result, message: null });
+  res.render("pages/staycostadd", { stays: result, message: null });
 };
 
 exports.postStayCost = async (req, res, next) => {
@@ -1285,7 +1359,7 @@ exports.postStayCost = async (req, res, next) => {
   const stayname = req.body.stayname;
   const category = req.body.category;
   const staycost = req.body.staycost;
-  if (req.body.submit == 'edit') {
+  if (req.body.submit == "edit") {
     const staycostsearch = await Staycost.findById(req.body.stay_id);
     staycostsearch.category = category;
     staycostsearch.destination = destination;
@@ -1301,14 +1375,14 @@ exports.postStayCost = async (req, res, next) => {
     });
     addcosting.save();
   }
-  res.redirect('/admin/getStayCost');
+  res.redirect("/admin/getStayCost");
 };
 
 exports.deleteStay = async (req, res, next) => {
   const stayid = req.body.stayid;
   Staycost.findByIdAndDelete(stayid)
     .then(() => {
-      res.redirect('/admin/getStayCost');
+      res.redirect("/admin/getStayCost");
     })
     .catch((err) => {
       console.log(err);
@@ -1352,7 +1426,7 @@ exports.getotp = async (req, res, next) => {
     // res.render('verifyOTP', { phoneNumber: req.body.phone, otpSent: true });
     return res.send(true); // Return OTP in case you need to verify it later
   } catch (err) {
-    console.error('Error sending OTP:', err);
+    console.error("Error sending OTP:", err);
     return res.send(false);
   }
 };
@@ -1360,9 +1434,9 @@ exports.getotp = async (req, res, next) => {
 exports.verifyotp = async (req, res, next) => {
   const { phone2, otp } = req.body;
   try {
-    const user = await Mobileuser.findOne({ phoneNumber: '+91' + phone2 });
+    const user = await Mobileuser.findOne({ phoneNumber: "+91" + phone2 });
     if (!user) {
-      return res.status(404).send('User not found');
+      return res.status(404).send("User not found");
     }
 
     // Verify OTP
@@ -1375,11 +1449,11 @@ exports.verifyotp = async (req, res, next) => {
       res.json({ accessToken });
       // res.send('OTP verified successfully');
     } else {
-      res.status(401).send('Invalid OTP or OTP expired');
+      res.status(401).send("Invalid OTP or OTP expired");
     }
   } catch (err) {
-    console.error('Error verifying OTP:', err);
-    res.status(500).send('Failed to verify OTP');
+    console.error("Error verifying OTP:", err);
+    res.status(500).send("Failed to verify OTP");
   }
 };
 
@@ -1398,7 +1472,7 @@ exports.createNewTourse = async (req, res) => {
 exports.getTours = async (req, res) => {
   try {
     let filters = [];
-    if(req && req.query && req.query.filterValue){
+    if (req && req.query && req.query.filterValue) {
       filters = JSON.parse(req.query.filterValue);
     }
     let queryConditions = [];
@@ -1406,26 +1480,39 @@ exports.getTours = async (req, res) => {
     // Filter by departure city
     if (filters["Departure city"] && filters["Departure city"].length > 0) {
       queryConditions.push({
-        "deptcities.City": { $in: filters["Departure city"].map(city => new RegExp(`^${city}$`, "i")) },
+        "deptcities.City": {
+          $in: filters["Departure city"].map(
+            (city) => new RegExp(`^${city}$`, "i")
+          ),
+        },
       });
     }
 
     // Filter by tour category (tags)
     if (filters["Tour category"] && filters["Tour category"].length > 0) {
       queryConditions.push({
-        tag: { $in: filters["Tour category"].map(tag => new RegExp(`^${tag}$`, "i")) },
+        tag: {
+          $in: filters["Tour category"].map(
+            (tag) => new RegExp(`^${tag}$`, "i")
+          ),
+        },
       });
     }
 
     // Filter by tour type
     if (filters["Tour type"] && filters["Tour type"].length > 0) {
       queryConditions.push({
-        tripType: { $in: filters["Tour type"].map(type => new RegExp(`^${type}$`, "i")) },
+        tripType: {
+          $in: filters["Tour type"].map((type) => new RegExp(`^${type}$`, "i")),
+        },
       });
     }
-    if(req.query.searchValue){
+    if (req.query.searchValue) {
       //const regex = new RegExp(".*" +`^${req.query.searchValue}$`+".*", "i")
-      const regex = new RegExp(".*" + req.query.searchValue.split(" ").join(".*") + ".*", "i");
+      const regex = new RegExp(
+        ".*" + req.query.searchValue.split(" ").join(".*") + ".*",
+        "i"
+      );
       queryConditions.push({
         $or: [
           { name: regex },
@@ -1441,27 +1528,40 @@ exports.getTours = async (req, res) => {
           { things_to_carry: regex },
           { guidelines: regex },
           { bookncancel: regex },
-          {placestovisit: regex}
+          { placestovisit: regex },
         ],
       });
     }
 
     // Filter by departure date (only apply if dates are provided)
-    if (filters["Filter by departure date between"] && filters["Filter by departure date between"].length === 2) {
+    if (
+      filters["Filter by departure date between"] &&
+      filters["Filter by departure date between"].length === 2
+    ) {
       const [startDate, endDate] = filters["Filter by departure date between"];
       queryConditions.push({
         $or: [
-          { trip_dates: { $gte: new Date(startDate), $lte: new Date(endDate) } },
-          { upcomingtrip: { $gte: new Date(startDate), $lte: new Date(endDate) } },
+          {
+            trip_dates: { $gte: new Date(startDate), $lte: new Date(endDate) },
+          },
+          {
+            upcomingtrip: {
+              $gte: new Date(startDate),
+              $lte: new Date(endDate),
+            },
+          },
         ],
       });
     }
-
     // Execute query with all filters applied
     const query = queryConditions.length > 0 ? { $and: queryConditions } : {};
-    const tours = await NewTours.find(query); // Use NewTours instead of NewToursSchema  
+    const tours = await NewTours.find(query); // Use NewTours instead of NewToursSchema
     //res.json(tours);
-    res.render('pages/tourlist',{ tourPackages: tours,filterChips:Object.values(filters).flat() ,Searchvalue: req.query.searchValue});
+    res.render("pages/tourlist", {
+      tourPackages: tours,
+      filterChips: Object.values(filters).flat(),
+      Searchvalue: req.query.searchValue,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -1470,16 +1570,18 @@ exports.getTours = async (req, res) => {
 // Newly created API for Upload image
 exports.uploadImage = async (req, res) => {
   try {
-      if (!req.files || req.files.length === 0) {
-          return res.status(400).json({ success: false, message: "No file uploaded" });
-      }
-      
-    const filePath = `/images/${req.files.filename}`;  // Correct URL
+    if (!req.files || req.files.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No file uploaded" });
+    }
+
+    const filePath = `/images/${req.file.filename}`; // Correct URL
     res.json({ success: true, imageUrl: filePath });
 
-      // res.json({ success: true, imageUrl: `/images/${fileName}` });
+    // res.json({ success: true, imageUrl: `/images/${fileName}` });
   } catch (error) {
-      console.error("Upload error:", error);
-      res.status(500).json({ success: false, message: "Server error" });
+    console.error("Upload error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };

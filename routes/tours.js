@@ -86,6 +86,8 @@ router.post(
 
 router.post('/admin/edit', ensureLoggedIn, isAuth, toursController.postEdit);
 
+router.post('/admin/getTripDetialById', ensureLoggedIn, isAuth, toursController.getTripDetialById);
+
 router.post(
   '/admin/addeditedtours',
   ensureLoggedIn,
@@ -396,4 +398,6 @@ router.get("/getNewTours", toursController.getTours);
 router.post("/createNewTours", toursController.createNewTourse); 
 
 router.post("/uploadImage", toursController.uploadImage);
+
+router.post("/getCheckToursUnique", toursController.getCheckToursUnique);
 module.exports = router;

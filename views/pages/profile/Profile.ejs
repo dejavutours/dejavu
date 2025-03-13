@@ -611,6 +611,7 @@
     // Submit Form
     document.getElementById('profileUpdateForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+
       const formData = new FormData(e.target);
       const csrfToken = document.querySelector('input[name="_csrf"]').value;
       const response = await fetch(e.target.action, {

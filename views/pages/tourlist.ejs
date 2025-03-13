@@ -2,776 +2,741 @@
 <html lang="en">
 
 <head>
-    <%- include('../partials/headtag'); %>
+  <%- include('../partials/headtag'); %>
 </head>
 <!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 <style>
-    .subtitle {
-        color: #f05a5a;
-        font-size: 14px;
-        margin-bottom: 8px;
-    }
+  .subtitle {
+    color: #f05a5a;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
 
-    h1 {
-        font-size: 28px;
-        margin-bottom: 20px;
-        color: #222;
-    }
+  .subtitle h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #222;
+  }
 
+  .search-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
+  }
+
+.search-bar {
+    display: flex;
+    flex-grow: 1;
+    max-width: 800px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: white;
+  }
+
+  .select-wrapper {
+    position: relative;
+    min-width: 55px;
+    border-right: 1px solid #e0e0e0;
+  }
+
+  .select-wrapper .select {
+    display: block;
+    width: 100%;
+    padding: 10px 30px 10px 15px;
+    border: none;
+    background-color: white;
+    font-size: 14px;
+    cursor: pointer;
+    color: #333;
+  }
+
+  .select-wrapper::after {
+    content: "▼";
+    font-size: 10px;
+    color: #888;
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .input-wrapper {
+    position: relative;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  .select-wrapper .input-wrapper .search-icon {
+    position: absolute;
+    left: 15px;
+    width: 16px;
+    height: 16px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%239e9e9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .select-wrapper .input-wrapper .search-input {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    border: none;
+    font-size: 14px;
+    outline: none;
+    color: #333;
+  }
+
+  .select-wrapper .input-wrapper .search-input::placeholder {
+    color: #9e9e9e;
+  }
+
+  .filters-btn {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    gap: 8px;
+    color: #333;
+  }
+
+  .filters-btn .filters-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  @media (max-width: 576px) {
     .search-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        gap: 15px;
+      flex-direction: column;
+      align-items: stretch;
     }
 
     .search-bar {
-        display: flex;
-        flex-grow: 1;
-        max-width: 800px;
-        border: 1px solid #e0e0e0;
-        border-radius: 6px;
-        overflow: hidden;
-        background-color: white;
-    }
-
-    .select-wrapper {
-        position: relative;
-        min-width: 55px;
-        border-right: 1px solid #e0e0e0;
-    }
-
-    .select {
-        display: block;
-        width: 100%;
-        padding: 10px 30px 10px 15px;
-        border: none;
-        background-color: white;
-        font-size: 14px;
-        cursor: pointer;
-        color: #333;
-    }
-
-    .select-wrapper::after {
-        content: "▼";
-        font-size: 10px;
-        color: #888;
-        position: absolute;
-        right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        pointer-events: none;
-    }
-
-    .input-wrapper {
-        position: relative;
-        flex-grow: 1;
-        display: flex;
-        align-items: center;
-    }
-
-    .search-icon {
-        position: absolute;
-        left: 15px;
-        width: 16px;
-        height: 16px;
-        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%239e9e9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>');
-        background-repeat: no-repeat;
-        background-position: center;
-    }
-
-    .search-input {
-        width: 100%;
-        padding: 10px 15px 10px 40px;
-        border: none;
-        font-size: 14px;
-        outline: none;
-        color: #333;
-    }
-
-    .search-input::placeholder {
-        color: #9e9e9e;
+      max-width: 100%;
     }
 
     .filters-btn {
-        display: flex;
-        align-items: center;
-        padding: 10px 20px;
-        background-color: white;
-        border: 1px solid #e0e0e0;
-        border-radius: 6px;
-        font-size: 14px;
-        cursor: pointer;
-        gap: 8px;
-        color: #333;
+      align-self: flex-end;
+    }
+  }
+
+  .packages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 10px;
+  }
+
+  .package-card {
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .package-card:hover {
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-image-container {
+    position: relative;
+    height: 280px;
+    overflow: hidden;
+    border-radius: 12px;
+  }
+
+  .card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .package-card:hover .card-image {
+    transform: scale(1.05);
+  }
+
+  .discount-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #ff5a5f;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .region {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    color: #666;
+    font-size: 13px;
+  }
+
+  .region::before {
+    content: "";
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: 5px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  @media (max-width: 768px) {
+    .packages-grid {
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+  }
+
+  @media (max-width: 576px) {
+    .search-container {
+      flex-direction: column;
     }
 
-    .filters-icon {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>');
-        background-repeat: no-repeat;
-        background-position: center;
+    .search-bar {
+      max-width: 100%;
     }
 
-    @media (max-width: 576px) {
-        .search-container {
-            flex-direction: column;
-            align-items: stretch;
-        }
+    .select-wrapper {
+      width: 100px;
+    }
 
-        .search-bar {
-            max-width: 100%;
-        }
-
-        .filters-btn {
-            align-self: flex-end;
-        }
+    .filters-btn {
+      align-self: flex-end;
     }
 
     .packages-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 20px;
+      grid-template-columns: 1fr;
     }
+  }
 
-    .package-card {
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+  .font-weight-bold {
+    font-weight: bold;
+  }
 
-    .package-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
-    }
+  .overflow-auto {
+    overflow: auto;
+  }
 
-    .card-image-container {
-        position: relative;
-        height: 220px;
-        overflow: hidden;
-    }
+  .chip {
+    display: flex;
+    align-items: center;
+    padding: 3px 10px;
+    margin: 0px 0px 11px 7px;
+    font-size: 14px;
+    border-radius: 10px;
+    background-color: #f1f3f5;
+    color: #333;
+    border: 1px solid #d1d1d1;
+    cursor: pointer;
+  }
 
-    .card-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
+  .chip .close {
+    margin-left: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #666;
+  }
 
-    .package-card:hover .card-image {
-        transform: scale(1.05);
-    }
+  .chip .close:hover {
+    color: #000;
+  }
 
-    .discount-tag {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-color: #ff5a5f;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 4px;
-        font-size: 12px;
-        font-weight: bold;
-    }
+/* Card detail section of tours detail */
+  .location-text {
+    color: #6c757d;
+    font-size: 14px;
+  }
 
-    .card-content {
-        padding: 15px;
-    }
+  .icon-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #000000;
+  }
 
-    .package-title {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 5px;
-        color: #333;
-    }
+  .icon-text i {
+    color: #020202;
+    /* Bootstrap primary color */
+  }
 
-    .location {
-        font-size: 14px;
-        color: #555;
-        margin-bottom: 10px;
-    }
+  .details {
+    font-size: 14px;
+    color: #6c757d;
+  }
 
-    .region {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-        color: #666;
-        font-size: 13px;
-    }
+  .bottom-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+  }
 
-    .region::before {
-        content: "";
-        display: inline-block;
-        width: 14px;
-        height: 14px;
-        margin-right: 5px;
-        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>');
-        background-repeat: no-repeat;
-        background-position: center;
-    }
+  .price {
+    font-weight: bold;
+    font-size: 18px;
+    color: #000;
+  }
 
-    .departure {
-        display: flex;
-        align-items: center;
-        margin-bottom: 12px;
-        color: #666;
-        font-size: 13px;
-    }
-
-    .departure::before {
-        content: "";
-        display: inline-block;
-        width: 14px;
-        height: 14px;
-        margin-right: 5px;
-        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>');
-        background-repeat: no-repeat;
-        background-position: center;
-    }
-
-    .duration {
-        display: flex;
-        align-items: center;
-        margin-bottom: 12px;
-        color: #666;
-        font-size: 13px;
-    }
-
-    .duration::before {
-        content: "";
-        display: inline-block;
-        width: 14px;
-        height: 14px;
-        margin-right: 5px;
-        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>');
-        background-repeat: no-repeat;
-        background-position: center;
-    }
-
-    .price-container {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-    }
-
-    .price-label {
-        font-size: 12px;
-        color: #777;
-        margin-right: 5px;
-    }
-
-    .price {
-        font-size: 16px;
-        font-weight: bold;
-        color: #222;
-    }
-
-    .price-note {
-        font-size: 12px;
-        color: #777;
-        margin-left: 2px;
-    }
-
-    @media (max-width: 768px) {
-        .packages-grid {
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        }
-    }
-
-    @media (max-width: 576px) {
-        .search-container {
-            flex-direction: column;
-        }
-
-        .search-bar {
-            max-width: 100%;
-        }
-
-        .select-wrapper {
-            width: 100px;
-        }
-
-        .filters-btn {
-            align-self: flex-end;
-        }
-
-        .packages-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    .font-weight-bold {
-        font-weight: bold;
-    }
-
-    .overflow-auto {
-        overflow: auto;
-    }
-</style>
-<!-- Chip Css -->
-<style>
-    .chip {
-        display: flex;
-        align-items: center;
-        padding: 3px 10px;
-        margin: 0px 0px 11px 7px;
-        font-size: 14px;
-        border-radius: 10px;
-        background-color: #f1f3f5;
-        color: #333;
-        border: 1px solid #d1d1d1;
-        cursor: pointer;
-    }
-
-    .chip .close {
-        margin-left: 8px;
-        font-size: 16px;
-        cursor: pointer;
-        color: #666;
-    }
-
-    .chip .close:hover {
-        color: #000;
-    }
+  .price small {
+    font-size: 14px;
+    color: #6c757d;
+  }
 </style>
 
 <body>
-    <%- include('../partials/header'); %>
-        <div class="container">
-            <div class="subtitle">Our curated tour packages</div>
-            <h1>Where are you planning to go next?</h1>
-            <div class="search-container">
-                <div class="search-bar">
-                    <div class="select-wrapper">
-                        <span class="select">ALL</span>
-                    </div>
-                    <div class="input-wrapper">
-                        <span class="search-icon"></span>
-                        <input id="SearchEntry" type="text" class="search-input"
-                            placeholder="Try searching place name, region, category">
-                    </div>
-                </div>
-                <button class="filters-btn" id="filterButton">
-                    <span class="filters-icon"></span>
-                    Filters
-                </button>
-            </div>
-            <div class="container mt-4">
-                <div id="chipContainer" class="d-flex flex-wrap">
-                    <!-- Chips will be inserted here dynamically -->
-                    <% filterChips.forEach((chip,index)=> { %>
-                        <div class="chip">
-                            <span>
-                                <%= chip %>
-                            </span>
-                            <span class="close" onclick="removeChip('<%= chip %>','<%=index%>')">&times;</span>
-                        </div>
-                        <% }); %>
-                            <% if (Searchvalue) { %>
-                                <div class="chip">
-                                    <span>
-                                        <%= Searchvalue %>
-                                    </span>
-                                    <span class="close" onclick="removeSearchChip('<%= Searchvalue %>')">&times;</span>
-                                </div>
-                                <% } %>
-                </div>
-            </div>
-            <div class="packages-grid">
-                <!-- Package 1 -->
-                <% tourPackages.forEach(function(tour) { %>
-                    <div class="package-card">
-                        <div class="card-image-container">
-                            <img src="<%= tour.imageurl %>" alt="Kutch desert with camels" class="card-image">
-                            <!-- <div class="discount-tag">10% off</div> -->
-                        </div>
-                        <div class="card-content">
-                            <h3 class="package-title"><strong>
-                                    <%= tour.name %>
-                                </strong></h3>
-                            <p class="location">
-                                <%- tour.route %>
-                            </p>
-                            <p class="region">
-                                <%= tour.state %>, <%= tour.deptstate %>
-                            </p>
-                            <p class="departure">Ex.<%= tour.route %>
-                            </p>
-                            <div class="duration">
-                                <%= tour.days %>
-                            </div>
-                            <div class="price-container">
-                                <span class="price-label">From</span>
-                                <span class="price">
-                                    <%= tour.price %>
-                                </span>
-                                <span class="price-note">/person</span>
-                            </div>
-                        </div>
-                    </div>
-                    <% }); %>
-            </div>
+  <%- include('../partials/header'); %>
+  <div class="container">
+    <div class="subtitle">Our curated tour packages</div>
+    <h1>Where are you planning to go next?</h1>
+    <div class="search-container">
+      <div class="search-bar">
+        <div class="select-wrapper">
+          <span class="select">ALL</span>
         </div>
-        <!-- Filters Modal (Hidden by default) -->
-        <div class="modal fade" id="filtersModal" tabindex="-1" aria-labelledby="filtersModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="filtersModalLabel">Filters</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form id="tourList" action="/getNewTours" method="GET" class="overflow-auto">
-                        <div class="modal-body">
-                            <!-- Date filter section -->
-                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                            <input id='filterValue' name="filterValue" type="hidden" name="filterValue">
-                            <input id='searchValue' name="searchValue" type="hidden" name="searchValue">
-                            <div class="filter-section mb-4">
-                                <div class="filter-section-title font-weight-bold">Filter by departure date between
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">From date</label>
-                                        <select class="form-select">
-                                            <option selected>Select...</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">to date</label>
-                                        <select class="form-select">
-                                            <option selected>Select...</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Tour category section -->
-                            <div class="filter-section mb-4">
-                                <div class="filter-section-title font-weight-bold">Tour category</div>
-                                <div class="row">
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="adventure">
-                                            <label class="form-check-label" for="adventure">Adventure</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="heritage">
-                                            <label class="form-check-label" for="heritage">Heritage</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="wildlife">
-                                            <label class="form-check-label" for="wildlife">Wildlife</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="safari">
-                                            <label class="form-check-label" for="safari">Safari</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="trekking">
-                                            <label class="form-check-label" for="trekking">Trekking</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="camping">
-                                            <label class="form-check-label" for="camping">Camping</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="sightseeing">
-                                            <label class="form-check-label" for="sightseeing">Sightseeing</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="offbeat">
-                                            <label class="form-check-label" for="offbeat">Offbeat</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="backpacking">
-                                            <label class="form-check-label" for="backpacking">Backpacking</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="spiritual">
-                                            <label class="form-check-label" for="spiritual">Spiritual</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="summer">
-                                            <label class="form-check-label" for="summer">Summer</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="leisure">
-                                            <label class="form-check-label" for="leisure">Leisure</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="himalaya">
-                                            <label class="form-check-label" for="himalaya">Himalaya</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="festival">
-                                            <label class="form-check-label" for="festival">Festival</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="winter">
-                                            <label class="form-check-label" for="winter">Winter</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="monsoon">
-                                            <label class="form-check-label" for="monsoon">Monsoon</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Tour type section -->
-                            <div class="filter-section mb-4">
-                                <div class="filter-section-title font-weight-bold">Tour type</div>
-                                <div class="row">
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="family">
-                                            <label class="form-check-label" for="family">Family</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="solo">
-                                            <label class="form-check-label" for="solo">Solo</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="couple">
-                                            <label class="form-check-label" for="couple">Couple friendly</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="bachelors">
-                                            <label class="form-check-label" for="bachelors">Bachelors</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="students">
-                                            <label class="form-check-label" for="students">Students</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Departure city section -->
-                            <div class="filter-section mb-4">
-                                <div class="filter-section-title font-weight-bold">Departure city</div>
-                                <div class="row">
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="ahmedabad">
-                                            <label class="form-check-label" for="ahmedabad">Ahmedabad</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="mumbai">
-                                            <label class="form-check-label" for="mumbai">Mumbai</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="bhuj">
-                                            <label class="form-check-label" for="bhuj">Bhuj</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="vadodara">
-                                            <label class="form-check-label" for="vadodara">Vadodara</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="pune">
-                                            <label class="form-check-label" for="pune">Pune</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="rajkot">
-                                            <label class="form-check-label" for="rajkot">Rajkot</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="surat">
-                                            <label class="form-check-label" for="surat">Surat</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="delhi">
-                                            <label class="form-check-label" for="delhi">Delhi</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" id="clearButton">Clear
-                                selection</button>
-                            <button type="submit" class="btn btn-primary show-trips-btn" id="ApplyFilterButton">Show
-                                trips</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+        <div class="input-wrapper">
+          <span class="search-icon"></span>
+          <input id="SearchEntry" type="text" class="search-input" placeholder="Try searching place name, region, category">
         </div>
+      </div>
+      <button class="filters-btn" id="filterButton">
+        <span class="filters-icon"></span>
+        Filters
+      </button>
+    </div>
+    <div class="container mt-4">
+      <div id="chipContainer" class="d-flex flex-wrap">
+        <!-- Chips will be inserted here dynamically -->
+        <% filterChips.forEach((chip,index)=> { %>
+        <div class="chip">
+          <span>
+            <%= chip %>
+          </span>
+          <span class="close" onclick="removeChip('<%= chip %>','<%=index%>')">&times;</span>
+        </div>
+        <% }); %>
+        <% if (Searchvalue) { %>
+        <div class="chip">
+          <span>
+            <%= Searchvalue %>
+          </span>
+          <span class="close" onclick="removeSearchChip('<%= Searchvalue %>')">&times;</span>
+        </div>
+        <% } %>
+      </div>
+    </div>
+    <div class="packages-grid">
+      <!-- Package 1 -->
+      <% tourPackages.forEach(function(tour) { %>
+      <div class="package-card p-2 border rounded-4">
+        <div class="card-image-container">
+          <img src="<%= tour.imageurl %>" alt="Kutch desert with camels" class="card-image card-img-top img-fluid rounded-4">
+          <!-- <div class="discount-tag">10% off</div> -->
+        </div>
+        <div class="card-body p-2">
+          <h5 class="card-title fw-bold"><%= tour.name %></h5>
+          <p class="location-text"><%- tour.destinations%></p>
 
-        <%- include('../partials/footer'); %>
-            <%- include('../partials/scripttag'); %>
+          <div class="icon-text">
+            <i class="bi bi-geo-alt-fill"></i>
+            <span><%= tour.state %>, India</span>
+          </div>
+
+          <div class="icon-text mt-2">
+            <i class="bi bi-house-door-fill"></i>
+            <span><%- tour.route %></span>
+          </div>
+
+          <div class="bottom-info">
+            <span class="details"><i class="bi bi-calendar-event"></i> <%- tour.days %></span>
+            <span class="price">From ₹<%-tour.price %><small>/person</small></span>
+          </div>
+          <% if(profile?.email===process.env.GMAIL_ADMIN) { %>
+            <!-- <form action="/admin/addtours" method="get">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input type="hidden" name="tripid" id="tripid" value="<%= tour._id %>"/>
+              <button type="submit" class="btn btn-primary">Edit</button>
+          </form> -->
+          <a href="/admin/addtours?tripid=<%= tour._id %>" class="btn btn-primary">Edit</a>
+            <% } %>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+  </div>
+  <!-- Filters Modal (Hidden by default) -->
+  <div class="modal fade bd-example-modal-lg" id="filtersModal" tabindex="-1" aria-labelledby="filtersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="filtersModalLabel">Filters</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="tourList" action="/getNewTours" method="GET" class="overflow-auto">
+          <div class="modal-body">
+            <!-- Date filter section -->
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input id='filterValue' name="filterValue" type="hidden" name="filterValue">
+            <input id='searchValue' name="searchValue" type="hidden" name="searchValue">
+            <div class="filter-section mb-4">
+              <div class="filter-section-title font-weight-bold">Filter by departure date between
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">From date</label>
+                  <select class="form-select">
+                    <option selected>Select...</option>
+                  </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">to date</label>
+                  <select class="form-select">
+                    <option selected>Select...</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tour category section -->
+            <div class="filter-section mb-4">
+              <div class="filter-section-title font-weight-bold">Tour category</div>
+              <div class="row">
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="adventure">
+                    <label class="form-check-label" for="adventure">Adventure</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="heritage">
+                    <label class="form-check-label" for="heritage">Heritage</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="wildlife">
+                    <label class="form-check-label" for="wildlife">Wildlife</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="safari">
+                    <label class="form-check-label" for="safari">Safari</label>
+                  </div>
+                </div>
+
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="trekking">
+                    <label class="form-check-label" for="trekking">Trekking</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="camping">
+                    <label class="form-check-label" for="camping">Camping</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="sightseeing">
+                    <label class="form-check-label" for="sightseeing">Sightseeing</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="offbeat">
+                    <label class="form-check-label" for="offbeat">Offbeat</label>
+                  </div>
+                </div>
+
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="backpacking">
+                    <label class="form-check-label" for="backpacking">Backpacking</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="spiritual">
+                    <label class="form-check-label" for="spiritual">Spiritual</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="summer">
+                    <label class="form-check-label" for="summer">Summer</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="leisure">
+                    <label class="form-check-label" for="leisure">Leisure</label>
+                  </div>
+                </div>
+
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="himalaya">
+                    <label class="form-check-label" for="himalaya">Himalaya</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="festival">
+                    <label class="form-check-label" for="festival">Festival</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="winter">
+                    <label class="form-check-label" for="winter">Winter</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="monsoon">
+                    <label class="form-check-label" for="monsoon">Monsoon</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tour type section -->
+            <div class="filter-section mb-4">
+              <div class="filter-section-title font-weight-bold">Tour type</div>
+              <div class="row">
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="family">
+                    <label class="form-check-label" for="family">Family</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="solo">
+                    <label class="form-check-label" for="solo">Solo</label>
+                  </div>
+                </div>
+
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="couple">
+                    <label class="form-check-label" for="couple">Couple friendly</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="bachelors">
+                    <label class="form-check-label" for="bachelors">Bachelors</label>
+                  </div>
+                </div>
+
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="students">
+                    <label class="form-check-label" for="students">Students</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Departure city section -->
+            <div class="filter-section mb-4">
+              <div class="filter-section-title font-weight-bold">Departure city</div>
+              <div class="row">
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="ahmedabad">
+                    <label class="form-check-label" for="ahmedabad">Ahmedabad</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="mumbai">
+                    <label class="form-check-label" for="mumbai">Mumbai</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="bhuj">
+                    <label class="form-check-label" for="bhuj">Bhuj</label>
+                  </div>
+                </div>
+
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="vadodara">
+                    <label class="form-check-label" for="vadodara">Vadodara</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="pune">
+                    <label class="form-check-label" for="pune">Pune</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="rajkot">
+                    <label class="form-check-label" for="rajkot">Rajkot</label>
+                  </div>
+                </div>
+
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="surat">
+                    <label class="form-check-label" for="surat">Surat</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="delhi">
+                    <label class="form-check-label" for="delhi">Delhi</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" id="clearButton">Clear
+              selection</button>
+            <button type="submit" class="btn btn-primary show-trips-btn" id="ApplyFilterButton">Show
+              trips</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../partials/footer'); %>
+  <%- include('../partials/scripttag'); %>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Wait for the DOM to be fully loaded
-    document.addEventListener('DOMContentLoaded', function () {
-        if (('<%=filterChips%>')) {
-            const filterChips = ('<%=filterChips%>').split(',');
-            if (filterChips) {
-                filterChips.forEach((chip, index) => {
-                    const chipProperty = document.getElementById(chip);
-                    chipProperty.checked = true;
-                });
-            }
-        }
-        if (('<%=Searchvalue%>')) {
-            const apiSearchvalue = ('<%=Searchvalue%>');
-            if (apiSearchvalue) {
-                document.getElementById("searchValue").value = apiSearchvalue;
-            }
-        }
-        const SearchEntry = document.getElementById('SearchEntry');
-        SearchEntry.addEventListener('keypress', function (event) {
-            if (event.key === 'Enter') {
-                const Searchvalues = document.getElementById("SearchEntry").value;
-                document.getElementById("searchValue").value = Searchvalues;
-                updatefilterValueforApiCall();
-                getTourListAPICall();
-                //document.getElementById("search").value = JSON.stringify(Searchvalues);
-            }
-        })
-    });
-    // document.addEventListener('DOMContentLoaded', function() {
-    // Get the filter button and modal elements
-    const filterButton = document.getElementById('filterButton');
-    const filtersModal = document.getElementById('filtersModal');
-    const clearButton = document.getElementById('clearButton');
-    const ApplyFilterButton = document.getElementById('ApplyFilterButton');
-    // Create a Bootstrap modal instance
-    const modal = new bootstrap.Modal(document.getElementById('filtersModal'));
-
-    // Event listener for filter button
-    filterButton.addEventListener('click', function () {
-        modal.show();
-    });
-
-    // Event listener for clear button
-    clearButton.addEventListener('click', function () {
-        // Get all checkboxes and clear them
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = false;
+  // Wait for the DOM to be fully loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    if (('<%=filterChips%>')) {
+      const filterChips = ('<%=filterChips%>').split(',');
+      if (filterChips) {
+        filterChips.forEach((chip, index) => {
+          const chipProperty = document.getElementById(chip);
+          chipProperty.checked = true;
         });
-
-        // Reset select dropdowns
-        const selects = document.querySelectorAll('select');
-        selects.forEach(select => {
-            select.selectedIndex = 0;
-        });
-    });
-
-    // get filter list
-    function getCheckedValues() {
-        const categories = {};
-        document.querySelectorAll('.filter-section').forEach(section => {
-            const sectionTitle = section.querySelector('.filter-section-title')?.innerText.trim();
-            if (!sectionTitle) return;
-            const checkedValues = Array.from(section.querySelectorAll('input[type="checkbox"]:checked'))
-                .map(input => input.id);
-            categories[sectionTitle] = checkedValues;
-        });
-        // Apply Filter Chip on page 
-        //renderChips(Object.values(categories).flat());
-        return categories;
-    };
-    // call function on submit 
-    function updatefilterValueforApiCall() {
-        const filterValue = getCheckedValues();
-        document.getElementById("filterValue").value = JSON.stringify(filterValue);
-    };
-    // Filter grid
-    ApplyFilterButton.addEventListener('click', function () {
-        updatefilterValueforApiCall();
-    });
-
-    function removeChip(chip, index) {
-        const chipProperty = document.getElementById(chip);
-        chipProperty.checked = false;
-        filterChips.splice(index, 1); // Remove chip from array
-        renderChips(); // Re-render chips
-        getTourListAPICall(); // retreive list
+      }
     }
-    function getTourListAPICall() {
-        document.getElementById("tourList").submit();
+    if (('<%=Searchvalue%>')) {
+      const apiSearchvalue = ('<%=Searchvalue%>');
+      if (apiSearchvalue) {
+        document.getElementById("searchValue").value = apiSearchvalue;
+      }
     }
-    function removeChip(chip, index) {
-        const chipProperty = document.getElementById(chip);
-        chipProperty.checked = false;
-        updatefilterValueforApiCall();
-        getTourListAPICall(); // retreive list
-    }
-    function removeSearchChip(value) {
-        document.getElementById("searchValue").value = null;
+    const SearchEntry = document.getElementById('SearchEntry');
+    SearchEntry.addEventListener('keypress', function(event) {
+      if (event.key === 'Enter') {
+        const Searchvalues = document.getElementById("SearchEntry").value;
+        document.getElementById("searchValue").value = Searchvalues;
         updatefilterValueforApiCall();
         getTourListAPICall();
-    }
-    //});
+        //document.getElementById("search").value = JSON.stringify(Searchvalues);
+      }
+    })
+  });
+  // document.addEventListener('DOMContentLoaded', function() {
+  // Get the filter button and modal elements
+  const filterButton = document.getElementById('filterButton');
+  const filtersModal = document.getElementById('filtersModal');
+  const clearButton = document.getElementById('clearButton');
+  const ApplyFilterButton = document.getElementById('ApplyFilterButton');
+  // Create a Bootstrap modal instance
+  const modal = new bootstrap.Modal(document.getElementById('filtersModal'));
+
+  // Event listener for filter button
+  filterButton.addEventListener('click', function() {
+    modal.show();
+  });
+
+  // Event listener for clear button
+  clearButton.addEventListener('click', function() {
+    // Get all checkboxes and clear them
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = false;
+    });
+
+    // Reset select dropdowns
+    const selects = document.querySelectorAll('select');
+    selects.forEach(select => {
+      select.selectedIndex = 0;
+    });
+  });
+
+  // get filter list
+  function getCheckedValues() {
+    const categories = {};
+    document.querySelectorAll('.filter-section').forEach(section => {
+      const sectionTitle = section.querySelector('.filter-section-title')?.innerText.trim();
+      if (!sectionTitle) return;
+      const checkedValues = Array.from(section.querySelectorAll('input[type="checkbox"]:checked'))
+        .map(input => input.id);
+      categories[sectionTitle] = checkedValues;
+    });
+    // Apply Filter Chip on page 
+    //renderChips(Object.values(categories).flat());
+    return categories;
+  };
+  // call function on submit 
+  function updatefilterValueforApiCall() {
+    const filterValue = getCheckedValues();
+    document.getElementById("filterValue").value = JSON.stringify(filterValue);
+  };
+  // Filter grid
+  ApplyFilterButton.addEventListener('click', function() {
+    updatefilterValueforApiCall();
+  });
+
+  function removeChip(chip, index) {
+    const chipProperty = document.getElementById(chip);
+    chipProperty.checked = false;
+    filterChips.splice(index, 1); // Remove chip from array
+    renderChips(); // Re-render chips
+    getTourListAPICall(); // retreive list
+  }
+
+  function getTourListAPICall() {
+    document.getElementById("tourList").submit();
+  }
+
+  function removeChip(chip, index) {
+    const chipProperty = document.getElementById(chip);
+    chipProperty.checked = false;
+    updatefilterValueforApiCall();
+    getTourListAPICall(); // retreive list
+  }
+
+  function removeSearchChip(value) {
+    document.getElementById("searchValue").value = null;
+    updatefilterValueforApiCall();
+    getTourListAPICall();
+  }
+  //});
 </script>
 
 </html>
