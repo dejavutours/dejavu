@@ -32,13 +32,13 @@
                             <div class="single_place">
                                 <div class="thumb">
                                     <!-- <img src="images/<%= trips.imageurl %>" alt=""> -->
-                                    <a href="/tripdetails/<%= trips.name %>">
+                                    <a href="/tripdetails/<%= trips._id %>">
                                         <img src="images/<%= trips.imageurl %>" alt="">
                                     </a>
-                                    <a href="/tripdetails/<%= trips.name %>" class="prise">₹<%= trips.price %></a><br>  
+                                    <a href="/tripdetails/<%= trips._id %>" class="prise">₹<%= trips.price %></a><br>  
                                 </div>
                                 <div class="place_info">
-                                    <a href="/tripdetails/<%= trips.name %>"><h3><%= trips.name %></h3></a>
+                                    <a href="/tripdetails/<%= trips._id %>"><h3><%= trips.name %></h3></a>
                                     <% if (!profile || profile?.email !== process.env.GMAIL_ADMIN) { %>
                                         <% for (var i = 0; i < trips.upcomingtrip.length; i++) { %>
                                     <form style ='display:inline-block;' action="/bookdate" method="POST">

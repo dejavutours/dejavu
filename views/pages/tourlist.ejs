@@ -141,6 +141,7 @@
   }
 
   .package-card {
+    cursor: pointer;
     overflow: hidden;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   }
@@ -344,7 +345,7 @@
     <div class="packages-grid">
       <!-- Package 1 -->
       <% tourPackages.forEach(function(tour) { %>
-      <div class="package-card p-2 border rounded-4">
+      <div class="package-card p-2 border rounded-4" onclick="window.location.href='/tripdetails/<%= tour._id %>'">
         <div class="card-image-container">
           <img src="<%= tour.imageurl %>" alt="Kutch desert with camels" class="card-image card-img-top img-fluid rounded-4">
           <!-- <div class="discount-tag">10% off</div> -->

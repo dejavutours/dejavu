@@ -25,13 +25,13 @@
                         <div class="single_place">
                             <div class="thumb">
                                 <!-- <img src="/images/<%= trips.imageurl %>" alt=""> -->
-                                <a href="/tripdetails/<%= trips.name %>">
+                                <a href="/tripdetails/<%= trips._id  %>">
                                     <img src="/images/<%= trips.imageurl %>" alt="">
                                 </a>
-                                <a href="/tripdetails/<%= trips.name %>" class="prise">₹<%= trips.price %></a>
+                                <a href="/tripdetails/<%= trips._id %>" class="prise">₹<%= trips.price %></a>
                             </div>
                             <div class="place_info">
-                                <a href="/tripdetails/<%= trips.name %>"><h3><%= trips.name %></h3></a>
+                                <a href="/tripdetails/<%= trips._id %>"><h3><%= trips.name %></h3></a>
                                 <p><%= trips.destinations %></p>
                                 <p><%= trips.route %></p>
                                 <div class="rating_days d-flex justify-content-between">

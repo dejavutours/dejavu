@@ -297,9 +297,8 @@ exports.postNewAddTours = async (req, res, next) => {
 exports.getTourDetails = async (req, res, next) => {
   try {
     const token = req.params.token;
-    const tripdetails = await Tours.find({ name: token });
-    const tests = await Tours.find().distinct("name");
-    res.render("pages/TripDetails", { trips: tripdetails[0], test: tests });
+    const tripdetails = await NewTours.findById(token);
+    res.render("pages/TripDetails", { trips: tripdetails});
   } catch (err) {
     console.log(err);
   }
@@ -487,6 +486,7 @@ exports.postEdit = async (req, res, next) => {
 };
 
 // DM get new edit trip detila based on trip id
+// No need to create this api please check wilth RJ First
 exports.getTripDetialById = async (req, res, next) => {
 
 };
@@ -786,10 +786,13 @@ exports.getAccomodationsDetails = async (req, res, next) => {
 
 exports.getStateFilters = async (req, res, next) => {
   try {
-    const token = req.params.token;
-    const alltours = await Tours.find({ state: token });
-    const tests = await Tours.find().distinct("name");
-    res.render("pages/StateFilter", { Tours: alltours, test: tests });
+    const filter = {
+      States: req.params.token
+    };
+   req.query.filterValue = JSON.stringify(filter);
+
+    const response = await this.getFiltertourAPIUseOnly(req,res);
+    res.render("pages/StateFilter", { Tours: response.tours });
   } catch (err) {
     console.log(err);
   }
@@ -1468,9 +1471,9 @@ exports.createNewTourse = async (req, res) => {
   }
 };
 
-// Fetch all tours
-exports.getTours = async (req, res) => {
-  try {
+// Fetch all Filters tours
+exports.getFiltertourAPIUseOnly = async (req,res) =>{
+  try{
     let filters = [];
     if (req && req.query && req.query.filterValue) {
       filters = JSON.parse(req.query.filterValue);
@@ -1507,6 +1510,17 @@ exports.getTours = async (req, res) => {
         },
       });
     }
+
+    // Filter by States
+    if(filters['States']){
+      const statesFilter = filters['States'].split(',')
+      queryConditions.push({
+        state: {
+          $in :  statesFilter.map((type) => new RegExp(`^${type}$`, "i"))
+        }
+      })
+    }
+
     if (req.query.searchValue) {
       //const regex = new RegExp(".*" +`^${req.query.searchValue}$`+".*", "i")
       const regex = new RegExp(
@@ -1555,11 +1569,23 @@ exports.getTours = async (req, res) => {
     }
     // Execute query with all filters applied
     const query = queryConditions.length > 0 ? { $and: queryConditions } : {};
-    const tours = await NewTours.find(query); // Use NewTours instead of NewToursSchema
+    const tourList = await NewTours.find(query); // Use NewTours instead of NewToursSchema
+    return ({
+      tours: tourList,
+      filters: filters
+    })
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+// Fetch all tours
+exports.getTours = async (req, res) => {
+  try {
+    const response = await this.getFiltertourAPIUseOnly(req,res); // Use NewTours instead of NewToursSchema
     //res.json(tours);
     res.render("pages/tourlist", {
-      tourPackages: tours,
-      filterChips: Object.values(filters).flat(),
+      tourPackages: response.tours,
+      filterChips: Object.values(response.filters).flat(),
       Searchvalue: req.query.searchValue,
     });
   } catch (error) {
