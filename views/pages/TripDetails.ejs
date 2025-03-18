@@ -1,22 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kedarnath - Tungnath Trek</title>
-    <%- include('../partials/headtag'); %>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kedarnath - Tungnath Trek</title>
+  <%- include('../partials/headtag'); %>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
     <style>
       :root {
         --primary-blue: #1a4b8e;
@@ -194,10 +185,8 @@
       .play-btn {
         width: 100px;
         height: 100px;
-        background: radial-gradient(
-          rgba(35, 235, 142, 0.8) 60%,
-          rgba(255, 255, 255, 1) 62%
-        );
+        background: radial-gradient(rgba(35, 235, 142, 0.8) 60%,
+            rgba(255, 255, 255, 1) 62%);
         border-radius: 50%;
         position: relative;
         display: block;
@@ -298,8 +287,10 @@
       #carouselTrack {
         white-space: nowrap;
         scroll-behavior: smooth;
-        scrollbar-width: none; /* Hides scrollbar (Firefox) */
-        -ms-overflow-style: none; /* Hides scrollbar (IE/Edge) */
+        scrollbar-width: none;
+        /* Hides scrollbar (Firefox) */
+        -ms-overflow-style: none;
+        /* Hides scrollbar (IE/Edge) */
       }
 
       /* Hide scrollbar for WebKit browsers */
@@ -328,19 +319,324 @@
         right: 10px;
       }
     </style>
-  </head>
+    <!-- Itiniary CSS -->
+    <style>
+      .itinerary-section {
+        background-color: #fff;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
 
-  <body>
-    <%- include('../partials/header'); %>
+      .itinerary-header {
+        padding: 15px 20px;
+        background-color: #e7e7e7c7;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: bold;
+      }
+
+      .itinerary-content {
+        padding: 15px 20px;
+        display: none;
+        animation: fadeIn 0.3s ease-in-out;
+      }
+
+      .itinerary-section.active .itinerary-content {
+        display: block;
+      }
+
+      .image-box {
+        margin-top: 15px;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .image-box img {
+        width: 100%;
+        height: auto;
+      }
+
+      ul {
+        padding-left: 20px;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+
+        to {
+          opacity: 1;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .itinerary-header {
+          align-items: flex-start;
+        }
+      }
+    </style>
+    <!-- UP/DOWN array css -->
+    <style>
+      .arrow-icon {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-left: 2px solid #a1a1a1;
+        border-bottom: 2px solid #a1a1a1;
+        transform: rotate(45deg);
+        margin: 5px;
+      }
+
+      .arrow-icon.down {
+        transform: rotate(315deg);
+      }
+
+      .arrow-icon.up {
+        transform: rotate(135deg);
+      }
+    </style>
+    <!-- Link Section CSS -->
+    <style>
+      .links-section {
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+
+      .links-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .links-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .link-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border: 1px solid #dcdcdc;
+        border-radius: 10px;
+        background-color: white;
+        color: #333;
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background 0.3s;
+      }
+
+      .link-btn:hover {
+        background-color: #f5f5f5;
+      }
+
+      /* Link sestion Popup CSS */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      .modal-content {
+        background-color: #fff;
+        margin: 50px auto;
+        padding: 20px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 600px;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-header h4 {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .modal-close {
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      .modal-body {
+        margin-top: 15px;
+        font-size: 14px;
+      }
+
+      .modal-body h5 {
+        font-weight: bold;
+        margin-top: 10px;
+      }
+
+      .modal-body ul {
+        padding-left: 20px;
+        list-style: disc;
+      }
+
+      .modal-footer {
+        text-align: right;
+        margin-top: 20px;
+      }
+
+      .modal-btn {
+        padding: 6px 12px;
+        background-color: #0d47a1;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .modal-btn:hover {
+        background-color: #0b3c8c;
+      }
+
+      @media screen and (max-width: 480px) {
+        .modal-content {
+          margin: 20px;
+          padding: 15px;
+        }
+
+        .modal-btn {
+          font-size: 14px;
+        }
+      }
+    </style>
+    <!-- More Information CSS -->
+    <style>
+      .tab-menu {
+        display: flex;
+        gap: 15px;
+        border-bottom: 2px solid #e0e0e0;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .tab {
+        background: none;
+        border: none;
+        padding: 10px 16px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        border-bottom: 3px solid transparent;
+        transition: border-color 0.3s;
+      }
+
+      .tab:hover,
+      .tab.active {
+        border-color: #111;
+        color: #111;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .table-responsive {
+        overflow-x: auto;
+      }
+
+      .package-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+
+      .package-table th,
+      .package-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: center;
+      }
+
+      .package-table th {
+        background-color: #2c2f38;
+        color: white;
+        font-weight: 600;
+      }
+
+      .package-table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      .sub-text {
+        font-size: 13px;
+        color: #777;
+        display: block;
+        margin-top: 4px;
+      }
+      /* .info-notes {
+        list-style: disc;
+        padding-left: 20px;
+        color: #444;
+        font-size: 15px;
+      }
+
+      .info-notes li {
+        margin-bottom: 8px;
+      } */
+      /* Responsive Design */
+      @media (max-width: 600px) {
+        .tab-menu {
+          flex-direction: column;
+        }
+
+        .tab {
+          width: 100%;
+          text-align: left;
+        }
+
+        .package-table th,
+        .package-table td {
+          font-size: 14px;
+          padding: 8px;
+        }
+
+        .info-heading {
+          font-size: 20px;
+        }
+      }
+    </style>
+
+</head>
+
+<body>
+  <%- include('../partials/header'); %>
     <div class="container py-4">
       <!-- Header -->
       <div class="trek-header">
         <div>
-          <h1 class="trek-title">Kedarnath - Tungnath</h1>
-          <div class="trek-subtitle">with Chopta - Narkhola - Badrinath</div>
+          <h1 class="trek-title">
+            <%= trips.name%>
+          </h1>
+          <div class="trek-subtitle"><%- trips.destinations%></div>
         </div>
         <div class="d-flex align-items-center gap-3 bg-light p-3">
-          <div class="fs-5">₹7499 <span class="fs-6">/person</span></div>
+          <div class="fs-5">₹<%-trips.price %><span class="fs-6">/person</span></div>
           <a href="#" class="btn-book-now rounded-5">Book now</a>
         </div>
       </div>
@@ -350,20 +646,17 @@
           <div class="swiper-slide">
             <img
               src="https://www.chardham-pilgrimage-tour.com/assets/images/top-tourist-places-enroute-kedarnath-dham.webp"
-              alt="Kedarnath Temple View 1"
-            />
+              alt="Kedarnath Temple View 1" />
           </div>
           <div class="swiper-slide">
             <img
               src="https://www.chardham-pilgrimage-tour.com/assets/images/top-tourist-places-enroute-kedarnath-dham.webp"
-              alt="Kedarnath Temple View 2"
-            />
+              alt="Kedarnath Temple View 2" />
           </div>
           <div class="swiper-slide">
             <img
               src="https://www.chardham-pilgrimage-tour.com/assets/images/top-tourist-places-enroute-kedarnath-dham.webp"
-              alt="Kedarnath Temple View 3"
-            />
+              alt="Kedarnath Temple View 3" />
           </div>
         </div>
         <!-- Add Pagination -->
@@ -379,18 +672,10 @@
           <!-- Left Content -->
           <div class="col-lg-7">
             <h5 class="fw-bold">About</h5>
-            <p class="text-muted">
-              Explore a soul-stirring journey to the mystical Himalayan marvels
-              of Kedarnath and Tungnath. In Kedarnath, find solace at the
-              ancient temple of Lord Shiva amidst awe-inspiring landscapes.
-              Then, ascend to Tungnath, the highest Shiva temple globally, for
-              panoramic views that touch the soul. This expedition promises an
-              unforgettable blend of spirituality and natural beauty, a
-              testament to the captivating allure of the Himalayas.
-            </p>
-            <button class="btn btn-light border rounded-pill px-4 py-2">
-              <i class="bi bi-download"></i> Download Itinerary
-            </button>
+            <%-trips.about %>
+              <button class="btn btn-light border rounded-pill px-4 py-2">
+                <i class="bi bi-download"></i> Download Itinerary
+              </button>
           </div>
 
           <!-- Right Content -->
@@ -402,7 +687,7 @@
                 </div>
                 <div>
                   <small class="text-muted">Duration</small>
-                  <p class="mb-0 fw-semibold">6 days - 7 nights</p>
+                  <p class="mb-0 fw-semibold"><%-trips.price %></p>
                 </div>
               </div>
               <div class="col-6 d-flex align-items-center">
@@ -411,7 +696,9 @@
                 </div>
                 <div>
                   <small class="text-muted">Difficulty</small>
-                  <p class="mb-0 fw-semibold">Easy to Moderate</p>
+                  <p class="mb-0 fw-semibold">
+                    <%= trips.tripType %>
+                  </p>
                 </div>
               </div>
               <div class="col-6 d-flex align-items-center">
@@ -420,7 +707,9 @@
                 </div>
                 <div>
                   <small class="text-muted">Altitude</small>
-                  <p class="mb-0 fw-semibold">12,000 ft</p>
+                  <p class="mb-0 fw-semibold">
+                    <%= trips.altitude %>
+                  </p>
                 </div>
               </div>
               <div class="col-6 d-flex align-items-center">
@@ -429,7 +718,9 @@
                 </div>
                 <div>
                   <small class="text-muted">Best season</small>
-                  <p class="mb-0 fw-semibold">May to October</p>
+                  <p class="mb-0 fw-semibold">
+                    <%= trips.bestSession %>
+                  </p>
                 </div>
               </div>
               <div class="col-6 d-flex align-items-center">
@@ -438,7 +729,9 @@
                 </div>
                 <div>
                   <small class="text-muted">Region</small>
-                  <p class="mb-0 fw-semibold">Uttarakhand, Himalaya</p>
+                  <p class="mb-0 fw-semibold">
+                    <%= trips.state %>, India
+                  </p>
                 </div>
               </div>
             </div>
@@ -446,6 +739,7 @@
         </div>
       </div>
     </div>
+    <!-- Departure City -->
     <div class="container-fluid py-2 my-2 bg-light">
       <!-- Departure City Section -->
       <div class="container">
@@ -455,68 +749,44 @@
             <div class="position-relative">
               <div class="d-flex gap-3 overflow-auto" id="carouselTrack">
                 <div class="city-card bg-light">
-                  <img
-                    src="https://via.placeholder.com/150x100"
-                    alt="Ahmedabad"
-                  />
+                  <img src="https://via.placeholder.com/150x100" alt="Ahmedabad" />
                   <h6 class="mt-2 mb-1">Ahmedabad</h6>
-                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
-                  ><br />
+                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small><br />
                   <small class="fw-semibold text-dark">₹7499/person</small>
                 </div>
                 <div class="city-card bg-light">
                   <img src="https://via.placeholder.com/150x100" alt="Surat" />
                   <h6 class="mt-2 mb-1">Surat</h6>
-                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
-                  ><br />
+                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small><br />
                   <small class="fw-semibold text-dark">₹7499/person</small>
                 </div>
                 <div class="city-card bg-light">
                   <img src="https://via.placeholder.com/150x100" alt="Delhi" />
                   <h6 class="mt-2 mb-1">Delhi</h6>
-                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
-                  ><br />
+                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small><br />
                   <small class="fw-semibold text-dark">₹8499/person</small>
                 </div>
                 <div class="city-card bg-light">
                   <img src="https://via.placeholder.com/150x100" alt="Jaipur" />
                   <h6 class="mt-2 mb-1">Jaipur</h6>
-                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
-                  ><br />
+                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small><br />
                   <small class="fw-semibold text-dark">₹8999/person</small>
                 </div>
                 <div class="city-card bg-light">
                   <img src="https://via.placeholder.com/150x100" alt="Mumbai" />
                   <h6 class="mt-2 mb-1">Mumbai</h6>
-                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small
-                  ><br />
+                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small><br />
                   <small class="fw-semibold text-dark">₹9499/person</small>
                 </div>
               </div>
 
               <!-- Scroll Buttons (Hidden by Default) -->
-              <button
-                id="prevBtn"
-                class="carousel-control-prev d-none"
-                type="button"
-                onclick="slideLeft()"
-              >
-                <span
-                  class="carousel-control-prev-icon"
-                  aria-hidden="true"
-                ></span>
+              <button id="prevBtn" class="carousel-control-prev d-none" type="button" onclick="slideLeft()">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
               </button>
-              <button
-                id="nextBtn"
-                class="carousel-control-next d-none"
-                type="button"
-                onclick="slideRight()"
-              >
-                <span
-                  class="carousel-control-next-icon"
-                  aria-hidden="true"
-                ></span>
+              <button id="nextBtn" class="carousel-control-next d-none" type="button" onclick="slideRight()">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
               </button>
             </div>
@@ -562,141 +832,115 @@
       <!-- Main Attractions -->
       <div class="mb-4">
         <h5 class="mb-3">Main attractions</h5>
-        <ul class="list-unstyled">
-          <li class="mb-2">• Ganga Aarti at Har ki Pauri (Hari)</li>
-          <li class="mb-2">• Shri Badrinath Temple</li>
-          <li class="mb-2">• Hanuman Tok (3,100 ft)</li>
-          <li class="mb-2">• River confluence at Devprayag and Rudraprayag</li>
-          <li class="mb-2">• Chopta and Tungnath - Highest Shiva Temple</li>
-          <li class="mb-2">• Chandrashila Summit (4,000 meter/12000 feet)</li>
-          <li class="mb-2">• Kedartal Valley - Nandadevi, Lammergeyer etc</li>
-        </ul>
+        <%- trips.activities %>
       </div>
 
       <!-- Itinerary -->
-      <div class="mb-4">
-        <h5 class="mb-3">Itinerary</h5>
-        <div class="accordion" id="itineraryAccordion">
-          <div class="accordion-item border-0">
-            <h2 class="accordion-header">
-              <button
-                class="itinerary-item"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#day1"
-              >
-                <div class="d-flex justify-content-between">
-                  <span>Day 1: Journey starts from Ahmedabad</span>
-                  <span>(May 9 2024)</span>
-                </div>
-              </button>
-            </h2>
-            <div
-              id="day1"
-              class="accordion-collapse collapse"
-              data-bs-parent="#itineraryAccordion"
-            >
-              <div class="accordion-body">
-                <p>Reporting time: 10:15 AM</p>
-                <p>Boarding time: 11:00 AM</p>
-                <p>Location: Kalupur railway station (BTS)</p>
-                <ul>
-                  <li>More details goes here</li>
-                  <li>More details goes here with bullet points</li>
-                </ul>
+      <% if(trips && trips.itinerary && trips.itinerary.length> 0) { %>
+        <div>
+          <h5>Itinerary</h5>
+          <% trips.itinerary.forEach(function(item,index) { %>
+            <div class="itinerary-section" id="<%=index%>">
+              <div class="itinerary-header">
+                <%= item.day %>: <%= item.header %>
+                    <span class="toggle-icon"><span class="arrow-icon down"></span></span>
+              </div>
+              <div class="itinerary-content">
+                <%- item.description %>
               </div>
             </div>
-          </div>
-          <!-- More days... -->
-          <div class="accordion-item border-0">
-            <h2 class="accordion-header">
-              <button
-                class="itinerary-item"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#day2"
-              >
-                <div class="d-flex justify-content-between">
-                  <span>Day 2: Journey starts from Ahmedabad</span>
-                  <span>(May 9 2024)</span>
+            <% })%>
+              <% } %>
+
+                <!-- More Information -->
+                <div class="mb-4">
+                  <div class="tab-menu">
+                    <button class="tab active" onclick="showTab('package')">Package cost</button>
+                    <button class="tab" onclick="showTab('attractions')">Main attractions</button>
+                    <button class="tab" onclick="showTab('carry')">Things to carry</button>
+                  </div>
+
+                  <!-- Tab Content -->
+                  <div id="package" class="tab-content active">
+                    <%- trips.package_cost%>
+                    <!-- <div class="table-responsive">
+                      <table class="package-table">
+                        <thead>
+                          <tr>
+                            <th>Available from</th>
+                            <th>Days</th>
+                            <th>Cost</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>
+                              Delhi <br />
+                              <span class="sub-text">(Triple Sharing)</span>
+                            </td>
+                            <td>5 days - 6 nights</td>
+                            <td>₹5499/-</td>
+                          </tr>
+                          <tr>
+                            <td>
+                              Ahmedabad, Vadodara <br />
+                              <span class="sub-text">(Non-AC sleeper train)</span>
+                            </td>
+                            <td>6 days - 7 nights</td>
+                            <td>₹7499/-</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <ul class="info-notes">
+                      <li>Delhi - Ahmedabad/Vadodara Non AC Sleeper Train</li>
+                      <li>For 3AC train and flight charges as per actual at the time booking</li>
+                      <li>Tatkal Train Ticket charges will be considered extra at the time of booking</li>
+                      <li>For couple sharing private room - ₹3000 per couple extra</li>
+                    </ul> -->
+                  </div>
+
+                  <div id="attractions" class="tab-content">
+                    <%- trips.activities%>
+                  </div>
+
+                  <div id="carry" class="tab-content">
+                    <%- trips.things_to_carry%>
+                  </div>
                 </div>
-              </button>
-            </h2>
-            <div
-              id="day2"
-              class="accordion-collapse collapse"
-              data-bs-parent="#itineraryAccordion"
-            >
-              <div class="accordion-body">
-                <p>Reporting time: 10:15 AM</p>
-                <p>Boarding time: 11:00 AM</p>
-                <p>Location: Kalupur railway station (BTS)</p>
-                <ul>
-                  <li>More details goes here</li>
-                  <li>More details goes here with bullet points</li>
-                </ul>
-              </div>
+        </div>
+        <!-- Links -->
+        <div class="links-section">
+          <h3 class="links-title">Links</h3>
+          <div class="links-buttons">
+            <button class="link-btn" onclick="openDynamicModal('Cancellation Policy', '<%=trips.bookncancel%>')">
+              Cancellation policy <span>&#x2197;</span>
+            </button>
+            <button class="link-btn" onclick="openDynamicModal('Inclusion & Exclusion','<%= trips.includenexclude%>')">
+              Inclusion & Exclusion <span>&#x2197;</span>
+            </button>
+            <button class="link-btn" onclick="openDynamicModal('Terms & Conditions','<%= trips.infonfaq%>')">
+              Terms & Conditions <span>&#x2197;</span>
+            </button>
+          </div>
+        </div>
+        <!-- Links Popup -->
+        <div id="dynamicModal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 id="modalTitle">Modal Title</h4>
+              <span class="modal-close" onclick="closeDynamicModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="modalBody">
+              <!-- Dynamic content will be inserted here -->
+            </div>
+            <div class="modal-footer">
+              <button onclick="closeDynamicModal()" class="modal-btn">Okay</button>
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- More Information -->
-      <div class="mb-4">
-        <ul class="nav nav-tabs" id="infoTabs" role="tablist">
-          <li class="nav-item">
-            <button
-              class="nav-link active"
-              data-bs-toggle="tab"
-              data-bs-target="#package"
-            >
-              Package cost
-            </button>
-          </li>
-          <li class="nav-item">
-            <button
-              class="nav-link"
-              data-bs-toggle="tab"
-              data-bs-target="#attractions"
-            >
-              Main attractions
-            </button>
-          </li>
-          <li class="nav-item">
-            <button
-              class="nav-link"
-              data-bs-toggle="tab"
-              data-bs-target="#carry"
-            >
-              Things to carry
-            </button>
-          </li>
-        </ul>
-        <div class="tab-content mt-3">
-          <div class="tab-pane fade show active" id="package">
-            <table class="package-table">
-              <tr>
-                <td>Delhi</td>
-                <td>5 days - 6 nights</td>
-                <td>₹4599/-</td>
-              </tr>
-              <tr>
-                <td>Ahmedabad, Vadodara</td>
-                <td>6 days - 7 nights</td>
-                <td>₹7499/-</td>
-              </tr>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Links -->
-      <div class="d-flex gap-4">
-        <a href="#" class="link-icon">Cancellation policy</a>
-        <a href="#" class="link-icon">Inclusion & Exclusion</a>
-        <a href="#" class="link-icon">Terms & Conditions</a>
-      </div>
     </div>
+
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -774,10 +1018,66 @@
       window.onload = checkSlideButtons;
       window.onresize = checkSlideButtons;
     </script>
+    <!-- Itinerary Script -->
+    <script>
+      const headers = document.querySelectorAll('.itinerary-header');
+
+      headers.forEach(header => {
+        header.addEventListener('click', () => {
+          const section = header.parentElement;
+          section.classList.toggle('active');
+
+          const icon = header.querySelector('.arrow-icon');
+          if (section.classList.contains('active')) {
+            icon.classList.remove('down');
+            icon.classList.add('up');
+          } else {
+            icon.classList.remove('up');
+            icon.classList.add('down');
+          }
+        });
+      });
+
+    </script>
+    <!-- switch tabs (More Informations) Scripts-->
+    <script>
+      function showTab(tabId) {
+        const tabs = document.querySelectorAll(".tab");
+        const contents = document.querySelectorAll(".tab-content");
+
+        tabs.forEach(tab => tab.classList.remove("active"));
+        contents.forEach(content => content.classList.remove("active"));
+
+        document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add("active");
+        document.getElementById(tabId).classList.add("active");
+      }
+    </script>
+    <!-- Links Popup -->
+    <script>
+      // Open modal with dynamic data
+      function openDynamicModal(title, content) {
+        document.getElementById("modalTitle").innerText = title;
+        document.getElementById("modalBody").innerHTML = content;
+        document.getElementById("dynamicModal").style.display = "block";
+      }
+
+      // Close modal
+      function closeDynamicModal() {
+        document.getElementById("dynamicModal").style.display = "none";
+      }
+
+      // Close when clicking outside
+      window.onclick = function (event) {
+        const modal = document.getElementById("dynamicModal");
+        if (event.target === modal) {
+          closeDynamicModal();
+        }
+      };
+    </script>
     <!-- newletter_area_end  -->
-    <%- include('../partials/footer'); %> <%- include('../partials/scripttag');
-    %>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-  </body>
+    <%- include('../partials/footer'); %> <%- include('../partials/scripttag'); %>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+</body>
+
 </html>
