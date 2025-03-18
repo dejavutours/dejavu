@@ -204,6 +204,7 @@
             <div class="mb-3">
               <label for="file" class="form-label">Upload Image</label>
               <input type="file" accept="image/*" name="image" id="file" enctype="multipart/form-data" class="form-control">
+              <input type="hidden" name="existingImage" value="<%= trips.imageurl %>">
               <div class="preview-container position-relative" id="mainImagePreviewContainer" style="display: <%= trips.imageurl ? 'block' : 'none' %>;">
                 <img id="mainImagePreview" alt="Preview" data-bs-toggle="modal" src="<%= trips.imageurl ? trips.imageurl : '' %>" data-bs-target="#imageModal" style="display: <%= trips.imageurl ? 'block' : 'none' %>;">
                 <button type="button" class="btn btn-danger remove-image" id="removeMainImage" style="position: absolute; top: 5px; right: 5px; padding: 5px; display: <%= trips.imageurl ? 'block' : 'none' %>;">
@@ -246,7 +247,7 @@
           </div>
           <div class="col-12 col-md-6">
             <div class="mb-3">
-              <label for="altitude" class="form-label">Altitude</label>
+              <label for="altitude" class="form-label">Altitude (feet)</label>
               <input type="text" class="form-control" name="altitude" id="altitude" placeholder="" value="<%= trips.altitude %>" required="" />
             </div>
           </div>
@@ -261,7 +262,7 @@
           </div>
           <div class="col-12 col-md-6">
             <div class="mb-3">
-              <label for="Price" class="form-label">Price(Price per person)</label>
+              <label for="Price" class="form-label">Base Price (Total trip cost)</label>
               <input type="text" class="form-control" name="price" id="price" placeholder="" value="<%= trips.price %>" required="" />
             </div>
           </div>
@@ -317,8 +318,8 @@
                 <div class="row">
                   <div class="col-12 col-md-6">
                     <div class="mb-3">
-                      <label for="basePrice" class="form-label">Base Price (Total trip cost)</label>
-                      <input type="number" class="form-control cost-field" id="basePrice" placeholder="Enter base price" required>
+                      <label for="basePrice" class="form-label">Per Person cost</label>
+                      <input type="number" class="form-control cost-field" id="perPersonCost" name="perPersonCost" placeholder="Enter base price" required disabled>
                     </div>
                   </div>
                   <div class="col-12 col-md-6">
@@ -345,8 +346,8 @@
                 <div class="row">
                   <div class="col-12 col-md-6">
                     <div class="mb-3">
-                      <label for="infantPrice" class="form-label">Infant Price</label>
-                      <input type="number" class="form-control" name="infantPrice" id="infantPrice" placeholder="Enter price per infant (if applicable)" />
+                      <label for="infantPrice" class="form-label">offer</label>
+                      <input type="text" class="form-control" name="infantPrice" id="infantPrice" placeholder="" disabled />
                     </div>
                   </div>
                   <!-- Date Picker Input -->
@@ -394,7 +395,7 @@
             </div>
           </div>
         </div>
-        <div class="row">
+        <div class="row mt-4">
           <div class="col-12 col-md-12">
             <div class="accordion mb-3" id="aboutAccordion">
               <div class="accordion-item">
@@ -454,23 +455,55 @@
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-12 col-md-12">
+        <!-- <div class="row">
+          <div class="col-12 col-md-12 border rounded mt-2 mb-2">
             <div class="mb-3">
-              <label for="itinerary" class="form-label">Itinerary</label>
               <div class="d-flex justify-content-between mb-3">
                 <button id="add-day" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add Day</button>
                 <button id="remove-day" class="btn btn-danger" disabled><i class="bi bi-trash"></i> Remove Day</button>
               </div>
-
-              <!-- Container for multiple itinerary editors -->
-              <div id="itinerary-container">
+            <h5 class="mt-3">Itinerary</h5> -->
+        <!-- Container for multiple itinerary editors -->
+        <!-- <div id="itinerary-container">
                 <div class="itinerary-day p-3 mb-3" data-day="1">
                   <h5>Day 1</h5>
                   <input type="text" class="form-control" name="itinerary-header" id="itinerary-header" placeholder="Enter Header" value="" required="" />
                   <div class="editor-container mb-3" id="editor-1"></div>
                   <input type="hidden" name="content[]" class="quill-content">
                 </div>
+              </div>
+            </div>
+          </div>
+        </div> -->
+        <div class="row">
+          <div class="col-12 col-md-12 border rounded mt-2 mb-2">
+            <div class="mb-3">
+              <div class="d-flex justify-content-between mb-3">
+                <button id="add-day" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add Day</button>
+                <button id="remove-day" class="btn btn-danger" disabled><i class="bi bi-trash"></i> Remove Day</button>
+              </div>
+              <h5 class="mt-3">Itinerary</h5>
+
+              <!-- Container for multiple itinerary editors -->
+              <div id="itinerary-container">
+                <% if (trips.itinerary && trips.itinerary.length > 0) { %>
+                <% trips.itinerary.forEach((dayItem, index) => { %>
+                <div class="itinerary-day p-3 mb-3" data-day="<%= index + 1 %>">
+                  <h5>Day <%= index + 1 %></h5>
+                  <input type="text" class="form-control" name="itinerary-header" value="<%= dayItem.header %>" placeholder="Enter Header" required />
+                  <div class="editor-container mb-3" id="editor-<%= index + 1 %>"></div>
+                  <input type="hidden" name="content[]" class="quill-content" value="<%= dayItem.description %>">
+                </div>
+                <% }) %>
+                <% } else { %>
+                <!-- Default empty itinerary item if none exist -->
+                <div class="itinerary-day p-3 mb-3" data-day="1">
+                  <h5>Day 1</h5>
+                  <input type="text" class="form-control" name="itinerary-header" placeholder="Enter Header" required />
+                  <div class="editor-container mb-3" id="editor-1"></div>
+                  <input type="hidden" name="content[]" class="quill-content">
+                </div>
+                <% } %>
               </div>
             </div>
           </div>
@@ -773,7 +806,6 @@
 
     document.addEventListener("DOMContentLoaded", function() {
       const cityContainer = document.getElementById("cityContainer");
-      const addCityButton = document.getElementById("addCity");
       let selectedCities = new Set();
 
       // Fetch cities and populate dropdown
@@ -800,8 +832,7 @@
           option.dataset.image = city.image;
           selectElement.appendChild(option);
         });
-      }
-
+      };
       // Handle city selection (event delegation)
       cityContainer.addEventListener("change", function(event) {
         if (event.target.classList.contains("city-select")) {
@@ -838,172 +869,20 @@
           }
         }
       });
-
-      // Function to add a new city section
-      let newCityEntry = null;
-      async function addCitySection() {
-        newCityEntry = document.createElement("div");
-        newCityEntry.classList.add("city-entry", "mb-3");
-        newCityEntry.innerHTML = `
-               <div class="col-md-2">
-              <button class="btn btn-danger remove-city mt-4">Remove</button>
-              </div>
-              <div class="city-entry">
-                <div class="row">
-                  <div class="col-12 text-end">
-                    <button type="button" class="btn btn-danger btn-sm remove-city d-none">
-                      <i class="bi bi-x-circle"></i> Remove Section
-                    </button>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                      <label>City</label>
-                      <select class="form-select city-select" required>
-                        <option value="">Select City</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                      <label>City Image</label>
-                      <img src="" class="img-fluid city-image" style="display: none; max-width: 100px;">
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                      <label>State</label>
-                      <input type="text" class="form-control state-field" placeholder="State" readonly required>
-                    </div>
-                  </div>
-                </div>
-                <h5 class="mt-3">Pricing Details</h5>
-                <div class="row">
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                      <label for="basePrice" class="form-label">Base Price (Total trip cost)</label>
-                      <input type="number" class="form-control cost-field" id="basePrice" placeholder="Enter base price" required>
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                      <label>Transfer Type</label>
-                      <input type="text" class="form-control transferType" name="transferType" placeholder="Transfer Type" required>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                      <label for="childPrice" class="form-label">Child Price</label>
-                      <input type="number" class="form-control" name="childPrice" id="childPrice" placeholder="Enter price per child" required />
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                      <label for="adultPrice" class="form-label">Adult Price</label>
-                      <input type="number" class="form-control adultPrice" id="adultPrice" placeholder="Enter price per adult" required>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                      <label for="infantPrice" class="form-label">Infant Price</label>
-                      <input type="number" class="form-control" name="infantPrice" id="infantPrice" placeholder="Enter price per infant (if applicable)" />
-                    </div>
-                  </div>
-                  <!-- Date Picker Input -->
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                      <h6 class="mt-3">Available Dates</h5>
-                        <div class="input-group">
-                          <input type="text" id="datePicker" class="form-control datePicker" placeholder="Select multiple dates">
-                          <button class="btn btn-danger clearDates" id="clearDates">Clear</button>
-                        </div>
-                        <small class="text-danger d-none error-msg" id="error-msg">Please select at least one date.</small>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <!-- Scrollable Table for Selected Dates -->
-                  <div class="col-12 col-md-12">
-                    <div class="mb-3">
-                      <label class="form-label fw-bold"></label>
-                      <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
-                        <table class="table table-bordered table-hover align-middle">
-                          <thead class="table-light sticky-top">
-                            <tr>
-                              <th class="text-center" style="width: 10%;">S.No.</th>
-                              <th class="text-center" style="width: 60%;">Selected Date</th>
-                              <th class="text-center" style="width: 30%;">Action</th>
-                            </tr>
-                          </thead>
-                          <tbody id="datePreview">
-                            <!-- Dynamic Rows Will Be Inserted Here -->
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-12 d-flex mb-3">
-                    <button type="button" class="btn btn-primary btn-sm addCity" id="addCity">
-                      <i class="bi bi-plus-circle"></i> Add City
-                    </button>
-                  </div>
-                </div>
-              </div>
-    `;
-
-        cityContainer.appendChild(newCityEntry);
-        const newSelect = newCityEntry.querySelector(".city-select");
-        await populateCityDropdown(newSelect);
-        // Reinitialize flatpickr for the new date picker input
-        let datePickerInput = newCityEntry.querySelector(".datePicker");
-        flatpickr(datePickerInput, {
-          mode: "multiple",
-          dateFormat: "Y-m-d",
-          minDate: "today",
-          enableTime: false,
-          onClose: function(selectedDatesArr) {
-            let selectedDates = selectedDatesArr.map(date => date.toISOString().split("T")[0]);
-            updateDatePreview(datePickerInput, selectedDates);
-          }
-        });
-      }
-
-      // Event listener to add a new city section
-      addCityButton.addEventListener("click", function() {
-        addCitySection();
-      });
-
-      // Handle removing a city section
-      cityContainer.addEventListener("click", function(event) {
-        if (event.target.classList.contains("remove-city")) {
-          const cityEntry = event.target.closest(".city-entry");
-          if (cityEntry) {
-            cityContainer.removeChild(cityEntry);
-          }
-        }
-      });
-
       // Initialize first dropdown
       populateCityDropdown(document.querySelector(".city-select"));
 
       let selectedDates = [];
-      let datePickerInput = cityContainer.querySelector(".datePicker");
-      flatpickr('#datePicker', {
+      let datePickerInput = document.querySelector(".datePicker");
+
+      // Store the flatpickr instance in `fp`
+      let fp = flatpickr("#datePicker", {
         mode: "multiple",
         dateFormat: "Y-m-d",
         minDate: "today",
         enableTime: false,
         onClose: function(selectedDatesArr) {
-          let selectedDates = selectedDatesArr.map(date => date.toISOString().split("T")[0]);
+          selectedDates = selectedDatesArr.map(date => date.toISOString().split("T")[0]); // Remove `let`
           updateDatePreview(datePickerInput, selectedDates);
         }
       });
@@ -1015,39 +894,38 @@
         datePreviewEl.innerHTML = "";
         selectedDates.forEach((date, index) => {
           let row = `
-            <tr>
-                <td class="text-center">${index + 1}</td>
-                <td class="text-center">${date}</td>
-                <td class="text-center">
-                    <button class="btn btn-danger btn-sm remove-date" data-date="${date}">Remove</button>
-                </td>
-            </tr>
-        `;
+                      <tr>
+                          <td class="text-center">${index + 1}</td>
+                          <td class="text-center">${date}</td>
+                          <td class="text-center">
+                              <button class="btn btn-danger btn-sm remove-date" data-date="${date}">Remove</button>
+                          </td>
+                      </tr>
+                   `;
           datePreviewEl.innerHTML += row;
         });
 
-        
-      }
-
-
-      document.querySelectorAll(".remove-btn").forEach(button => {
-        button.addEventListener("click", function() {
-          let dateToRemove = this.getAttribute("data-date");
-          removeDate(dateToRemove);
+        // Re-attach event listeners after updating the table
+        document.querySelectorAll(".remove-date").forEach(button => {
+          button.addEventListener("click", function(e) {
+            e.preventDefault();
+            let dateToRemove = this.getAttribute("data-date");
+            removeDate(dateToRemove);
+          });
         });
-      });
+      }
 
       function removeDate(date) {
         selectedDates = selectedDates.filter(d => d !== date);
-        fp.setDate(selectedDates, true);
-        updateDatePreview();
+        fp.setDate(selectedDates, true); // Use `fp` to update selection
+        updateDatePreview(datePickerInput, selectedDates);
       }
 
       document.getElementById("clearDates").addEventListener("click", function(e) {
         e.preventDefault();
         selectedDates = [];
         fp.clear();
-        updateDatePreview();
+        updateDatePreview(datePickerInput, selectedDates);
       });
 
       // Convert selectedDates to MongoDB Format
@@ -1056,45 +934,29 @@
 
         selectedDates.forEach(date => {
           let [year, month, day] = date.split("-");
-
           let monthName = new Date(date).toLocaleString("en-US", {
             month: "long"
           });
 
           if (!groupedData[`${year}-${monthName}`]) {
             groupedData[`${year}-${monthName}`] = {
-              year: year,
+              year,
               month: monthName,
               dates: []
             };
           }
           groupedData[`${year}-${monthName}`].dates.push(day);
         });
+
         let formattedArray = Object.values(groupedData).map(entry => ({
           year: entry.year,
           month: entry.month,
           dates: entry.dates.join(", ")
         }));
-
         return formattedArray;
-      }
+      };
 
     });
-
-    //** Add calender date and other for manage months**
-    // function initializeFlatpickr(selector) {
-    //   return flatpickr(selector, {
-    //     mode: "multiple",
-    //     dateFormat: "Y-m-d",
-    //     minDate: "today",
-    //     enableTime: false,
-    //     onClose: function(selectedDatesArr, instance) {
-    //       let selectedDates = selectedDatesArr.map(date => date.toISOString().split("T")[0]);
-    //       updateDatePreview(selectedDates, instance.element);
-    //     }
-    //   });
-    // };
-
     // **End  of the calender dateand other for manage monthes**
 
     //** Mange about section and other section textEditor  **//
@@ -1161,68 +1023,78 @@
 
     //** New Itinerary day section start from here **/
     // Mange iternity section textEditor section config with image upload
+    // ** New Itinerary day section start from here **
     let dayCount = 1;
-    let editors = {};
-    Quill.register('modules/imageResize', window.ImageResize.default);
+    let editors = {}; // Object to store Quill instances
+    let itineraryData = <%- JSON.stringify(trips?.itinerary || []) %>; // Default to an empty array
+
+    // Function to generate itinerary HTML
+    function createItineraryDay(dayNumber, headerValue = "", descriptionValue = "") {
+      let editorId = `editor-${dayNumber}`;
+
+      let itineraryHtml = `
+    <div class="itinerary-day p-3 mb-3 border rounded" data-day="${dayNumber}">
+      <h5>Day ${dayNumber}</h5>
+      <input type="text" class="form-control" name="itinerary-header" placeholder="Enter Header" value="${headerValue}" required />
+      <div class="editor-container mb-3" id="${editorId}"></div>
+      <input type="hidden" name="content[]" class="quill-content">
+    </div>`;
+
+      document.getElementById("itinerary-container").insertAdjacentHTML("beforeend", itineraryHtml);
+      initializeEditor(editorId, descriptionValue);
+    }
+
     // Function to initialize Quill editor
-    function initializeEditor(editorId) {
+    function initializeEditor(editorId, content = "") {
       editors[editorId] = new Quill(`#${editorId}`, {
         theme: "snow",
         modules: {
           toolbar: [
             [{
               'header': [1, 2, 3, 4, 5, 6, false]
-            }], // All header sizes
+            }],
             [{
               'font': []
-            }], // Font family
+            }],
             [{
               'size': ['small', false, 'large', 'huge']
-            }], // Font size
-            ['bold', 'italic', 'underline', 'strike'], // Text formatting
+            }],
+            ['bold', 'italic', 'underline', 'strike'],
             [{
               'script': 'sub'
             }, {
               'script': 'super'
-            }], // Subscript & Superscript
+            }],
             [{
               'list': 'ordered'
             }, {
               'list': 'bullet'
-            }], // Lists
+            }],
             [{
               'indent': '-1'
             }, {
               'indent': '+1'
-            }], // Indentation
+            }],
             [{
               'align': []
-            }], // Text align (left, center, right, justify)
+            }],
             [{
               'color': []
             }, {
               'background': []
-            }], // Text & background color
-            ['blockquote'], // Blockquote & Code block
-            ['link', 'image', ], // Media tools
-            ['clean'] // Clear formatting
+            }],
+            ['blockquote'],
+            ['link', 'image'],
+            ['clean']
           ],
-          imageResize: {
-            displayStyles: {
-              backgroundColor: 'black',
-              border: 'none',
-              color: 'white'
-            },
-            modules: ['Resize', 'DisplaySize', 'Toolbar']
-          }
         }
       });
 
-      // Sync content with hidden input field
+      editors[editorId].root.innerHTML = content;
+
       editors[editorId].on("text-change", function() {
         document.querySelector(`#${editorId}`).nextElementSibling.value = editors[editorId].root.innerHTML;
       });
-
       // Handle image selection & upload
       editors[editorId].getModule('toolbar').addHandler('image', () => {
         let input = document.createElement('input');
@@ -1279,170 +1151,201 @@
         };
       });
     }
-    // Initialize first editor
-    initializeEditor("editor-1");
+
+    // Load itinerary from database
+    function loadItinerary() {
+      document.getElementById("itinerary-container").innerHTML = ""; // Clear existing data
+      dayCount = itineraryData.length > 0 ? itineraryData.length : 1; // Set correct dayCount
+
+      if (itineraryData.length > 0) {
+        itineraryData.forEach((item, index) => {
+          createItineraryDay(index + 1, item.header, item.description);
+        });
+      } else {
+        createItineraryDay(1); // Default to 1 empty day if no itinerary exists
+      }
+
+      // Enable or disable remove button
+      document.getElementById("remove-day").disabled = dayCount === 1;
+    }
+
+    // Initialize UI with data
+    document.addEventListener("DOMContentLoaded", loadItinerary);
 
     // Add new itinerary day
-    document.getElementById("add-day").addEventListener("click", function() {
+    document.getElementById("add-day").addEventListener("click", function(event) {
       event.preventDefault(); // Prevent page scroll or refresh
       dayCount++;
-      let newEditorId = `editor-${dayCount}`;
-      let newDay = document.createElement("div");
-      newDay.classList.add("itinerary-day", "border", "rounded", "p-3", "mb-3");
-      newDay.setAttribute("data-day", dayCount);
-      newDay.innerHTML = `
-            <h5>Day ${dayCount}</h5>
-            <input type="text" class="form-control" name="itinerary-header" id="itinerary-header" placeholder="Enter Header" value="" required="" />
-            <div class="editor-container mb-3" id="${newEditorId}"></div>
-            <input type="hidden" name="content[]" class="quill-content">
-        `;
-      document.getElementById("itinerary-container").appendChild(newDay);
-      initializeEditor(newEditorId);
-
-      // Enable remove button
+      createItineraryDay(dayCount);
       document.getElementById("remove-day").disabled = false;
     });
 
     // Remove last itinerary day
-    document.getElementById("remove-day").addEventListener("click", function() {
+    document.getElementById("remove-day").addEventListener("click", function(event) {
       event.preventDefault(); // Prevent page scroll or refresh
       if (dayCount > 1) {
         let lastDay = document.querySelector(`.itinerary-day[data-day="${dayCount}"]`);
         lastDay.remove();
         delete editors[`editor-${dayCount}`]; // Remove editor instance
         dayCount--;
-        // Disable remove button if only one editor remains
-        if (dayCount === 1) {
-          document.getElementById("remove-day").disabled = true;
-        }
+        document.getElementById("remove-day").disabled = dayCount === 1;
       }
     });
+
 
     //** Itinerary day section end here **/
 
     //*** Submit form section logic **/
-    document.getElementById('addUpdateTripDetial').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const response = await fetch(e.target.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'X-CSRF-Token': csrfToken
+    // Handle form submission
+    document.addEventListener("DOMContentLoaded", function() {
+      const form = document.getElementById('addUpdateTripDetial');
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          collectFormData();
+          // const formData = new FormData(form);
+          //   console.log("Form Data:");
+          //   for (let [name, value] of formData.entries()) {
+          //       console.log(`${name}: ${value}`);
+          //   }
+          this.submit();
+        });
+      }
+
+      function collectFormData() {
+        // Collect editor content
+        const editorIds = ["about-editor", "placestovisit-editor", "activities-editor", "things_to_carry-editor", "includenexclude-editor", "package_cost-editor", "infonfaq-editor", "guidelines-editor", "bookncancel-editor"];
+        editorIds.forEach(editorId => {
+          const editor = editorsd[editorId];
+          if (editor) {
+            const content = editor.root.innerHTML;
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = editorId.replace('-editor', '');
+            hiddenInput.value = content;
+            console.log(content);
+            form.appendChild(hiddenInput);
+          }
+        });
+
+        // Collect itinerary data
+        const itineraryData = [];
+        const itineraryDays = document.querySelectorAll('.itinerary-day');
+        itineraryDays.forEach(day => {
+          const dayNum = day.dataset.day;
+          const header = day.querySelector('input[name="itinerary-header"]').value;
+          const description = editors[`editor-${dayNum}`].root.innerHTML;
+          itineraryData.push({
+            day: `Day ${dayNum}`,
+            header: header,
+            description: description
+          });
+          // console.log(itineraryData);
+        });
+
+        // Add itinerary data as hidden input
+        const itineraryInput = document.createElement('input');
+        itineraryInput.type = 'hidden';
+        itineraryInput.name = 'itinerary';
+        itineraryInput.value = JSON.stringify(itineraryData);
+        // console.log(itineraryInput)
+        form.appendChild(itineraryInput);
+
+        // Collect departure cities data
+        const deptCitiesData = [];
+        const tripDatesData = [];
+
+        const cityEntries = document.querySelectorAll('.city-entry');
+        cityEntries.forEach(entry => {
+          const citySelect = entry.querySelector('.city-select');
+          const cityData = citySelect.options[citySelect.selectedIndex].value;
+          const stateField = entry.querySelector('.state-field').value;
+
+          // Get price details
+          const basePrice = parseFloat(entry.querySelector('.cost-field').value);
+          const transferType = entry.querySelector('.transferType').value;
+          const adultPrice = parseFloat(entry.querySelector('.adultPrice').value);
+          const childPrice = parseFloat(entry.querySelector('#childPrice').value);
+          //const infantPrice = parseFloat(entry.querySelector('#infantPrice').value);
+
+          // Get dates
+          const datePicker = entry.querySelector('.datePicker');
+          const selectedDates = Array.from(datePicker._flatpickr.selectedDates).map(date => date.toISOString().split('T')[0]);
+
+          const groupedDates = {};
+          selectedDates.forEach(dateStr => {
+            const dateObj = new Date(dateStr);
+            const year = dateObj.getFullYear().toString();
+            const month = dateObj.toLocaleString('en-US', {
+              month: 'long'
+            });
+
+            if (!groupedDates[year]) {
+              groupedDates[year] = {};
+            }
+            if (!groupedDates[year][month]) {
+              groupedDates[year][month] = [];
+            }
+            groupedDates[year][month].push(dateStr);
+          });
+
+          // Convert grouped dates into array format
+          const formattedDates = [];
+          for (const year in groupedDates) {
+            for (const month in groupedDates[year]) {
+              formattedDates.push({
+                Year: year,
+                Month: month,
+                dates: groupedDates[year][month].join(', ') // Store as CSV string
+              });
+            }
+          }
+
+          // Push data to deptCitiesData array
+          deptCitiesData.push({
+            State: stateField,
+            City: citySelect.options[citySelect.selectedIndex].text,
+            // CityId: cityId,
+            PerPersonCost: perPersonCost.value ==""? 0:perPersonCost.value,
+            dates: formattedDates,
+            price: [{
+              transferType,
+              adultPrice,
+              childPrice,
+              //infantPrice
+            }]
+          });
+        });
+
+        // Collect global trip_dates
+        deptCitiesData.forEach(city => {
+          city.dates.forEach(dateEntry => {
+            const existing = tripDatesData.find(d => d.Year === dateEntry.Year && d.Month === dateEntry.Month);
+            if (existing) {
+              existing.dates += `, ${dateEntry.dates}`;
+            } else {
+              tripDatesData.push({
+                ...dateEntry
+              });
+            }
+          });
+        });
+
+        // Attach data to the form before submission
+        addHiddenField("deptcities", JSON.stringify(deptCitiesData));
+        addHiddenField("trip_dates", JSON.stringify(tripDatesData));
+      }
+
+      function addHiddenField(name, value) {
+        let input = document.querySelector(`input[name="${name}"]`);
+        if (!input) {
+          input = document.createElement("input");
+          input.type = "hidden";
+          input.name = name;
+          form.appendChild(input);
         }
-      });
-      // Collect basic trip details
-      // formData.append("name", $("#name").val());
-      // formData.append("state", $("#state").val());
-      // formData.append("destinations", $("#destinations").val());
-      // formData.append("route", $("#route").val());
-      // formData.append("days", $("#days").val());
-      // formData.append("tag", $("#tag").val());
-      // formData.append("price", $("#price").val());
-      // formData.append("tripType", $("#tripType").val());
-      // formData.append("altitude", $("#altitude").val());
-      // formData.append("bestSession", $("#bestSession").val());
-      // formData.append("placestovisit", $("#placestovisit").val());
-      // formData.append("activities", $("#activities").val());
-      // formData.append("includenexclude", $("#includenexclude").val());
-      // formData.append("package_cost", $("#package_cost").val());
-      // formData.append("Bookncancel", $("#Bookncancel").val());
-      // formData.append("guidelines", $("#guidelines").val());
-      // formData.append("infonfaq", $("#infonfaq").val());
-
-      // // Handle image uploads
-      // let mainImage = $("#file")[0].files[0];
-      // if (mainImage) {
-      //   formData.append("image", mainImage);
-      // }
-
-      // let bannerImages = $("#bannerImages")[0].files;
-      // let bannerImageArr = [];
-      // for (let i = 0; i < bannerImages.length; i++) {
-      //   formData.append("bannerImages", bannerImages[i]);
-      // }
-
-      // Collect departure city data
-      // let depCityData = [];
-      // let datesArray = [];
-
-      // $(".city-entry").each(function() {
-      //   let state = $(this).find(".state-field").val();
-      //   let city = $(this).find(".city-select").val();
-      //   let perPersonCost = $(this).find(".cost-field").val();
-
-      //   $(this).find(".month-entry").each(function() {
-      //     let month = $(this).find(".month-select").val();
-      //     let dates = $(this).find(".date-select").val();
-
-      //     if (month && dates) {
-      //       datesArray.push({
-      //         Month: month,
-      //         dates: dates
-      //       });
-      //     }
-      //   });
-
-      //   if (state && city && perPersonCost) {
-      //     depCityData.push({
-      //       State: state,
-      //       City: city,
-      //       PerPersonCost: parseInt(perPersonCost),
-      //       dates: datesArray
-      //     });
-      //   }
-      // });
-
-      // formData.append("deptcities", JSON.stringify(depCityData));
-      // // Append trip_dates separately
-      // formData.append("trip_dates", JSON.stringify(datesArray));
-
-      // // Collect itinerary data
-      // let itineraryData = [];
-      // $(".itinerary-day").each(function() {
-      //   let day = "Day " + $(this).attr("data-day");
-      //   // ✅ Select input field by name (since ID is repeated)
-      //   let itinerarydayHeader = $(this).find("input[name='itinerary-header']").val() || "";
-
-      //   // ✅ Get editor ID and fetch Quill content safely
-      //   let editorId = $(this).find(".editor-container").attr("id");
-      //   let description = editorId && editors[editorId] ? editors[editorId].root.innerHTML : "";
-
-      //   itineraryData.push({
-      //     day: day,
-      //     header: itinerarydayHeader,
-      //     description: description,
-      //   });
-      // });
-
-      // formData.append("itinerary", JSON.stringify(itineraryData));
-      // formData.append("about", $("#about").val());
-      // formData.append("inclusions", $("#inclusions").val());
-      // formData.append("exclusions", $("#exclusions").val());
-      // formData.append("shortItinerary", $("#shortItinerary").val());
-      // formData.append("things_to_carry", $("#things_to_carry").val());
-      // formData.append("termsConditions", $("#termsConditions").val());
-      // formData.append("faq", $("#faq").val());
-
-      // AJAX call to API
-      // $.ajax({
-      //   url: "/admin/postNewAddTours", // Change to your backend API URL
-      //   type: "POST",
-      //   headers: {
-      //     'X-CSRF-Token': csrfToken
-      //   },
-      //   data: formData,
-      //   processData: false,
-      //   contentType: false,
-      //   success: function(response) {
-      //     alert("Trip successfully added!");
-      //     console.log(response);
-      //   },
-      //   error: function(error) {
-      //     console.error("Error:", error);
-      //     alert("Something went wrong!");
-      //   }
-      // });
+        input.value = value;
+      }
     });
   </script>
 </body>

@@ -213,86 +213,91 @@ exports.getCheckToursUnique = async (req, res, next) => {
 };
 
 
-// New Trip detial add API using new collection
-exports.postNewAddTours = async (req, res, next) => {
-
+exports.postNewAddTours = async (req, res) => {
   try {
-    const name = req.body.name;
-    const ifexist = await NewTours.find({ name: name });
+    const { name, tripId, state, destinations, route, days, price, tripType, about, placestovisit, activities, things_to_carry, package_cost, includenexclude, infonfaq, Bookncancel, guidelines, tag, altitude,bestSession } = req.body;
 
-    if (ifexist.length > 0) {
-      if (req.files["image"]) {
-        fileHelper.deleteFile("images/" + req.files["image"][0].filename);
+    // Check if the tour name already exists
+    const existingTour = await NewTours.findOne({ name });
+
+    if (existingTour && (!tripId || existingTour._id.toString() !== tripId.toString())) {
+      // Delete uploaded image if it exists (to prevent unused files)
+      if (req.files?.["image"]) {
+        fileHelper.deleteFile(`images/${req.files["image"][0].filename}`);
       }
-      return res.json({ exists: false }, { message: "Trip must be unique" });
+      return res.status(400).json({ exists: true, message: "Trip name must be unique" });
     }
 
-    // Parse itinerary field if it's a string
-    if (typeof req.body.itinerary === "string") {
-      req.body.itinerary = JSON.parse(req.body.itinerary);
-    }
-    if (typeof req.body.deptcities === "string") {
-      req.body.deptcities = JSON.parse(req.body.deptcities);
-    }
-    if (typeof req.body.trip_dates === "string") {
-      req.body.trip_dates = JSON.parse(req.body.trip_dates);
-    }
+    // Parse JSON fields if they are strings
+    const parseJSONField = (field) => (typeof field === "string" ? JSON.parse(field) : field);
+
+    const parsedItinerary = parseJSONField(req.body.itinerary);
+    const parsedDeptCities = parseJSONField(req.body.deptcities);
+    const parsedTripDates = parseJSONField(req.body.trip_dates);
 
     // Validate required fields
-    const requiredFields = ["name","state","destinations","route","days","price","about","tripType","placestovisit","activities","things_to_carry","package_cost",];
-
+    const requiredFields = ["name", "state", "destinations", "route", "days", "price", "about", "tripType", "placestovisit", "activities", "things_to_carry", "package_cost"];
     const missingFields = requiredFields.filter((field) => !req.body[field]);
 
     if (missingFields.length > 0) {
-      return res.status(400).json({
-        error: `Missing required fields: ${missingFields.join(", ")}`,
-      });
+      return res.status(400).json({ error: `Missing required fields: ${missingFields.join(", ")}` });
     }
 
-    const state = req.body.state;
-    const image = req.file ? req.file.filename : null;
-    // const tripSlideImage = req.files["bannerImages"] || [];
+    const image = req.files?.[0]?.filename || req.body.existingImage || null;
+    const imageurl = req.files?.[0]?.filename ? `/images/${image}` : image ;
 
-    const imageurl = image ? `/images/${image}` : null;
-    // const bannerImageUrls = tripSlideImage.map(img => `/images/${img.filename}`);
-    //const filePath = `/images/${req.files["image"].filename}`;  // Correct URL
+    // Prepare data for saving
+    const tourData = {
+      name,
+      state,
+      imageurl,
+      bannerImages: imageurl, // Single image (Consider making this an array for multiple images)
+      destinations,
+      route,
+      days,
+      price,
+      tripType,
+      about,
+      placestovisit,
+      activities,
+      itinerary: parsedItinerary,
+      things_to_carry,
+      includenexclude,
+      package_cost,
+      infonfaq,
+      Bookncancel,
+      guidelines,
+      trip_dates: parsedTripDates,
+      deptcities: parsedDeptCities,
+      tag,
+      altitude,
+      bestSession
+    };
 
-    const newTours = new NewTours({
-      name: name,
-      state: state,
-      imageurl: imageurl, // Single image
-      bannerImages: imageurl, // Array of multiple images
-      destinations: req.body.destinations,
-      route: req.body.route,
-      days: req.body.days,
-      tag: req.body.tag,
-      price: req.body.price,
-      tripType: req.body.tripType,
-      altitude: req.body.altitude,
-      bestSession: req.body.bestSession,
-      about: req.body.about,
-      placestovisit: req.body.placestovisit,
-      activities: req.body.activities,
-      itinerary: req.body.itinerary,
-      things_to_carry: req.body.things_to_carry,
-      includenexclude: req.body.includenexclude,
-      package_cost: req.body.package_cost,
-      infonfaq: req.body.infonfaq,
-      Bookncancel: req.body.Bookncancel,
-      guidelines: req.body.guidelines,
-      trip_dates: req.body.trip_dates,
-      deptcities: req.body.deptcities,
+    if (tripId) {
+      // Update existing trip
+      await NewTours.findByIdAndUpdate(tripId, tourData);
+      return res.status(200).json({ success: true, message: "Trip updated successfully" });
+    } else {
+      // Create new trip
+      const newTour = new NewTours(tourData);
+      await newTour.save();
+       // Execute query with all filters applied
+    const query = {};
+    const tours = await NewTours.find(query); // Use NewTours instead of NewToursSchema
+    //res.json(tours);
+    res.render("pages/tourlist", {
+      tourPackages: tours,
+      filterChips: Object.values({}).flat(),
+      Searchvalue: "",
     });
-
-    await newTours.save();
-    res.redirect("/");
+    }
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ success: false, message: "Server error", err: error });
+    console.error("Error in postNewAddTours:", error);
+    res.status(500).json({ success: false, message: "Server error", error });
   }
 };
+
 
 exports.getTourDetails = async (req, res, next) => {
   try {

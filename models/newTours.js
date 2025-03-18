@@ -50,20 +50,27 @@ const newToursSchema = new Schema(
       {
         State: String, // Purpose: Departure state (e.g., "GJ").
         City: String, // Purpose: Departure city (e.g., "AHM").
-        CityId:{ type: mongoose.Schema.Types.ObjectId, ref: "City"},
+        //CityId:{ type: mongoose.Schema.Types.ObjectId, ref: "City"},
         PerPersonCost: Number, // Purpose: Cost per person for the package.
         dates: [
           {
+            Year: String,
             Month: String, // Purpose: Available month (e.g., "May").
             dates: String, // Purpose: Specific departure dates in that month.
           },
         ],
+        price:[{
+          transferType: String,
+          adultprice: Number,
+          childPrice: Number
+         }]
       },
     ],
     // Purpose: List of departure cities, their cost, and available travel dates.
 
     trip_dates: [
         {
+            Year: String,
             Month: String,  // Available month (e.g., "May")
             dates: String   // Specific departure dates in that month
         }
