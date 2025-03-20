@@ -1,595 +1,655 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kedarnath - Tungnath Trek</title>
   <%- include('../partials/headtag'); %>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
-    <style>
-      :root {
-        --primary-blue: #1a4b8e;
-        --light-gray: #f8f9fa;
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+  <style>
+    :root {
+      --primary-blue: #1a4b8e;
+      --light-gray: #f8f9fa;
+    }
+
+    .image-slider {
+      width: 100%;
+      height: 500px;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .image-slider .swiper-slide {
+      width: 100%;
+      height: 100%;
+    }
+
+    .image-slider img {
+      width: 100%;
+      min-height: 500px;
+      object-fit: cover;
+    }
+
+    .image-slider .swiper-button-next,
+    .image-slider .swiper-button-prev {
+      color: white;
+      background: rgba(0, 0, 0, 0.3);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    .image-slider .swiper-button-next:after,
+    .image-slider .swiper-button-prev:after {
+      font-size: 20px;
+    }
+
+    .image-slider .swiper-pagination-bullet {
+      background: white;
+      opacity: 0.7;
+    }
+
+    .image-slider .swiper-pagination-bullet-active {
+      opacity: 1;
+    }
+
+    .trek-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+    }
+
+    .trek-title {
+      /* font-size: 20px; */
+      margin: 0;
+    }
+
+    .trek-subtitle {
+      color: #6c757d;
+      font-size: 14px;
+    }
+
+    .btn-book-now {
+      background: var(--primary-blue);
+      color: white;
+      padding: 8px 24px;
+      border-radius: 10px;
+      text-decoration: none;
+      margin: 2px;
+    }
+
+    .btn-book-now :hover {
+      color: white;
+      padding: 8px 24px;
+      border-radius: 10px;
+      text-decoration: none;
+      margin: 2px;
+    }
+
+    .image-slider {
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .image-slider img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+    }
+
+    .city-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .city-card.active {
+      border-color: var(--primary-blue);
+    }
+
+    .city-image {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .date-selector {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 8px 0;
+    }
+
+    .date-item {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .date-item.active {
+      background: var(--primary-blue);
+      color: white;
+      border-color: var(--primary-blue);
+    }
+
+    .itinerary-item {
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      padding: 12px;
+      border-radius: 8px;
+    }
+
+    .itinerary-item:hover {
+      background: var(--light-gray);
+    }
+
+    .package-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 8px;
+    }
+
+    .package-table th {
+      background: var(--light-gray);
+      padding: 12px;
+    }
+
+    .package-table td {
+      padding: 12px;
+      border-top: 1px solid #dee2e6;
+    }
+
+    .link-icon {
+      text-decoration: none;
+      color: #6c757d;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .bs-example {
+      margin: 20px;
+    }
+
+    .modal-dialog iframe {
+      margin: 0 auto;
+      display: block;
+    }
+
+    .play-btn {
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(rgba(35, 235, 142, 0.8) 60%,
+          rgba(255, 255, 255, 1) 62%);
+      border-radius: 50%;
+      position: relative;
+      display: block;
+      margin: 100px auto;
+      box-shadow: 0px 0px 25px 3px rgba(35, 235, 142, 0.8);
+    }
+
+    /* triangle */
+    .play-btn::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      -webkit-transform: translateX(-40%) translateY(-50%);
+      transform: translateX(-40%) translateY(-50%);
+      transform-origin: center center;
+      width: 0;
+      height: 0;
+      border-top: 15px solid transparent;
+      border-bottom: 15px solid transparent;
+      border-left: 25px solid #fff;
+      z-index: 100;
+      -webkit-transition: all 400ms cubic-bezier(0.55, 0.055, 0.675, 0.19);
+      transition: all 400ms cubic-bezier(0.55, 0.055, 0.675, 0.19);
+    }
+
+    /* pulse wave */
+    .play-btn:before {
+      content: "";
+      position: absolute;
+      width: 150%;
+      height: 150%;
+      -webkit-animation-delay: 0s;
+      animation-delay: 0s;
+      -webkit-animation: pulsate1 2s;
+      animation: pulsate1 2s;
+      -webkit-animation-direction: forwards;
+      animation-direction: forwards;
+      -webkit-animation-iteration-count: infinite;
+      animation-iteration-count: infinite;
+      -webkit-animation-timing-function: steps;
+      animation-timing-function: steps;
+      opacity: 1;
+      border-radius: 50%;
+      border: 5px solid rgba(255, 255, 255, 0.75);
+      top: -30%;
+      left: -30%;
+      background: rgba(198, 16, 0, 0);
+    }
+
+    @-webkit-keyframes pulsate1 {
+      0% {
+        -webkit-transform: scale(0.6);
+        transform: scale(0.6);
+        opacity: 1;
+        box-shadow: inset 0px 0px 25px 3px rgba(255, 255, 255, 0.75),
+          0px 0px 25px 10px rgba(255, 255, 255, 0.75);
       }
 
-      .image-slider {
-        width: 100%;
-        height: 300px;
-        border-radius: 12px;
-        overflow: hidden;
-        position: relative;
+      100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 0;
+        box-shadow: none;
+      }
+    }
+
+    @keyframes pulsate1 {
+      0% {
+        -webkit-transform: scale(0.6);
+        transform: scale(0.6);
+        opacity: 1;
+        box-shadow: inset 0px 0px 25px 3px rgba(255, 255, 255, 0.75),
+          0px 0px 25px 10px rgba(255, 255, 255, 0.75);
       }
 
-      .image-slider .swiper-slide {
-        width: 100%;
-        height: 100%;
+      100% {
+        -webkit-transform: scale(1, 1);
+        transform: scale(1);
+        opacity: 0;
+        box-shadow: none;
+      }
+    }
+
+    /* City card styling */
+    .city-card {
+      width: 150px;
+      flex-shrink: 0;
+      text-align: center;
+      background: #747474;
+      padding: 10px;
+      border: 1px solid black;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .city-card img {
+      width: 100%;
+      /* Makes the image take the full width of the parent */
+      height: auto;
+      /* Maintains aspect ratio */
+      border-radius: 5px;
+      /* Optional: Matches the card's rounded corners */
+    }
+
+    /* Scroll container styling */
+    #carouselTrack {
+      white-space: nowrap;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      /* Hides scrollbar (Firefox) */
+      -ms-overflow-style: none;
+      /* Hides scrollbar (IE/Edge) */
+    }
+
+    /* Hide scrollbar for WebKit browsers */
+    #carouselTrack::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Button positioning */
+    .carousel-control-prev,
+    .carousel-control-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+    }
+
+    .carousel-control-prev {
+      left: 10px;
+    }
+
+    .carousel-control-next {
+      right: 10px;
+    }
+  </style>
+  <!-- Itiniary CSS -->
+  <style>
+    .itinerary-section {
+      background-color: #fff;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .itinerary-header {
+      padding: 15px 20px;
+      background-color: #e7e7e7c7;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      font-size: larger;
+    }
+
+    .itinerary-content {
+      padding: 15px 20px;
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+      background-color: #eee7e7c7;
+    }
+
+    .itinerary-content img {
+      border: 2px solid #333;
+      /* Dark gray border */
+      border-radius: 10px;
+      /* Optional: Rounded corners */
+      margin: 5px;
+      /* Optional: Space inside the border */
+      max-width: 100%;
+      /* Ensures responsiveness */
+    }
+
+    .itinerary-content ul {
+      all: unset;
+      /* Resets all inherited styles */
+      display: block;
+      /* Ensures the list still behaves as a block element */
+      margin-left: 40px;
+      /* Restores default margin */
+    }
+
+    .itinerary-content li {
+      display: list-item;
+      /* Ensures list items behave correctly */
+      list-style-type: disc;
+      /* Restores default bullet points */
+    }
+
+    .itinerary-section.active .itinerary-content {
+      display: block;
+    }
+
+    .image-box {
+      margin-top: 15px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .image-box img {
+      width: 100%;
+      height: auto;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
       }
 
-      .image-slider img {
-        width: 100%;
-        min-height: 300px;
-        object-fit: cover;
-      }
-
-      .image-slider .swiper-button-next,
-      .image-slider .swiper-button-prev {
-        color: white;
-        background: rgba(0, 0, 0, 0.3);
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-      }
-
-      .image-slider .swiper-button-next:after,
-      .image-slider .swiper-button-prev:after {
-        font-size: 20px;
-      }
-
-      .image-slider .swiper-pagination-bullet {
-        background: white;
-        opacity: 0.7;
-      }
-
-      .image-slider .swiper-pagination-bullet-active {
+      to {
         opacity: 1;
       }
+    }
 
-      .trek-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 0;
-      }
-
-      .trek-title {
-        font-size: 20px;
-        margin: 0;
-      }
-
-      .trek-subtitle {
-        color: #6c757d;
-        font-size: 14px;
-      }
-
-      .btn-book-now {
-        background: var(--primary-blue);
-        color: white;
-        padding: 8px 24px;
-        border-radius: 10px;
-        text-decoration: none;
-        margin: 2px;
-      }
-
-      .image-slider {
-        border-radius: 12px;
-        overflow: hidden;
-        margin-bottom: 24px;
-      }
-
-      .image-slider img {
-        width: 100%;
-        height: 300px;
-        object-fit: cover;
-      }
-
-      .city-card {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-      }
-
-      .city-card.active {
-        border-color: var(--primary-blue);
-      }
-
-      .city-image {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-      }
-
-      .date-selector {
-        display: flex;
-        gap: 8px;
-        overflow-x: auto;
-        padding: 8px 0;
-      }
-
-      .date-item {
-        width: 36px;
-        height: 36px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        cursor: pointer;
-      }
-
-      .date-item.active {
-        background: var(--primary-blue);
-        color: white;
-        border-color: var(--primary-blue);
-      }
-
-      .itinerary-item {
-        border: none;
-        background: transparent;
-        width: 100%;
-        text-align: left;
-        padding: 12px;
-        border-radius: 8px;
-      }
-
-      .itinerary-item:hover {
-        background: var(--light-gray);
-      }
-
-      .package-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0 8px;
-      }
-
-      .package-table th {
-        background: var(--light-gray);
-        padding: 12px;
-      }
-
-      .package-table td {
-        padding: 12px;
-        border-top: 1px solid #dee2e6;
-      }
-
-      .link-icon {
-        text-decoration: none;
-        color: #6c757d;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-      }
-
-      .bs-example {
-        margin: 20px;
-      }
-
-      .modal-dialog iframe {
-        margin: 0 auto;
-        display: block;
-      }
-
-      .play-btn {
-        width: 100px;
-        height: 100px;
-        background: radial-gradient(rgba(35, 235, 142, 0.8) 60%,
-            rgba(255, 255, 255, 1) 62%);
-        border-radius: 50%;
-        position: relative;
-        display: block;
-        margin: 100px auto;
-        box-shadow: 0px 0px 25px 3px rgba(35, 235, 142, 0.8);
-      }
-
-      /* triangle */
-      .play-btn::after {
-        content: "";
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        -webkit-transform: translateX(-40%) translateY(-50%);
-        transform: translateX(-40%) translateY(-50%);
-        transform-origin: center center;
-        width: 0;
-        height: 0;
-        border-top: 15px solid transparent;
-        border-bottom: 15px solid transparent;
-        border-left: 25px solid #fff;
-        z-index: 100;
-        -webkit-transition: all 400ms cubic-bezier(0.55, 0.055, 0.675, 0.19);
-        transition: all 400ms cubic-bezier(0.55, 0.055, 0.675, 0.19);
-      }
-
-      /* pulse wave */
-      .play-btn:before {
-        content: "";
-        position: absolute;
-        width: 150%;
-        height: 150%;
-        -webkit-animation-delay: 0s;
-        animation-delay: 0s;
-        -webkit-animation: pulsate1 2s;
-        animation: pulsate1 2s;
-        -webkit-animation-direction: forwards;
-        animation-direction: forwards;
-        -webkit-animation-iteration-count: infinite;
-        animation-iteration-count: infinite;
-        -webkit-animation-timing-function: steps;
-        animation-timing-function: steps;
-        opacity: 1;
-        border-radius: 50%;
-        border: 5px solid rgba(255, 255, 255, 0.75);
-        top: -30%;
-        left: -30%;
-        background: rgba(198, 16, 0, 0);
-      }
-
-      @-webkit-keyframes pulsate1 {
-        0% {
-          -webkit-transform: scale(0.6);
-          transform: scale(0.6);
-          opacity: 1;
-          box-shadow: inset 0px 0px 25px 3px rgba(255, 255, 255, 0.75),
-            0px 0px 25px 10px rgba(255, 255, 255, 0.75);
-        }
-
-        100% {
-          -webkit-transform: scale(1);
-          transform: scale(1);
-          opacity: 0;
-          box-shadow: none;
-        }
-      }
-
-      @keyframes pulsate1 {
-        0% {
-          -webkit-transform: scale(0.6);
-          transform: scale(0.6);
-          opacity: 1;
-          box-shadow: inset 0px 0px 25px 3px rgba(255, 255, 255, 0.75),
-            0px 0px 25px 10px rgba(255, 255, 255, 0.75);
-        }
-
-        100% {
-          -webkit-transform: scale(1, 1);
-          transform: scale(1);
-          opacity: 0;
-          box-shadow: none;
-        }
-      }
-
-      /* City card styling */
-      .city-card {
-        width: 150px;
-        flex-shrink: 0;
-        text-align: center;
-        background: #747474;
-        padding: 10px;
-        border: 1px solid black;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-
-      /* Scroll container styling */
-      #carouselTrack {
-        white-space: nowrap;
-        scroll-behavior: smooth;
-        scrollbar-width: none;
-        /* Hides scrollbar (Firefox) */
-        -ms-overflow-style: none;
-        /* Hides scrollbar (IE/Edge) */
-      }
-
-      /* Hide scrollbar for WebKit browsers */
-      #carouselTrack::-webkit-scrollbar {
-        display: none;
-      }
-
-      /* Button positioning */
-      .carousel-control-prev,
-      .carousel-control-next {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 10;
-        background: rgba(0, 0, 0, 0.3);
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-      }
-
-      .carousel-control-prev {
-        left: 10px;
-      }
-
-      .carousel-control-next {
-        right: 10px;
-      }
-    </style>
-    <!-- Itiniary CSS -->
-    <style>
-      .itinerary-section {
-        background-color: #fff;
-        border-radius: 10px;
-        margin-bottom: 15px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      }
-
+    @media (max-width: 600px) {
       .itinerary-header {
-        padding: 15px 20px;
-        background-color: #e7e7e7c7;
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-weight: bold;
+        align-items: flex-start;
       }
+    }
+  </style>
+  <!-- UP/DOWN array css -->
+  <style>
+    .arrow-icon {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-left: 2px solid #a1a1a1;
+      border-bottom: 2px solid #a1a1a1;
+      transform: rotate(45deg);
+      margin: 5px;
+    }
 
-      .itinerary-content {
-        padding: 15px 20px;
-        display: none;
-        animation: fadeIn 0.3s ease-in-out;
-      }
+    .arrow-icon.down {
+      transform: rotate(315deg);
+    }
 
-      .itinerary-section.active .itinerary-content {
-        display: block;
-      }
+    .arrow-icon.up {
+      transform: rotate(135deg);
+    }
+  </style>
+  <!-- Link Section CSS -->
+  <style>
+    .links-section {
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
 
-      .image-box {
-        margin-top: 15px;
-        border-radius: 8px;
-        overflow: hidden;
-      }
+    .links-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
 
-      .image-box img {
-        width: 100%;
-        height: auto;
-      }
+    .links-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
 
-      ul {
-        padding-left: 20px;
-      }
+    .link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: 1px solid #dcdcdc;
+      border-radius: 10px;
+      background-color: white;
+      color: #333;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
 
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
+    .link-btn:hover {
+      background-color: #f5f5f5;
+    }
 
-        to {
-          opacity: 1;
-        }
-      }
+    /* Link sestion Popup CSS */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
 
-      @media (max-width: 600px) {
-        .itinerary-header {
-          align-items: flex-start;
-        }
-      }
-    </style>
-    <!-- UP/DOWN array css -->
-    <style>
-      .arrow-icon {
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        border-left: 2px solid #a1a1a1;
-        border-bottom: 2px solid #a1a1a1;
-        transform: rotate(45deg);
-        margin: 5px;
-      }
+    .modal-content {
+      background-color: #fff;
+      margin: 50px auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+    }
 
-      .arrow-icon.down {
-        transform: rotate(315deg);
-      }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-      .arrow-icon.up {
-        transform: rotate(135deg);
-      }
-    </style>
-    <!-- Link Section CSS -->
-    <style>
-      .links-section {
-        padding: 20px;
-        font-family: Arial, sans-serif;
-      }
+    .modal-header h4 {
+      margin: 0;
+      font-size: 18px;
+    }
 
-      .links-title {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 10px;
-      }
+    .modal-close {
+      font-size: 24px;
+      cursor: pointer;
+    }
 
-      .links-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
+    .modal-body {
+      margin-top: 15px;
+      font-size: 14px;
+    }
 
-      .link-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 16px;
-        border: 1px solid #dcdcdc;
-        border-radius: 10px;
-        background-color: white;
-        color: #333;
-        text-decoration: none;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background 0.3s;
-      }
+    .modal-body h5 {
+      font-weight: bold;
+      margin-top: 10px;
+    }
 
-      .link-btn:hover {
-        background-color: #f5f5f5;
-      }
+    .modal-body ul {
+      padding-left: 20px;
+      list-style: disc;
+    }
 
-      /* Link sestion Popup CSS */
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 999;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.5);
-      }
+    .modal-footer {
+      text-align: right;
+      margin-top: 20px;
+    }
 
+    .modal-btn {
+      padding: 6px 12px;
+      background-color: #0d47a1;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .modal-btn:hover {
+      background-color: #0b3c8c;
+    }
+
+    @media screen and (max-width: 480px) {
       .modal-content {
-        background-color: #fff;
-        margin: 50px auto;
-        padding: 20px;
-        border-radius: 10px;
-        width: 90%;
-        max-width: 600px;
-      }
-
-      .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .modal-header h4 {
-        margin: 0;
-        font-size: 18px;
-      }
-
-      .modal-close {
-        font-size: 24px;
-        cursor: pointer;
-      }
-
-      .modal-body {
-        margin-top: 15px;
-        font-size: 14px;
-      }
-
-      .modal-body h5 {
-        font-weight: bold;
-        margin-top: 10px;
-      }
-
-      .modal-body ul {
-        padding-left: 20px;
-        list-style: disc;
-      }
-
-      .modal-footer {
-        text-align: right;
-        margin-top: 20px;
+        margin: 20px;
+        padding: 15px;
       }
 
       .modal-btn {
-        padding: 6px 12px;
-        background-color: #0d47a1;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
+        font-size: 14px;
       }
+    }
+  </style>
+  <!-- More Information CSS -->
+  <style>
+    .tab-menu {
+      display: flex;
+      gap: 15px;
+      border-bottom: 2px solid #e0e0e0;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
 
-      .modal-btn:hover {
-        background-color: #0b3c8c;
-      }
+    .tab {
+      background: none;
+      border: none;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      border-bottom: 3px solid transparent;
+      transition: border-color 0.3s;
+    }
 
-      @media screen and (max-width: 480px) {
-        .modal-content {
-          margin: 20px;
-          padding: 15px;
-        }
+    .tab:hover,
+    .tab.active {
+      border-color: #111;
+      color: #111;
+    }
 
-        .modal-btn {
-          font-size: 14px;
-        }
-      }
-    </style>
-    <!-- More Information CSS -->
-    <style>
-      .tab-menu {
-        display: flex;
-        gap: 15px;
-        border-bottom: 2px solid #e0e0e0;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-      }
+    .tab-content {
+      display: none;
+    }
 
-      .tab {
-        background: none;
-        border: none;
-        padding: 10px 16px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 16px;
-        border-bottom: 3px solid transparent;
-        transition: border-color 0.3s;
-      }
+    .tab-content.active {
+      display: block;
+    }
 
-      .tab:hover,
-      .tab.active {
-        border-color: #111;
-        color: #111;
-      }
+    .tab-content.active ul {
+      all: unset;
+      /* Resets all inherited styles */
+    }
 
-      .tab-content {
-        display: none;
-      }
+    .tab-content.active li {
+      display: list-item;
+      /* Ensures list items behave correctly */
+      list-style-type: disc;
+      /* Restores default bullet points */
+    }
 
-      .tab-content.active {
-        display: block;
-      }
+    .table-responsive {
+      overflow-x: auto;
+    }
 
-      .table-responsive {
-        overflow-x: auto;
-      }
+    .package-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
 
-      .package-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-      }
+    .package-table th,
+    .package-table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+    }
 
-      .package-table th,
-      .package-table td {
-        border: 1px solid #ddd;
-        padding: 12px;
-        text-align: center;
-      }
+    .package-table th {
+      background-color: #2c2f38;
+      color: white;
+      font-weight: 600;
+    }
 
-      .package-table th {
-        background-color: #2c2f38;
-        color: white;
-        font-weight: 600;
-      }
+    .package-table tbody tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
 
-      .package-table tbody tr:nth-child(even) {
-        background-color: #f9f9f9;
-      }
+    .sub-text {
+      font-size: 13px;
+      color: #777;
+      display: block;
+      margin-top: 4px;
+    }
 
-      .sub-text {
-        font-size: 13px;
-        color: #777;
-        display: block;
-        margin-top: 4px;
-      }
-      /* .info-notes {
+    /* .info-notes {
         list-style: disc;
         padding-left: 20px;
         color: #444;
@@ -599,485 +659,472 @@
       .info-notes li {
         margin-bottom: 8px;
       } */
-      /* Responsive Design */
-      @media (max-width: 600px) {
-        .tab-menu {
-          flex-direction: column;
-        }
-
-        .tab {
-          width: 100%;
-          text-align: left;
-        }
-
-        .package-table th,
-        .package-table td {
-          font-size: 14px;
-          padding: 8px;
-        }
-
-        .info-heading {
-          font-size: 20px;
-        }
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      .tab-menu {
+        flex-direction: column;
       }
-    </style>
+
+      .tab {
+        width: 100%;
+        text-align: left;
+      }
+
+      .package-table th,
+      .package-table td {
+        font-size: 14px;
+        padding: 8px;
+      }
+
+      .info-heading {
+        font-size: 20px;
+      }
+    }
+
+    .nice-select {
+      width: 100%;
+      /* Ensures the select box takes full width */
+    }
+
+    .procedd-btn-book {
+      background-color: var(--primary-blue);
+    }
+
+    .nice-select .list {
+      width: 100%;
+      /* Ensures the dropdown matches the select width */
+      min-width: 100%;
+    }
+
+    .nice-select .option {
+      width: 100%;
+      /* Ensures each option takes full width */
+      text-align: left;
+      /* Aligns text properly */
+      padding: 8px 12px;
+      /* Adds padding for better spacing */
+    }
+  </style>
 
 </head>
 
 <body>
   <%- include('../partials/header'); %>
-    <div class="container py-4">
-      <!-- Header -->
-      <div class="trek-header">
-        <div>
-          <h1 class="trek-title">
-            <%= trips.name%>
-          </h1>
-          <div class="trek-subtitle"><%- trips.destinations%></div>
+  <div class="container py-4">
+    <!-- Header -->
+    <div class="trek-header">
+      <div>
+        <h1 class="trek-title">
+          <%= trips.name%>
+        </h1>
+        <div class="trek-subtitle"><%- trips.destinations%></div>
+      </div>
+      <div class="d-flex align-items-center gap-3 bg-light p-3 rounded-4">
+        <div class="fs-5">₹<%-trips.price %><span class="fs-6">/person</span></div>
+        <a href="#" class="btn-book-now rounded-5">Book now</a>
+      </div>
+    </div>
+    <!-- Image Slider -->
+    <div class="swiper image-slider">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <img src="<%= trips.imageurl %>" alt="Kedarnath Temple View 1" />
         </div>
-        <div class="d-flex align-items-center gap-3 bg-light p-3">
-          <div class="fs-5">₹<%-trips.price %><span class="fs-6">/person</span></div>
-          <a href="#" class="btn-book-now rounded-5">Book now</a>
+        <div class="swiper-slide">
+          <img src="<%= trips.imageurl %>" alt="Kedarnath Temple View 2" />
+        </div>
+        <div class="swiper-slide">
+          <img src="https://www.chardham-pilgrimage-tour.com/assets/images/top-tourist-places-enroute-kedarnath-dham.webp" alt="Kedarnath Temple View 3" />
         </div>
       </div>
-      <!-- Image Slider -->
-      <div class="swiper image-slider">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <img
-              src="https://www.chardham-pilgrimage-tour.com/assets/images/top-tourist-places-enroute-kedarnath-dham.webp"
-              alt="Kedarnath Temple View 1" />
-          </div>
-          <div class="swiper-slide">
-            <img
-              src="https://www.chardham-pilgrimage-tour.com/assets/images/top-tourist-places-enroute-kedarnath-dham.webp"
-              alt="Kedarnath Temple View 2" />
-          </div>
-          <div class="swiper-slide">
-            <img
-              src="https://www.chardham-pilgrimage-tour.com/assets/images/top-tourist-places-enroute-kedarnath-dham.webp"
-              alt="Kedarnath Temple View 3" />
-          </div>
+      <!-- Add Pagination -->
+      <div class="swiper-pagination"></div>
+      <!-- Add Navigation -->
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+
+    <!-- About Section -->
+    <div class="container my-5">
+      <div class="row">
+        <!-- Left Content -->
+        <div class="col-lg-7">
+          <h5 class="fw-bold">About</h5>
+          <%-trips.about %>
+          <button class="btn btn-light border rounded-pill px-4 py-2">
+            <i class="bi bi-download"></i> Download Itinerary
+          </button>
         </div>
-        <!-- Add Pagination -->
-        <div class="swiper-pagination"></div>
-        <!-- Add Navigation -->
-        <div class="swiper-button-prev"></div>
-        <div class="swiper-button-next"></div>
-      </div>
 
-      <!-- About Section -->
-      <div class="container my-5">
-        <div class="row">
-          <!-- Left Content -->
-          <div class="col-lg-7">
-            <h5 class="fw-bold">About</h5>
-            <%-trips.about %>
-              <button class="btn btn-light border rounded-pill px-4 py-2">
-                <i class="bi bi-download"></i> Download Itinerary
-              </button>
-          </div>
-
-          <!-- Right Content -->
-          <div class="col-lg-5 mt-4 mt-lg-0">
-            <div class="row g-3">
-              <div class="col-6 d-flex align-items-center">
-                <div class="icon-circle me-2">
-                  <i class="bi bi-calendar-event"></i>
-                </div>
-                <div>
-                  <small class="text-muted">Duration</small>
-                  <p class="mb-0 fw-semibold"><%-trips.price %></p>
-                </div>
+        <!-- Right Content -->
+        <div class="col-lg-5 mt-4 mt-lg-0">
+          <div class="row g-3">
+            <div class="col-6 d-flex align-items-center">
+              <div class="icon-circle me-2">
+                <i class="bi bi-calendar-event"></i>
               </div>
-              <div class="col-6 d-flex align-items-center">
-                <div class="icon-circle me-2">
-                  <i class="bi bi-bar-chart"></i>
-                </div>
-                <div>
-                  <small class="text-muted">Difficulty</small>
-                  <p class="mb-0 fw-semibold">
-                    <%= trips.tripType %>
-                  </p>
-                </div>
+              <div>
+                <small class="text-muted">Duration</small>
+                <p class="mb-0 fw-semibold"><%-trips.price %></p>
               </div>
-              <div class="col-6 d-flex align-items-center">
-                <div class="icon-circle me-2">
-                  <i class="bi bi-signpost"></i>
-                </div>
-                <div>
-                  <small class="text-muted">Altitude</small>
-                  <p class="mb-0 fw-semibold">
-                    <%= trips.altitude %>
-                  </p>
-                </div>
+            </div>
+            <div class="col-6 d-flex align-items-center">
+              <div class="icon-circle me-2">
+                <i class="bi bi-bar-chart"></i>
               </div>
-              <div class="col-6 d-flex align-items-center">
-                <div class="icon-circle me-2">
-                  <i class="bi bi-cloud-sun"></i>
-                </div>
-                <div>
-                  <small class="text-muted">Best season</small>
-                  <p class="mb-0 fw-semibold">
-                    <%= trips.bestSession %>
-                  </p>
-                </div>
+              <div>
+                <small class="text-muted">Difficulty</small>
+                <p class="mb-0 fw-semibold">
+                  <%= trips.tripType %>
+                </p>
               </div>
-              <div class="col-6 d-flex align-items-center">
-                <div class="icon-circle me-2">
-                  <i class="bi bi-geo-alt"></i>
-                </div>
-                <div>
-                  <small class="text-muted">Region</small>
-                  <p class="mb-0 fw-semibold">
-                    <%= trips.state %>, India
-                  </p>
-                </div>
+            </div>
+            <div class="col-6 d-flex align-items-center">
+              <div class="icon-circle me-2">
+                <i class="bi bi-signpost"></i>
+              </div>
+              <div>
+                <small class="text-muted">Altitude</small>
+                <p class="mb-0 fw-semibold">
+                  <%= trips.altitude %>
+                </p>
+              </div>
+            </div>
+            <div class="col-6 d-flex align-items-center">
+              <div class="icon-circle me-2">
+                <i class="bi bi-cloud-sun"></i>
+              </div>
+              <div>
+                <small class="text-muted">Best season</small>
+                <p class="mb-0 fw-semibold">
+                  <%= trips.bestSession %>
+                </p>
+              </div>
+            </div>
+            <div class="col-6 d-flex align-items-center">
+              <div class="icon-circle me-2">
+                <i class="bi bi-geo-alt"></i>
+              </div>
+              <div>
+                <small class="text-muted">Region</small>
+                <p class="mb-0 fw-semibold">
+                  <%= trips.state %>, India
+                </p>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- Departure City -->
-    <div class="container-fluid py-2 my-2 bg-light">
-      <!-- Departure City Section -->
-      <div class="container">
-        <h5 class="fw-bold my-3">Departure City</h5>
-        <div class="row">
-          <div class="col-lg-8 col-md-6 col-sm-8 col-12">
-            <div class="position-relative">
-              <div class="d-flex gap-3 overflow-auto" id="carouselTrack">
-                <div class="city-card bg-light">
-                  <img src="https://via.placeholder.com/150x100" alt="Ahmedabad" />
-                  <h6 class="mt-2 mb-1">Ahmedabad</h6>
-                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small><br />
-                  <small class="fw-semibold text-dark">₹7499/person</small>
-                </div>
-                <div class="city-card bg-light">
-                  <img src="https://via.placeholder.com/150x100" alt="Surat" />
-                  <h6 class="mt-2 mb-1">Surat</h6>
-                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small><br />
-                  <small class="fw-semibold text-dark">₹7499/person</small>
-                </div>
-                <div class="city-card bg-light">
-                  <img src="https://via.placeholder.com/150x100" alt="Delhi" />
-                  <h6 class="mt-2 mb-1">Delhi</h6>
-                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small><br />
-                  <small class="fw-semibold text-dark">₹8499/person</small>
-                </div>
-                <div class="city-card bg-light">
-                  <img src="https://via.placeholder.com/150x100" alt="Jaipur" />
-                  <h6 class="mt-2 mb-1">Jaipur</h6>
-                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small><br />
-                  <small class="fw-semibold text-dark">₹8999/person</small>
-                </div>
-                <div class="city-card bg-light">
-                  <img src="https://via.placeholder.com/150x100" alt="Mumbai" />
-                  <h6 class="mt-2 mb-1">Mumbai</h6>
-                  <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small><br />
-                  <small class="fw-semibold text-dark">₹9499/person</small>
-                </div>
-              </div>
-
-              <!-- Scroll Buttons (Hidden by Default) -->
-              <button id="prevBtn" class="carousel-control-prev d-none" type="button" onclick="slideLeft()">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-              </button>
-              <button id="nextBtn" class="carousel-control-next d-none" type="button" onclick="slideRight()">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Booking Form -->
-          <div class="col-lg-4 col-md-5 col-12 mt-3 mt-md-0">
-            <div class="card p-3">
-              <h6>Joining from</h6>
-              <select class="form-select mb-3" id="selectedCity">
-                <option>Ahmedabad</option>
-                <option>Surat</option>
-                <option>Delhi</option>
-              </select>
-              <h6>Tour date</h6>
-              <select class="form-select mb-3" id="selectedDate">
-                <option>8 May 2024 to 16 May 2024</option>
-              </select>
-              <button class="btn btn-primary w-100">Proceed to book</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Available Dates Section -->
-        <div class="mb-4">
-          <h5 class="mb-3">Available dates</h5>
-          <div class="date-selector">
-            <div class="date-item">1</div>
-            <div class="date-item active">6</div>
-            <div class="date-item">10</div>
-            <div class="date-item">14</div>
-            <div class="date-item">17</div>
-            <div class="date-item">18</div>
-            <div class="date-item">20</div>
-            <div class="date-item">28</div>
-            <div class="date-item">30</div>
-            <div class="date-item">31</div>
-          </div>
-        </div>
-      </div>
-    </div>
+  </div>
+  <!-- Departure City -->
+  <div class="container-fluid py-2 my-2 bg-light">
+    <!-- Departure City Section -->
     <div class="container">
-      <!-- Main Attractions -->
+      <h2 class="fw-bold my-3">Departure City</h2>
+      <div class="row">
+        <div class="col-lg-8 col-md-6 col-sm-8 col-12">
+          <div class="position-relative">
+            <div class="d-flex gap-3 overflow-auto" id="carouselTrack">
+              <div class="city-card bg-light">
+                <img src="<%= city[0].image%>" alt="Ahmedabad" />
+                <h6 class="mt-2 mb-1">Ahmedabad</h6>
+                <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small><br />
+                <small class="fw-semibold text-dark">₹7499/person</small>
+              </div>
+              <div class="city-card bg-light">
+                <img src="<%= city[0].image%>" alt="Surat" />
+                <h6 class="mt-2 mb-1">Surat</h6>
+                <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small><br />
+                <small class="fw-semibold text-dark">₹7499/person</small>
+              </div>
+              <div class="city-card bg-light">
+                <img src="<%= city[0].image%>" alt="Delhi" />
+                <h6 class="mt-2 mb-1">Delhi</h6>
+                <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small><br />
+                <small class="fw-semibold text-dark">₹8499/person</small>
+              </div>
+              <div class="city-card bg-light">
+                <img src="<%= city[0].image%>" alt="Jaipur" />
+                <h6 class="mt-2 mb-1">Jaipur</h6>
+                <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small><br />
+                <small class="fw-semibold text-dark">₹8999/person</small>
+              </div>
+              <div class="city-card bg-light">
+                <img src="<%= city[0].image%>" alt="Mumbai" />
+                <h6 class="mt-2 mb-1">Mumbai</h6>
+                <small><i class="bi bi-calendar"></i> 5 days - 6 nights</small><br />
+                <small class="fw-semibold text-dark">₹9499/person</small>
+              </div>
+            </div>
+
+            <!-- Scroll Buttons (Hidden by Default) -->
+            <button id="prevBtn" class="carousel-control-prev d-none" type="button" onclick="slideLeft()">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button id="nextBtn" class="carousel-control-next d-none" type="button" onclick="slideRight()">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Booking Form -->
+        <div class="col-lg-4 col-md-5 col-12 mt-3 mt-md-0">
+          <div class="card p-3">
+            <h6>Joining from</h6>
+            <select class="form-select mb-3" id="selectedCity">
+              <option>Ahmedabad</option>
+              <option>Surat</option>
+              <option>Delhi</option>
+            </select>
+            <h6>Tour date</h6>
+            <select class="form-select mb-3" id="selectedDate">
+              <option>8 May 2024 to 16 May 2024</option>
+            </select>
+            <button class="btn btn-primary  procedd-btn-book w-100">Proceed to book</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Available Dates Section -->
       <div class="mb-4">
+        <h5 class="mb-3">Available dates</h5>
+        <div class="date-selector">
+          <div class="date-item">1</div>
+          <div class="date-item active">6</div>
+          <div class="date-item">10</div>
+          <div class="date-item">14</div>
+          <div class="date-item">17</div>
+          <div class="date-item">18</div>
+          <div class="date-item">20</div>
+          <div class="date-item">28</div>
+          <div class="date-item">30</div>
+          <div class="date-item">31</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container mb-5">
+    <!-- Main Attractions -->
+    <!-- <div class="mb-4">
         <h5 class="mb-3">Main attractions</h5>
         <%- trips.activities %>
+      </div> -->
+
+    <!-- Itinerary -->
+    <% if(trips && trips.itinerary && trips.itinerary.length> 0) { %>
+    <div class="mt-5">
+      <h2>Itinerary</h2>
+      <% trips.itinerary.forEach(function(item,index) { %>
+      <div class="itinerary-section mb-3" id="<%=index%>">
+        <div class="itinerary-header">
+          <%= item.day %>: <%= item.header %>
+          <span class="toggle-icon"><span class="arrow-icon down"></span></span>
+        </div>
+        <div class="itinerary-content">
+          <%- item.description %>
+        </div>
       </div>
+      <% })%>
+      <% } %>
 
-      <!-- Itinerary -->
-      <% if(trips && trips.itinerary && trips.itinerary.length> 0) { %>
-        <div>
-          <h5>Itinerary</h5>
-          <% trips.itinerary.forEach(function(item,index) { %>
-            <div class="itinerary-section" id="<%=index%>">
-              <div class="itinerary-header">
-                <%= item.day %>: <%= item.header %>
-                    <span class="toggle-icon"><span class="arrow-icon down"></span></span>
-              </div>
-              <div class="itinerary-content">
-                <%- item.description %>
-              </div>
-            </div>
-            <% })%>
-              <% } %>
-
-                <!-- More Information -->
-                <div class="mb-4">
-                  <div class="tab-menu">
-                    <button class="tab active" onclick="showTab('package')">Package cost</button>
-                    <button class="tab" onclick="showTab('attractions')">Main attractions</button>
-                    <button class="tab" onclick="showTab('carry')">Things to carry</button>
-                  </div>
-
-                  <!-- Tab Content -->
-                  <div id="package" class="tab-content active">
-                    <%- trips.package_cost%>
-                    <!-- <div class="table-responsive">
-                      <table class="package-table">
-                        <thead>
-                          <tr>
-                            <th>Available from</th>
-                            <th>Days</th>
-                            <th>Cost</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>
-                              Delhi <br />
-                              <span class="sub-text">(Triple Sharing)</span>
-                            </td>
-                            <td>5 days - 6 nights</td>
-                            <td>₹5499/-</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              Ahmedabad, Vadodara <br />
-                              <span class="sub-text">(Non-AC sleeper train)</span>
-                            </td>
-                            <td>6 days - 7 nights</td>
-                            <td>₹7499/-</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                    <ul class="info-notes">
-                      <li>Delhi - Ahmedabad/Vadodara Non AC Sleeper Train</li>
-                      <li>For 3AC train and flight charges as per actual at the time booking</li>
-                      <li>Tatkal Train Ticket charges will be considered extra at the time of booking</li>
-                      <li>For couple sharing private room - ₹3000 per couple extra</li>
-                    </ul> -->
-                  </div>
-
-                  <div id="attractions" class="tab-content">
-                    <%- trips.activities%>
-                  </div>
-
-                  <div id="carry" class="tab-content">
-                    <%- trips.things_to_carry%>
-                  </div>
-                </div>
+      <!-- More Information -->
+      <div class="mt5 mb-4">
+        <h2 class="mt5 mb-4">More Information</h2>
+        <div class="tab-menu">
+          <button class="tab active" onclick="showTab('package')">Package cost</button>
+          <button class="tab" onclick="showTab('attractions')">Main attractions</button>
+          <button class="tab" onclick="showTab('carry')">Things to carry</button>
+          <button class="tab" onclick="showTab('bookncancel')">Cancellation Policy</button>
+          <button class="tab" onclick="showTab('includenexclude')"> Inclusion & Exclusion</button>
+          <button class="tab" onclick="showTab('infonfaq')"> Terms & Conditions</button>
         </div>
-        <!-- Links -->
-        <div class="links-section">
-          <h3 class="links-title">Links</h3>
-          <div class="links-buttons">
-            <button class="link-btn" onclick="openDynamicModal('Cancellation Policy', '<%=trips.bookncancel%>')">
-              Cancellation policy <span>&#x2197;</span>
-            </button>
-            <button class="link-btn" onclick="openDynamicModal('Inclusion & Exclusion','<%= trips.includenexclude%>')">
-              Inclusion & Exclusion <span>&#x2197;</span>
-            </button>
-            <button class="link-btn" onclick="openDynamicModal('Terms & Conditions','<%= trips.infonfaq%>')">
-              Terms & Conditions <span>&#x2197;</span>
-            </button>
-          </div>
+
+        <!-- Tab Content -->
+        <div id="package" class="tab-content active">
+          <%- trips.package_cost%>
         </div>
-        <!-- Links Popup -->
-        <div id="dynamicModal" class="modal">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 id="modalTitle">Modal Title</h4>
-              <span class="modal-close" onclick="closeDynamicModal()">&times;</span>
-            </div>
-            <div class="modal-body" id="modalBody">
-              <!-- Dynamic content will be inserted here -->
-            </div>
-            <div class="modal-footer">
-              <button onclick="closeDynamicModal()" class="modal-btn">Okay</button>
-            </div>
-          </div>
+
+        <div id="attractions" class="tab-content">
+          <%- trips.activities%>
         </div>
+
+        <div id="carry" class="tab-content">
+          <%- trips.things_to_carry%>
+        </div>
+        <div id="bookncancel" class="tab-content">
+          <%- trips.bookncancel%>
+        </div>
+        <div id="includenexclude" class="tab-content">
+          <%- trips.includenexclude%>
+        </div>
+        <div id="includenexclude" class="tab-content">
+          <%- trips.infonfaq%>
+        </div>
+      </div>
     </div>
 
+    <!-- Links Popup -->
+    <div id="dynamicModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 id="modalTitle">Modal Title</h4>
+          <span class="modal-close" onclick="closeDynamicModal()">&times;</span>
+        </div>
+        <div class="modal-body" id="modalBody">
+          <!-- Dynamic content will be inserted here -->
+        </div>
+        <div class="modal-footer">
+          <button onclick="closeDynamicModal()" class="modal-btn">Okay</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        new Swiper(".image-slider", {
-          loop: true,
-          navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-          },
-          pagination: {
-            el: ".swiper-pagination",
-            clickable: true,
-          },
-        });
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      new Swiper(".image-slider", {
+        loop: true,
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
       });
+    });
 
-      // Initialize city selection
-      function selectCity(element, city, price) {
+    // Initialize city selection
+    function selectCity(element, city, price) {
+      document
+        .querySelectorAll(".city-card")
+        .forEach((el) => el.classList.remove("active"));
+      element.classList.add("active");
+      document.getElementById("selectedCity").value = city;
+    }
+
+    // Initialize date selection
+    document.querySelectorAll(".date-item").forEach((date) => {
+      date.addEventListener("click", () => {
         document
-          .querySelectorAll(".city-card")
-          .forEach((el) => el.classList.remove("active"));
-        element.classList.add("active");
-        document.getElementById("selectedCity").value = city;
-      }
-
-      // Initialize date selection
-      document.querySelectorAll(".date-item").forEach((date) => {
-        date.addEventListener("click", () => {
-          document
-            .querySelectorAll(".date-item")
-            .forEach((d) => d.classList.remove("active"));
-          date.classList.add("active");
-        });
+          .querySelectorAll(".date-item")
+          .forEach((d) => d.classList.remove("active"));
+        date.classList.add("active");
       });
+    });
 
-      // slider
-      function slideLeft() {
-        const container = document.getElementById("carouselTrack");
-        container.scrollBy({ left: -200, behavior: "smooth" });
-        checkSlideButtons();
-      }
+    // slider
+    function slideLeft() {
+      const container = document.getElementById("carouselTrack");
+      container.scrollBy({
+        left: -200,
+        behavior: "smooth"
+      });
+      checkSlideButtons();
+    }
 
-      function slideRight() {
-        const container = document.getElementById("carouselTrack");
-        container.scrollBy({ left: 200, behavior: "smooth" });
-        checkSlideButtons();
-      }
+    function slideRight() {
+      const container = document.getElementById("carouselTrack");
+      container.scrollBy({
+        left: 200,
+        behavior: "smooth"
+      });
+      checkSlideButtons();
+    }
 
-      function checkSlideButtons() {
-        const container = document.getElementById("carouselTrack");
-        const prevBtn = document.getElementById("prevBtn");
-        const nextBtn = document.getElementById("nextBtn");
+    function checkSlideButtons() {
+      const container = document.getElementById("carouselTrack");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
 
-        if (container.scrollWidth > container.clientWidth) {
-          prevBtn.classList.remove("d-none");
-          nextBtn.classList.remove("d-none");
+      if (container.scrollWidth > container.clientWidth) {
+        prevBtn.classList.remove("d-none");
+        nextBtn.classList.remove("d-none");
 
-          if (container.scrollLeft === 0) {
-            prevBtn.classList.add("d-none");
-          }
-
-          if (
-            container.scrollLeft + container.clientWidth >=
-            container.scrollWidth
-          ) {
-            nextBtn.classList.add("d-none");
-          }
-        } else {
+        if (container.scrollLeft === 0) {
           prevBtn.classList.add("d-none");
+        }
+
+        if (
+          container.scrollLeft + container.clientWidth >=
+          container.scrollWidth
+        ) {
           nextBtn.classList.add("d-none");
         }
+      } else {
+        prevBtn.classList.add("d-none");
+        nextBtn.classList.add("d-none");
       }
+    }
 
-      // Run on page load and resize
-      window.onload = checkSlideButtons;
-      window.onresize = checkSlideButtons;
-    </script>
-    <!-- Itinerary Script -->
-    <script>
-      const headers = document.querySelectorAll('.itinerary-header');
+    // Run on page load and resize
+    window.onload = checkSlideButtons;
+    window.onresize = checkSlideButtons;
+  </script>
+  <!-- Itinerary Script -->
+  <script>
+    const headers = document.querySelectorAll('.itinerary-header');
 
-      headers.forEach(header => {
-        header.addEventListener('click', () => {
-          const section = header.parentElement;
-          section.classList.toggle('active');
+    headers.forEach(header => {
+      header.addEventListener('click', () => {
+        const section = header.parentElement;
+        section.classList.toggle('active');
 
-          const icon = header.querySelector('.arrow-icon');
-          if (section.classList.contains('active')) {
-            icon.classList.remove('down');
-            icon.classList.add('up');
-          } else {
-            icon.classList.remove('up');
-            icon.classList.add('down');
-          }
-        });
-      });
-
-    </script>
-    <!-- switch tabs (More Informations) Scripts-->
-    <script>
-      function showTab(tabId) {
-        const tabs = document.querySelectorAll(".tab");
-        const contents = document.querySelectorAll(".tab-content");
-
-        tabs.forEach(tab => tab.classList.remove("active"));
-        contents.forEach(content => content.classList.remove("active"));
-
-        document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add("active");
-        document.getElementById(tabId).classList.add("active");
-      }
-    </script>
-    <!-- Links Popup -->
-    <script>
-      // Open modal with dynamic data
-      function openDynamicModal(title, content) {
-        document.getElementById("modalTitle").innerText = title;
-        document.getElementById("modalBody").innerHTML = content;
-        document.getElementById("dynamicModal").style.display = "block";
-      }
-
-      // Close modal
-      function closeDynamicModal() {
-        document.getElementById("dynamicModal").style.display = "none";
-      }
-
-      // Close when clicking outside
-      window.onclick = function (event) {
-        const modal = document.getElementById("dynamicModal");
-        if (event.target === modal) {
-          closeDynamicModal();
+        const icon = header.querySelector('.arrow-icon');
+        if (section.classList.contains('active')) {
+          icon.classList.remove('down');
+          icon.classList.add('up');
+        } else {
+          icon.classList.remove('up');
+          icon.classList.add('down');
         }
-      };
-    </script>
-    <!-- newletter_area_end  -->
-    <%- include('../partials/footer'); %> <%- include('../partials/scripttag'); %>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+      });
+    });
+  </script>
+  <!-- switch tabs (More Informations) Scripts-->
+  <script>
+    function showTab(tabId) {
+      const tabs = document.querySelectorAll(".tab");
+      const contents = document.querySelectorAll(".tab-content");
+
+      tabs.forEach(tab => tab.classList.remove("active"));
+      contents.forEach(content => content.classList.remove("active"));
+
+      document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add("active");
+      document.getElementById(tabId).classList.add("active");
+    }
+  </script>
+  <!-- Links Popup -->
+  <script>
+    // Open modal with dynamic data
+    function openDynamicModal(title, content) {
+      document.getElementById("modalTitle").innerText = title;
+      document.getElementById("modalBody").innerHTML = content;
+      document.getElementById("dynamicModal").style.display = "block";
+    }
+
+    // Close modal
+    function closeDynamicModal() {
+      document.getElementById("dynamicModal").style.display = "none";
+    }
+
+    // Close when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById("dynamicModal");
+      if (event.target === modal) {
+        closeDynamicModal();
+      }
+    };
+  </script>
+  <!-- newletter_area_end  -->
+  <%- include('../partials/footer'); %> <%- include('../partials/scripttag'); %>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 </body>
 
 </html>

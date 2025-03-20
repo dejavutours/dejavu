@@ -347,7 +347,9 @@
       <% tourPackages.forEach(function(tour) { %>
       <div class="package-card p-2 border rounded-4" onclick="window.location.href='/tripdetails/<%= tour._id %>'">
         <div class="card-image-container">
+          <a href="/tripdetails/<%= tour._id %>">
           <img src="<%= tour.imageurl %>" alt="Kutch desert with camels" class="card-image card-img-top img-fluid rounded-4">
+          </a>
           <!-- <div class="discount-tag">10% off</div> -->
         </div>
         <div class="card-body p-2">
@@ -368,13 +370,19 @@
             <span class="details"><i class="bi bi-calendar-event"></i> <%- tour.days %></span>
             <span class="price">From ₹<%-tour.price %><small>/person</small></span>
           </div>
+          <div class="mt-2 mb-2 d-flex align-items-center">
           <% if(profile?.email===process.env.GMAIL_ADMIN) { %>
             <!-- <form action="/admin/addtours" method="get">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <input type="hidden" name="tripid" id="tripid" value="<%= tour._id %>"/>
               <button type="submit" class="btn btn-primary">Edit</button>
           </form> -->
-          <a href="/admin/addtours?tripid=<%= tour._id %>" class="btn btn-primary">Edit</a>
+          <a href="/admin/addtours?tripid=<%= tour._id %>" class="btn btn-primary m-1">Edit</a>
+
+          <a href="" class="btn btn-primary m-1">Update Banner</a>
+
+          <a href="" class="btn btn-warning m-1">Change Status</a>
+        </div>
             <% } %>
         </div>
       </div>

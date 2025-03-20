@@ -215,7 +215,7 @@ exports.getCheckToursUnique = async (req, res, next) => {
 
 exports.postNewAddTours = async (req, res) => {
   try {
-    const { name, tripId, state, destinations, route, days, price, tripType, about, placestovisit, activities, things_to_carry, package_cost, includenexclude, infonfaq, Bookncancel, guidelines, tag, altitude,bestSession } = req.body;
+    const { name, tripId, state, destinations, route, days, price, tripType, about, placestovisit, activities, things_to_carry, package_cost, includenexclude, infonfaq, bookncancel, guidelines, tag, altitude,bestSession } = req.body;
 
     // Check if the tour name already exists
     const existingTour = await NewTours.findOne({ name });
@@ -265,7 +265,7 @@ exports.postNewAddTours = async (req, res) => {
       includenexclude,
       package_cost,
       infonfaq,
-      Bookncancel,
+      bookncancel,
       guidelines,
       trip_dates: parsedTripDates,
       deptcities: parsedDeptCities,
@@ -277,7 +277,7 @@ exports.postNewAddTours = async (req, res) => {
     if (tripId) {
       // Update existing trip
       await NewTours.findByIdAndUpdate(tripId, tourData);
-      return res.status(200).json({ success: true, message: "Trip updated successfully" });
+      return res.json({ message: "Trip updated successfully" });
     } else {
       // Create new trip
       const newTour = new NewTours(tourData);
@@ -303,7 +303,13 @@ exports.getTourDetails = async (req, res, next) => {
   try {
     const token = req.params.token;
     const tripdetails = await NewTours.findById(token);
-    res.render("pages/TripDetails", { trips: tripdetails});
+   
+    // Extract departure city names from NewTours
+    const departureCityNames = tripdetails.deptcities.map((city) => city.City);
+
+    // Find matching cities in City collection
+    const matchedCities = await City.find({ name: { $in: departureCityNames } });
+    res.render("pages/TripDetails", { trips: tripdetails, city: matchedCities });
   } catch (err) {
     console.log(err);
   }

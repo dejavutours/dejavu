@@ -57,6 +57,20 @@
     .modal img {
       width: 100%;
     }
+
+    .removeRow {
+      position: absolute;
+      top: 50%;
+      right: -40px;
+      transform: translateY(-50%);
+      /* display: none; */
+    }
+
+    .pricingRow {
+      position: relative;
+      padding-right: 45px;
+      /* Space for remove button */
+    }
   </style>
 </head>
 
@@ -285,86 +299,88 @@
               <div class="city-entry">
                 <div class="row">
                   <div class="col-12 text-end">
-                    <button type="button" class="btn btn-danger btn-sm remove-city d-none">
-                      <i class="bi bi-x-circle"></i> Remove Section
+                    <button type="button" class="btn btn-danger btn-sm remove-city">
+                      <i class="bi bi-x-circle"></i> Remove City
                     </button>
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-12 col-md-6">
+                  <div class="col-12 col-md-4">
                     <div class="mb-3">
-                      <label>City</label>
+                      <h5> Add Departure City </h5>
                       <select class="form-select city-select" required>
                         <option value="">Select City</option>
                       </select>
                     </div>
                   </div>
-                  <div class="col-12 col-md-6">
+                  <div class="col-12 col-md-4">
+                    <div class="mb-3">
+                      <label>State</label>
+                      <input type="text" class="form-control state-field" placeholder="State" readonly required>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-4">
                     <div class="mb-3">
                       <label>City Image</label>
                       <img src="" class="img-fluid city-image" style="display: none; max-width: 100px;">
                     </div>
                   </div>
                 </div>
+
                 <div class="row">
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                      <label>State</label>
-                      <input type="text" class="form-control state-field" placeholder="State" readonly required>
-                    </div>
-                  </div>
-                </div>
-                <h5 class="mt-3">Pricing Details</h5>
-                <div class="row">
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                      <label for="basePrice" class="form-label">Per Person cost</label>
-                      <input type="number" class="form-control cost-field" id="perPersonCost" name="perPersonCost" placeholder="Enter base price" required disabled>
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                      <label>Transfer Type</label>
-                      <input type="text" class="form-control transferType" name="transferType" placeholder="Transfer Type" required>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                      <label for="childPrice" class="form-label">Child Price</label>
-                      <input type="number" class="form-control" name="childPrice" id="childPrice" placeholder="Enter price per child" required />
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                      <label for="adultPrice" class="form-label">Adult Price</label>
-                      <input type="number" class="form-control adultPrice" id="adultPrice" placeholder="Enter price per adult" required>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                      <label for="infantPrice" class="form-label">offer</label>
-                      <input type="text" class="form-control" name="infantPrice" id="infantPrice" placeholder="" disabled />
-                    </div>
-                  </div>
-                  <!-- Date Picker Input -->
-                  <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                      <h6 class="mt-3">Available Dates</h5>
-                        <div class="input-group">
-                          <input type="text" id="datePicker" class="form-control datePicker" placeholder="Select multiple dates">
-                          <button class="btn btn-danger clearDates" id="clearDates">Clear</button>
+                  <div class="container mt-4">
+                    <h5 class="mt-3 d-flex justify-content-between align-items-center">
+                      Pricing Details
+                      <button type="button" class="btn btn-primary btn-sm" id="addRow">
+                        <i class="bi bi-plus-circle"></i> Add Pricing
+                      </button>
+                    </h5>
+
+                    <div id="pricingContainer">
+                      <div class="row pricingRow">
+                        <div class="col-12 col-md-4">
+                          <div class="mb-3">
+                            <label class="form-label">Transfer Type</label>
+                            <input type="text" class="form-control transferType" name="transferType[]" placeholder="Transfer Type" required>
+                            <div class="invalid-feedback">Transfer Type is required and must be unique.</div>
+                          </div>
                         </div>
-                        <small class="text-danger d-none error-msg" id="error-msg">Please select at least one date.</small>
+                        <div class="col-12 col-md-4">
+                          <div class="mb-3">
+                            <label class="form-label">Child Price</label>
+                            <input type="number" class="form-control childPrice" name="childPrice[]" placeholder="Enter price per child" required>
+                            <div class="invalid-feedback">Child Price is required.</div>
+                          </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                          <div class="mb-3 position-relative">
+                            <label class="form-label">Adult Price</label>
+                            <div class="d-flex align-items-center">
+                              <input type="number" class="form-control adultPrice" name="adultPrice[]" placeholder="Enter price per adult" required>
+                              <div class="invalid-feedback">Adult Price is required.</div>
+                              <button type="button" class="btn btn-danger btn-sm removeRow mt-3">
+                                <i class="bi bi-x-circle"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div class="row">
-                  <!-- Scrollable Table for Selected Dates -->
-                  <div class="col-12 col-md-12">
+
+                <div class="row mt-3">
+                  <div class="col-12 col-md-4">
+                    <div class="mb-3">
+                      <h5>Available Dates</h5>
+                      <div class="input-group">
+                        <input type="text" id="datePicker" class="form-control datePicker" placeholder="Select multiple dates">
+                        <button class="btn btn-danger clearDates" id="clearDates">Clear</button>
+                      </div>
+                      <small class="text-danger d-none error-msg" id="error-msg">Please select at least one date.</small>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-8">
                     <div class="mb-3">
                       <label class="form-label fw-bold"></label>
                       <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
@@ -384,13 +400,14 @@
                     </div>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-12 d-flex mb-3">
-                    <button type="button" class="btn btn-primary btn-sm addCity" id="addCity">
-                      <i class="bi bi-plus-circle"></i> Add City
-                    </button>
-                  </div>
-                </div>
+                <hr/>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 d-flex mb-3">
+                <button type="button" class="btn btn-primary btn-sm addCity" id="addCity">
+                  <i class="bi bi-plus-circle"></i> Add City
+                </button>
               </div>
             </div>
           </div>
@@ -454,36 +471,14 @@
             </div>
           </div>
         </div>
-
-        <!-- <div class="row">
-          <div class="col-12 col-md-12 border rounded mt-2 mb-2">
-            <div class="mb-3">
-              <div class="d-flex justify-content-between mb-3">
-                <button id="add-day" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add Day</button>
-                <button id="remove-day" class="btn btn-danger" disabled><i class="bi bi-trash"></i> Remove Day</button>
-              </div>
-            <h5 class="mt-3">Itinerary</h5> -->
-        <!-- Container for multiple itinerary editors -->
-        <!-- <div id="itinerary-container">
-                <div class="itinerary-day p-3 mb-3" data-day="1">
-                  <h5>Day 1</h5>
-                  <input type="text" class="form-control" name="itinerary-header" id="itinerary-header" placeholder="Enter Header" value="" required="" />
-                  <div class="editor-container mb-3" id="editor-1"></div>
-                  <input type="hidden" name="content[]" class="quill-content">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> -->
         <div class="row">
-          <div class="col-12 col-md-12 border rounded mt-2 mb-2">
+          <div class="col-12 border rounded col-md-12 mt-2 mb-2">
             <div class="mb-3">
               <div class="d-flex justify-content-between mb-3">
+                <h5 class="mt-3">Itinerary</h5>
                 <button id="add-day" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add Day</button>
                 <button id="remove-day" class="btn btn-danger" disabled><i class="bi bi-trash"></i> Remove Day</button>
               </div>
-              <h5 class="mt-3">Itinerary</h5>
-
               <!-- Container for multiple itinerary editors -->
               <div id="itinerary-container">
                 <% if (trips.itinerary && trips.itinerary.length > 0) { %>
@@ -652,15 +647,22 @@
     </div>
   </div>
 
-  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
-  <script src="/vendor/jquery/jquery.min.js"></script>
+
+  <!-- Load jQuery (only one version) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+  <!-- jQuery-dependent libraries -->
   <script src="/vendor/select2/select2.min.js"></script>
   <script src="/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
 
+  <!-- FilePond -->
   <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
   <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
-  <!-- Bootstrap Bundle with Popper -->
+
+  <!-- Bootstrap Bundle (after jQuery) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Flatpickr -->
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
   <!-- Quill JS -->
@@ -716,6 +718,31 @@
       });
     });
 
+          // Fetch cities and populate dropdown
+      async function fetchCities() {
+        try {
+          const response = await fetch("/getCityList");
+          const data = await response.json();
+          return data.success ? data.cities : [];
+        } catch (error) {
+          console.error("Error fetching cities:", error);
+          return [];
+        }
+      }
+
+      // Populate city dropdown
+      async function populateCityDropdown(selectElement) {
+        const cities = await fetchCities();
+        selectElement.innerHTML = '<option value="">Select City</option>';
+        cities.forEach((city) => {
+          const option = document.createElement("option");
+          option.value = city.name;
+          option.textContent = city.name;
+          option.dataset.state = city.state;
+          option.dataset.image = city.image;
+          selectElement.appendChild(option);
+        });
+      };
     // common method to show error on field
     function showError(input, message) {
       input.classList.add("is-invalid");
@@ -807,32 +834,6 @@
     document.addEventListener("DOMContentLoaded", function() {
       const cityContainer = document.getElementById("cityContainer");
       let selectedCities = new Set();
-
-      // Fetch cities and populate dropdown
-      async function fetchCities() {
-        try {
-          const response = await fetch("/getCityList");
-          const data = await response.json();
-          return data.success ? data.cities : [];
-        } catch (error) {
-          console.error("Error fetching cities:", error);
-          return [];
-        }
-      }
-
-      // Populate city dropdown
-      async function populateCityDropdown(selectElement) {
-        const cities = await fetchCities();
-        selectElement.innerHTML = '<option value="">Select City</option>';
-        cities.forEach((city) => {
-          const option = document.createElement("option");
-          option.value = city.name;
-          option.textContent = city.name;
-          option.dataset.state = city.state;
-          option.dataset.image = city.image;
-          selectElement.appendChild(option);
-        });
-      };
       // Handle city selection (event delegation)
       cityContainer.addEventListener("change", function(event) {
         if (event.target.classList.contains("city-select")) {
@@ -890,7 +891,6 @@
       function updateDatePreview(inputElement, selectedDates) {
         let cityEntry = inputElement.closest(".city-entry");
         let datePreviewEl = cityEntry.querySelector("#datePreview");
-
         datePreviewEl.innerHTML = "";
         selectedDates.forEach((date, index) => {
           let row = `
@@ -1194,6 +1194,227 @@
 
 
     //** Itinerary day section end here **/
+    document.addEventListener("DOMContentLoaded", function () {
+  const cityContainer = document.getElementById("cityContainer");
+  const addCityButton = document.getElementById("addCity");
+
+  // Fetch cities and populate dropdown
+  async function fetchCities() {
+    try {
+      const response = await fetch("/getCityList");
+      const data = await response.json();
+      return data.success ? data.cities : [];
+    } catch (error) {
+      console.error("Error fetching cities:", error);
+      return [];
+    }
+  }
+
+  // Populate city dropdown
+  async function populateCityDropdown(selectElement, selectedCity = "") {
+    const cities = await fetchCities();
+    selectElement.innerHTML = '<option value="">Select City</option>';
+    cities.forEach((city) => {
+      const option = document.createElement("option");
+      option.value = city.name;
+      option.textContent = city.name;
+      option.dataset.state = city.state;
+      option.dataset.image = city.image;
+      if (city.name === selectedCity) {
+        option.selected = true;
+        selectElement.testImg = city.image
+      }
+      selectElement.appendChild(option);
+    });
+  }
+
+  // Populate city entry with data
+  function populateCityEntry(cityEntry, cityData) {
+    const citySelect = cityEntry.querySelector(".city-select");
+    const stateField = cityEntry.querySelector(".state-field");
+    const cityImage = cityEntry.querySelector(".city-image");
+    const datePicker = cityEntry.querySelector(".datePicker");
+    const pricingContainer = cityEntry.querySelector("#pricingContainer");
+
+    // Populate city and state
+    populateCityDropdown(citySelect, cityData.City).then(() => {
+      citySelect.value = cityData.City;
+      stateField.value = cityData.State;
+      cityImage.src = citySelect?.testImg ||cityData.image || "";
+      cityImage.style.display = citySelect?.testImg  ? "block" : "none";
+    });
+
+    // Populate dates
+    const selectedDates = cityData.dates.flatMap((dateGroup) =>
+      dateGroup.dates.split(", ")
+    );
+    initializeFlatpickr(datePicker, cityEntry.querySelector("#datePreview"), selectedDates);
+
+    // Populate pricing rows
+    cityData.price.forEach((price) => {
+      
+      
+      addPricingRow(cityEntry, price);
+    });
+  }
+
+  // Add a new city entry
+  function addCityEntry(cityData = null) {
+    const cityEntryTemplate = document.querySelector(".city-entry");
+    const newCityEntry = cityEntryTemplate.cloneNode(true);
+
+    // Clear fields for a fresh entry
+    newCityEntry.querySelector(".city-select").value = "";
+    newCityEntry.querySelector(".state-field").value = "";
+    newCityEntry.querySelector(".city-image").src = "";
+    newCityEntry.querySelector(".datePicker").value = "";
+    newCityEntry.querySelector("#datePreview").innerHTML = "";
+    newCityEntry.querySelector("#pricingContainer").innerHTML = "";
+
+    // Append the new city entry
+    cityContainer.appendChild(newCityEntry);
+
+    // Add event listeners
+    addEventListenersToEntry(newCityEntry);
+
+    // Populate data if updating
+    if (cityData) {
+      populateCityEntry(newCityEntry, cityData);
+    }
+  }
+
+  // Add event listeners to a city entry
+  function addEventListenersToEntry(cityEntry) {
+    cityEntry.querySelector(".remove-city").addEventListener("click", () => {
+      cityEntry.remove();
+    });
+
+    cityEntry.querySelector("#addRow").addEventListener("click", () => {
+      addPricingRow(cityEntry);
+    });
+
+    cityEntry.querySelector("#clearDates").addEventListener("click", () => {
+      cityEntry.querySelector(".datePicker").value = "";
+      cityEntry.querySelector("#datePreview").innerHTML = "";
+    });
+  }
+
+  // Add a pricing row
+  function addPricingRow(cityEntry, priceData = null) {
+    const pricingContainer = cityEntry.querySelector("#pricingContainer");
+
+    const pricingRow = document.createElement("div");
+    pricingRow.classList.add("row", "pricingRow");
+
+    pricingRow.innerHTML = `
+      <div class="col-4">
+        <input type="text" class="form-control transferType" placeholder="Transfer Type" required>
+      </div>
+      <div class="col-4">
+        <input type="number" class="form-control childPrice" placeholder="Child Price" required>
+      </div>
+      <div class="col-4">
+        <input type="number" class="form-control adultPrice" placeholder="Adult Price" required>
+        <button type="button" class="btn btn-danger btn-sm removeRow">
+          <i class="bi bi-x-circle"></i>
+        </button>
+      </div>
+    `;
+
+    // Populate pricing data if updating
+    if (priceData) {
+      pricingRow.querySelector(".transferType").value = priceData.transferType;
+      pricingRow.querySelector(".childPrice").value = priceData.childPrice;
+      pricingRow.querySelector(".adultPrice").value = priceData.adultPrice;
+    }
+
+    pricingContainer.appendChild(pricingRow);
+
+    // Add remove row event
+    pricingRow.querySelector(".removeRow").addEventListener("click", () => {
+      pricingRow.remove();
+    });
+  }
+
+  // Initialize flatpickr for date selection
+  function initializeFlatpickr(inputElement, previewTable, selectedDates = []) {
+    const fp = flatpickr(inputElement, {
+      mode: "multiple",
+      dateFormat: "Y-m-d",
+      minDate: "today",
+      enableTime: false,
+      defaultDate: selectedDates,
+      onClose: function (selectedDatesArr) {
+        const formattedDates = selectedDatesArr.map((date) =>
+          date.toISOString().split("T")[0]
+        );
+        updateDatePreview(previewTable, formattedDates);
+      },
+    });
+
+    updateDatePreview(previewTable, selectedDates);
+  }
+
+  // Update date preview table
+  function updateDatePreview(previewTable, selectedDates) {
+    previewTable.innerHTML = "";
+    selectedDates.forEach((date, index) => {
+      const row = `
+        <tr>
+          <td class="text-center">${index + 1}</td>
+          <td class="text-center">${date}</td>
+          <td class="text-center">
+            <button class="btn btn-danger btn-sm remove-date" data-date="${date}">Remove</button>
+          </td>
+        </tr>
+      `;
+      previewTable.innerHTML += row;
+    });
+
+    // Add remove date event listeners
+    previewTable.querySelectorAll(".remove-date").forEach((button) => {
+      button.addEventListener("click", (e) => {
+        e.preventDefault();
+        const dateToRemove = button.getAttribute("data-date");
+        removeDate(dateToRemove, previewTable);
+      });
+    });
+  }
+
+  // Remove a date from the preview and date picker
+  function removeDate(date, previewTable) {
+    const datePickerInput = previewTable.closest(".city-entry").querySelector(".datePicker");
+    const fp = flatpickr(datePickerInput);
+    const selectedDates = fp.selectedDates.map((d) => d.toISOString().split("T")[0]);
+
+    const updatedDates = selectedDates.filter((d) => d !== date);
+    fp.setDate(updatedDates, true);
+    updateDatePreview(previewTable, updatedDates);
+  }
+
+  // Populate form with data from `trips` variable (update case)
+  const trips = <%- JSON.stringify(trips || {}) %>;
+  if (trips.deptcities && trips.deptcities.length > 0) {
+    // Populate the existing UI structure first
+    const existingCityEntry = document.querySelector(".city-entry");
+    populateCityEntry(existingCityEntry, trips.deptcities[0]);
+
+    // Add additional city entries if needed
+    trips.deptcities.slice(1).forEach((cityData) => {
+      addCityEntry(cityData);
+    });
+  } else {
+    // Add an empty city entry for the add case
+    // addCityEntry();
+  }
+
+  // Add new city entry on button click
+  addCityButton.addEventListener("click", () => {
+    addCityEntry();
+  });
+});
+
+    // **City selection seciton end here **/
 
     //*** Submit form section logic **/
     // Handle form submission
@@ -1203,11 +1424,11 @@
         form.addEventListener('submit', function(e) {
           e.preventDefault();
           collectFormData();
-          // const formData = new FormData(form);
-          //   console.log("Form Data:");
-          //   for (let [name, value] of formData.entries()) {
-          //       console.log(`${name}: ${value}`);
-          //   }
+          const formData = new FormData(form);
+            // console.log("Form Data:");
+            // for (let [name, value] of formData.entries()) {
+            //     console.log(`${name}: ${value}`);
+            // }
           this.submit();
         });
       }
@@ -1261,14 +1482,10 @@
           const cityData = citySelect.options[citySelect.selectedIndex].value;
           const stateField = entry.querySelector('.state-field').value;
 
-          // Get price details
-          const basePrice = parseFloat(entry.querySelector('.cost-field').value);
           const transferType = entry.querySelector('.transferType').value;
           const adultPrice = parseFloat(entry.querySelector('.adultPrice').value);
-          const childPrice = parseFloat(entry.querySelector('#childPrice').value);
-          //const infantPrice = parseFloat(entry.querySelector('#infantPrice').value);
+          const childPrice = parseFloat(entry.querySelector('.childPrice').value);
 
-          // Get dates
           const datePicker = entry.querySelector('.datePicker');
           const selectedDates = Array.from(datePicker._flatpickr.selectedDates).map(date => date.toISOString().split('T')[0]);
 
@@ -1296,28 +1513,24 @@
               formattedDates.push({
                 Year: year,
                 Month: month,
-                dates: groupedDates[year][month].join(', ') // Store as CSV string
+                dates: groupedDates[year][month].join(', ')
               });
             }
           }
 
-          // Push data to deptCitiesData array
           deptCitiesData.push({
             State: stateField,
             City: citySelect.options[citySelect.selectedIndex].text,
-            // CityId: cityId,
-            PerPersonCost: perPersonCost.value ==""? 0:perPersonCost.value,
+            PerPersonCost: 0,
             dates: formattedDates,
             price: [{
               transferType,
               adultPrice,
               childPrice,
-              //infantPrice
             }]
           });
         });
 
-        // Collect global trip_dates
         deptCitiesData.forEach(city => {
           city.dates.forEach(dateEntry => {
             const existing = tripDatesData.find(d => d.Year === dateEntry.Year && d.Month === dateEntry.Month);
@@ -1331,7 +1544,6 @@
           });
         });
 
-        // Attach data to the form before submission
         addHiddenField("deptcities", JSON.stringify(deptCitiesData));
         addHiddenField("trip_dates", JSON.stringify(tripDatesData));
       }
@@ -1346,6 +1558,76 @@
         }
         input.value = value;
       }
+    });
+
+    // Temp added to manage pricing
+    $(document).ready(function() {
+      // Show remove button only when more than one row exists
+      function toggleRemoveButtons() {
+        let pricingRows = $(this).find(".pricingRow");
+        $(this).find(".removeRow").toggle(pricingRows.length > 1);
+      }
+      // Validate fields
+      function validateFields(row) {
+        let isValid = true;
+        let transferType = row.find(".transferType").val().trim();
+        let childPrice = row.find(".childPrice").val().trim();
+        let adultPrice = row.find(".adultPrice").val().trim();
+
+        row.find(".form-control").removeClass("is-invalid");
+
+        if (!transferType) {
+          row.find(".transferType").addClass("is-invalid");
+          isValid = false;
+        }
+        if (!childPrice) {
+          row.find(".childPrice").addClass("is-invalid");
+          isValid = false;
+        }
+        if (!adultPrice) {
+          // row.find(".adultPrice").addClass("is-invalid");
+          isValid = false;
+        }
+
+        return isValid;
+      }
+
+      $("#addRow").click(function() {
+        let allValid = true;
+        let transferTypes = [];
+
+        $(".pricingRow").each(function() {
+          if (!validateFields($(this))) {
+            allValid = false;
+          }
+          transferTypes.push($(this).find(".transferType").val().trim());
+        });
+
+        if (!allValid) return;
+
+        // Clone the first row, reset values, and append
+        let newRow = $(".pricingRow:first").clone();
+        newRow.find("input").val(""); // Clear inputs
+        newRow.find(".transferType").val();
+        newRow.find(".removeRow").show(); // Show remove button
+
+        $("#pricingContainer").append(newRow);
+        toggleRemoveButtons(); // Ensure remove button logic is correct
+      });
+
+      $(document).on("input", ".form-control", function() {
+        if ($(this).val().trim()) {
+          $(this).removeClass("is-invalid");
+        }
+      });
+
+      // Remove row event
+      $(document).on("click", ".removeRow", function() {
+        $(this).closest(".pricingRow").remove();
+        toggleRemoveButtons(); // Re-check remove button visibility
+      });
+
+      toggleRemoveButtons(); // Initial check on page load
     });
   </script>
 </body>
