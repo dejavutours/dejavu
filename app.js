@@ -22,8 +22,10 @@ const flash = require('connect-flash');
 const multer = require('multer');
 const helmet = require('helmet');
 const compression = require('compression');
+const fs = require('fs');
 const { uploadFile } = require('./s3');
 const { uploadFileProof } = require('./s3');
+
 const PORT = process.env.PORT || 5000;
 
 const Tours = require('./models/tours');
@@ -53,7 +55,13 @@ const fileStorage = multer.diskStorage({
       req.url === '/admin/updateImageUrl' ||
       req.url === '/admin/updateBannerImages'
     ) {
-      cb(null, 'images/tours'); // New folder for tour images
+      cb(null, 'images/tours');
+    } else if (req.url === '/cities') {
+      // Store all city images in a common folder
+      const uploadPath = path.join('images', 'cities');
+      // Create the cities folder if it doesn't exist
+      fs.mkdirSync(uploadPath, { recursive: true });
+      cb(null, uploadPath);
     } else {
       cb(null, 'images'); // Default folder for other routes
     }
@@ -72,7 +80,8 @@ const fileStorage = multer.diskStorage({
     } else if (
       req.url === '/admin/postNewAddTours' ||
       req.url === '/admin/updateImageUrl' ||
-      req.url === '/admin/updateBannerImages'
+      req.url === '/admin/updateBannerImages' ||
+      req.url === '/cities' // Use DateTime for city images
     ) {
       // Add timestamp for tour-related routes
       const timestamp = new Date().toISOString().replace(/:/g, '-');
@@ -110,12 +119,13 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+// Use multer with the updated storage configuration
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).array('image', 12)
 );
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/images', express.static(path.join(__dirname, 'images'))); // Serves images/tours as well
+app.use('/images', express.static(path.join(__dirname, 'images'))); // Serves images/cities as well
 
 app.use(
   session({

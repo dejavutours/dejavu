@@ -11,8 +11,8 @@ const router = express.Router();
 
 router.get('/cities', ensureLoggedIn, isAuth, cityController.getCities);
 router.get('/getCityList', ensureLoggedIn, isAuth, cityController.getCityList);
-router.post('/cities', ensureLoggedIn, isAuth, cityController.addCity);
-router.post('/cities/update/:id', ensureLoggedIn, isAuth, cityController.updateCity);
+// router.post('/cities', ensureLoggedIn, isAuth, cityController.addCity);
+router.post('/cities', ensureLoggedIn, isAuth, cityController.upsertCity);
 router.post('/cities/delete/:id', ensureLoggedIn, isAuth, cityController.deleteCity);
 
 module.exports = router;

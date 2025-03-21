@@ -1609,15 +1609,36 @@ exports.getTourDetails = async (req, res, next) => {
   try {
     const token = req.params.token;
     const tripdetails = await NewTours.findById(token);
-   
+
+    if (!tripdetails) {
+      return res.status(404).render("pages/404", { message: "Trip not found" });
+    }
+
     // Extract departure city names from NewTours
     const departureCityNames = tripdetails.deptcities.map((city) => city.City);
 
     // Find matching cities in City collection
     const matchedCities = await City.find({ name: { $in: departureCityNames } });
-    res.render("pages/TripDetails", { trips: tripdetails, city: matchedCities });
+
+    // Map city images to deptcities
+    const deptCitiesWithImages = tripdetails.deptcities.map((deptCity) => {
+      const cityMatch = matchedCities.find((city) => city.name.toLowerCase() === deptCity.City.toLowerCase());
+      return {
+        ...deptCity._doc,
+        image: cityMatch ? cityMatch.image : "/images/cities/default.jpg",
+      };
+    });
+
+    // Update tripdetails with the new deptcities array
+    tripdetails.deptcities = deptCitiesWithImages;
+
+    // Debug: Log the deptcities to ensure images are mapped
+    console.log("deptCitiesWithImages:", deptCitiesWithImages);
+
+    res.render("pages/TripDetails", { trips: tripdetails });
   } catch (err) {
-    console.log(err);
+    console.error("Error in getTourDetails:", err);
+    res.status(500).render("pages/500", { message: "Server error" });
   }
 };
 

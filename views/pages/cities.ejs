@@ -30,40 +30,21 @@
                 <div class="main-menu d-none d-lg-block">
                   <nav>
                     <ul id="navigation">
-                      <li>
-                        <a href="/">Home</a>
-                      </li>
+                      <li><a href="/">Home</a></li>
                       <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
-                      <li>
-                        <a href="/admin/addtours">AddTours</a>
-                      </li>
-                      <li>
-                        <a href="/admin/addaccomodation">AddAccod</a>
-                      </li>
-                      <li>
-                        <a href="/admin/accoddetails">Accod</a>
-                      </li>
-                      <li>
-                        <a href="/admin/viewregistration">Reg</a>
-                      </li>
-                      <li>
-                        <a href="/admin/viewmails">Mail</a>
-                      </li>
-                      <li>
-                        <a href="/admin/code">Code</a>
-                      </li>
-                      <li>
-                        <a href="/admin/addblog">Blog</a>
-                      </li>
-                      <li>
-                        <form action="/admin/logout" method="post">
-                          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                          <button type="submit" class="btn btn-primary">
-                            Logout
-                          </button>
-                        </form>
-                      </li>
-
+                        <li><a href="/admin/addtours">AddTours</a></li>
+                        <li><a href="/admin/addaccomodation">AddAccod</a></li>
+                        <li><a href="/admin/accoddetails">Accod</a></li>
+                        <li><a href="/admin/viewregistration">Reg</a></li>
+                        <li><a href="/admin/viewmails">Mail</a></li>
+                        <li><a href="/admin/code">Code</a></li>
+                        <li><a href="/admin/addblog">Blog</a></li>
+                        <li>
+                          <form action="/admin/logout" method="post">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                            <button type="submit" class="btn btn-primary">Logout</button>
+                          </form>
+                        </li>
                       <% } %>
                     </ul>
                   </nav>
@@ -71,31 +52,12 @@
               </div>
               <div class="col-xl-3 col-lg-3 d-none d-lg-block">
                 <div class="social_wrap d-flex align-items-center justify-content-end">
-                  <!-- <div class="number">
-                                        <p> <i class="fa fa-phone"></i>+91 851111 7891</p>
-                                    </div> -->
                   <div class="social_links d-none d-xl-block">
                     <ul>
-                      <li>
-                        <a href="https://www.instagram.com/dejavutours/">
-                          <i class="fa fa-instagram"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="https://www.youtube.com/watch?v=56-u7Pv-cQg">
-                          <i class="fa fa-youtube-play"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="https://www.facebook.com/dejavutours.in">
-                          <i class="fa fa-facebook"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="https://twitter.com/dejavutours_in">
-                          <i class="fa fa-twitter"></i>
-                        </a>
-                      </li>
+                      <li><a href="https://www.instagram.com/dejavutours/"><i class="fa fa-instagram"></i></a></li>
+                      <li><a href="https://www.youtube.com/watch?v=56-u7Pv-cQg"><i class="fa fa-youtube-play"></i></a></li>
+                      <li><a href="https://www.facebook.com/dejavutours.in"><i class="fa fa-facebook"></i></a></li>
+                      <li><a href="https://twitter.com/dejavutours_in"><i class="fa fa-twitter"></i></a></li>
                     </ul>
                   </div>
                 </div>
@@ -159,24 +121,23 @@
       </thead>
       <tbody id="cityTableBody">
         <% cities.slice(0, 5).forEach(city => { %>
-        <!-- Show only first 5 cities initially -->
-        <tr>
-          <td>
-            <img src="<%= city.image %>" width="80" height="80" onclick="$('#previewModalImg').attr('src', '<%= city.image %>'); 
-                     $('#previewModal').modal('show');" style="cursor:pointer;" />
-          </td>
-          <td><%= city.name %></td>
-          <td><%= city.state %></td>
-          <td>
-            <button class="btn btn-warning" onclick="editCity('<%= city._id %>', '<%= city.name %>', '<%= city.state %>', '<%= city.image %>')">
-              Edit
-            </button>
-            <form action="/cities/delete/<%= city._id %>" method="POST" class="d-inline">
-              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-              <button type="submit" class="btn btn-danger">Delete</button>
-            </form>
-          </td>
-        </tr>
+          <tr>
+            <td>
+              <img src="<%= city.image %>" width="80" height="80" onclick="$('#previewModalImg').attr('src', '<%= city.image %>'); 
+                       $('#previewModal').modal('show');" style="cursor:pointer;" />
+            </td>
+            <td><%= city.name %></td>
+            <td><%= city.state %></td>
+            <td>
+              <button class="btn btn-warning" onclick="editCity('<%= city._id %>', '<%= city.name %>', '<%= city.state %>', '<%= city.image %>')">
+                Edit
+              </button>
+              <form action="/cities/delete/<%= city._id %>" method="POST" class="d-inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
         <% }) %>
       </tbody>
     </table>
@@ -187,6 +148,7 @@
       <button class="btn btn-primary" onclick="nextPage()" id="nextBtn">Next</button>
     </div>
   </div>
+
   <!-- Image Preview Modal -->
   <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -201,9 +163,10 @@
       </div>
     </div>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    let cities = <%- JSON.stringify(cities) %>; // Convert to JSON for pagination
+    let cities = <%- JSON.stringify(cities) %>;
     let currentPage = 1;
     const rowsPerPage = 5;
 
@@ -213,35 +176,34 @@
       const paginatedCities = cities.slice(start, end);
 
       const tableBody = document.getElementById("cityTableBody");
-      tableBody.innerHTML = ""; // Clear existing rows
+      tableBody.innerHTML = "";
 
       paginatedCities.forEach(city => {
         const row = `
-                <tr>
-                    <td>
-                        <img src="${city.image}" width="80" height="80" 
-                             onclick="$('#previewModalImg').attr('src', '${city.image}'); 
-                             $('#previewModal').modal('show');" 
-                             style="cursor:pointer;" />
-                    </td>
-                    <td>${city.name}</td>
-                    <td>${city.state}</td>
-                    <td>
-                        <button class="btn btn-warning" 
-                                onclick="editCity('${city._id}', '${city.name}', '${city.state}', '${city.image}')">
-                            Edit
-                        </button>
-                        <form action="/cities/delete/${city._id}" method="POST" class="d-inline">
-                            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            `;
+          <tr>
+            <td>
+              <img src="${city.image}" width="80" height="80" 
+                   onclick="$('#previewModalImg').attr('src', '${city.image}'); 
+                   $('#previewModal').modal('show');" 
+                   style="cursor:pointer;" />
+            </td>
+            <td>${city.name}</td>
+            <td>${city.state}</td>
+            <td>
+              <button class="btn btn-warning" 
+                      onclick="editCity('${city._id}', '${city.name}', '${city.state}', '${city.image}')">
+                Edit
+              </button>
+              <form action="/cities/delete/${city._id}" method="POST" class="d-inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+        `;
         tableBody.innerHTML += row;
       });
 
-      // Enable/Disable Pagination Buttons
       document.getElementById("prevBtn").disabled = page === 1;
       document.getElementById("nextBtn").disabled = end >= cities.length;
     }
@@ -260,73 +222,64 @@
       }
     }
 
-    // Initial Render
     renderTable(currentPage);
   </script>
-    <script>
-      // Function to preview selected image
-      function previewImage(event) {
-        const reader = new FileReader();
-        reader.onload = function() {
-          document.getElementById('imagePreview').src = reader.result;
-        };
-        reader.readAsDataURL(event.target.files[0]);
-      }
-  
-      var stateCities = <%- JSON.stringify(stateCities) %>;
-  
-      $(document).ready(function() {
-        // Initialize Select2
-        $(".select2").select2({
-          placeholder: "Select an option",
-          allowClear: true
-        });
-  
-        var stateCities = <%- JSON.stringify(stateCities) %>;
-  
-        // Populate State Dropdown
-        var stateDropdown = $('#state');
-        Object.keys(stateCities).forEach(state => {
-          stateDropdown.append(`<option value="${state}">${state}</option>`);
-        });
-  
-        // When State is Selected, Populate City Dropdown
-        $('#state').change(function() {
-          var selectedState = $(this).val();
-          var cityDropdown = $('#name');
-          cityDropdown.empty().append('<option value="">Select City</option>');
-  
-          if (selectedState && stateCities[selectedState]) {
-            stateCities[selectedState].forEach(city => {
-              cityDropdown.append(`<option value="${city}">${city}</option>`);
-            });
-          }
-  
-          // Refresh Select2 for City Dropdown
-          cityDropdown.select2();
-        });
-        // Pre-fill dropdowns when editing a city
-        function editCity(id, name, state, image) {
-          $('#cityId').val(id);
-          $('#state').val(state).trigger('change'); // Trigger change to load cities
-          $('#imagePreview').attr('src', image);
-          $('#oldImage').val(image);
-          $('#submitBtn').text('Update City');
-          $('form').attr('action', `/cities/update/${id}`);
-  
-          // Wait for the city dropdown to be updated after the state changes
-          setTimeout(() => {
-            if ($('#name option[value="' + name + '"]').length > 0) {
-              $('#name').val(name).trigger('change'); // Set city if available
-            } else {
-              console.warn('City option not found:', name);
-            }
-          }, 500); // Delay allows city options to populate
-        }
-  
-        window.editCity = editCity; // Expose function globally
+  <script>
+    function previewImage(event) {
+      const reader = new FileReader();
+      reader.onload = function() {
+        document.getElementById('imagePreview').src = reader.result;
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    }
+
+    $(document).ready(function() {
+      $(".select2").select2({
+        placeholder: "Select an option",
+        allowClear: true
       });
-    </script>
+
+      var stateCities = <%- JSON.stringify(stateCities) %>;
+
+      var stateDropdown = $('#state');
+      Object.keys(stateCities).forEach(state => {
+        stateDropdown.append(`<option value="${state}">${state}</option>`);
+      });
+
+      $('#state').change(function() {
+        var selectedState = $(this).val();
+        var cityDropdown = $('#name');
+        cityDropdown.empty().append('<option value="">Select City</option>');
+
+        if (selectedState && stateCities[selectedState]) {
+          stateCities[selectedState].forEach(city => {
+            cityDropdown.append(`<option value="${city}">${city}</option>`);
+          });
+        }
+
+        cityDropdown.select2();
+      });
+
+      function editCity(id, name, state, image) {
+        $('#cityId').val(id);
+        $('#state').val(state).trigger('change');
+        $('#imagePreview').attr('src', image);
+        $('#oldImage').val(image);
+        $('#submitBtn').text('Update City');
+        $('form').attr('action', '/cities'); // Use the same endpoint for add and update
+
+        setTimeout(() => {
+          if ($('#name option[value="' + name + '"]').length > 0) {
+            $('#name').val(name).trigger('change');
+          } else {
+            console.warn('City option not found:', name);
+          }
+        }, 500);
+      }
+
+      window.editCity = editCity;
+    });
+  </script>
 </body>
 
 </html>
