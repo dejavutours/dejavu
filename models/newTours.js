@@ -50,8 +50,7 @@ const newToursSchema = new Schema(
       {
         State: String, // Purpose: Departure state (e.g., "GJ").
         City: String, // Purpose: Departure city (e.g., "AHM").
-        //CityId:{ type: mongoose.Schema.Types.ObjectId, ref: "City"},
-        PerPersonCost: Number, // Purpose: Cost per person for the package.
+        tripDuration: String, // Purpose: Cost per person for the package.
         dates: [
           {
             Year: String,
@@ -61,7 +60,7 @@ const newToursSchema = new Schema(
         ],
         price:[{
           transferType: String,
-          adultprice: Number,
+          adultPrice: Number,
           childPrice: Number
          }]
       },

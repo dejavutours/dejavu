@@ -8,18 +8,14 @@
   <%- include('../partials/headtag'); %>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous" />
-  <!-- Bootstrap Icons CDN (Required if not already included) -->
+  <!-- Bootstrap Icons CDN -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-  <!-- FilePond CSS & JS -->
+  <!-- FilePond CSS -->
   <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet" />
+  <!-- Flatpickr CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <!-- Date selector calender -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
   <!-- FilePond Plugins -->
   <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet" />
-
   <!-- Quill CSS -->
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
   <title>Dejavu Add Tours Details</title>
@@ -63,14 +59,24 @@
       top: 50%;
       right: -40px;
       transform: translateY(-50%);
-      /* display: none; */
     }
 
     .pricingRow {
       position: relative;
       padding-right: 45px;
-      /* Space for remove button */
     }
+
+    @media (max-width: 768px) {
+      .removeRow {
+        position: static;
+        margin-top: 10px;
+      }
+
+      .pricingRow {
+        padding-right: 0;
+      }
+    }
+
   </style>
 </head>
 
@@ -92,40 +98,21 @@
                 <div class="main-menu d-none d-lg-block">
                   <nav>
                     <ul id="navigation">
-                      <li>
-                        <a href="/">Home</a>
-                      </li>
+                      <li><a href="/">Home</a></li>
                       <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
-                      <li>
-                        <a href="/admin/addtours">AddTours</a>
-                      </li>
-                      <li>
-                        <a href="/admin/addaccomodation">AddAccod</a>
-                      </li>
-                      <li>
-                        <a href="/admin/accoddetails">Accod</a>
-                      </li>
-                      <li>
-                        <a href="/admin/viewregistration">Reg</a>
-                      </li>
-                      <li>
-                        <a href="/admin/viewmails">Mail</a>
-                      </li>
-                      <li>
-                        <a href="/admin/code">Code</a>
-                      </li>
-                      <li>
-                        <a href="/admin/addblog">Blog</a>
-                      </li>
+                      <li><a href="/admin/addtours">AddTours</a></li>
+                      <li><a href="/admin/addaccomodation">AddAccod</a></li>
+                      <li><a href="/admin/accoddetails">Accod</a></li>
+                      <li><a href="/admin/viewregistration">Reg</a></li>
+                      <li><a href="/admin/viewmails">Mail</a></li>
+                      <li><a href="/admin/code">Code</a></li>
+                      <li><a href="/admin/addblog">Blog</a></li>
                       <li>
                         <form action="/admin/logout" method="post">
                           <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                          <button type="submit" class="btn btn-primary">
-                            Logout
-                          </button>
+                          <button type="submit" class="btn btn-primary">Logout</button>
                         </form>
                       </li>
-
                       <% } %>
                     </ul>
                   </nav>
@@ -135,26 +122,10 @@
                 <div class="social_wrap d-flex align-items-center justify-content-end">
                   <div class="social_links d-none d-xl-block">
                     <ul>
-                      <li>
-                        <a href="https://www.instagram.com/dejavutours/">
-                          <i class="fa fa-instagram"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="https://www.youtube.com/watch?v=56-u7Pv-cQg">
-                          <i class="fa fa-youtube-play"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="https://www.facebook.com/dejavutours.in">
-                          <i class="fa fa-facebook"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="https://twitter.com/dejavutours_in">
-                          <i class="fa fa-twitter"></i>
-                        </a>
-                      </li>
+                      <li><a href="https://www.instagram.com/dejavutours/"><i class="fa fa-instagram"></i></a></li>
+                      <li><a href="https://www.youtube.com/watch?v=56-u7Pv-cQg"><i class="fa fa-youtube-play"></i></a></li>
+                      <li><a href="https://www.facebook.com/dejavutours.in"><i class="fa fa-facebook"></i></a></li>
+                      <li><a href="https://twitter.com/dejavutours_in"><i class="fa fa-twitter"></i></a></li>
                     </ul>
                   </div>
                 </div>
@@ -173,7 +144,6 @@
       </div>
     </div>
   </header>
-  <!-- header-end -->
   <h1 class="text-primary">
     <center>Dejavu Tours&Treks : Add Trip</center>
   </h1>
@@ -185,19 +155,19 @@
           <div class="col-12 col-lg-12 col-sm-12">
             <div class="mb-3">
               <h5 class="mt-3">Trip Name <b class="text-success">* Trip name must be unique</b></h5>
-              <input type="text" class="form-control" name="name" id="name" value="<%= trips.name %>" placeholder="Enter Trip Name" required />
-              <input type="hidden" class="form-control" name="tripId" id="tripId" value="<%= trips._id %>"" />
-              <small id=" nameError" class="text-danger d-none">Trip name already exists!</small>
+              <input type="text" class="form-control" name="name" id="name" value="<%= trips.name || '' %>" placeholder="Enter Trip Name" required />
+              <input type="hidden" name="tripId" id="tripId" value="<%= trips._id || '' %>" />
+              <small id="nameError" class="text-danger d-none">Trip name already exists!</small>
             </div>
           </div>
         </div>
-        <!-- state and destination input field -->
+        <!-- State and Destinations -->
         <div class="row">
           <div class="col-12 col-md-6">
             <div class="mb-3">
               <label for="state" class="form-label">State</label>
               <select class="form-control select2" name="state" id="state" data-placeholder="Select a State" style="width: 100%" required>
-                <option value="<%= trips.state %>" selected hidden><%= trips.state %></option>
+                <option value="<%= trips.state || '' %>" selected hidden><%= trips.state || 'Select a State' %></option>
                 <% for (var i = 0; i < states_arr.length; i++) { %>
                 <option value="<%= states_arr[i] %>"><%= states_arr[i] %></option>
                 <% } %>
@@ -206,23 +176,22 @@
           </div>
           <div class="col-12 col-md-6">
             <div class="mb-3">
-              <label for="Destinations" class="form-label">Destinations</label>
-              <input type="text" class="form-control" name="destinations" id="destinations" placeholder="" value="<%= trips.destinations %>" required />
+              <label for="destinations" class="form-label">Destinations</label>
+              <input type="text" class="form-control" name="destinations" id="destinations" value="<%= trips.destinations || '' %>" required />
             </div>
           </div>
         </div>
-
-        <!-- Image upload input field for main and banner -->
+        <!-- Image Upload -->
         <div class="row">
           <div class="col-12 col-md-6">
             <div class="mb-3">
               <label for="file" class="form-label">Upload Image</label>
-              <input type="file" accept="image/*" name="image" id="file" enctype="multipart/form-data" class="form-control">
-              <input type="hidden" name="existingImage" value="<%= trips.imageurl %>">
-              <div class="preview-container position-relative" id="mainImagePreviewContainer" style="display: <%= trips.imageurl ? 'block' : 'none' %>;">
-                <img id="mainImagePreview" alt="Preview" data-bs-toggle="modal" src="<%= trips.imageurl ? trips.imageurl : '' %>" data-bs-target="#imageModal" style="display: <%= trips.imageurl ? 'block' : 'none' %>;">
+              <input type="file" accept="image/*" name="image" id="file" class="form-control">
+              <input type="hidden" name="existingImage" value="<%= trips.imageurl || '' %>">
+              <div class="preview-container position-relative" id="mainImagePreviewContainer" style="display: <%= trips.imageurl ? 'block' : 'none' %>; max-width: 200px;">
+                <img id="mainImagePreview" src="<%= trips.imageurl || '' %>" data-bs-toggle="modal" data-bs-target="#imageModal" alt="Preview">
                 <button type="button" class="btn btn-danger remove-image" id="removeMainImage" style="position: absolute; top: 5px; right: 5px; padding: 5px; display: <%= trips.imageurl ? 'block' : 'none' %>;">
-                  <i class="bi bi-x-circle-fill"></i> <!-- Bootstrap Icon -->
+                  <i class="bi bi-x-circle-fill"></i>
                 </button>
               </div>
             </div>
@@ -235,107 +204,106 @@
             </div>
           </div>
         </div>
-        <!-- Input field route and day's -->
+        <!-- Route and Days -->
         <div class="row">
           <div class="col-12 col-md-6">
             <div class="mb-3">
-              <label for="Route" class="form-label">Route</label>
-              <input type="text" class="form-control" name="route" id="route" placeholder="" value="<%= trips.route %>" required="" />
+              <label for="route" class="form-label">Route</label>
+              <input type="text" class="form-control" name="route" id="route" value="<%= trips.route || '' %>" required />
             </div>
           </div>
           <div class="col-12 col-md-6">
             <div class="mb-3">
-              <label for="Route" class="form-label">Trip Duration </label>
-              <input type="text" class="form-control" name="days" id="days" placeholder="" value="<%= trips.days %>" required="" />
+              <label for="days" class="form-label">Trip Duration</label>
+              <input type="text" class="form-control" name="days" id="days" value="<%= trips.days || '' %>" required />
             </div>
           </div>
         </div>
-
-        <!-- Input field tab line and price -->
+        <!-- Tag Line and Altitude -->
         <div class="row">
           <div class="col-12 col-md-6">
             <div class="mb-3">
-              <label for="TagLine" class="form-label">Tag Line</label>
-              <input type="text" class="form-control" name="tag" id="tag" placeholder="" value="<%= trips.tag %>" required="" />
+              <label for="tag" class="form-label">Tag Line</label>
+              <input type="text" class="form-control" name="tag" id="tag" value="<%= trips.tag || '' %>" required />
             </div>
           </div>
           <div class="col-12 col-md-6">
             <div class="mb-3">
               <label for="altitude" class="form-label">Altitude (feet)</label>
-              <input type="text" class="form-control" name="altitude" id="altitude" placeholder="" value="<%= trips.altitude %>" required="" />
+              <input type="text" class="form-control" name="altitude" id="altitude" value="<%= trips.altitude || '' %>" required />
             </div>
           </div>
         </div>
-        <!-- Input field Difficulty and Altitude -->
+        <!-- Difficulty and Price -->
         <div class="row">
           <div class="col-12 col-md-6">
             <div class="mb-3">
-              <label for="tripType" class="form-label">Difficulty</label>tripType
-              <input type="text" class="form-control" name="tripType" id="tripType" placeholder="" value="<%= trips.tripType %>" required="" />
+              <label for="tripType" class="form-label">Difficulty</label>
+              <input type="text" class="form-control" name="tripType" id="tripType" value="<%= trips.tripType || '' %>" required />
             </div>
           </div>
           <div class="col-12 col-md-6">
             <div class="mb-3">
-              <label for="Price" class="form-label">Base Price (Total trip cost)</label>
-              <input type="text" class="form-control" name="price" id="price" placeholder="" value="<%= trips.price %>" required="" />
+              <label for="price" class="form-label">Base Price (Total trip cost)</label>
+              <input type="text" class="form-control" name="price" id="price" value="<%= trips.price || '' %>" required />
             </div>
           </div>
         </div>
-        <!-- Input field Best Session -->
+        <!-- Best Session -->
         <div class="row">
           <div class="col-12 col-md-12">
             <div class="mb-3">
               <label for="bestSession" class="form-label">Best Session</label>
-              <input type="text" class="form-control" name="bestSession" id="bestSession" placeholder="" value="<%= trips.bestSession %>" required="" />
+              <input type="text" class="form-control" name="bestSession" id="bestSession" value="<%= trips.bestSession || '' %>" required />
             </div>
           </div>
         </div>
-
-        <!-- Add departure city section -->
+        <!-- Departure City -->
         <div class="row">
           <div class="col-12 border rounded mt-2">
-            <h5 class="mt-3">Add Departure City <b class="text-success">* Departure City must be unique</b></h5>
+            <h5 class="mt-3">Departure City <b class="text-success">* Departure City must be unique</b></h5>
             <div id="cityContainer">
               <div class="city-entry">
                 <div class="row">
                   <div class="col-12 text-end">
-                    <button type="button" class="btn btn-danger btn-sm remove-city">
-                      <i class="bi bi-x-circle"></i> Remove City
-                    </button>
+                    <button type="button" class="btn btn-danger btn-sm remove-city"><i class="bi bi-x-circle"></i> Remove City</button>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-12 col-md-4">
                     <div class="mb-3">
-                      <h5> Add Departure City </h5>
-                      <select class="form-select city-select" required>
+                      <h6>Add City</h6>
+                      <select class="form-select city-select" name="city[]" required>
                         <option value="">Select City</option>
                       </select>
                     </div>
                   </div>
-                  <div class="col-12 col-md-4">
+                  <div class="col-12 col-md-2">
                     <div class="mb-3">
                       <label>State</label>
-                      <input type="text" class="form-control state-field" placeholder="State" readonly required>
+                      <input type="text" class="form-control state-field" name="stateField[]" placeholder="State" readonly required>
                     </div>
                   </div>
-                  <div class="col-12 col-md-4">
+                  <div class="col-12 col-md-2">
                     <div class="mb-3">
                       <label>City Image</label>
                       <img src="" class="img-fluid city-image" style="display: none; max-width: 100px;">
                     </div>
                   </div>
+                  <div class="col-12 col-md-4">
+                    <div class="mb-3">
+                      <label class="form-label">Trip Duration from city</label>
+                      <input type="text" class="form-control tripDuration" name="tripDuration[]" placeholder="Trip Duration from city" required>
+                      <div class="invalid-feedback">Trip Duration is required</div>
+                    </div>
+                  </div>
                 </div>
-
                 <div class="row">
                   <div class="container mt-4">
                     <h5 class="mt-3 d-flex justify-content-between align-items-center">
                       Pricing Details
-                      <button type="button" class="btn btn-primary btn-sm" id="addRow">
-                        <i class="bi bi-plus-circle"></i> Add Pricing
-                      </button>
+                      <button type="button" class="btn btn-primary btn-sm" id="addRow"><i class="bi bi-plus-circle"></i> Add Pricing</button>
                     </h5>
-
                     <div id="pricingContainer">
                       <div class="row pricingRow">
                         <div class="col-12 col-md-4">
@@ -358,9 +326,7 @@
                             <div class="d-flex align-items-center">
                               <input type="number" class="form-control adultPrice" name="adultPrice[]" placeholder="Enter price per adult" required>
                               <div class="invalid-feedback">Adult Price is required.</div>
-                              <button type="button" class="btn btn-danger btn-sm removeRow mt-3">
-                                <i class="bi bi-x-circle"></i>
-                              </button>
+                              <button type="button" class="btn btn-danger btn-sm removeRow mt-3"><i class="bi bi-x-circle"></i></button>
                             </div>
                           </div>
                         </div>
@@ -368,21 +334,19 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="row mt-3">
                   <div class="col-12 col-md-4">
                     <div class="mb-3">
                       <h5>Available Dates</h5>
                       <div class="input-group">
-                        <input type="text" id="datePicker" class="form-control datePicker" placeholder="Select multiple dates">
-                        <button class="btn btn-danger clearDates" id="clearDates">Clear</button>
+                        <input type="text" class="form-control datePicking" name="datePicker[]" placeholder="Select multiple dates">
+                        <button class="btn btn-danger clearDates">Clear</button>
                       </div>
-                      <small class="text-danger d-none error-msg" id="error-msg">Please select at least one date.</small>
+                      <small class="text-danger d-none error-msg">Please select at least one date.</small>
                     </div>
                   </div>
                   <div class="col-12 col-md-8">
                     <div class="mb-3">
-                      <label class="form-label fw-bold"></label>
                       <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
                         <table class="table table-bordered table-hover align-middle">
                           <thead class="table-light sticky-top">
@@ -392,26 +356,23 @@
                               <th class="text-center" style="width: 30%;">Action</th>
                             </tr>
                           </thead>
-                          <tbody id="datePreview">
-                            <!-- Dynamic Rows Will Be Inserted Here -->
-                          </tbody>
+                          <tbody class="datePreview"></tbody>
                         </table>
                       </div>
                     </div>
                   </div>
                 </div>
-                <hr/>
+                <hr />
               </div>
             </div>
             <div class="row">
               <div class="col-12 d-flex mb-3">
-                <button type="button" class="btn btn-primary btn-sm addCity" id="addCity">
-                  <i class="bi bi-plus-circle"></i> Add City
-                </button>
+                <button type="button" class="btn btn-primary btn-sm addCity" id="addCity"><i class="bi bi-plus-circle"></i> Add City</button>
               </div>
             </div>
           </div>
         </div>
+        <!-- Accordions with Unique IDs -->
         <div class="row mt-4">
           <div class="col-12 col-md-12">
             <div class="accordion mb-3" id="aboutAccordion">
@@ -423,7 +384,7 @@
                 </h2>
                 <div id="aboutCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
                   <div class="accordion-body">
-                    <div class="editor-container mb-3" name="about" id="about-editor"><%- trips.about %></div>
+                    <div class="editor-container mb-3" id="about-editor"><%- trips.about || '' %></div>
                     <small class="text-danger d-none" id="aboutError">About field is required (Max: 500 characters).</small>
                   </div>
                 </div>
@@ -431,7 +392,6 @@
             </div>
           </div>
         </div>
-
         <div class="row">
           <div class="col-12 col-md-12">
             <div class="accordion mb-3" id="placestovisitAccordion">
@@ -443,28 +403,27 @@
                 </h2>
                 <div id="placestovisitCollapse" class="accordion-collapse collapse" aria-labelledby="placestovisitHeading" data-bs-parent="#placestovisitAccordion">
                   <div class="accordion-body">
-                    <div class="editor-container mb-3" name="placestovisit" id="placestovisit-editor"><%- trips.placestovisit %></div>
-                    <small class="text-danger d-none" id="placestovisitError">placestovisit field is required (Max: 500 characters).</small>
+                    <div class="editor-container mb-3" id="placestovisit-editor"><%- trips.placestovisit || '' %></div>
+                    <small class="text-danger d-none" id="placestovisitError">Places to visit field is required (Max: 500 characters).</small>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
         <div class="row">
           <div class="col-12 col-md-12">
-            <div class="accordion mb-3" id="aboutAccordion">
+            <div class="accordion mb-3" id="activitiesAccordion">
               <div class="accordion-item">
-                <h2 class="accordion-header" id="aboutHeading">
+                <h2 class="accordion-header" id="activitiesHeading">
                   <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#activitiesCollapse" aria-expanded="false" aria-controls="activitiesCollapse">
                     Activities & Attraction
                   </button>
                 </h2>
-                <div id="activitiesCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
+                <div id="activitiesCollapse" class="accordion-collapse collapse" aria-labelledby="activitiesHeading" data-bs-parent="#activitiesAccordion">
                   <div class="accordion-body">
-                    <div class="editor-container mb-3" name="activities" id="activities-editor"><%- trips.activities %></div>
-                    <small class="text-danger d-none" id="activitiesError">activities field is required (Max: 500 characters).</small>
+                    <div class="editor-container mb-3" id="activities-editor"><%- trips.activities || '' %></div>
+                    <small class="text-danger d-none" id="activitiesError">Activities field is required (Max: 500 characters).</small>
                   </div>
                 </div>
               </div>
@@ -472,150 +431,171 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-12 border rounded col-md-12 mt-2 mb-2">
+          <div class="col-12 border rounded mt-2 mb-2 p-3">
             <div class="mb-3">
-              <div class="d-flex justify-content-between mb-3">
-                <h5 class="mt-3">Itinerary</h5>
-                <button id="add-day" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add Day</button>
-                <button id="remove-day" class="btn btn-danger" disabled><i class="bi bi-trash"></i> Remove Day</button>
-              </div>
-              <!-- Container for multiple itinerary editors -->
-              <div id="itinerary-container">
-                <% if (trips.itinerary && trips.itinerary.length > 0) { %>
-                <% trips.itinerary.forEach((dayItem, index) => { %>
-                <div class="itinerary-day p-3 mb-3" data-day="<%= index + 1 %>">
-                  <h5>Day <%= index + 1 %></h5>
-                  <input type="text" class="form-control" name="itinerary-header" value="<%= dayItem.header %>" placeholder="Enter Header" required />
-                  <div class="editor-container mb-3" id="editor-<%= index + 1 %>"></div>
-                  <input type="hidden" name="content[]" class="quill-content" value="<%= dayItem.description %>">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mt-2">Itinerary</h5>
+                <div>
+                  <button id="add-day" class="btn btn-primary me-2" disabled><i class="bi bi-plus-circle"></i> Add Day</button>
+                  <!-- <button id="remove-day" class="btn btn-danger d-none"><i class="bi bi-trash"></i> Remove Day</button> -->
                 </div>
-                <% }) %>
+              </div>
+              <div id="itinerary-container" class="accordion">
+                <% if (trips && trips.itinerary && trips.itinerary.length > 0) { %>
+                <% trips.itinerary.forEach(function(dayItem, index) { %>
+                <div class="accordion-item itinerary-day" data-day="<%= index + 1 %>">
+                  <h2 class="accordion-header" id="heading-<%= index + 1 %>">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-<%= index + 1 %>" aria-expanded="true" aria-controls="collapse-<%= index + 1 %>">
+                      <%= dayItem.day || 'Day ' + (index + 1) %>
+                    </button>
+                  </h2>
+                  <div id="collapse-<%= index + 1 %>" class="accordion-collapse collapse show" aria-labelledby="heading-<%= index + 1 %>" data-bs-parent="#itinerary-container">
+                    <div class="accordion-body">
+                      <div class="mb-3">
+                        <label class="form-label">Header</label>
+                        <input type="text" class="form-control itinerary-header" name="itinerary-header[]" value="<%= dayItem.header || '' %>" placeholder="Enter Header" required />
+                        <div class="invalid-feedback">Header is required.</div>
+                      </div>
+                      <div class="editor-container mb-3" id="editor-<%= index + 1 %>"></div>
+                      <input type="hidden" name="content[]" class="quill-content" value="<%= dayItem.description ? dayItem.description.replace(/"/g, '&quot;').replace(/>/g, '&gt;').replace(/</g, '&lt;') : '' %>">
+                      <button type="button" class="btn btn-danger btn-sm remove-day-btn mt-2" <%= trips.itinerary.length === 1 ? 'disabled' : '' %>><i class="bi bi-trash"></i> Remove This Day</button>
+                    </div>
+                  </div>
+                </div>
+                <% }); %>
                 <% } else { %>
-                <!-- Default empty itinerary item if none exist -->
-                <div class="itinerary-day p-3 mb-3" data-day="1">
-                  <h5>Day 1</h5>
-                  <input type="text" class="form-control" name="itinerary-header" placeholder="Enter Header" required />
-                  <div class="editor-container mb-3" id="editor-1"></div>
-                  <input type="hidden" name="content[]" class="quill-content">
+                <div class="accordion-item itinerary-day" data-day="1">
+                  <h2 class="accordion-header" id="heading-1">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1" aria-expanded="true" aria-controls="collapse-1">
+                      Day 1
+                    </button>
+                  </h2>
+                  <div id="collapse-1" class="accordion-collapse collapse show" aria-labelledby="heading-1" data-bs-parent="#itinerary-container">
+                    <div class="accordion-body">
+                      <div class="mb-3">
+                        <label class="form-label">Header</label>
+                        <input type="text" class="form-control itinerary-header" name="itinerary-header[]" placeholder="Enter Header" required />
+                        <div class="invalid-feedback">Header is required.</div>
+                      </div>
+                      <div class="editor-container mb-3" id="editor-1"></div>
+                      <input type="hidden" name="content[]" class="quill-content" value="">
+                      <button type="button" class="btn btn-danger btn-sm remove-day-btn mt-2" disabled><i class="bi bi-trash"></i> Remove This Day</button>
+                    </div>
+                  </div>
                 </div>
                 <% } %>
               </div>
             </div>
           </div>
         </div>
-
+        <!-- More Accordions -->
         <div class="row">
           <div class="col-12 col-md-12">
-            <div class="accordion mb-3" id="aboutAccordion">
+            <div class="accordion mb-3" id="thingsToCarryAccordion">
               <div class="accordion-item">
-                <h2 class="accordion-header" id="aboutHeading">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#things_to_carryCollapse" aria-expanded="false" aria-controls="things_to_carryCollapse">
+                <h2 class="accordion-header" id="thingsToCarryHeading">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#thingsToCarryCollapse" aria-expanded="false" aria-controls="thingsToCarryCollapse">
                     Things to Carry
                   </button>
                 </h2>
-                <div id="things_to_carryCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
+                <div id="thingsToCarryCollapse" class="accordion-collapse collapse" aria-labelledby="thingsToCarryHeading" data-bs-parent="#thingsToCarryAccordion">
                   <div class="accordion-body">
-                    <div class="editor-container mb-3" name="things_to_carry" id="things_to_carry-editor"><%- trips.things_to_carry %></div>
-                    <small class="text-danger d-none" id="activitiesError">activities field is required (Max: 500 characters).</small>
+                    <div class="editor-container mb-3" id="things_to_carry-editor"><%- trips.things_to_carry || '' %></div>
+                    <small class="text-danger d-none" id="thingsToCarryError">Things to carry field is required (Max: 500 characters).</small>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
         <div class="row">
           <div class="col-12 col-md-12">
-            <div class="accordion mb-3" id="aboutAccordion">
+            <div class="accordion mb-3" id="includeExcludeAccordion">
               <div class="accordion-item">
-                <h2 class="accordion-header" id="aboutHeading">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#includenexcludeCollapse" aria-expanded="false" aria-controls="includenexcludeCollapse">
+                <h2 class="accordion-header" id="includeExcludeHeading">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#includeExcludeCollapse" aria-expanded="false" aria-controls="includeExcludeCollapse">
                     Include & Exclude
                   </button>
                 </h2>
-                <div id="includenexcludeCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
+                <div id="includeExcludeCollapse" class="accordion-collapse collapse" aria-labelledby="includeExcludeHeading" data-bs-parent="#includeExcludeAccordion">
                   <div class="accordion-body">
-                    <div class="editor-container mb-3" name="includenexclude" id="includenexclude-editor"><%- trips.includenexclude %></div>
-                    <small class="text-danger d-none" id="activitiesError">includenexclude field is required (Max: 500 characters).</small>
+                    <div class="editor-container mb-3" id="includenexclude-editor"><%- trips.includenexclude || '' %></div>
+                    <small class="text-danger d-none" id="includeExcludeError">Include/Exclude field is required (Max: 500 characters).</small>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
         <div class="row">
           <div class="col-12 col-md-12">
-            <div class="accordion mb-3" id="aboutAccordion">
+            <div class="accordion mb-3" id="packageCostAccordion">
               <div class="accordion-item">
-                <h2 class="accordion-header" id="aboutHeading">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#package_costCollapse" aria-expanded="false" aria-controls="package_costCollapse">
+                <h2 class="accordion-header" id="packageCostHeading">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#packageCostCollapse" aria-expanded="false" aria-controls="packageCostCollapse">
                     Package Cost
                   </button>
                 </h2>
-                <div id="package_costCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
+                <div id="packageCostCollapse" class="accordion-collapse collapse" aria-labelledby="packageCostHeading" data-bs-parent="#packageCostAccordion">
                   <div class="accordion-body">
-                    <div class="editor-container mb-3" name="package_cost" id="package_cost-editor"><%- trips.package_cost %></div>
-                    <small class="text-danger d-none" id="package_costError">package cost field is required (Max: 500 characters).</small>
+                    <div class="editor-container mb-3" id="package_cost-editor"><%- trips.package_cost || '' %></div>
+                    <small class="text-danger d-none" id="packageCostError">Package cost field is required (Max: 500 characters).</small>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
         <div class="row">
           <div class="col-12 col-md-12">
-            <div class="accordion mb-3" id="aboutAccordion">
+            <div class="accordion mb-3" id="infoFaqAccordion">
               <div class="accordion-item">
-                <h2 class="accordion-header" id="aboutHeading">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#infonfaqCollapse" aria-expanded="false" aria-controls="infonfaqCollapse">
+                <h2 class="accordion-header" id="infoFaqHeading">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#infoFaqCollapse" aria-expanded="false" aria-controls="infoFaqCollapse">
                     Info & FAQs
                   </button>
                 </h2>
-                <div id="infonfaqCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
+                <div id="infoFaqCollapse" class="accordion-collapse collapse" aria-labelledby="infoFaqHeading" data-bs-parent="#infoFaqAccordion">
                   <div class="accordion-body">
-                    <div class="editor-container mb-3" name="infonfaq" id="infonfaq-editor"><%- trips.infonfaq %></div>
-                    <small class="text-danger d-none" id="infonfaqError">infonfaq field is required (Max: 500 characters).</small>
+                    <div class="editor-container mb-3" id="infonfaq-editor"><%- trips.infonfaq || '' %></div>
+                    <small class="text-danger d-none" id="infoFaqError">Info & FAQs field is required (Max: 500 characters).</small>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
         <div class="row">
           <div class="col-12 col-md-12">
-            <div class="accordion mb-3" id="aboutAccordion">
+            <div class="accordion mb-3" id="bookCancelAccordion">
               <div class="accordion-item">
-                <h2 class="accordion-header" id="aboutHeading">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bookncancelCollapse" aria-expanded="false" aria-controls="bookncancelCollapse">
+                <h2 class="accordion-header" id="bookCancelHeading">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bookCancelCollapse" aria-expanded="false" aria-controls="bookCancelCollapse">
                     Booking & Cancellation
                   </button>
                 </h2>
-                <div id="bookncancelCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
+                <div id="bookCancelCollapse" class="accordion-collapse collapse" aria-labelledby="bookCancelHeading" data-bs-parent="#bookCancelAccordion">
                   <div class="accordion-body">
-                    <div class="editor-container mb-3" name="bookncancel" id="bookncancel-editor"><%- trips.bookncancel %></div>
-                    <small class="text-danger d-none" id="bookncancelError">bookncancel field is required (Max: 500 characters).</small>
+                    <div class="editor-container mb-3" id="bookncancel-editor"><%- trips.bookncancel || '' %></div>
+                    <small class="text-danger d-none" id="bookCancelError">Booking & Cancellation field is required (Max: 500 characters).</small>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
         <div class="row">
           <div class="col-12 col-md-12">
-            <div class="accordion mb-3" id="aboutAccordion">
+            <div class="accordion mb-3" id="guidelinesAccordion">
               <div class="accordion-item">
-                <h2 class="accordion-header" id="aboutHeading">
+                <h2 class="accordion-header" id="guidelinesHeading">
                   <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#guidelinesCollapse" aria-expanded="false" aria-controls="guidelinesCollapse">
                     Travel Guidelines
                   </button>
                 </h2>
-                <div id="guidelinesCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
+                <div id="guidelinesCollapse" class="accordion-collapse collapse" aria-labelledby="guidelinesHeading" data-bs-parent="#guidelinesAccordion">
                   <div class="accordion-body">
-                    <div class="editor-container mb-3" name="guidelines" id="guidelines-editor"><%- trips.guidelines %></div>
+                    <div class="editor-container mb-3" id="guidelines-editor"><%- trips.guidelines || '' %></div>
                     <small class="text-danger d-none" id="guidelinesError">Guidelines field is required (Max: 500 characters).</small>
                   </div>
                 </div>
@@ -623,7 +603,7 @@
             </div>
           </div>
         </div>
-
+        <!-- Submit Button -->
         <div class="row">
           <div class="col-12 col-md-12">
             <button type="submit" id="submitBtn" class="btn btn-primary">Submit</button>
@@ -653,9 +633,6 @@
 
   <!-- jQuery-dependent libraries -->
   <script src="/vendor/select2/select2.min.js"></script>
-  <script src="/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
-
-  <!-- FilePond -->
   <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
   <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
 
@@ -670,115 +647,93 @@
   <!-- Image Resize Module (Correct Version) -->
   <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
 
-
-
   <script>
     $(document).ready(function() {
       $(".select2").select2();
-    });
-
-    $("#imageModal").on("hidden.bs.modal", function() {
-      $(".modal-backdrop").remove();
-      $("body").removeClass("modal-open");
-    });
-    // Get CSRF token from hidden input field
-    const csrfToken = document.querySelector('input[name="_csrf"]').value;
-    // Form validation and  error message
-    $(document).ready(function() {
-      let lastCheckedName = ""; // Store last checked name to prevent duplicate requests
-
-      $("#name").on("blur", function() {
-        let tripName = $(this).val().trim();
-        const tripId = $('#tripId').val()
-        if (tripName === "" || tripName === lastCheckedName) return; // Skip if empty or already checked
-
-        lastCheckedName = tripName; // Update last checked name
-
-        $.ajax({
-          url: "/getCheckToursUnique",
-          type: "POST",
-          headers: {
-            "X-CSRF-Token": csrfToken, // Ensure CSRF token is correctly set
-          },
-          data: {
-            name: tripName,
-            tripId: tripId || undefined, // Send tripId if updating, otherwise undefined
-          },
-          success: function(response) {
-            if (response.exists) {
-              $("#nameError").removeClass("d-none"); // Show error message
-            } else {
-              $("#nameError").addClass("d-none"); // Hide error message
-            }
-          },
-          error: function() {
-            console.error("Error checking trip name.");
-          },
-        });
+      $("#imageModal").on("hidden.bs.modal", function() {
+        $(".modal-backdrop").remove();
+        $("body").removeClass("modal-open");
       });
     });
 
-          // Fetch cities and populate dropdown
-      async function fetchCities() {
-        try {
-          const response = await fetch("/getCityList");
-          const data = await response.json();
-          return data.success ? data.cities : [];
-        } catch (error) {
-          console.error("Error fetching cities:", error);
-          return [];
-        }
-      }
+    const csrfToken = document.querySelector('input[name="_csrf"]').value;
+    // Quill Editors for static sections
+    const staticEditors = {};
+    const editorIds = [
+      "about-editor", "placestovisit-editor", "activities-editor",
+      "things_to_carry-editor", "includenexclude-editor", "package_cost-editor",
+      "infonfaq-editor", "guidelines-editor", "bookncancel-editor"
+    ];
 
-      // Populate city dropdown
-      async function populateCityDropdown(selectElement) {
-        const cities = await fetchCities();
-        selectElement.innerHTML = '<option value="">Select City</option>';
-        cities.forEach((city) => {
-          const option = document.createElement("option");
-          option.value = city.name;
-          option.textContent = city.name;
-          option.dataset.state = city.state;
-          option.dataset.image = city.image;
-          selectElement.appendChild(option);
-        });
-      };
-    // common method to show error on field
-    function showError(input, message) {
-      input.classList.add("is-invalid");
-      let errorSpan = input.nextElementSibling;
-      if (!errorSpan || !errorSpan.classList.contains("invalid-feedback")) {
-        errorSpan = document.createElement("div");
-        errorSpan.className = "invalid-feedback";
-        input.parentNode.appendChild(errorSpan);
-      }
-      errorSpan.textContent = message;
-    }
-    // common method to remoe error from the field
-    function removeError(input) {
-      input.classList.remove("is-invalid");
-      let errorSpan = input.nextElementSibling;
-      if (errorSpan && errorSpan.classList.contains("invalid-feedback")) {
-        errorSpan.remove();
+    // Trip Name Uniqueness Check
+    let lastCheckedName = "";
+    $("#name").on("blur", function() {
+      let tripName = $(this).val().trim();
+      const tripId = $("#tripId").val();
+      if (!tripName || tripName === lastCheckedName) return;
+      lastCheckedName = tripName;
+      $.ajax({
+        url: "/getCheckToursUnique",
+        type: "POST",
+        headers: {
+          "X-CSRF-Token": csrfToken
+        },
+        data: {
+          name: tripName,
+          tripId: tripId || undefined
+        },
+        success: function(response) {
+          const nameError = $("#nameError");
+          const submitBtn = $("#submitBtn");
+          if (response.exists) {
+            nameError.removeClass("d-none");
+            submitBtn.prop("disabled", true);
+          } else {
+            nameError.addClass("d-none");
+            submitBtn.prop("disabled", false);
+          }
+        },
+        error: function() {
+          console.error("Error checking trip name.");
+        },
+      });
+    });
+
+    // Fetch Cities
+    async function fetchCities() {
+      try {
+        const response = await fetch("/getCityList");
+        const data = await response.json();
+        return data.success ? data.cities : [];
+      } catch (error) {
+        console.error("Error fetching cities:", error);
+        return [];
       }
     }
 
-    // Main image preview section : functionality - set image on priview and also add or update the image , remove the image from the source
+    // Populate City Dropdown
+    async function populateCityDropdown(selectElement, selectedCity = "") {
+      const cities = await fetchCities();
+      selectElement.innerHTML = '<option value="">Select City</option>';
+      cities.forEach(city => {
+        const option = document.createElement("option");
+        option.value = city.name;
+        option.textContent = city.name;
+        option.dataset.state = city.state;
+        option.dataset.image = city.image;
+        if (city.name === selectedCity) option.selected = true;
+        selectElement.appendChild(option);
+      });
+    }
+
+    // Image Preview
     document.addEventListener("DOMContentLoaded", function() {
-      // Main image preview
       const mainImageInput = document.getElementById("file");
       const mainImagePreview = document.getElementById("mainImagePreview");
       const mainImagePreviewContainer = document.getElementById("mainImagePreviewContainer");
       const removeMainImageButton = document.getElementById("removeMainImage");
-      mainImagePreviewContainer.style.display = "block";
-      mainImagePreviewContainer.style.maxWidth = "200px"
-
-      // Ensure preview container is hidden initially if no image exists
-      if (!mainImagePreview.src || mainImagePreview.src === window.location.href) {
-        mainImagePreviewContainer.style.display = "none";
-      } else {
-        mainImagePreviewContainer.style.display = "block";
-      };
+      const bannerImageInput = document.getElementById("bannerImages");
+      const bannerPreviewContainer = document.getElementById("bannerPreviewContainer");
 
       mainImageInput.addEventListener("change", function() {
         const file = this.files[0];
@@ -786,65 +741,466 @@
           const reader = new FileReader();
           reader.onload = function(e) {
             mainImagePreview.src = e.target.result;
-            mainImagePreview.style.display = "block";
-            mainImagePreviewContainer.style.display = "block"; // Ensure it is visible
-            removeMainImageButton.style.display = "block"; // Show remove button
+            mainImagePreviewContainer.style.display = "block";
+            removeMainImageButton.style.display = "block";
           };
           reader.readAsDataURL(file);
         }
       });
 
-      // Clicking the preview image opens the modal
       mainImagePreview.addEventListener("click", function() {
         document.getElementById("fullSizeImage").src = this.src;
       });
 
-      // Banner images preview (multiple)
-      const bannerImageInput = document.getElementById("bannerImages");
-      const bannerPreviewContainer = document.getElementById("bannerPreviewContainer");
+      $("#removeMainImage").click(function() {
+        $("#mainImagePreview").attr("src", "");
+        $("#mainImagePreviewContainer").hide();
+        $("#file").val("");
+      });
 
       bannerImageInput.addEventListener("change", function() {
         bannerPreviewContainer.innerHTML = "";
-        if (this.files) {
-          Array.from(this.files).forEach(file => {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-              const img = document.createElement("img");
-              img.src = e.target.result;
-              img.classList.add("img-thumbnail");
-              img.setAttribute("data-bs-toggle", "modal");
-              img.setAttribute("data-bs-target", "#imageModal");
-              img.addEventListener("click", function() {
-                document.getElementById("fullSizeImage").src = this.src;
-              });
-              bannerPreviewContainer.appendChild(img);
-            };
-            reader.readAsDataURL(file);
-          });
-        }
-      });
-      // Remove main image
-      $("#removeMainImage").click(function() {
-        $("#mainImagePreview").attr("src", ""); // Clear src
-        $("#mainImagePreviewContainer").hide(); // Hide container
-        $("#file").val(""); // Reset file input
+        Array.from(this.files).forEach(file => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.classList.add("img-thumbnail");
+            img.setAttribute("data-bs-toggle", "modal");
+            img.setAttribute("data-bs-target", "#imageModal");
+            img.addEventListener("click", function() {
+              document.getElementById("fullSizeImage").src = this.src;
+            });
+            bannerPreviewContainer.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        });
       });
     });
 
+    // manage city detail add update and all other event are managed from here
     document.addEventListener("DOMContentLoaded", function() {
       const cityContainer = document.getElementById("cityContainer");
+      const addCityBtn = document.getElementById("addCity");
       let selectedCities = new Set();
-      // Handle city selection (event delegation)
+
+      /**
+       * Initializes all city entries on page load, handling both add and update cases.
+       * @async
+       */
+      async function initializeCityEntries() {
+        const trips = <%- JSON.stringify(trips || {}) %>;
+        const firstCityEntry = document.querySelector(".city-entry");
+
+        await populateCityDropdown(firstCityEntry.querySelector(".city-select"));
+
+        if (trips.deptcities && trips.deptcities.length > 0) {
+          firstCityEntry.querySelector("#pricingContainer").innerHTML = "";
+          populateCityEntry(firstCityEntry, trips.deptcities[0]);
+          initializeFlatpickr(firstCityEntry, trips.deptcities[0].dates);
+          for (let i = 1; i < trips.deptcities.length; i++) {
+            await addCityEntry(trips.deptcities[i]);
+          }
+        } else {
+          initializeFlatpickr(firstCityEntry);
+        }
+        addEventListenersToEntry(firstCityEntry);
+        updateAddCityButtonState();
+      }
+
+      /**
+       * Adds a new city entry dynamically.
+       * @async
+       * @param {Object|null} cityData - Data for pre-filling the entry (update case).
+       * @returns {HTMLElement} The newly created city entry element.
+       */
+      async function addCityEntry(cityData = null) {
+        const template = document.querySelector(".city-entry").cloneNode(true);
+        template.querySelector(".city-select").value = "";
+        template.querySelector(".state-field").value = "";
+        template.querySelector(".city-image").src = "";
+        template.querySelector(".city-image").style.display = "none";
+        template.querySelector(".datePicking").value = "";
+        template.querySelector(".datePreview").innerHTML = "";
+        template.querySelector("#pricingContainer").innerHTML = `
+      <div class="row pricingRow">
+        <div class="col-12 col-md-4">
+          <div class="mb-3">
+            <label class="form-label">Transfer Type</label>
+            <input type="text" class="form-control transferType" name="transferType[]" placeholder="Transfer Type" required>
+            <div class="invalid-feedback">Transfer Type is required and must be unique.</div>
+          </div>
+        </div>
+        <div class="col-12 col-md-4">
+          <div class="mb-3">
+            <label class="form-label">Child Price</label>
+            <input type="number" class="form-control childPrice" name="childPrice[]" placeholder="Enter price per child" required>
+            <div class="invalid-feedback">Child Price is required.</div>
+          </div>
+        </div>
+        <div class="col-12 col-md-4">
+          <div class="mb-3 position-relative">
+            <label class="form-label">Adult Price</label>
+            <div class="d-flex align-items-center">
+              <input type="number" class="form-control adultPrice" name="adultPrice[]" placeholder="Enter price per adult" required>
+              <div class="invalid-feedback">Adult Price is required.</div>
+              <button type="button" class="btn btn-danger btn-sm removeRow mt-3" style="display: none;"><i class="bi bi-x-circle"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+        cityContainer.appendChild(template);
+        const select = template.querySelector(".city-select");
+        await populateCityDropdown(select, cityData?.City);
+        if (cityData) {
+          populateCityEntry(template, cityData);
+          initializeFlatpickr(template, cityData.dates);
+        } else {
+          initializeFlatpickr(template);
+        }
+        addEventListenersToEntry(template);
+        updateAddCityButtonState();
+        return template;
+      }
+
+      /**
+       * Populates a city entry with saved data (update case).
+       * @param {HTMLElement} entry - The city entry element to populate.
+       * @param {Object} cityData - Saved city data from the database.
+       */
+      function populateCityEntry(entry, cityData) {
+        const select = entry.querySelector(".city-select");
+        const stateField = entry.querySelector(".state-field");
+        const imageField = entry.querySelector(".city-image");
+        const tripDurationField = entry.querySelector(".tripDuration"); // Add this
+        select.value = cityData.City;
+        const selectedOption = Array.from(select.options).find(option => option.value === cityData.City);
+        if (selectedOption) {
+          stateField.value = selectedOption.dataset.state || cityData.State;
+          imageField.src = selectedOption.dataset.image || cityData.image || "";
+          imageField.style.display = imageField.src ? "block" : "none";
+        }
+        // Set tripDuration
+        tripDurationField.value = cityData.tripDuration || ""; // Add this
+        selectedCities.add(cityData.City);
+        cityData.price.forEach((price, index) => {
+          const row = addPricingRow(entry, price);
+          if (index === 0) row.querySelector(".removeRow").style.display = "none";
+        });
+        updatePricingButtons(entry);
+        select.dispatchEvent(new Event("change"));
+      }
+
+      /**
+       * Fetches and populates the city dropdown with options.
+       * @async
+       * @param {HTMLSelectElement} selectElement - The select element to populate.
+       * @param {string} [selectedCity=""] - The pre-selected city (update case).
+       */
+      async function populateCityDropdown(selectElement, selectedCity = "") {
+        const cities = await fetchCities();
+        selectElement.innerHTML = '<option value="">Select City</option>';
+        cities.forEach(city => {
+          const option = document.createElement("option");
+          option.value = city.name;
+          option.textContent = city.name;
+          option.dataset.state = city.state;
+          option.dataset.image = city.image;
+          if (city.name === selectedCity) option.selected = true;
+          selectElement.appendChild(option);
+        });
+      }
+
+      /**
+       * Adds event listeners to a city entry for dynamic interactions.
+       * @param {HTMLElement} entry - The city entry element.
+       */
+      function addEventListenersToEntry(entry) {
+        entry.querySelector(".remove-city").addEventListener("click", () => {
+          selectedCities.delete(entry.querySelector(".city-select").value);
+          entry.remove();
+          updateAddCityButtonState();
+          toggleRemoveCityButtons();
+        });
+
+        const addRowBtn = entry.querySelector("#addRow");
+        addRowBtn.addEventListener("click", () => {
+          if (!addRowBtn.disabled) {
+            const transferTypes = Array.from(entry.querySelectorAll(".transferType")).map(input => input.value.trim());
+            const newRow = addPricingRow(entry);
+            newRow.querySelector(".transferType").addEventListener("blur", function() {
+              if (transferTypes.includes(this.value.trim()) && this.value.trim()) {
+                this.classList.add("is-invalid");
+                this.nextElementSibling.textContent = "Transfer Type must be unique within this city.";
+              } else {
+                this.classList.remove("is-invalid");
+              }
+            });
+            updatePricingButtons(entry);
+            updateAddCityButtonState();
+            updateAddPricingButtonState(entry); // Re-validate after adding
+          }
+        });
+
+        entry.querySelector(".clearDates").addEventListener("click", () => {
+          const fp = entry.querySelector(".datePicking")._flatpickr;
+          fp.clear();
+          entry.querySelector(".datePreview").innerHTML = "";
+          entry.querySelector(".error-msg").classList.add("d-none");
+          updateAddPricingButtonState(entry); // Re-validate after clearing dates
+        });
+
+        // Add input listeners for validation
+        entry.querySelectorAll(".transferType, .childPrice, .adultPrice").forEach(input => {
+          input.addEventListener("input", () => {
+            input.classList.toggle("is-invalid", !input.value.trim());
+            updateAddCityButtonState();
+            updateAddPricingButtonState(entry);
+          });
+        });
+
+        entry.querySelector(".city-select").addEventListener("change", () => {
+          updateAddPricingButtonState(entry);
+        });
+      }
+
+      /**
+       * Adds a pricing row to a city entry.
+       * @param {HTMLElement} entry - The city entry element.
+       * @param {Object|null} priceData - Saved price data (update case).
+       * @returns {HTMLElement} The newly created pricing row.
+       */
+      function addPricingRow(entry, priceData = null) {
+        const container = entry.querySelector("#pricingContainer");
+        const row = document.createElement("div");
+        row.classList.add("row", "pricingRow");
+        row.innerHTML = `
+      <div class="col-12 col-md-4">
+        <div class="mb-3">
+          <label class="form-label">Transfer Type</label>
+          <input type="text" class="form-control transferType" name="transferType[]" placeholder="Transfer Type" required>
+          <div class="invalid-feedback">Transfer Type is required and must be unique.</div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="mb-3">
+          <label class="form-label">Child Price</label>
+          <input type="number" class="form-control childPrice" name="childPrice[]" placeholder="Enter price per child" required>
+          <div class="invalid-feedback">Child Price is required.</div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="mb-3 position-relative">
+          <label class="form-label">Adult Price</label>
+          <div class="d-flex align-items-center">
+            <input type="number" class="form-control adultPrice" name="adultPrice[]" placeholder="Enter price per adult" required>
+            <div class="invalid-feedback">Adult Price is required.</div>
+            <button type="button" class="btn btn-danger btn-sm removeRow mt-3" style="display: none;"><i class="bi bi-x-circle"></i></button>
+          </div>
+        </div>
+      </div>`;
+        if (priceData) {
+          row.querySelector(".transferType").value = priceData.transferType;
+          row.querySelector(".childPrice").value = priceData.childPrice;
+          row.querySelector(".adultPrice").value = priceData.adultPrice;
+        }
+        container.appendChild(row);
+        row.querySelector(".removeRow").addEventListener("click", () => {
+          row.remove();
+          updatePricingButtons(entry);
+          updateAddCityButtonState();
+          updateAddPricingButtonState(entry); // Re-validate after removal
+        });
+        return row;
+      }
+
+      /**
+       * Updates visibility of pricing row remove buttons.
+       * @param {HTMLElement} entry - The city entry element.
+       */
+      function updatePricingButtons(entry) {
+        const pricingRows = entry.querySelectorAll(".pricingRow");
+        const removeButtons = entry.querySelectorAll(".removeRow");
+        if (pricingRows.length > 1) {
+          removeButtons.forEach(btn => btn.style.display = "block");
+        } else {
+          removeButtons.forEach(btn => btn.style.display = "none");
+        }
+      }
+
+      /**
+       * Toggles visibility of remove city buttons based on number of cities.
+       */
+      function toggleRemoveCityButtons() {
+        const cityEntries = document.querySelectorAll(".city-entry");
+        const removeCityButtons = document.querySelectorAll(".remove-city");
+        if (cityEntries.length > 1) {
+          removeCityButtons.forEach(btn => btn.style.display = "block");
+        } else {
+          removeCityButtons.forEach(btn => btn.style.display = "none");
+        }
+      }
+
+      /**
+       * Updates the state of the "Add City" button based on form validity across all entries.
+       */
+      function updateAddCityButtonState() {
+        const cityEntries = document.querySelectorAll(".city-entry");
+        let allValid = true;
+        cityEntries.forEach(entry => {
+          const citySelect = entry.querySelector(".city-select").value;
+          const pricingRows = entry.querySelectorAll(".pricingRow");
+          const dates = entry.querySelector(".datePicking")._flatpickr?.selectedDates || [];
+          if (!citySelect || dates.length === 0) allValid = false;
+          if (!citySelect) entry.querySelector(".city-select").classList.add("is-invalid");
+          pricingRows.forEach(row => {
+            const transferType = row.querySelector(".transferType").value.trim();
+            const childPrice = row.querySelector(".childPrice").value.trim();
+            const adultPrice = row.querySelector(".adultPrice").value.trim();
+            if (!transferType || !childPrice || !adultPrice) allValid = false;
+            row.querySelector(".transferType").classList.toggle("is-invalid", !transferType);
+            row.querySelector(".childPrice").classList.toggle("is-invalid", !childPrice);
+            row.querySelector(".adultPrice").classList.toggle("is-invalid", !adultPrice);
+          });
+        });
+        addCityBtn.disabled = !allValid;
+        toggleRemoveCityButtons();
+      }
+
+      /**
+       * Updates the state of the "Add Pricing" button for a specific city entry.
+       * @param {HTMLElement} entry - The city entry element to validate.
+       */
+      function updateAddPricingButtonState(entry) {
+        const addRowBtn = entry.querySelector("#addRow");
+        const citySelect = entry.querySelector(".city-select").value;
+        const pricingRows = entry.querySelectorAll(".pricingRow");
+        const dates = entry.querySelector(".datePicking")._flatpickr?.selectedDates || [];
+        let allValid = citySelect && dates.length > 0;
+
+        if (!citySelect) entry.querySelector(".city-select").classList.add("is-invalid");
+        else entry.querySelector(".city-select").classList.remove("is-invalid");
+
+        pricingRows.forEach(row => {
+          const transferType = row.querySelector(".transferType").value.trim();
+          const childPrice = row.querySelector(".childPrice").value.trim();
+          const adultPrice = row.querySelector(".adultPrice").value.trim();
+          if (!transferType || !childPrice || !adultPrice) allValid = false;
+          // Feedback is already handled by individual input listeners
+        });
+
+        addRowBtn.disabled = !allValid;
+      }
+
+      /**
+       * Initializes Flatpickr calendar for a city entry.
+       * @param {HTMLElement} entry - The city entry element.
+       * @param {Array} [initialDates=[]] - Saved dates from the database.
+       */
+
+      function initializeFlatpickr(entry, initialDates = []) {
+  const dateInput = entry.querySelector(".datePicking");
+  const preview = entry.querySelector(".datePreview");
+  const errorMsg = entry.querySelector(".error-msg");
+  let dates = [];
+
+  if (initialDates && initialDates.length > 0) {
+    dates = initialDates.flatMap(d => {
+      const year = d.Year;
+      const month = d.Month;
+      const monthNumber = new Date(`${month} 1, ${year}`).getMonth() + 1;
+      const monthStr = monthNumber.toString().padStart(2, "0");
+      return d.dates.split(", ").map(date => {
+        const day = date.trim().padStart(2, "0");
+        // Parse the date as UTC
+        const utcDate = new Date(Date.UTC(year, monthNumber - 1, day));
+        // Convert to local time for Flatpickr
+        return utcDate;
+      });
+    }).filter(date => {
+      const parsedDate = new Date(date);
+      return parsedDate >= new Date().setHours(0, 0, 0, 0);
+    });
+  }
+
+  if (dateInput._flatpickr) dateInput._flatpickr.destroy();
+
+  const fp = flatpickr(dateInput, {
+    mode: "multiple",
+    dateFormat: "Y-m-d",
+    minDate: "today",
+    defaultDate: dates.length ? dates : null,
+    onReady: function() {
+      updateDatePreview(preview, this.selectedDates);
+    },
+    onChange: function(selectedDates) {
+      updateDatePreview(preview, selectedDates);
+      errorMsg.classList.toggle("d-none", selectedDates.length > 0);
+      updateAddCityButtonState();
+      updateAddPricingButtonState(entry);
+    }
+  });
+
+  if (dates.length) updateDatePreview(preview, dates);
+  else errorMsg.classList.remove("d-none");
+}
+
+  /**
+ * Formats a Date object to YYYY-MM-DD in the local time zone.
+ * @param {Date} date - The Date object to format.
+ * @returns {string} The formatted date string (e.g., "2025-03-20").
+ */
+function formatLocalDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function updateDatePreview(preview, dates) {
+  preview.innerHTML = "";
+  dates.forEach((date, index) => {
+    const formattedDate = typeof date === "string" ? date : formatLocalDate(date); // Display in local time
+    preview.innerHTML += `
+      <tr>
+        <td class="text-center">${index + 1}</td>
+        <td class="text-center">${formattedDate}</td>
+        <td class="text-center">
+          <button class="btn btn-danger btn-sm remove-date" data-date="${formattedDate}">Remove</button>
+        </td>
+      </tr>`;
+  });
+  preview.querySelectorAll(".remove-date").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const date = btn.dataset.date;
+      const fp = btn.closest(".city-entry").querySelector(".datePicking")._flatpickr;
+      const updatedDates = fp.selectedDates.filter(d => formatLocalDate(d) !== date);
+      fp.setDate(updatedDates);
+      updateDatePreview(preview, updatedDates);
+      btn.closest(".city-entry").querySelector(".error-msg").classList.toggle("d-none", updatedDates.length > 0);
+      updateAddPricingButtonState(btn.closest(".city-entry"));
+    });
+  });
+}
+
       cityContainer.addEventListener("change", function(event) {
         if (event.target.classList.contains("city-select")) {
           const select = event.target;
-          const selectedOption = select.options[select.selectedIndex];
-          const cityName = selectedOption.value;
-          const cityEntry = select.closest(".city-entry");
-          const stateField = cityEntry.querySelector(".state-field");
-          const imageField = cityEntry.querySelector(".city-image");
+          const cityName = select.value;
+          const entry = select.closest(".city-entry");
+          const stateField = entry.querySelector(".state-field");
+          const imageField = entry.querySelector(".city-image");
+          const isDuplicate = Array.from(document.querySelectorAll(".city-select")).some(s => s !== select && s.value === cityName);
 
-          if (cityName && !selectedCities.has(cityName)) {
+          if (isDuplicate) {
+            alert("This city is already selected!");
+            select.value = "";
+            stateField.value = "";
+            imageField.src = "";
+            imageField.style.display = "none";
+            selectedCities.delete(cityName);
+          } else if (cityName) {
+            const selectedOption = select.options[select.selectedIndex];
             stateField.value = selectedOption.dataset.state;
             imageField.src = selectedOption.dataset.image;
             imageField.style.display = "block";
@@ -855,119 +1211,23 @@
             imageField.style.display = "none";
             selectedCities.delete(cityName);
           }
+          updateAddCityButtonState();
+          updateAddPricingButtonState(entry);
         }
       });
 
-      // Handle click event for dynamically generated images
-      cityContainer.addEventListener("click", function(event) {
-        if (event.target.classList.contains("city-image")) {
-          const fullSizeImage = document.getElementById("fullSizeImage");
-          const imageModal = new bootstrap.Modal(document.getElementById("imageModal"));
-
-          if (event.target.src) {
-            fullSizeImage.src = event.target.src;
-            imageModal.show();
-          }
-        }
-      });
-      // Initialize first dropdown
-      populateCityDropdown(document.querySelector(".city-select"));
-
-      let selectedDates = [];
-      let datePickerInput = document.querySelector(".datePicker");
-
-      // Store the flatpickr instance in `fp`
-      let fp = flatpickr("#datePicker", {
-        mode: "multiple",
-        dateFormat: "Y-m-d",
-        minDate: "today",
-        enableTime: false,
-        onClose: function(selectedDatesArr) {
-          selectedDates = selectedDatesArr.map(date => date.toISOString().split("T")[0]); // Remove `let`
-          updateDatePreview(datePickerInput, selectedDates);
-        }
+      document.getElementById("addCity").addEventListener("click", () => {
+        if (!addCityBtn.disabled) addCityEntry();
       });
 
-      function updateDatePreview(inputElement, selectedDates) {
-        let cityEntry = inputElement.closest(".city-entry");
-        let datePreviewEl = cityEntry.querySelector("#datePreview");
-        datePreviewEl.innerHTML = "";
-        selectedDates.forEach((date, index) => {
-          let row = `
-                      <tr>
-                          <td class="text-center">${index + 1}</td>
-                          <td class="text-center">${date}</td>
-                          <td class="text-center">
-                              <button class="btn btn-danger btn-sm remove-date" data-date="${date}">Remove</button>
-                          </td>
-                      </tr>
-                   `;
-          datePreviewEl.innerHTML += row;
-        });
-
-        // Re-attach event listeners after updating the table
-        document.querySelectorAll(".remove-date").forEach(button => {
-          button.addEventListener("click", function(e) {
-            e.preventDefault();
-            let dateToRemove = this.getAttribute("data-date");
-            removeDate(dateToRemove);
-          });
-        });
-      }
-
-      function removeDate(date) {
-        selectedDates = selectedDates.filter(d => d !== date);
-        fp.setDate(selectedDates, true); // Use `fp` to update selection
-        updateDatePreview(datePickerInput, selectedDates);
-      }
-
-      document.getElementById("clearDates").addEventListener("click", function(e) {
-        e.preventDefault();
-        selectedDates = [];
-        fp.clear();
-        updateDatePreview(datePickerInput, selectedDates);
-      });
-
-      // Convert selectedDates to MongoDB Format
-      function formatForMongoDB() {
-        let groupedData = {};
-
-        selectedDates.forEach(date => {
-          let [year, month, day] = date.split("-");
-          let monthName = new Date(date).toLocaleString("en-US", {
-            month: "long"
-          });
-
-          if (!groupedData[`${year}-${monthName}`]) {
-            groupedData[`${year}-${monthName}`] = {
-              year,
-              month: monthName,
-              dates: []
-            };
-          }
-          groupedData[`${year}-${monthName}`].dates.push(day);
-        });
-
-        let formattedArray = Object.values(groupedData).map(entry => ({
-          year: entry.year,
-          month: entry.month,
-          dates: entry.dates.join(", ")
-        }));
-        return formattedArray;
-      };
-
+      initializeCityEntries();
     });
-    // **End  of the calender dateand other for manage monthes**
 
-    //** Mange about section and other section textEditor  **//
-    // Store all Quill editors
-    const editorsd = {};
-    // Define all section editor IDs
-    const editorIds = ["about-editor", "placestovisit-editor", "activities-editor", "things_to_carry-editor", "includenexclude-editor", "package_cost-editor", "infonfaq-editor", "guidelines-editor", "bookncancel-editor"];
+    // end of manage departure city
 
-    // Loop through each section and create a Quill editor
-    editorIds.forEach(editorId => {
-      editorsd[editorId] = new Quill(`#${editorId}`, {
+    // Quill Editors
+    editorIds.forEach(id => {
+      staticEditors[id] = new Quill(`#${id}`, {
         theme: "snow",
         modules: {
           toolbar: [
@@ -1004,631 +1264,614 @@
             }, {
               'background': []
             }],
-            ['blockquote'],
-            ['link'],
+            ['blockquote', 'link'],
             ['clean']
-          ],
-          imageResize: {
-            displayStyles: {
-              backgroundColor: 'black',
-              border: 'none',
-              color: 'white'
-            },
-            modules: ['Resize', 'DisplaySize', 'Toolbar']
-          }
+          ]
         }
       });
     });
-    //** End of all type of textEditor section ** //
 
-    //** New Itinerary day section start from here **/
-    // Mange iternity section textEditor section config with image upload
-    // ** New Itinerary day section start from here **
-    let dayCount = 1;
-    let editors = {}; // Object to store Quill instances
-    let itineraryData = <%- JSON.stringify(trips?.itinerary || []) %>; // Default to an empty array
+    // Itinerary Management
+    const itineraryData = <%- JSON.stringify(trips?.itinerary || []) %>;
+    const addDayBtn = document.getElementById("add-day");
+    const itineraryContainer = document.getElementById("itinerary-container");
 
-    // Function to generate itinerary HTML
-    function createItineraryDay(dayNumber, headerValue = "", descriptionValue = "") {
-      let editorId = `editor-${dayNumber}`;
+    // Separate editors object for itinerary to avoid conflicts
+    let itineraryEditors = {};
 
-      let itineraryHtml = `
-    <div class="itinerary-day p-3 mb-3 border rounded" data-day="${dayNumber}">
-      <h5>Day ${dayNumber}</h5>
-      <input type="text" class="form-control" name="itinerary-header" placeholder="Enter Header" value="${headerValue}" required />
-      <div class="editor-container mb-3" id="${editorId}"></div>
-      <input type="hidden" name="content[]" class="quill-content">
+    function getNextDayNumber() {
+      const existingDays = Array.from(itineraryContainer.querySelectorAll(".itinerary-day"))
+        .map(day => parseInt(day.dataset.day));
+      return existingDays.length === 0 ? 1 : Math.max(...existingDays) + 1;
+    }
+
+    function createItineraryDay(dayNumber, headerValue = "", descriptionValue = "", dayLabel = `Day ${dayNumber}`) {
+      const editorId = `editor-${dayNumber}`; // Unique editor ID based on dayNumber
+      const accordionId = `collapse-${dayNumber}`;
+      const itineraryHtml = `
+    <div class="accordion-item itinerary-day" data-day="${dayNumber}">
+      <h2 class="accordion-header" id="heading-${dayNumber}">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#${accordionId}" aria-expanded="true" aria-controls="${accordionId}">
+          ${dayLabel}
+        </button>
+      </h2>
+      <div id="${accordionId}" class="accordion-collapse collapse show" aria-labelledby="heading-${dayNumber}" data-bs-parent="#itinerary-container">
+        <div class="accordion-body">
+          <div class="mb-3">
+            <label class="form-label">Header</label>
+            <input type="text" class="form-control itinerary-header" name="itinerary-header[]" value="${headerValue}" placeholder="Enter Header" required />
+            <div class="invalid-feedback">Header is required.</div>
+          </div>
+          <div class="editor-container mb-3" id="${editorId}"></div>
+          <input type="hidden" name="content[]" class="quill-content" value="${descriptionValue.replace(/"/g, '&quot;').replace(/>/g, '&gt;').replace(/</g, '&lt;')}">
+          <button type="button" class="btn btn-danger btn-sm remove-day-btn mt-2" disabled><i class="bi bi-trash"></i> Remove This Day</button>
+        </div>
+      </div>
     </div>`;
 
-      document.getElementById("itinerary-container").insertAdjacentHTML("beforeend", itineraryHtml);
-      initializeEditor(editorId, descriptionValue);
-    }
-
-    // Function to initialize Quill editor
-    function initializeEditor(editorId, content = "") {
-      editors[editorId] = new Quill(`#${editorId}`, {
-        theme: "snow",
-        modules: {
-          toolbar: [
-            [{
-              'header': [1, 2, 3, 4, 5, 6, false]
-            }],
-            [{
-              'font': []
-            }],
-            [{
-              'size': ['small', false, 'large', 'huge']
-            }],
-            ['bold', 'italic', 'underline', 'strike'],
-            [{
-              'script': 'sub'
-            }, {
-              'script': 'super'
-            }],
-            [{
-              'list': 'ordered'
-            }, {
-              'list': 'bullet'
-            }],
-            [{
-              'indent': '-1'
-            }, {
-              'indent': '+1'
-            }],
-            [{
-              'align': []
-            }],
-            [{
-              'color': []
-            }, {
-              'background': []
-            }],
-            ['blockquote'],
-            ['link', 'image'],
-            ['clean']
-          ],
+      itineraryContainer.insertAdjacentHTML("beforeend", itineraryHtml);
+      const editorContainer = document.getElementById(editorId);
+      if (editorContainer) {
+        console.log(`Editor container #${editorId} added to DOM`);
+        initializeEditor(editorId, descriptionValue);
+        const dayElement = document.querySelector(`.itinerary-day[data-day="${dayNumber}"]`);
+        if (dayElement) {
+          addEventListenersToDay(dayElement);
+        } else {
+          console.error(`Day element for day ${dayNumber} not found`);
         }
-      });
+        updateDayLabelsAndButtons();
+      } else {
+        console.error(`Failed to find editor container #${editorId} after insertion`);
+      }
+    }
 
-      editors[editorId].root.innerHTML = content;
+    function initializeEditor(editorId, content = "") {
+      const editorContainer = document.getElementById(editorId);
+      if (!editorContainer) {
+        console.error(`Editor container #${editorId} not found for initialization`);
+        return;
+      }
 
-      editors[editorId].on("text-change", function() {
-        document.querySelector(`#${editorId}`).nextElementSibling.value = editors[editorId].root.innerHTML;
-      });
-      // Handle image selection & upload
-      editors[editorId].getModule('toolbar').addHandler('image', () => {
-        let input = document.createElement('input');
-        input.setAttribute('type', 'file');
-        input.setAttribute('accept', 'image/*');
-        input.click();
+      if (itineraryEditors[editorId]) {
+        console.warn(`Editor ${editorId} already initialized, skipping`);
+        return;
+      }
 
-        input.onchange = async () => {
-          const file = input.files[0];
-
-          if (!file) return;
-
-          // Validate file type
-          const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-          if (!allowedTypes.includes(file.type)) {
-            alert('Only JPG, JPEG, and PNG images are allowed.');
-            return;
+      try {
+        itineraryEditors[editorId] = new Quill(`#${editorId}`, {
+          theme: "snow",
+          modules: {
+            toolbar: [
+              [{
+                'header': [1, 2, 3, 4, 5, 6, false]
+              }],
+              [{
+                'font': []
+              }],
+              [{
+                'size': ['small', false, 'large', 'huge']
+              }],
+              ['bold', 'italic', 'underline', 'strike'],
+              [{
+                'script': 'sub'
+              }, {
+                'script': 'super'
+              }],
+              [{
+                'list': 'ordered'
+              }, {
+                'list': 'bullet'
+              }],
+              [{
+                'indent': '-1'
+              }, {
+                'indent': '+1'
+              }],
+              [{
+                'align': []
+              }],
+              [{
+                'color': []
+              }, {
+                'background': []
+              }],
+              ['blockquote', 'link', 'image'],
+              ['clean']
+            ]
           }
+        });
+        console.log(`Editor ${editorId} initialized successfully`);
 
-          // Validate file size (Max 2MB)
-          if (file.size > 2 * 1024 * 1024) {
-            alert('File size should not exceed 2MB.');
-            return;
-          }
+        itineraryEditors[editorId].root.innerHTML = content || "";
+        const hiddenInput = editorContainer.nextElementSibling;
+        if (hiddenInput && hiddenInput.classList.contains('quill-content')) {
+          hiddenInput.value = content || "";
+        } else {
+          console.error(`Hidden input for ${editorId} not found or invalid`);
+        }
 
-          let formData = new FormData();
-          formData.append('_csrf', csrfToken);
-          const timestamp = new Date().toISOString().replace(/:/g, '-');
-          const fileName = `${timestamp}-${file.name}`;
-          file.originalname = fileName;
-          formData.append('image', file);
+        itineraryEditors[editorId].on("text-change", () => {
+          hiddenInput.value = itineraryEditors[editorId].root.innerHTML;
+          updateAddDayButtonState();
+        });
 
-          try {
-            const response = await fetch('/uploadImage', {
-              method: 'POST',
-              headers: {
-                'X-CSRF-Token': csrfToken
-              },
-              body: formData
-            });
-
-            const result = await response.json();
-
-            if (response.ok && result.success) {
-              let range = editors[editorId].getSelection();
-              editors[editorId].insertEmbed(range.index, 'image', result.imageUrl);
-            } else {
-              alert(result.message || 'Failed to upload image.');
+        itineraryEditors[editorId].getModule('toolbar').addHandler('image', () => {
+          const input = document.createElement('input');
+          input.setAttribute('type', 'file');
+          input.setAttribute('accept', 'image/*');
+          input.click();
+          input.onchange = async () => {
+            const file = input.files[0];
+            if (!file) return;
+            const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+            if (!allowedTypes.includes(file.type)) {
+              alert('Only JPG, JPEG, and PNG images are allowed.');
+              return;
             }
-          } catch (error) {
-            console.error('Upload Error:', error);
-            alert('Something went wrong while uploading the image.');
-          }
-        };
+            if (file.size > 2 * 1024 * 1024) {
+              alert('File size should not exceed 2MB.');
+              return;
+            }
+            const formData = new FormData();
+            formData.append('_csrf', csrfToken);
+            const timestamp = new Date().toISOString().replace(/:/g, '-');
+            const fileName = `${timestamp}-${file.name}`;
+            file.originalname = fileName;
+            formData.append('image', file);
+            try {
+              const response = await fetch('/uploadImage', {
+                method: 'POST',
+                headers: {
+                  'X-CSRF-Token': csrfToken
+                },
+                body: formData
+              });
+              const result = await response.json();
+              if (response.ok && result.success) {
+                const range = itineraryEditors[editorId].getSelection() || {
+                  index: 0
+                };
+                itineraryEditors[editorId].insertEmbed(range.index, 'image', result.imageUrl);
+              } else {
+                alert(result.message || 'Failed to upload image.');
+              }
+            } catch (error) {
+              console.error('Upload Error:', error);
+              alert('Something went wrong while uploading the image.');
+            }
+          };
+        });
+
+        // Ensure the button state is updated after initialization
+        setTimeout(() => updateAddDayButtonState(), 0);
+      } catch (error) {
+        console.error(`Error initializing Quill editor ${editorId}:`, error);
+      }
+    }
+
+    function addEventListenersToDay(dayElement) {
+      const removeBtn = dayElement.querySelector(".remove-day-btn");
+      removeBtn.addEventListener("click", () => {
+        const dayNumber = dayElement.dataset.day;
+        dayElement.remove();
+        const editorId = `editor-${dayNumber}`;
+        delete itineraryEditors[`editor-${dayNumber}`];
+        updateDayLabelsAndButtons();
+        updateAddDayButtonState(editorId);
+      });
+
+      const headerInput = dayElement.querySelector(".itinerary-header");
+      headerInput.addEventListener("input", () => {
+        headerInput.classList.toggle("is-invalid", !headerInput.value.trim());
+        updateAddDayButtonState();
       });
     }
 
-    // Load itinerary from database
+    /**
+ * Updates the day labels and editor IDs to be sequential (Day 1, Day 2, etc.).
+ * Ensures that editor IDs in the DOM and itineraryEditors object match the new day numbers.
+ */
+function updateDayLabelsAndButtons() {
+  const days = Array.from(itineraryContainer.querySelectorAll(".itinerary-day"));
+
+  // Update day labels and editor IDs to be sequential
+  days.forEach((day, index) => {
+    const logicalDayNumber = index + 1; // New day number (e.g., Day 3 → Day 2)
+    const oldDayNumber = parseInt(day.dataset.day); // Old day number (e.g., 3)
+
+    // If the day number has changed, update the DOM and editor IDs
+    if (logicalDayNumber !== oldDayNumber) {
+      // Update the data-day attribute for logical ordering
+      day.dataset.day = logicalDayNumber;
+
+      // Update accordion header and collapse IDs
+      const header = day.querySelector(".accordion-header");
+      header.id = `heading-${logicalDayNumber}`;
+      const button = header.querySelector(".accordion-button");
+      button.setAttribute("data-bs-target", `#collapse-${logicalDayNumber}`);
+      button.setAttribute("aria-controls", `collapse-${logicalDayNumber}`);
+      button.textContent = `Day ${logicalDayNumber}`;
+
+      const collapse = day.querySelector(".accordion-collapse");
+      collapse.id = `collapse-${logicalDayNumber}`;
+      collapse.setAttribute("aria-labelledby", `heading-${logicalDayNumber}`);
+
+      // Update editor ID in itineraryEditors and DOM
+      const oldEditorId = `editor-${oldDayNumber}`;
+      const newEditorId = `editor-${logicalDayNumber}`;
+      if (itineraryEditors[oldEditorId]) {
+        // Transfer the editor instance to the new ID
+        itineraryEditors[newEditorId] = itineraryEditors[oldEditorId];
+        delete itineraryEditors[oldEditorId];
+
+        // Update the editor container ID in the DOM
+        const editorContainer = day.querySelector(".editor-container");
+        editorContainer.id = newEditorId;
+      }
+    } else {
+      // If the day number hasn't changed, just update the label
+      const headerBtn = day.querySelector(".accordion-button");
+      headerBtn.textContent = `Day ${logicalDayNumber}`;
+    }
+  });
+
+  // Update remove buttons: disable if only one day remains
+  const removeButtons = itineraryContainer.querySelectorAll(".remove-day-btn");
+  removeButtons.forEach(btn => {
+    btn.disabled = days.length === 1;
+  });
+}
+
+   /**
+ * Updates the enable/disable state of the "Add Day" button based on the validity of existing days.
+ * A day is valid if its header and editor content are non-empty.
+ * @param {string|null} removedEditorId - The ID of the editor that was just removed (if any).
+ */
+function updateAddDayButtonState(removedEditorId = null) {
+  const days = itineraryContainer.querySelectorAll(".itinerary-day");
+  let allValid = true;
+
+  // If there are no days, the button should be disabled
+  if (days.length === 0) {
+    console.log("No days present, disabling Add Day button");
+    addDayBtn.disabled = true;
+    return;
+  }
+
+  // Validate each day's header and editor content
+  days.forEach(day => {
+    const header = day.querySelector(".itinerary-header").value.trim();
+    const editorId = `editor-${day.dataset.day}`;
+
+    // Check if the editor exists before accessing its content
+    if (!itineraryEditors[editorId]) {
+      console.warn(`Editor ${editorId} not found for Day ${day.dataset.day}, treating as invalid`);
+      allValid = false;
+      return;
+    }
+
+    // Use innerHTML to check editor content, excluding empty paragraphs
+    const editorContent = itineraryEditors[editorId]?.root.innerHTML || "";
+    const contentIsEmpty = !editorContent || editorContent === "<p><br></p>";
+
+    // A day is invalid if its header or editor content is empty
+    if (!header || contentIsEmpty) {
+      allValid = false;
+      console.log(`Validation failed for Day ${day.dataset.day}: Header=${header}, Content=${editorContent}`);
+    }
+
+    // Toggle invalid state for the header input
+    day.querySelector(".itinerary-header").classList.toggle("is-invalid", !header);
+  });
+
+  // Log the validation result for debugging
+  console.log({ removedEditorId, allValid });
+
+  // Enable the "Add Day" button if all days are valid
+  addDayBtn.disabled = !allValid;
+  console.log(`Add Day button state: ${addDayBtn.disabled ? 'disabled' : 'enabled'}`);
+}
+
     function loadItinerary() {
-      document.getElementById("itinerary-container").innerHTML = ""; // Clear existing data
-      dayCount = itineraryData.length > 0 ? itineraryData.length : 1; // Set correct dayCount
+      itineraryContainer.innerHTML = ""; // Clear existing content
 
       if (itineraryData.length > 0) {
         itineraryData.forEach((item, index) => {
-          createItineraryDay(index + 1, item.header, item.description);
+          const dayNumber = index + 1;
+          createItineraryDay(dayNumber, item.header, item.description, `Day ${index + 1}`);
         });
       } else {
-        createItineraryDay(1); // Default to 1 empty day if no itinerary exists
+        createItineraryDay(1);
       }
-
-      // Enable or disable remove button
-      document.getElementById("remove-day").disabled = dayCount === 1;
+      updateDayLabelsAndButtons();
+      updateAddDayButtonState();
     }
 
-    // Initialize UI with data
-    document.addEventListener("DOMContentLoaded", loadItinerary);
-
-    // Add new itinerary day
-    document.getElementById("add-day").addEventListener("click", function(event) {
-      event.preventDefault(); // Prevent page scroll or refresh
-      dayCount++;
-      createItineraryDay(dayCount);
-      document.getElementById("remove-day").disabled = false;
-    });
-
-    // Remove last itinerary day
-    document.getElementById("remove-day").addEventListener("click", function(event) {
-      event.preventDefault(); // Prevent page scroll or refresh
-      if (dayCount > 1) {
-        let lastDay = document.querySelector(`.itinerary-day[data-day="${dayCount}"]`);
-        lastDay.remove();
-        delete editors[`editor-${dayCount}`]; // Remove editor instance
-        dayCount--;
-        document.getElementById("remove-day").disabled = dayCount === 1;
+    addDayBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      if (!addDayBtn.disabled) {
+        const newDayNumber = getNextDayNumber();
+        console.log(`Adding new day: Day ${newDayNumber}`);
+        createItineraryDay(newDayNumber);
       }
     });
 
+    // Initial load
+    loadItinerary();
+    // End of the itineray managment
 
-    //** Itinerary day section end here **/
-    document.addEventListener("DOMContentLoaded", function () {
-  const cityContainer = document.getElementById("cityContainer");
-  const addCityButton = document.getElementById("addCity");
+    // Form Submission with Validation
+document.getElementById("addUpdateTripDetial").addEventListener("submit", function(e) {
+  e.preventDefault();
 
-  // Fetch cities and populate dropdown
-  async function fetchCities() {
-    try {
-      const response = await fetch("/getCityList");
-      const data = await response.json();
-      return data.success ? data.cities : [];
-    } catch (error) {
-      console.error("Error fetching cities:", error);
-      return [];
+  // Step 1: Validate all required fields
+  const requiredFields = [
+    { id: "name", name: "Trip Name" },
+    { id: "state", name: "State" },
+    { id: "destinations", name: "Destinations" },
+    { id: "route", name: "Route" },
+    { id: "days", name: "Trip Duration" },
+    { id: "price", name: "Base Price" },
+    { id: "tripType", name: "Difficulty" },
+    { id: "tag", name: "Tag Line" },
+    { id: "altitude", name: "Altitude" },
+    { id: "bestSession", name: "Best Session" }
+  ];
+
+  let validationErrors = [];
+
+  // Validate simple input fields
+  requiredFields.forEach(field => {
+    const input = document.getElementById(field.id);
+    const value = input.value.trim();
+    if (!value) {
+      validationErrors.push(`${field.name} is required.`);
+      input.classList.add("is-invalid");
+    } else {
+      input.classList.remove("is-invalid");
     }
-  }
-
-  // Populate city dropdown
-  async function populateCityDropdown(selectElement, selectedCity = "") {
-    const cities = await fetchCities();
-    selectElement.innerHTML = '<option value="">Select City</option>';
-    cities.forEach((city) => {
-      const option = document.createElement("option");
-      option.value = city.name;
-      option.textContent = city.name;
-      option.dataset.state = city.state;
-      option.dataset.image = city.image;
-      if (city.name === selectedCity) {
-        option.selected = true;
-        selectElement.testImg = city.image
-      }
-      selectElement.appendChild(option);
-    });
-  }
-
-  // Populate city entry with data
-  function populateCityEntry(cityEntry, cityData) {
-    const citySelect = cityEntry.querySelector(".city-select");
-    const stateField = cityEntry.querySelector(".state-field");
-    const cityImage = cityEntry.querySelector(".city-image");
-    const datePicker = cityEntry.querySelector(".datePicker");
-    const pricingContainer = cityEntry.querySelector("#pricingContainer");
-
-    // Populate city and state
-    populateCityDropdown(citySelect, cityData.City).then(() => {
-      citySelect.value = cityData.City;
-      stateField.value = cityData.State;
-      cityImage.src = citySelect?.testImg ||cityData.image || "";
-      cityImage.style.display = citySelect?.testImg  ? "block" : "none";
-    });
-
-    // Populate dates
-    const selectedDates = cityData.dates.flatMap((dateGroup) =>
-      dateGroup.dates.split(", ")
-    );
-    initializeFlatpickr(datePicker, cityEntry.querySelector("#datePreview"), selectedDates);
-
-    // Populate pricing rows
-    cityData.price.forEach((price) => {
-      
-      
-      addPricingRow(cityEntry, price);
-    });
-  }
-
-  // Add a new city entry
-  function addCityEntry(cityData = null) {
-    const cityEntryTemplate = document.querySelector(".city-entry");
-    const newCityEntry = cityEntryTemplate.cloneNode(true);
-
-    // Clear fields for a fresh entry
-    newCityEntry.querySelector(".city-select").value = "";
-    newCityEntry.querySelector(".state-field").value = "";
-    newCityEntry.querySelector(".city-image").src = "";
-    newCityEntry.querySelector(".datePicker").value = "";
-    newCityEntry.querySelector("#datePreview").innerHTML = "";
-    newCityEntry.querySelector("#pricingContainer").innerHTML = "";
-
-    // Append the new city entry
-    cityContainer.appendChild(newCityEntry);
-
-    // Add event listeners
-    addEventListenersToEntry(newCityEntry);
-
-    // Populate data if updating
-    if (cityData) {
-      populateCityEntry(newCityEntry, cityData);
-    }
-  }
-
-  // Add event listeners to a city entry
-  function addEventListenersToEntry(cityEntry) {
-    cityEntry.querySelector(".remove-city").addEventListener("click", () => {
-      cityEntry.remove();
-    });
-
-    cityEntry.querySelector("#addRow").addEventListener("click", () => {
-      addPricingRow(cityEntry);
-    });
-
-    cityEntry.querySelector("#clearDates").addEventListener("click", () => {
-      cityEntry.querySelector(".datePicker").value = "";
-      cityEntry.querySelector("#datePreview").innerHTML = "";
-    });
-  }
-
-  // Add a pricing row
-  function addPricingRow(cityEntry, priceData = null) {
-    const pricingContainer = cityEntry.querySelector("#pricingContainer");
-
-    const pricingRow = document.createElement("div");
-    pricingRow.classList.add("row", "pricingRow");
-
-    pricingRow.innerHTML = `
-      <div class="col-4">
-        <input type="text" class="form-control transferType" placeholder="Transfer Type" required>
-      </div>
-      <div class="col-4">
-        <input type="number" class="form-control childPrice" placeholder="Child Price" required>
-      </div>
-      <div class="col-4">
-        <input type="number" class="form-control adultPrice" placeholder="Adult Price" required>
-        <button type="button" class="btn btn-danger btn-sm removeRow">
-          <i class="bi bi-x-circle"></i>
-        </button>
-      </div>
-    `;
-
-    // Populate pricing data if updating
-    if (priceData) {
-      pricingRow.querySelector(".transferType").value = priceData.transferType;
-      pricingRow.querySelector(".childPrice").value = priceData.childPrice;
-      pricingRow.querySelector(".adultPrice").value = priceData.adultPrice;
-    }
-
-    pricingContainer.appendChild(pricingRow);
-
-    // Add remove row event
-    pricingRow.querySelector(".removeRow").addEventListener("click", () => {
-      pricingRow.remove();
-    });
-  }
-
-  // Initialize flatpickr for date selection
-  function initializeFlatpickr(inputElement, previewTable, selectedDates = []) {
-    const fp = flatpickr(inputElement, {
-      mode: "multiple",
-      dateFormat: "Y-m-d",
-      minDate: "today",
-      enableTime: false,
-      defaultDate: selectedDates,
-      onClose: function (selectedDatesArr) {
-        const formattedDates = selectedDatesArr.map((date) =>
-          date.toISOString().split("T")[0]
-        );
-        updateDatePreview(previewTable, formattedDates);
-      },
-    });
-
-    updateDatePreview(previewTable, selectedDates);
-  }
-
-  // Update date preview table
-  function updateDatePreview(previewTable, selectedDates) {
-    previewTable.innerHTML = "";
-    selectedDates.forEach((date, index) => {
-      const row = `
-        <tr>
-          <td class="text-center">${index + 1}</td>
-          <td class="text-center">${date}</td>
-          <td class="text-center">
-            <button class="btn btn-danger btn-sm remove-date" data-date="${date}">Remove</button>
-          </td>
-        </tr>
-      `;
-      previewTable.innerHTML += row;
-    });
-
-    // Add remove date event listeners
-    previewTable.querySelectorAll(".remove-date").forEach((button) => {
-      button.addEventListener("click", (e) => {
-        e.preventDefault();
-        const dateToRemove = button.getAttribute("data-date");
-        removeDate(dateToRemove, previewTable);
-      });
-    });
-  }
-
-  // Remove a date from the preview and date picker
-  function removeDate(date, previewTable) {
-    const datePickerInput = previewTable.closest(".city-entry").querySelector(".datePicker");
-    const fp = flatpickr(datePickerInput);
-    const selectedDates = fp.selectedDates.map((d) => d.toISOString().split("T")[0]);
-
-    const updatedDates = selectedDates.filter((d) => d !== date);
-    fp.setDate(updatedDates, true);
-    updateDatePreview(previewTable, updatedDates);
-  }
-
-  // Populate form with data from `trips` variable (update case)
-  const trips = <%- JSON.stringify(trips || {}) %>;
-  if (trips.deptcities && trips.deptcities.length > 0) {
-    // Populate the existing UI structure first
-    const existingCityEntry = document.querySelector(".city-entry");
-    populateCityEntry(existingCityEntry, trips.deptcities[0]);
-
-    // Add additional city entries if needed
-    trips.deptcities.slice(1).forEach((cityData) => {
-      addCityEntry(cityData);
-    });
-  } else {
-    // Add an empty city entry for the add case
-    // addCityEntry();
-  }
-
-  // Add new city entry on button click
-  addCityButton.addEventListener("click", () => {
-    addCityEntry();
   });
+
+  // Validate image (required for new trips)
+  const tripId = document.getElementById("tripId").value;
+  const imageInput = document.getElementById("file");
+  const existingImage = document.querySelector('input[name="existingImage"]').value;
+  if (!tripId && !imageInput.files.length && !existingImage) {
+    validationErrors.push("An image is required for new trips.");
+    imageInput.classList.add("is-invalid");
+  } else {
+    imageInput.classList.remove("is-invalid");
+  }
+
+  // Validate editor fields
+  const editorFields = [
+    { id: "about-editor", name: "About Information", errorId: "aboutError" },
+    { id: "placestovisit-editor", name: "Places to Visit", errorId: "placestovisitError" },
+    { id: "activities-editor", name: "Activities & Attraction", errorId: "activitiesError" },
+    { id: "things_to_carry-editor", name: "Things to Carry", errorId: "thingsToCarryError" },
+    { id: "includenexclude-editor", name: "Include & Exclude", errorId: "includeExcludeError" },
+    { id: "package_cost-editor", name: "Package Cost", errorId: "packageCostError" },
+    { id: "infonfaq-editor", name: "Info & FAQs", errorId: "infoFaqError" },
+    { id: "bookncancel-editor", name: "Booking & Cancellation", errorId: "bookCancelError" },
+    { id: "guidelines-editor", name: "Travel Guidelines", errorId: "guidelinesError" }
+  ];
+
+  editorFields.forEach(field => {
+    const content = staticEditors[field.id].root.innerHTML.trim();
+    const isEmpty = !content || content === "<p><br></p>";
+    const errorElement = document.getElementById(field.errorId);
+    if (field.name !== "Info & FAQs" && field.name !== "Booking & Cancellation" && field.name !== "Travel Guidelines") {
+      // Required fields
+      if (isEmpty) {
+        validationErrors.push(`${field.name} is required.`);
+        errorElement.classList.remove("d-none");
+      } else {
+        errorElement.classList.add("d-none");
+      }
+    } else {
+      // Optional fields
+      errorElement.classList.add("d-none");
+    }
+  });
+
+  // Validate itinerary
+  const itineraryDays = Array.from(document.querySelectorAll(".itinerary-day"));
+  const itineraryData = itineraryDays.map(day => {
+    const header = day.querySelector('input[name="itinerary-header[]"]').value.trim();
+    const editorId = `editor-${day.dataset.day}`;
+    const description = itineraryEditors[editorId]?.root.innerHTML || "";
+    const contentIsEmpty = !description || description === "<p><br></p>";
+
+    if (!header) {
+      validationErrors.push(`Itinerary Day ${day.dataset.day}: Header is required.`);
+      day.querySelector(".itinerary-header").classList.add("is-invalid");
+    }
+    if (contentIsEmpty) {
+      validationErrors.push(`Itinerary Day ${day.dataset.day}: Description is required.`);
+    }
+
+    return {
+      day: `Day ${day.dataset.day}`,
+      header,
+      description
+    };
+  });
+
+  // Validate deptcities
+const deptCitiesData = Array.from(document.querySelectorAll(".city-entry")).map(entry => {
+  const citySelect = entry.querySelector(".city-select");
+  const city = citySelect.value;
+  const state = entry.querySelector(".state-field").value;
+  const pricingRows = entry.querySelectorAll(".pricingRow");
+  const dates = entry.querySelector(".datePicking")._flatpickr?.selectedDates || []; // Keep as Date objects
+  const tripDuration = entry.querySelector(".tripDuration").value.trim();
+
+  // Validate city and state
+  if (!city) {
+    validationErrors.push("Departure City is required for all entries.");
+    citySelect.classList.add("is-invalid");
+  } else {
+    citySelect.classList.remove("is-invalid");
+  }
+  if (!state) {
+    validationErrors.push("State is required for all departure cities.");
+    entry.querySelector(".state-field").classList.add("is-invalid");
+  } else {
+    entry.querySelector(".state-field").classList.remove("is-invalid");
+  }
+
+  // Validate dates
+  if (dates.length === 0) {
+    validationErrors.push(`Departure City ${city}: At least one date is required.`);
+    entry.querySelector(".error-msg").classList.remove("d-none");
+  } else {
+    entry.querySelector(".error-msg").classList.add("d-none");
+  }
+
+  // Validate pricing
+  const price = Array.from(pricingRows).map(row => {
+    const transferType = row.querySelector(".transferType");
+    const childPrice = row.querySelector(".childPrice");
+    const adultPrice = row.querySelector(".adultPrice");
+    const transferTypeValue = transferType.value.trim();
+    const childPriceValue = childPrice.value.trim();
+    const adultPriceValue = adultPrice.value.trim();
+
+    if (!transferTypeValue) {
+      validationErrors.push(`Departure City ${city}: Transfer Type is required for all pricing entries.`);
+      transferType.classList.add("is-invalid");
+    } else {
+      transferType.classList.remove("is-invalid");
+    }
+    if (!childPriceValue) {
+      validationErrors.push(`Departure City ${city}: Child Price is required for all pricing entries.`);
+      childPrice.classList.add("is-invalid");
+    } else {
+      childPrice.classList.remove("is-invalid");
+    }
+    if (!adultPriceValue) {
+      validationErrors.push(`Departure City ${city}: Adult Price is required for all pricing entries.`);
+      adultPrice.classList.add("is-invalid");
+    } else {
+      adultPrice.classList.remove("is-invalid");
+    }
+
+    return {
+      transferType: transferTypeValue,
+      childPrice: parseFloat(childPriceValue) || 0,
+      adultPrice: parseFloat(adultPriceValue) || 0
+    };
+  });
+
+  return {
+    City: city,
+    State: state,
+    tripDuration,
+    dates: formatDatesForMongoDB(dates), // Pass Date objects directly
+    price
+  };
 });
 
-    // **City selection seciton end here **/
+  // Derive trip_dates from deptcities dates (if this is the intended behavior)
+  const allDates = deptCitiesData.flatMap(city => city.dates.map(date => ({
+    Year: date.Year,
+    Month: date.Month,
+    dates: date.dates
+  })));
+  const uniqueTripDates = Array.from(new Map(allDates.map(item => [`${item.Year}-${item.Month}-${item.dates}`, item])).values());
 
-    //*** Submit form section logic **/
-    // Handle form submission
-    document.addEventListener("DOMContentLoaded", function() {
-      const form = document.getElementById('addUpdateTripDetial');
-      if (form) {
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-          collectFormData();
-          const formData = new FormData(form);
-            // console.log("Form Data:");
-            // for (let [name, value] of formData.entries()) {
-            //     console.log(`${name}: ${value}`);
-            // }
-          this.submit();
-        });
+  // Step 2: Display validation errors if any
+  if (validationErrors.length > 0) {
+    alert("Please fix the following errors:\n- " + validationErrors.join("\n- "));
+    return;
+  }
+
+  // Step 3: Prepare form data for submission
+  const formData = new FormData(this);
+
+  // Append editor content
+  editorFields.forEach(field => {
+    const fieldName = field.id.replace("-editor", "");
+    formData.set(fieldName, staticEditors[field.id].root.innerHTML);
+  });
+
+  // Append itinerary data
+  formData.set("itinerary", JSON.stringify(itineraryData));
+
+  // Append deptcities data
+  formData.set("deptcities", JSON.stringify(deptCitiesData));
+
+  // Append trip_dates
+  formData.set("trip_dates", JSON.stringify(uniqueTripDates));
+
+  // Step 4: Submit the form
+  fetch("/admin/postNewAddTours", {
+    method: "POST",
+    body: formData
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data) {
+        alert("Trip saved successfully!");
+        window.location.reload();
+      } else if (data.exists) {
+        alert("Trip name must be unique!");
+        document.getElementById("nameError").classList.remove("d-none");
+      } else {
+        alert("Error saving trip: " + (data.message || "Unknown error"));
       }
-
-      function collectFormData() {
-        // Collect editor content
-        const editorIds = ["about-editor", "placestovisit-editor", "activities-editor", "things_to_carry-editor", "includenexclude-editor", "package_cost-editor", "infonfaq-editor", "guidelines-editor", "bookncancel-editor"];
-        editorIds.forEach(editorId => {
-          const editor = editorsd[editorId];
-          if (editor) {
-            const content = editor.root.innerHTML;
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = editorId.replace('-editor', '');
-            hiddenInput.value = content;
-            console.log(content);
-            form.appendChild(hiddenInput);
-          }
-        });
-
-        // Collect itinerary data
-        const itineraryData = [];
-        const itineraryDays = document.querySelectorAll('.itinerary-day');
-        itineraryDays.forEach(day => {
-          const dayNum = day.dataset.day;
-          const header = day.querySelector('input[name="itinerary-header"]').value;
-          const description = editors[`editor-${dayNum}`].root.innerHTML;
-          itineraryData.push({
-            day: `Day ${dayNum}`,
-            header: header,
-            description: description
-          });
-          // console.log(itineraryData);
-        });
-
-        // Add itinerary data as hidden input
-        const itineraryInput = document.createElement('input');
-        itineraryInput.type = 'hidden';
-        itineraryInput.name = 'itinerary';
-        itineraryInput.value = JSON.stringify(itineraryData);
-        // console.log(itineraryInput)
-        form.appendChild(itineraryInput);
-
-        // Collect departure cities data
-        const deptCitiesData = [];
-        const tripDatesData = [];
-
-        const cityEntries = document.querySelectorAll('.city-entry');
-        cityEntries.forEach(entry => {
-          const citySelect = entry.querySelector('.city-select');
-          const cityData = citySelect.options[citySelect.selectedIndex].value;
-          const stateField = entry.querySelector('.state-field').value;
-
-          const transferType = entry.querySelector('.transferType').value;
-          const adultPrice = parseFloat(entry.querySelector('.adultPrice').value);
-          const childPrice = parseFloat(entry.querySelector('.childPrice').value);
-
-          const datePicker = entry.querySelector('.datePicker');
-          const selectedDates = Array.from(datePicker._flatpickr.selectedDates).map(date => date.toISOString().split('T')[0]);
-
-          const groupedDates = {};
-          selectedDates.forEach(dateStr => {
-            const dateObj = new Date(dateStr);
-            const year = dateObj.getFullYear().toString();
-            const month = dateObj.toLocaleString('en-US', {
-              month: 'long'
-            });
-
-            if (!groupedDates[year]) {
-              groupedDates[year] = {};
-            }
-            if (!groupedDates[year][month]) {
-              groupedDates[year][month] = [];
-            }
-            groupedDates[year][month].push(dateStr);
-          });
-
-          // Convert grouped dates into array format
-          const formattedDates = [];
-          for (const year in groupedDates) {
-            for (const month in groupedDates[year]) {
-              formattedDates.push({
-                Year: year,
-                Month: month,
-                dates: groupedDates[year][month].join(', ')
-              });
-            }
-          }
-
-          deptCitiesData.push({
-            State: stateField,
-            City: citySelect.options[citySelect.selectedIndex].text,
-            PerPersonCost: 0,
-            dates: formattedDates,
-            price: [{
-              transferType,
-              adultPrice,
-              childPrice,
-            }]
-          });
-        });
-
-        deptCitiesData.forEach(city => {
-          city.dates.forEach(dateEntry => {
-            const existing = tripDatesData.find(d => d.Year === dateEntry.Year && d.Month === dateEntry.Month);
-            if (existing) {
-              existing.dates += `, ${dateEntry.dates}`;
-            } else {
-              tripDatesData.push({
-                ...dateEntry
-              });
-            }
-          });
-        });
-
-        addHiddenField("deptcities", JSON.stringify(deptCitiesData));
-        addHiddenField("trip_dates", JSON.stringify(tripDatesData));
-      }
-
-      function addHiddenField(name, value) {
-        let input = document.querySelector(`input[name="${name}"]`);
-        if (!input) {
-          input = document.createElement("input");
-          input.type = "hidden";
-          input.name = name;
-          form.appendChild(input);
-        }
-        input.value = value;
-      }
+    })
+    .catch(err => {
+      console.error("Submission error:", err);
+      alert("An error occurred while submitting the form. Please try again.");
     });
+});
 
-    // Temp added to manage pricing
-    $(document).ready(function() {
-      // Show remove button only when more than one row exists
-      function toggleRemoveButtons() {
-        let pricingRows = $(this).find(".pricingRow");
-        $(this).find(".removeRow").toggle(pricingRows.length > 1);
-      }
-      // Validate fields
-      function validateFields(row) {
-        let isValid = true;
-        let transferType = row.find(".transferType").val().trim();
-        let childPrice = row.find(".childPrice").val().trim();
-        let adultPrice = row.find(".adultPrice").val().trim();
+/**
+ * Formats dates into the structure expected by MongoDB.
+ * @param {string[]} dates - Array of dates in "YYYY-MM-DD" format.
+ * @returns {Object[]} Array of objects with Year, Month, and dates.
+ */
+function formatUTCDate(date) {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Months are 0-based
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
 
-        row.find(".form-control").removeClass("is-invalid");
+/**
+ * Formats dates into the structure expected by MongoDB, using UTC.
+ * @param {string[]} dates - Array of dates in "YYYY-MM-DD" format or Date objects.
+ * @returns {Object[]} Array of objects with Year, Month, and dates.
+ */
+function formatDatesForMongoDB(dates) {
+  const grouped = {};
+  dates.forEach(date => {
+    // If date is a string (e.g., "2025-03-20"), parse it as a local date
+    const d = typeof date === "string" ? new Date(date) : date;
+    // Convert to UTC
+    const utcDate = new Date(Date.UTC(
+      d.getFullYear(),
+      d.getMonth(),
+      d.getDate()
+    ));
+    const utcDateStr = formatUTCDate(utcDate); // e.g., "2025-03-19" in UTC
+    const [year, month, day] = utcDateStr.split("-");
+    const monthName = new Date(utcDate).toLocaleString("en-US", { month: "long", timeZone: "UTC" });
+    if (!grouped[year]) grouped[year] = {};
+    if (!grouped[year][monthName]) grouped[year][monthName] = [];
+    grouped[year][monthName].push(day);
+  });
+  return Object.entries(grouped).flatMap(([year, months]) =>
+    Object.entries(months).map(([month, days]) => ({
+      Year: year,
+      Month: month,
+      dates: days.join(", ")
+    }))
+  );
+}
 
-        if (!transferType) {
-          row.find(".transferType").addClass("is-invalid");
-          isValid = false;
-        }
-        if (!childPrice) {
-          row.find(".childPrice").addClass("is-invalid");
-          isValid = false;
-        }
-        if (!adultPrice) {
-          // row.find(".adultPrice").addClass("is-invalid");
-          isValid = false;
-        }
-
-        return isValid;
-      }
-
-      $("#addRow").click(function() {
-        let allValid = true;
-        let transferTypes = [];
-
-        $(".pricingRow").each(function() {
-          if (!validateFields($(this))) {
-            allValid = false;
-          }
-          transferTypes.push($(this).find(".transferType").val().trim());
-        });
-
-        if (!allValid) return;
-
-        // Clone the first row, reset values, and append
-        let newRow = $(".pricingRow:first").clone();
-        newRow.find("input").val(""); // Clear inputs
-        newRow.find(".transferType").val();
-        newRow.find(".removeRow").show(); // Show remove button
-
-        $("#pricingContainer").append(newRow);
-        toggleRemoveButtons(); // Ensure remove button logic is correct
-      });
-
-      $(document).on("input", ".form-control", function() {
-        if ($(this).val().trim()) {
-          $(this).removeClass("is-invalid");
-        }
-      });
-
-      // Remove row event
-      $(document).on("click", ".removeRow", function() {
-        $(this).closest(".pricingRow").remove();
-        toggleRemoveButtons(); // Re-check remove button visibility
-      });
-
-      toggleRemoveButtons(); // Initial check on page load
-    });
   </script>
 </body>
 
