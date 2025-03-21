@@ -30,7 +30,6 @@ const Tours = require('./models/tours');
 const User = require('./models/user');
 const isProduction = process.env.NODE_ENV === 'development';
 
-
 const MONGODB_URI = isProduction
   ? `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.ogxnm.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
   : `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
@@ -42,35 +41,44 @@ const store = new MongoDBStore({
 });
 const csrfProtection = csrf();
 
+// Updated Multer Storage Configuration
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    if (req.url == '/booktrip') {
+    if (req.url === '/booktrip') {
       cb(null, 'images/proofs');
-    } else if (req.url == '/admin/addblog') {
+    } else if (req.url === '/admin/addblog' || req.url === '/admin/addEditedblog') {
       cb(null, 'images/blog');
-    } else if (req.url == '/admin/addEditedblog') {
-      cb(null, 'images/blog');
+    } else if (
+      req.url === '/admin/postNewAddTours' ||
+      req.url === '/admin/updateImageUrl' ||
+      req.url === '/admin/updateBannerImages'
+    ) {
+      cb(null, 'images/tours'); // New folder for tour images
     } else {
-      cb(null, 'images');
+      cb(null, 'images'); // Default folder for other routes
     }
   },
   filename: (req, file, cb) => {
-    if (req.url == '/booktrip') {
+    if (
+      req.url === '/booktrip' ||
+      req.url === '/admin/addblog' ||
+      req.url === '/admin/addEditedblog'
+    ) {
+      // Keep existing behavior for these routes
       cb(
         null,
         new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname
       );
-    } else if (req.url == '/admin/addblog') {
-      cb(
-        null,
-        new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname
-      );
-    } else if (req.url == '/admin/addEditedblog') {
-      cb(
-        null,
-        new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname
-      );
+    } else if (
+      req.url === '/admin/postNewAddTours' ||
+      req.url === '/admin/updateImageUrl' ||
+      req.url === '/admin/updateBannerImages'
+    ) {
+      // Add timestamp for tour-related routes
+      const timestamp = new Date().toISOString().replace(/:/g, '-');
+      cb(null, `${timestamp}-${file.originalname}`);
     } else {
+      // Keep original filename for other routes
       cb(null, file.originalname);
     }
   },
@@ -97,35 +105,17 @@ const authRoutes = require('./routes/auth');
 const paymentRoutes = require('./routes/payments');
 const cityRoutes = require('./routes/cityRoutes');
 
-//app.use(helmet());
 app.use(compression());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-//app.use(bodyParser.json());
 
-// app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single("image"));
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).array('image', 12)
 );
 
-// app.use(async(req, res, next) => {
-//   if(!req.file){
-//     return next();
-//   }else{
-//     if(req.url != '/booktrip') {
-//       const result = await uploadFile(req.file);
-//       return next();
-//      }else{
-//       const result = await uploadFileProof(req.file);
-//       return next();
-//      }
-//   }
-
-// });
-
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/images', express.static(path.join(__dirname, 'images'))); // Serves images/tours as well
 
 app.use(
   session({
@@ -153,7 +143,6 @@ app.use((req, res, next) => {
   if (req.files !== undefined) {
     req.file = req.files[0];
   }
-  //console.log(res.locals.csrfToken);
   next();
 });
 

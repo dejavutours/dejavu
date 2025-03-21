@@ -8,14 +8,13 @@ const newToursSchema = new Schema(
     // Purpose: Name of the tour package (e.g., "Goa Beach Tour").
 
     state: { type: String, required: true },
-    // Purpose: The state where the tour is conducted (e.g., "Goa").
-
-    imageurl: { type: String, required: true },
-    // Purpose: Primary image URL representing the tour.
-
-    bannerimages: { type: String },
-    // Purpose: List of images used as banners for promotions.
-
+    // Purpose: The state where the tour is conducted (e.g., "Goa")
+    imageurl: { type: String }, // Keep this for backward compatibility if needed
+    // Array of strings for multiple banner images
+    bannerimages: [{ type: String }], 
+  
+    isActive: { type: Boolean, default: true }, // Added for status toggle
+    
     destinations: { type: String, required: true },
     // Purpose: Major destinations covered in the tour (e.g., "Goa, Panaji, Baga Beach").
 

@@ -86,8 +86,6 @@ router.post(
 
 router.post('/admin/edit', ensureLoggedIn, isAuth, toursController.postEdit);
 
-router.post('/admin/getTripDetialById', ensureLoggedIn, isAuth, toursController.getTripDetialById);
-
 router.post(
   '/admin/addeditedtours',
   ensureLoggedIn,
@@ -387,17 +385,19 @@ router.post(
   makepdfController.deletePdftrip
 );
 
-// router.get('/profile', ensuremultiplelogin, toursController.getprofile);
 
+// New Routes for new api 
 router.post('/getotp', toursController.getotp);
 
 router.post('/verifyotp', toursController.verifyotp);
 
 router.get("/getNewTours", toursController.getTours);
 
-router.post("/createNewTours", toursController.createNewTourse); 
-
 router.post("/uploadImage", toursController.uploadImage);
 
 router.post("/getCheckToursUnique", toursController.getCheckToursUnique);
+
+router.post('/admin/updateImageUrl', ensureLoggedIn, isAuth, toursController.updateImageUrl);
+router.post('/admin/updateBannerImages', ensureLoggedIn, isAuth, toursController.updateBannerImages);
+router.post('/admin/removeBannerImage', ensureLoggedIn, isAuth, toursController.removeBannerImage);
 module.exports = router;

@@ -79,59 +79,6 @@ exports.getIndexPage = async (req, res, next) => {
 };
 
 
-// Get the Add/Edit Tours detail page
-// - If no trip ID is provided, return the Add Tours page with required details
-// - If a trip ID is provided, fetch and return trip details for editing
-exports.getAddTours = async (req, res, next) => {
-  try {
-    // Extract states from configuration file
-    const states_arr = Object.keys(config);
-
-    // Check if request body contains a trip ID (for editing an existing tour)
-    const tripid = req.query.tripid
-    ;
-
-    if (tripid) {
-      // Validate if tripid is a valid MongoDB ObjectId
-      if (!tripid.match(/^[0-9a-fA-F]{24}$/)) {
-        return res.status(400).json({ error: "Invalid Trip ID format" });
-      }
-
-      try {
-        // Fetch trip details from the database
-        const tripdetails = await NewTours.findOne({ _id: tripid }).populate("CityId");
-
-        if (!tripdetails) {
-          return res.status(404).json({ error: "Trip not found" });
-        }
-
-        // Render Update Tours page with fetched trip details
-        return res.render("pages/Addtours", {
-          message: null,
-          trips: tripdetails,
-          states_arr,
-          csrfToken: req.csrfToken(),
-        });
-      } catch (err) {
-        console.error("Error fetching trip details:", err);
-        return res.status(500).json({ error: "Internal Server Error" });
-      }
-    }
-
-    // If no trip ID is provided, render Add Tours page
-    return res.render("pages/Addtours", {
-      message: null,
-      trips: [],
-      states_arr,
-      csrfToken: req.csrfToken(),
-    });
-  } catch (err) {
-    console.error("Error processing request:", err);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
-
 exports.postAddTours = async (req, res, next) => {
   const name = req.body.name;
   const ifexist = await Tours.find({ name: name });
@@ -182,136 +129,6 @@ exports.postAddTours = async (req, res, next) => {
     });
     tours.save();
     res.redirect("/");
-  }
-};
-
-// Validate unique tour name before adding or updating a tour
-exports.getCheckToursUnique = async (req, res, next) => {
-  try {
-    const { name, tripId } = req.body; // Extract name and tripId from request body
-
-    // Check if a tour with the given name already exists
-    const ifExist = await NewTours.findOne({ name });
-
-    if (ifExist) {
-      if (tripId) {
-        // Case: Updating an existing tour
-        // Allow update only if the found record is the same as the one being updated
-        if (ifExist._id.toString() !== tripId.toString()) {
-          return res.json({ exists: true, message: "Tour name already exists" });
-        }
-      } else {
-        // Case: Adding a new tour
-        return res.json({ exists: true, message: "Tour name must be unique" });
-      }
-    }
-    res.json({ exists: false }); // No duplicate found, tour name is unique
-  } catch (error) {
-    console.error("Error in getCheckToursUnique:", error);
-    res.status(500).json({ success: false, message: "Server error", error });
-  }
-};
-
-
-exports.postNewAddTours = async (req, res) => {
-  try {
-    const { name, tripId, state, destinations, route, days, price, tripType, about, placestovisit, activities, things_to_carry, package_cost, includenexclude, infonfaq, bookncancel, guidelines, tag, altitude,bestSession } = req.body;
-
-    // Check if the tour name already exists
-    const existingTour = await NewTours.findOne({ name });
-
-    if (existingTour && (!tripId || existingTour._id.toString() !== tripId.toString())) {
-      // Delete uploaded image if it exists (to prevent unused files)
-      if (req.files?.["image"]) {
-        fileHelper.deleteFile(`images/${req.files["image"][0].filename}`);
-      }
-      return res.status(400).json({ exists: true, message: "Trip name must be unique" });
-    }
-
-    // Parse JSON fields if they are strings
-    const parseJSONField = (field) => (typeof field === "string" ? JSON.parse(field) : field);
-
-    const parsedItinerary = parseJSONField(req.body.itinerary);
-    const parsedDeptCities = parseJSONField(req.body.deptcities);
-    const parsedTripDates = parseJSONField(req.body.trip_dates);
-
-    // Validate required fields
-    const requiredFields = ["name", "state", "destinations", "route", "days", "price", "about", "tripType", "placestovisit", "activities", "things_to_carry", "package_cost"];
-    const missingFields = requiredFields.filter((field) => !req.body[field]);
-
-    if (missingFields.length > 0) {
-      return res.status(400).json({ error: `Missing required fields: ${missingFields.join(", ")}` });
-    }
-
-    const image = req.files?.[0]?.filename || req.body.existingImage || null;
-    const imageurl = req.files?.[0]?.filename ? `/images/${image}` : image ;
-
-    // Prepare data for saving
-    const tourData = {
-      name,
-      state,
-      imageurl,
-      bannerImages: imageurl, // Single image (Consider making this an array for multiple images)
-      destinations,
-      route,
-      days,
-      price,
-      tripType,
-      about,
-      placestovisit,
-      activities,
-      itinerary: parsedItinerary,
-      things_to_carry,
-      includenexclude,
-      package_cost,
-      infonfaq,
-      bookncancel,
-      guidelines,
-      trip_dates: parsedTripDates,
-      deptcities: parsedDeptCities,
-      tag,
-      altitude,
-      bestSession
-    };
-
-    if (tripId) {
-      // Update existing trip
-      await NewTours.findByIdAndUpdate(tripId, tourData);
-      return res.json({ message: "Trip updated successfully" });
-    } else {
-      // Create new trip
-      const newTour = new NewTours(tourData);
-      await newTour.save();
-       // Execute query with all filters applied
-    const query = {};
-    const tours = await NewTours.find(query); // Use NewTours instead of NewToursSchema
-    //res.json(tours);
-    res.render("pages/tourlist", {
-      tourPackages: tours,
-      filterChips: Object.values({}).flat(),
-      Searchvalue: "",
-    });
-    }
-  } catch (error) {
-    console.error("Error in postNewAddTours:", error);
-    res.status(500).json({ success: false, message: "Server error", error });
-  }
-};
-
-
-exports.getTourDetails = async (req, res, next) => {
-  try {
-    const token = req.params.token;
-    const tripdetails = await NewTours.findById(token);
-   
-    // Extract departure city names from NewTours
-    const departureCityNames = tripdetails.deptcities.map((city) => city.City);
-
-    // Find matching cities in City collection
-    const matchedCities = await City.find({ name: { $in: departureCityNames } });
-    res.render("pages/TripDetails", { trips: tripdetails, city: matchedCities });
-  } catch (err) {
-    console.log(err);
   }
 };
 
@@ -494,12 +311,6 @@ exports.postEdit = async (req, res, next) => {
   } catch (err) {
     console.log(err);
   }
-};
-
-// DM get new edit trip detila based on trip id
-// No need to create this api please check wilth RJ First
-exports.getTripDetialById = async (req, res, next) => {
-
 };
 
 exports.postDelete = (req, res, next) => {
@@ -1471,16 +1282,58 @@ exports.verifyotp = async (req, res, next) => {
   }
 };
 
-// Create a new tour
-exports.createNewTourse = async (req, res) => {
+// Get the Add/Edit Tours detail page
+// - If no trip ID is provided, return the Add Tours page with required details
+// - If a trip ID is provided, fetch and return trip details for editing
+exports.getAddTours = async (req, res, next) => {
   try {
-    const newTour = new NewTours(req.body); // Use NewTours instead of NewToursSchema
-    const savedTour = await newTour.save();
-    res.status(201).json(savedTour);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    // Extract states from configuration file
+    const states_arr = Object.keys(config);
+
+    // Check if request body contains a trip ID (for editing an existing tour)
+    const tripid = req.query.tripid
+    ;
+
+    if (tripid) {
+      // Validate if tripid is a valid MongoDB ObjectId
+      if (!tripid.match(/^[0-9a-fA-F]{24}$/)) {
+        return res.status(400).json({ error: "Invalid Trip ID format" });
+      }
+
+      try {
+        // Fetch trip details from the database
+        const tripdetails = await NewTours.findOne({ _id: tripid }).populate("CityId");
+
+        if (!tripdetails) {
+          return res.status(404).json({ error: "Trip not found" });
+        }
+
+        // Render Update Tours page with fetched trip details
+        return res.render("pages/Addtours", {
+          message: null,
+          trips: tripdetails,
+          states_arr,
+          csrfToken: req.csrfToken(),
+        });
+      } catch (err) {
+        console.error("Error fetching trip details:", err);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+    }
+
+    // If no trip ID is provided, render Add Tours page
+    return res.render("pages/Addtours", {
+      message: null,
+      trips: [],
+      states_arr,
+      csrfToken: req.csrfToken(),
+    });
+  } catch (err) {
+    console.error("Error processing request:", err);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 // Fetch all Filters tours
 exports.getFiltertourAPIUseOnly = async (req,res) =>{
@@ -1604,7 +1457,7 @@ exports.getTours = async (req, res) => {
   }
 };
 
-// Newly created API for Upload image
+// Api method is used for upload image from textEditor while upload from text editor
 exports.uploadImage = async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
@@ -1620,5 +1473,262 @@ exports.uploadImage = async (req, res) => {
   } catch (error) {
     console.error("Upload error:", error);
     res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// Validate unique tour name before adding or updating a tour
+exports.getCheckToursUnique = async (req, res, next) => {
+  try {
+    const { name, tripId } = req.body; // Extract name and tripId from request body
+
+    // Check if a tour with the given name already exists
+    const ifExist = await NewTours.findOne({ name });
+
+    if (ifExist) {
+      if (tripId) {
+        // Case: Updating an existing tour
+        // Allow update only if the found record is the same as the one being updated
+        if (ifExist._id.toString() !== tripId.toString()) {
+          return res.json({ exists: true, message: "Tour name already exists" });
+        }
+      } else {
+        // Case: Adding a new tour
+        return res.json({ exists: true, message: "Tour name must be unique" });
+      }
+    }
+    res.json({ exists: false }); // No duplicate found, tour name is unique
+  } catch (error) {
+    console.error("Error in getCheckToursUnique:", error);
+    res.status(500).json({ success: false, message: "Server error", error });
+  }
+};
+
+
+exports.postNewAddTours = async (req, res) => {
+  try {
+    const {
+      name, tripId, state, destinations, route, days, price, tripType, about, placestovisit, activities,
+      things_to_carry, package_cost, includenexclude, infonfaq, bookncancel, guidelines, tag, altitude, bestSession,
+      existingImage, itinerary, deptcities, trip_dates
+    } = req.body;
+
+    // Check if the tour name already exists
+    const existingTour = await NewTours.findOne({ name });
+    if (existingTour && (!tripId || existingTour._id.toString() !== tripId.toString())) {
+      if (req.files && req.files.length > 0) {
+        req.files.forEach(file => fileHelper.deleteFile(`images/tours/${file.filename}`));
+      }
+      return res.status(400).json({ exists: true, message: "Trip name must be unique" });
+    }
+
+    // Parse JSON fields if they are strings
+    const parseJSONField = (field) => (typeof field === "string" ? JSON.parse(field) : field);
+    const parsedItinerary = parseJSONField(itinerary);
+    const parsedDeptCities = parseJSONField(deptcities);
+    const parsedTripDates = parseJSONField(trip_dates);
+
+    // Validate required fields
+    const requiredFields = ["name", "state", "destinations", "route", "days", "price", "about", "tripType", "placestovisit", "activities", "things_to_carry", "package_cost"];
+    const missingFields = requiredFields.filter((field) => !req.body[field]);
+    if (missingFields.length > 0) {
+      return res.status(400).json({ error: `Missing required fields: ${missingFields.join(", ")}` });
+    }
+
+    // Handle image uploads
+    let imageurl = existingImage || null;
+    let bannerimages = tripId ? (await NewTours.findById(tripId))?.bannerimages || [] : [];
+    if (req.files && req.files.length > 0) {
+      const imageFiles = req.files.map(file => `/images/tours/${file.filename}`);
+      imageurl = imageFiles[0]; // First file is main image
+      if (imageFiles.length > 1) {
+        bannerimages = [...bannerimages, ...imageFiles.slice(1)]; // Remaining files are banner images
+      }
+    }
+
+    if (!imageurl && !tripId) {
+      return res.status(400).json({ error: "Main image is required for new trips" });
+    }
+
+    const tourData = {
+      name,
+      state,
+      imageurl,
+      bannerimages, // Corrected to array
+      destinations,
+      route,
+      days,
+      price,
+      tripType,
+      about,
+      placestovisit,
+      activities,
+      itinerary: parsedItinerary,
+      things_to_carry,
+      includenexclude,
+      package_cost,
+      infonfaq,
+      bookncancel,
+      guidelines,
+      trip_dates: parsedTripDates,
+      deptcities: parsedDeptCities,
+      tag,
+      altitude,
+      bestSession
+    };
+
+    if (tripId) {
+      // Update existing trip
+      const existingTrip = await NewTours.findById(tripId);
+      if (imageurl && imageurl !== existingTrip.imageurl) {
+        fileHelper.deleteFile(existingTrip.imageurl.replace("/images/tours/", "images/tours/"));
+      }
+      await NewTours.findByIdAndUpdate(tripId, tourData);
+      return res.json({ message: "Trip updated successfully" });
+    } else {
+      // Create new trip
+      const newTour = new NewTours(tourData);
+      await newTour.save();
+      const tours = await NewTours.find({});
+      res.render("pages/tourlist", {
+        tourPackages: tours,
+        filterChips: [],
+        Searchvalue: "",
+      });
+    }
+  } catch (error) {
+    console.error("Error in postNewAddTours:", error);
+    if (req.files && req.files.length > 0) {
+      req.files.forEach(file => fileHelper.deleteFile(`images/tours/${file.filename}`));
+    }
+    res.status(500).json({ success: false, message: "Server error", error });
+  }
+};
+
+
+exports.getTourDetails = async (req, res, next) => {
+  try {
+    const token = req.params.token;
+    const tripdetails = await NewTours.findById(token);
+   
+    // Extract departure city names from NewTours
+    const departureCityNames = tripdetails.deptcities.map((city) => city.City);
+
+    // Find matching cities in City collection
+    const matchedCities = await City.find({ name: { $in: departureCityNames } });
+    res.render("pages/TripDetails", { trips: tripdetails, city: matchedCities });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+
+// Trip detial page new API and controller from the UI
+/**
+ * POST /admin/updateImageUrl - Updates the single required imageurl for a NewTours trip
+ * Replaces the existing imageurl with a new one; deletion not allowed.
+ * @param {Object} req - Express request with tripId and single image file
+ * @param {Object} res - Express response object
+ */
+exports.updateImageUrl = async (req, res) => {
+  try {
+    const { tripId } = req.body;
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ success: false, message: "No image uploaded" });
+    }
+    if (req.files.length > 1) {
+      req.files.forEach((file) => fileHelper.deleteFile(`images/tours/${file.filename}`));
+      return res.status(400).json({ success: false, message: "Only one image allowed for imageurl" });
+    }
+
+    const newImageUrl = `/images/tours/${req.files[0].filename}`; // Updated path
+    const trip = await NewTours.findById(tripId);
+    if (!trip) {
+      fileHelper.deleteFile(`images/tours/${req.files[0].filename}`);
+      return res.status(404).json({ success: false, message: "Trip not found" });
+    }
+
+    if (trip.imageurl) {
+      fileHelper.deleteFile(trip.imageurl.replace("/images/tours/", "images/tours/")); // Updated path
+    }
+    trip.imageurl = newImageUrl;
+    await trip.save();
+
+    res.json({ success: true, imageUrl: newImageUrl });
+  } catch (error) {
+    console.error("Error in updateImageUrl:", error);
+    res.status(500).json({ success: false, message: "Server error", error });
+  }
+};
+
+/**
+ * POST /admin/updateBannerImages - Adds new banner images to a NewTours trip
+ * Appends new images to the bannerimages array.
+ * @param {Object} req - Express request with tripId and multiple image files
+ * @param {Object} res - Express response object
+ */
+exports.updateBannerImages = async (req, res) => {
+  try {
+    const { tripId } = req.body;
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ success: false, message: "No images uploaded" });
+    }
+
+    const imageUrls = req.files.map((file) => `/images/tours/${file.filename}`); // Updated path
+    await NewTours.updateOne(
+      { _id: tripId },
+      { $push: { bannerimages: { $each: imageUrls } } }
+    );
+
+    res.json({ success: true, imageUrls });
+  } catch (error) {
+    console.error("Error in updateBannerImages:", error);
+    res.status(500).json({ success: false, message: "Server error", error });
+  }
+};
+
+/**
+ * POST /admin/removeBannerImage - Removes a specific banner image from a NewTours trip
+ * Pulls the specified image URL from the bannerimages array.
+ * @param {Object} req - Express request with tripId and imageUrl
+ * @param {Object} res - Express response object
+ */
+exports.removeBannerImage = async (req, res) => {
+  try {
+    const { tripId, imageUrl } = req.body;
+    const trip = await NewTours.findById(tripId);
+    if (!trip) {
+      return res.status(404).json({ success: false, message: "Trip not found" });
+    }
+
+    await NewTours.updateOne(
+      { _id: tripId },
+      { $pull: { bannerimages: imageUrl } }
+    );
+    fileHelper.deleteFile(imageUrl.replace("/images/tours/", "images/tours/")); // Updated path
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error in removeBannerImage:", error);
+    res.status(500).json({ success: false, message: "Server error", error });
+  }
+};
+
+/**
+ * POST /admin/changeTripStatus - Toggles the active status of a NewTours trip
+ * Sets isActive to true/false for enabling/disabling trips.
+ * @param {Object} req - Express request object with tripId and isActive
+ * @param {Object} res - Express response object
+ */
+exports.changeTripStatus = async (req, res) => {
+  try {
+    const { tripId, isActive } = req.body;
+    await NewTours.updateOne(
+      { _id: tripId },
+      { $set: { isActive: isActive } }
+    );
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error in changeTripStatus:", error);
+    res.status(500).json({ success: false, message: "Server error", error });
   }
 };
