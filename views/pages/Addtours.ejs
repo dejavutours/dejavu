@@ -76,7 +76,6 @@
         padding-right: 0;
       }
     }
-
   </style>
 </head>
 
@@ -790,23 +789,39 @@
        */
       async function initializeCityEntries() {
         const trips = <%- JSON.stringify(trips || {}) %>;
-        const firstCityEntry = document.querySelector(".city-entry");
+        const cityContainer = document.getElementById("cityContainer");
 
+        // Clear existing entries except the template
+        const firstCityEntry = document.querySelector(".city-entry");
         await populateCityDropdown(firstCityEntry.querySelector(".city-select"));
 
         if (trips.deptcities && trips.deptcities.length > 0) {
-          firstCityEntry.querySelector("#pricingContainer").innerHTML = "";
+          // Populate first city
+          firstCityEntry.querySelector("#pricingContainer").innerHTML = ""; // Clear default pricing
           populateCityEntry(firstCityEntry, trips.deptcities[0]);
           initializeFlatpickr(firstCityEntry, trips.deptcities[0].dates);
+          addEventListenersToEntry(firstCityEntry);
+          updateAddPricingButtonState(firstCityEntry); // Explicitly update button state after population
+
+          // Add additional cities
           for (let i = 1; i < trips.deptcities.length; i++) {
-            await addCityEntry(trips.deptcities[i]);
+            const newEntry = await addCityEntry(trips.deptcities[i]);
+            populateCityEntry(newEntry, trips.deptcities[i]);
+            initializeFlatpickr(newEntry, trips.deptcities[i].dates);
+            updateAddPricingButtonState(newEntry); // Explicitly update button state for each new entry
           }
         } else {
+          firstCityEntry.querySelector("#pricingContainer").innerHTML = "";
+          addPricingRow(firstCityEntry);
           initializeFlatpickr(firstCityEntry);
+          addEventListenersToEntry(firstCityEntry);
+          updateAddPricingButtonState(firstCityEntry); // Update for default case
         }
-        addEventListenersToEntry(firstCityEntry);
+
         updateAddCityButtonState();
+        toggleRemoveCityButtons();
       }
+
 
       /**
        * Adds a new city entry dynamically.
@@ -820,6 +835,7 @@
         template.querySelector(".state-field").value = "";
         template.querySelector(".city-image").src = "";
         template.querySelector(".city-image").style.display = "none";
+        template.querySelector(".tripDuration").value = "";
         template.querySelector(".datePicking").value = "";
         template.querySelector(".datePreview").innerHTML = "";
         template.querySelector("#pricingContainer").innerHTML = `
@@ -872,25 +888,34 @@
         const select = entry.querySelector(".city-select");
         const stateField = entry.querySelector(".state-field");
         const imageField = entry.querySelector(".city-image");
-        const tripDurationField = entry.querySelector(".tripDuration"); // Add this
-        select.value = cityData.City;
+        const tripDurationField = entry.querySelector(".tripDuration");
+        const pricingContainer = entry.querySelector("#pricingContainer");
+
+        select.value = cityData.City || "";
         const selectedOption = Array.from(select.options).find(option => option.value === cityData.City);
         if (selectedOption) {
-          stateField.value = selectedOption.dataset.state || cityData.State;
-          imageField.src = selectedOption.dataset.image || cityData.image || "";
+          stateField.value = selectedOption.dataset.state || cityData.State || "";
+          imageField.src = selectedOption.dataset.image || "";
           imageField.style.display = imageField.src ? "block" : "none";
         }
-        // Set tripDuration
-        tripDurationField.value = cityData.tripDuration || ""; // Add this
+        tripDurationField.value = cityData.tripDuration || "";
         selectedCities.add(cityData.City);
-        cityData.price.forEach((price, index) => {
-          const row = addPricingRow(entry, price);
-          if (index === 0) row.querySelector(".removeRow").style.display = "none";
-        });
+
+        // Clear existing pricing rows and populate from data
+        pricingContainer.innerHTML = "";
+        if (cityData.price && cityData.price.length > 0) {
+          cityData.price.forEach((price, index) => {
+            const row = addPricingRow(entry, price);
+            if (index === 0) row.querySelector(".removeRow").style.display = "none"; // Hide remove for first row
+          });
+        } else {
+          addPricingRow(entry); // Add one default row if no pricing data
+        }
+
         updatePricingButtons(entry);
+        updateAddPricingButtonState(entry);
         select.dispatchEvent(new Event("change"));
       }
-
       /**
        * Fetches and populates the city dropdown with options.
        * @async
@@ -935,10 +960,11 @@
               } else {
                 this.classList.remove("is-invalid");
               }
+              updateAddPricingButtonState(entry);
             });
             updatePricingButtons(entry);
             updateAddCityButtonState();
-            updateAddPricingButtonState(entry); // Re-validate after adding
+            updateAddPricingButtonState(entry);
           }
         });
 
@@ -947,15 +973,16 @@
           fp.clear();
           entry.querySelector(".datePreview").innerHTML = "";
           entry.querySelector(".error-msg").classList.add("d-none");
-          updateAddPricingButtonState(entry); // Re-validate after clearing dates
+          updateAddPricingButtonState(entry);
         });
 
-        // Add input listeners for validation
-        entry.querySelectorAll(".transferType, .childPrice, .adultPrice").forEach(input => {
+        // Add input listeners for all fields
+        const inputs = entry.querySelectorAll(".transferType, .childPrice, .adultPrice, .tripDuration");
+        inputs.forEach(input => {
           input.addEventListener("input", () => {
             input.classList.toggle("is-invalid", !input.value.trim());
-            updateAddCityButtonState();
             updateAddPricingButtonState(entry);
+            updateAddCityButtonState();
           });
         });
 
@@ -995,22 +1022,51 @@
           <div class="d-flex align-items-center">
             <input type="number" class="form-control adultPrice" name="adultPrice[]" placeholder="Enter price per adult" required>
             <div class="invalid-feedback">Adult Price is required.</div>
-            <button type="button" class="btn btn-danger btn-sm removeRow mt-3" style="display: none;"><i class="bi bi-x-circle"></i></button>
+            <button type="button" class="btn btn-danger btn-sm removeRow mt-3"><i class="bi bi-x-circle"></i></button>
           </div>
         </div>
       </div>`;
+
         if (priceData) {
-          row.querySelector(".transferType").value = priceData.transferType;
-          row.querySelector(".childPrice").value = priceData.childPrice;
-          row.querySelector(".adultPrice").value = priceData.adultPrice;
+          row.querySelector(".transferType").value = priceData.transferType || "";
+          row.querySelector(".childPrice").value = priceData.childPrice || "";
+          row.querySelector(".adultPrice").value = priceData.adultPrice || "";
         }
+
         container.appendChild(row);
+
+        // Add event listeners to new inputs
+        const inputs = row.querySelectorAll(".transferType, .childPrice, .adultPrice");
+        inputs.forEach(input => {
+          input.addEventListener("input", () => {
+            input.classList.toggle("is-invalid", !input.value.trim());
+            updateAddPricingButtonState(entry);
+          });
+        });
+
+        // Validate transfer type uniqueness
+        row.querySelector(".transferType").addEventListener("blur", function() {
+          const transferTypes = Array.from(entry.querySelectorAll(".transferType"))
+            .map(t => t.value.trim())
+            .filter((v, i, self) => v && self.indexOf(v) === i);
+          if (transferTypes.filter(t => t === this.value.trim()).length > 1) {
+            this.classList.add("is-invalid");
+            this.nextElementSibling.textContent = "Transfer Type must be unique within this city.";
+          } else {
+            this.classList.remove("is-invalid");
+            this.nextElementSibling.textContent = "Transfer Type is required and must be unique.";
+          }
+          updateAddPricingButtonState(entry);
+        });
+
         row.querySelector(".removeRow").addEventListener("click", () => {
           row.remove();
           updatePricingButtons(entry);
           updateAddCityButtonState();
-          updateAddPricingButtonState(entry); // Re-validate after removal
+          updateAddPricingButtonState(entry);
         });
+
+        updatePricingButtons(entry);
         return row;
       }
 
@@ -1074,24 +1130,30 @@
       function updateAddPricingButtonState(entry) {
         const addRowBtn = entry.querySelector("#addRow");
         const citySelect = entry.querySelector(".city-select").value;
+        const tripDuration = entry.querySelector(".tripDuration").value.trim();
         const pricingRows = entry.querySelectorAll(".pricingRow");
         const dates = entry.querySelector(".datePicking")._flatpickr?.selectedDates || [];
-        let allValid = citySelect && dates.length > 0;
+        let allValid = citySelect && tripDuration && dates.length > 0;
 
-        if (!citySelect) entry.querySelector(".city-select").classList.add("is-invalid");
-        else entry.querySelector(".city-select").classList.remove("is-invalid");
+        // Validate and toggle error states
+        entry.querySelector(".city-select").classList.toggle("is-invalid", !citySelect);
+        entry.querySelector(".tripDuration").classList.toggle("is-invalid", !tripDuration);
 
         pricingRows.forEach(row => {
           const transferType = row.querySelector(".transferType").value.trim();
           const childPrice = row.querySelector(".childPrice").value.trim();
           const adultPrice = row.querySelector(".adultPrice").value.trim();
-          if (!transferType || !childPrice || !adultPrice) allValid = false;
-          // Feedback is already handled by individual input listeners
+          const isValidRow = transferType && childPrice && adultPrice;
+          allValid = allValid && isValidRow;
+
+          row.querySelector(".transferType").classList.toggle("is-invalid", !transferType);
+          row.querySelector(".childPrice").classList.toggle("is-invalid", !childPrice);
+          row.querySelector(".adultPrice").classList.toggle("is-invalid", !adultPrice);
         });
 
         addRowBtn.disabled = !allValid;
+        console.log(`Add Price button for city ${entry.querySelector(".city-select").value}: ${addRowBtn.disabled ? 'disabled' : 'enabled'}`);
       }
-
       /**
        * Initializes Flatpickr calendar for a city entry.
        * @param {HTMLElement} entry - The city entry element.
@@ -1099,69 +1161,69 @@
        */
 
       function initializeFlatpickr(entry, initialDates = []) {
-  const dateInput = entry.querySelector(".datePicking");
-  const preview = entry.querySelector(".datePreview");
-  const errorMsg = entry.querySelector(".error-msg");
-  let dates = [];
+        const dateInput = entry.querySelector(".datePicking");
+        const preview = entry.querySelector(".datePreview");
+        const errorMsg = entry.querySelector(".error-msg");
+        let dates = [];
 
-  if (initialDates && initialDates.length > 0) {
-    dates = initialDates.flatMap(d => {
-      const year = d.Year;
-      const month = d.Month;
-      const monthNumber = new Date(`${month} 1, ${year}`).getMonth() + 1;
-      const monthStr = monthNumber.toString().padStart(2, "0");
-      return d.dates.split(", ").map(date => {
-        const day = date.trim().padStart(2, "0");
-        // Parse the date as UTC
-        const utcDate = new Date(Date.UTC(year, monthNumber - 1, day));
-        // Convert to local time for Flatpickr
-        return utcDate;
-      });
-    }).filter(date => {
-      const parsedDate = new Date(date);
-      return parsedDate >= new Date().setHours(0, 0, 0, 0);
-    });
-  }
+        if (initialDates && initialDates.length > 0) {
+          dates = initialDates.flatMap(d => {
+            const year = d.Year;
+            const month = d.Month;
+            const monthNumber = new Date(`${month} 1, ${year}`).getMonth() + 1;
+            const monthStr = monthNumber.toString().padStart(2, "0");
+            return d.dates.split(", ").map(date => {
+              const day = date.trim().padStart(2, "0");
+              // Parse the date as UTC
+              const utcDate = new Date(Date.UTC(year, monthNumber - 1, day));
+              // Convert to local time for Flatpickr
+              return utcDate;
+            });
+          }).filter(date => {
+            const parsedDate = new Date(date);
+            return parsedDate >= new Date().setHours(0, 0, 0, 0);
+          });
+        }
 
-  if (dateInput._flatpickr) dateInput._flatpickr.destroy();
+        if (dateInput._flatpickr) dateInput._flatpickr.destroy();
 
-  const fp = flatpickr(dateInput, {
-    mode: "multiple",
-    dateFormat: "Y-m-d",
-    minDate: "today",
-    defaultDate: dates.length ? dates : null,
-    onReady: function() {
-      updateDatePreview(preview, this.selectedDates);
-    },
-    onChange: function(selectedDates) {
-      updateDatePreview(preview, selectedDates);
-      errorMsg.classList.toggle("d-none", selectedDates.length > 0);
-      updateAddCityButtonState();
-      updateAddPricingButtonState(entry);
-    }
-  });
+        const fp = flatpickr(dateInput, {
+          mode: "multiple",
+          dateFormat: "Y-m-d",
+          minDate: "today",
+          defaultDate: dates.length ? dates : null,
+          onReady: function() {
+            updateDatePreview(preview, this.selectedDates);
+          },
+          onChange: function(selectedDates) {
+            updateDatePreview(preview, selectedDates);
+            errorMsg.classList.toggle("d-none", selectedDates.length > 0);
+            updateAddCityButtonState();
+            updateAddPricingButtonState(entry);
+          }
+        });
 
-  if (dates.length) updateDatePreview(preview, dates);
-  else errorMsg.classList.remove("d-none");
-}
+        if (dates.length) updateDatePreview(preview, dates);
+        else errorMsg.classList.remove("d-none");
+      }
 
-  /**
- * Formats a Date object to YYYY-MM-DD in the local time zone.
- * @param {Date} date - The Date object to format.
- * @returns {string} The formatted date string (e.g., "2025-03-20").
- */
-function formatLocalDate(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
+      /**
+       * Formats a Date object to YYYY-MM-DD in the local time zone.
+       * @param {Date} date - The Date object to format.
+       * @returns {string} The formatted date string (e.g., "2025-03-20").
+       */
+      function formatLocalDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
 
-function updateDatePreview(preview, dates) {
-  preview.innerHTML = "";
-  dates.forEach((date, index) => {
-    const formattedDate = typeof date === "string" ? date : formatLocalDate(date); // Display in local time
-    preview.innerHTML += `
+      function updateDatePreview(preview, dates) {
+        preview.innerHTML = "";
+        dates.forEach((date, index) => {
+          const formattedDate = typeof date === "string" ? date : formatLocalDate(date); // Display in local time
+          preview.innerHTML += `
       <tr>
         <td class="text-center">${index + 1}</td>
         <td class="text-center">${formattedDate}</td>
@@ -1169,19 +1231,19 @@ function updateDatePreview(preview, dates) {
           <button class="btn btn-danger btn-sm remove-date" data-date="${formattedDate}">Remove</button>
         </td>
       </tr>`;
-  });
-  preview.querySelectorAll(".remove-date").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const date = btn.dataset.date;
-      const fp = btn.closest(".city-entry").querySelector(".datePicking")._flatpickr;
-      const updatedDates = fp.selectedDates.filter(d => formatLocalDate(d) !== date);
-      fp.setDate(updatedDates);
-      updateDatePreview(preview, updatedDates);
-      btn.closest(".city-entry").querySelector(".error-msg").classList.toggle("d-none", updatedDates.length > 0);
-      updateAddPricingButtonState(btn.closest(".city-entry"));
-    });
-  });
-}
+        });
+        preview.querySelectorAll(".remove-date").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const date = btn.dataset.date;
+            const fp = btn.closest(".city-entry").querySelector(".datePicking")._flatpickr;
+            const updatedDates = fp.selectedDates.filter(d => formatLocalDate(d) !== date);
+            fp.setDate(updatedDates);
+            updateDatePreview(preview, updatedDates);
+            btn.closest(".city-entry").querySelector(".error-msg").classList.toggle("d-none", updatedDates.length > 0);
+            updateAddPricingButtonState(btn.closest(".city-entry"));
+          });
+        });
+      }
 
       cityContainer.addEventListener("change", function(event) {
         if (event.target.classList.contains("city-select")) {
@@ -1469,109 +1531,112 @@ function updateDatePreview(preview, dates) {
     }
 
     /**
- * Updates the day labels and editor IDs to be sequential (Day 1, Day 2, etc.).
- * Ensures that editor IDs in the DOM and itineraryEditors object match the new day numbers.
- */
-function updateDayLabelsAndButtons() {
-  const days = Array.from(itineraryContainer.querySelectorAll(".itinerary-day"));
+     * Updates the day labels and editor IDs to be sequential (Day 1, Day 2, etc.).
+     * Ensures that editor IDs in the DOM and itineraryEditors object match the new day numbers.
+     */
+    function updateDayLabelsAndButtons() {
+      const days = Array.from(itineraryContainer.querySelectorAll(".itinerary-day"));
 
-  // Update day labels and editor IDs to be sequential
-  days.forEach((day, index) => {
-    const logicalDayNumber = index + 1; // New day number (e.g., Day 3 → Day 2)
-    const oldDayNumber = parseInt(day.dataset.day); // Old day number (e.g., 3)
+      // Update day labels and editor IDs to be sequential
+      days.forEach((day, index) => {
+        const logicalDayNumber = index + 1; // New day number (e.g., Day 3 → Day 2)
+        const oldDayNumber = parseInt(day.dataset.day); // Old day number (e.g., 3)
 
-    // If the day number has changed, update the DOM and editor IDs
-    if (logicalDayNumber !== oldDayNumber) {
-      // Update the data-day attribute for logical ordering
-      day.dataset.day = logicalDayNumber;
+        // If the day number has changed, update the DOM and editor IDs
+        if (logicalDayNumber !== oldDayNumber) {
+          // Update the data-day attribute for logical ordering
+          day.dataset.day = logicalDayNumber;
 
-      // Update accordion header and collapse IDs
-      const header = day.querySelector(".accordion-header");
-      header.id = `heading-${logicalDayNumber}`;
-      const button = header.querySelector(".accordion-button");
-      button.setAttribute("data-bs-target", `#collapse-${logicalDayNumber}`);
-      button.setAttribute("aria-controls", `collapse-${logicalDayNumber}`);
-      button.textContent = `Day ${logicalDayNumber}`;
+          // Update accordion header and collapse IDs
+          const header = day.querySelector(".accordion-header");
+          header.id = `heading-${logicalDayNumber}`;
+          const button = header.querySelector(".accordion-button");
+          button.setAttribute("data-bs-target", `#collapse-${logicalDayNumber}`);
+          button.setAttribute("aria-controls", `collapse-${logicalDayNumber}`);
+          button.textContent = `Day ${logicalDayNumber}`;
 
-      const collapse = day.querySelector(".accordion-collapse");
-      collapse.id = `collapse-${logicalDayNumber}`;
-      collapse.setAttribute("aria-labelledby", `heading-${logicalDayNumber}`);
+          const collapse = day.querySelector(".accordion-collapse");
+          collapse.id = `collapse-${logicalDayNumber}`;
+          collapse.setAttribute("aria-labelledby", `heading-${logicalDayNumber}`);
 
-      // Update editor ID in itineraryEditors and DOM
-      const oldEditorId = `editor-${oldDayNumber}`;
-      const newEditorId = `editor-${logicalDayNumber}`;
-      if (itineraryEditors[oldEditorId]) {
-        // Transfer the editor instance to the new ID
-        itineraryEditors[newEditorId] = itineraryEditors[oldEditorId];
-        delete itineraryEditors[oldEditorId];
+          // Update editor ID in itineraryEditors and DOM
+          const oldEditorId = `editor-${oldDayNumber}`;
+          const newEditorId = `editor-${logicalDayNumber}`;
+          if (itineraryEditors[oldEditorId]) {
+            // Transfer the editor instance to the new ID
+            itineraryEditors[newEditorId] = itineraryEditors[oldEditorId];
+            delete itineraryEditors[oldEditorId];
 
-        // Update the editor container ID in the DOM
-        const editorContainer = day.querySelector(".editor-container");
-        editorContainer.id = newEditorId;
+            // Update the editor container ID in the DOM
+            const editorContainer = day.querySelector(".editor-container");
+            editorContainer.id = newEditorId;
+          }
+        } else {
+          // If the day number hasn't changed, just update the label
+          const headerBtn = day.querySelector(".accordion-button");
+          headerBtn.textContent = `Day ${logicalDayNumber}`;
+        }
+      });
+
+      // Update remove buttons: disable if only one day remains
+      const removeButtons = itineraryContainer.querySelectorAll(".remove-day-btn");
+      removeButtons.forEach(btn => {
+        btn.disabled = days.length === 1;
+      });
+    }
+
+    /**
+     * Updates the enable/disable state of the "Add Day" button based on the validity of existing days.
+     * A day is valid if its header and editor content are non-empty.
+     * @param {string|null} removedEditorId - The ID of the editor that was just removed (if any).
+     */
+    function updateAddDayButtonState(removedEditorId = null) {
+      const days = itineraryContainer.querySelectorAll(".itinerary-day");
+      let allValid = true;
+
+      // If there are no days, the button should be disabled
+      if (days.length === 0) {
+        console.log("No days present, disabling Add Day button");
+        addDayBtn.disabled = true;
+        return;
       }
-    } else {
-      // If the day number hasn't changed, just update the label
-      const headerBtn = day.querySelector(".accordion-button");
-      headerBtn.textContent = `Day ${logicalDayNumber}`;
+
+      // Validate each day's header and editor content
+      days.forEach(day => {
+        const header = day.querySelector(".itinerary-header").value.trim();
+        const editorId = `editor-${day.dataset.day}`;
+
+        // Check if the editor exists before accessing its content
+        if (!itineraryEditors[editorId]) {
+          console.warn(`Editor ${editorId} not found for Day ${day.dataset.day}, treating as invalid`);
+          allValid = false;
+          return;
+        }
+
+        // Use innerHTML to check editor content, excluding empty paragraphs
+        const editorContent = itineraryEditors[editorId]?.root.innerHTML || "";
+        const contentIsEmpty = !editorContent || editorContent === "<p><br></p>";
+
+        // A day is invalid if its header or editor content is empty
+        if (!header || contentIsEmpty) {
+          allValid = false;
+          console.log(`Validation failed for Day ${day.dataset.day}: Header=${header}, Content=${editorContent}`);
+        }
+
+        // Toggle invalid state for the header input
+        day.querySelector(".itinerary-header").classList.toggle("is-invalid", !header);
+      });
+
+      // Log the validation result for debugging
+      console.log({
+        removedEditorId,
+        allValid
+      });
+
+      // Enable the "Add Day" button if all days are valid
+      addDayBtn.disabled = !allValid;
+      console.log(`Add Day button state: ${addDayBtn.disabled ? 'disabled' : 'enabled'}`);
     }
-  });
-
-  // Update remove buttons: disable if only one day remains
-  const removeButtons = itineraryContainer.querySelectorAll(".remove-day-btn");
-  removeButtons.forEach(btn => {
-    btn.disabled = days.length === 1;
-  });
-}
-
-   /**
- * Updates the enable/disable state of the "Add Day" button based on the validity of existing days.
- * A day is valid if its header and editor content are non-empty.
- * @param {string|null} removedEditorId - The ID of the editor that was just removed (if any).
- */
-function updateAddDayButtonState(removedEditorId = null) {
-  const days = itineraryContainer.querySelectorAll(".itinerary-day");
-  let allValid = true;
-
-  // If there are no days, the button should be disabled
-  if (days.length === 0) {
-    console.log("No days present, disabling Add Day button");
-    addDayBtn.disabled = true;
-    return;
-  }
-
-  // Validate each day's header and editor content
-  days.forEach(day => {
-    const header = day.querySelector(".itinerary-header").value.trim();
-    const editorId = `editor-${day.dataset.day}`;
-
-    // Check if the editor exists before accessing its content
-    if (!itineraryEditors[editorId]) {
-      console.warn(`Editor ${editorId} not found for Day ${day.dataset.day}, treating as invalid`);
-      allValid = false;
-      return;
-    }
-
-    // Use innerHTML to check editor content, excluding empty paragraphs
-    const editorContent = itineraryEditors[editorId]?.root.innerHTML || "";
-    const contentIsEmpty = !editorContent || editorContent === "<p><br></p>";
-
-    // A day is invalid if its header or editor content is empty
-    if (!header || contentIsEmpty) {
-      allValid = false;
-      console.log(`Validation failed for Day ${day.dataset.day}: Header=${header}, Content=${editorContent}`);
-    }
-
-    // Toggle invalid state for the header input
-    day.querySelector(".itinerary-header").classList.toggle("is-invalid", !header);
-  });
-
-  // Log the validation result for debugging
-  console.log({ removedEditorId, allValid });
-
-  // Enable the "Add Day" button if all days are valid
-  addDayBtn.disabled = !allValid;
-  console.log(`Add Day button state: ${addDayBtn.disabled ? 'disabled' : 'enabled'}`);
-}
 
     function loadItinerary() {
       itineraryContainer.innerHTML = ""; // Clear existing content
@@ -1602,276 +1667,342 @@ function updateAddDayButtonState(removedEditorId = null) {
     // End of the itineray managment
 
     // Form Submission with Validation
-document.getElementById("addUpdateTripDetial").addEventListener("submit", function(e) {
-  e.preventDefault();
+    document.getElementById("addUpdateTripDetial").addEventListener("submit", function(e) {
+      e.preventDefault();
 
-  // Step 1: Validate all required fields
-  const requiredFields = [
-    { id: "name", name: "Trip Name" },
-    { id: "state", name: "State" },
-    { id: "destinations", name: "Destinations" },
-    { id: "route", name: "Route" },
-    { id: "days", name: "Trip Duration" },
-    { id: "price", name: "Base Price" },
-    { id: "tripType", name: "Difficulty" },
-    { id: "tag", name: "Tag Line" },
-    { id: "altitude", name: "Altitude" },
-    { id: "bestSession", name: "Best Session" }
-  ];
+      // Step 1: Validate all required fields
+      const requiredFields = [{
+          id: "name",
+          name: "Trip Name"
+        },
+        {
+          id: "state",
+          name: "State"
+        },
+        {
+          id: "destinations",
+          name: "Destinations"
+        },
+        {
+          id: "route",
+          name: "Route"
+        },
+        {
+          id: "days",
+          name: "Trip Duration"
+        },
+        {
+          id: "price",
+          name: "Base Price"
+        },
+        {
+          id: "tripType",
+          name: "Difficulty"
+        },
+        {
+          id: "tag",
+          name: "Tag Line"
+        },
+        {
+          id: "altitude",
+          name: "Altitude"
+        },
+        {
+          id: "bestSession",
+          name: "Best Session"
+        }
+      ];
 
-  let validationErrors = [];
+      let validationErrors = [];
 
-  // Validate simple input fields
-  requiredFields.forEach(field => {
-    const input = document.getElementById(field.id);
-    const value = input.value.trim();
-    if (!value) {
-      validationErrors.push(`${field.name} is required.`);
-      input.classList.add("is-invalid");
-    } else {
-      input.classList.remove("is-invalid");
-    }
-  });
+      // Validate simple input fields
+      requiredFields.forEach(field => {
+        const input = document.getElementById(field.id);
+        const value = input.value.trim();
+        if (!value) {
+          validationErrors.push(`${field.name} is required.`);
+          input.classList.add("is-invalid");
+        } else {
+          input.classList.remove("is-invalid");
+        }
+      });
 
-  // Validate image (required for new trips)
-  const tripId = document.getElementById("tripId").value;
-  const imageInput = document.getElementById("file");
-  const existingImage = document.querySelector('input[name="existingImage"]').value;
-  if (!tripId && !imageInput.files.length && !existingImage) {
-    validationErrors.push("An image is required for new trips.");
-    imageInput.classList.add("is-invalid");
-  } else {
-    imageInput.classList.remove("is-invalid");
-  }
-
-  // Validate editor fields
-  const editorFields = [
-    { id: "about-editor", name: "About Information", errorId: "aboutError" },
-    { id: "placestovisit-editor", name: "Places to Visit", errorId: "placestovisitError" },
-    { id: "activities-editor", name: "Activities & Attraction", errorId: "activitiesError" },
-    { id: "things_to_carry-editor", name: "Things to Carry", errorId: "thingsToCarryError" },
-    { id: "includenexclude-editor", name: "Include & Exclude", errorId: "includeExcludeError" },
-    { id: "package_cost-editor", name: "Package Cost", errorId: "packageCostError" },
-    { id: "infonfaq-editor", name: "Info & FAQs", errorId: "infoFaqError" },
-    { id: "bookncancel-editor", name: "Booking & Cancellation", errorId: "bookCancelError" },
-    { id: "guidelines-editor", name: "Travel Guidelines", errorId: "guidelinesError" }
-  ];
-
-  editorFields.forEach(field => {
-    const content = staticEditors[field.id].root.innerHTML.trim();
-    const isEmpty = !content || content === "<p><br></p>";
-    const errorElement = document.getElementById(field.errorId);
-    if (field.name !== "Info & FAQs" && field.name !== "Booking & Cancellation" && field.name !== "Travel Guidelines") {
-      // Required fields
-      if (isEmpty) {
-        validationErrors.push(`${field.name} is required.`);
-        errorElement.classList.remove("d-none");
+      // Validate image (required for new trips)
+      const tripId = document.getElementById("tripId").value;
+      const imageInput = document.getElementById("file");
+      const existingImage = document.querySelector('input[name="existingImage"]').value;
+      if (!tripId && !imageInput.files.length && !existingImage) {
+        validationErrors.push("An image is required for new trips.");
+        imageInput.classList.add("is-invalid");
       } else {
-        errorElement.classList.add("d-none");
+        imageInput.classList.remove("is-invalid");
       }
-    } else {
-      // Optional fields
-      errorElement.classList.add("d-none");
-    }
-  });
 
-  // Validate itinerary
-  const itineraryDays = Array.from(document.querySelectorAll(".itinerary-day"));
-  const itineraryData = itineraryDays.map(day => {
-    const header = day.querySelector('input[name="itinerary-header[]"]').value.trim();
-    const editorId = `editor-${day.dataset.day}`;
-    const description = itineraryEditors[editorId]?.root.innerHTML || "";
-    const contentIsEmpty = !description || description === "<p><br></p>";
+      // Validate editor fields
+      const editorFields = [{
+          id: "about-editor",
+          name: "About Information",
+          errorId: "aboutError"
+        },
+        {
+          id: "placestovisit-editor",
+          name: "Places to Visit",
+          errorId: "placestovisitError"
+        },
+        {
+          id: "activities-editor",
+          name: "Activities & Attraction",
+          errorId: "activitiesError"
+        },
+        {
+          id: "things_to_carry-editor",
+          name: "Things to Carry",
+          errorId: "thingsToCarryError"
+        },
+        {
+          id: "includenexclude-editor",
+          name: "Include & Exclude",
+          errorId: "includeExcludeError"
+        },
+        {
+          id: "package_cost-editor",
+          name: "Package Cost",
+          errorId: "packageCostError"
+        },
+        {
+          id: "infonfaq-editor",
+          name: "Info & FAQs",
+          errorId: "infoFaqError"
+        },
+        {
+          id: "bookncancel-editor",
+          name: "Booking & Cancellation",
+          errorId: "bookCancelError"
+        },
+        {
+          id: "guidelines-editor",
+          name: "Travel Guidelines",
+          errorId: "guidelinesError"
+        }
+      ];
 
-    if (!header) {
-      validationErrors.push(`Itinerary Day ${day.dataset.day}: Header is required.`);
-      day.querySelector(".itinerary-header").classList.add("is-invalid");
-    }
-    if (contentIsEmpty) {
-      validationErrors.push(`Itinerary Day ${day.dataset.day}: Description is required.`);
-    }
+      editorFields.forEach(field => {
+        const content = staticEditors[field.id].root.innerHTML.trim();
+        const isEmpty = !content || content === "<p><br></p>";
+        const errorElement = document.getElementById(field.errorId);
+        if (field.name !== "Info & FAQs" && field.name !== "Booking & Cancellation" && field.name !== "Travel Guidelines") {
+          // Required fields
+          if (isEmpty) {
+            validationErrors.push(`${field.name} is required.`);
+            errorElement.classList.remove("d-none");
+          } else {
+            errorElement.classList.add("d-none");
+          }
+        } else {
+          // Optional fields
+          errorElement.classList.add("d-none");
+        }
+      });
 
-    return {
-      day: `Day ${day.dataset.day}`,
-      header,
-      description
-    };
-  });
+      // Validate itinerary
+      const itineraryDays = Array.from(document.querySelectorAll(".itinerary-day"));
+      const itineraryData = itineraryDays.map(day => {
+        const header = day.querySelector('input[name="itinerary-header[]"]').value.trim();
+        const editorId = `editor-${day.dataset.day}`;
+        const description = itineraryEditors[editorId]?.root.innerHTML || "";
+        const contentIsEmpty = !description || description === "<p><br></p>";
 
-  // Validate deptcities
-const deptCitiesData = Array.from(document.querySelectorAll(".city-entry")).map(entry => {
-  const citySelect = entry.querySelector(".city-select");
-  const city = citySelect.value;
-  const state = entry.querySelector(".state-field").value;
-  const pricingRows = entry.querySelectorAll(".pricingRow");
-  const dates = entry.querySelector(".datePicking")._flatpickr?.selectedDates || []; // Keep as Date objects
-  const tripDuration = entry.querySelector(".tripDuration").value.trim();
+        if (!header) {
+          validationErrors.push(`Itinerary Day ${day.dataset.day}: Header is required.`);
+          day.querySelector(".itinerary-header").classList.add("is-invalid");
+        }
+        if (contentIsEmpty) {
+          validationErrors.push(`Itinerary Day ${day.dataset.day}: Description is required.`);
+        }
 
-  // Validate city and state
-  if (!city) {
-    validationErrors.push("Departure City is required for all entries.");
-    citySelect.classList.add("is-invalid");
-  } else {
-    citySelect.classList.remove("is-invalid");
-  }
-  if (!state) {
-    validationErrors.push("State is required for all departure cities.");
-    entry.querySelector(".state-field").classList.add("is-invalid");
-  } else {
-    entry.querySelector(".state-field").classList.remove("is-invalid");
-  }
+        return {
+          day: `Day ${day.dataset.day}`,
+          header,
+          description
+        };
+      });
 
-  // Validate dates
-  if (dates.length === 0) {
-    validationErrors.push(`Departure City ${city}: At least one date is required.`);
-    entry.querySelector(".error-msg").classList.remove("d-none");
-  } else {
-    entry.querySelector(".error-msg").classList.add("d-none");
-  }
+      // Validate deptcities
+      const deptCitiesData = Array.from(document.querySelectorAll(".city-entry")).map(entry => {
+        const citySelect = entry.querySelector(".city-select");
+        const city = citySelect.value;
+        const state = entry.querySelector(".state-field").value;
+        const pricingRows = entry.querySelectorAll(".pricingRow");
+        const dates = entry.querySelector(".datePicking")._flatpickr?.selectedDates || []; // Keep as Date objects
+        const tripDuration = entry.querySelector(".tripDuration").value.trim();
 
-  // Validate pricing
-  const price = Array.from(pricingRows).map(row => {
-    const transferType = row.querySelector(".transferType");
-    const childPrice = row.querySelector(".childPrice");
-    const adultPrice = row.querySelector(".adultPrice");
-    const transferTypeValue = transferType.value.trim();
-    const childPriceValue = childPrice.value.trim();
-    const adultPriceValue = adultPrice.value.trim();
+        // Validate city and state
+        if (!city) {
+          validationErrors.push("Departure City is required for all entries.");
+          citySelect.classList.add("is-invalid");
+        } else {
+          citySelect.classList.remove("is-invalid");
+        }
+        if (!state) {
+          validationErrors.push("State is required for all departure cities.");
+          entry.querySelector(".state-field").classList.add("is-invalid");
+        } else {
+          entry.querySelector(".state-field").classList.remove("is-invalid");
+        }
 
-    if (!transferTypeValue) {
-      validationErrors.push(`Departure City ${city}: Transfer Type is required for all pricing entries.`);
-      transferType.classList.add("is-invalid");
-    } else {
-      transferType.classList.remove("is-invalid");
-    }
-    if (!childPriceValue) {
-      validationErrors.push(`Departure City ${city}: Child Price is required for all pricing entries.`);
-      childPrice.classList.add("is-invalid");
-    } else {
-      childPrice.classList.remove("is-invalid");
-    }
-    if (!adultPriceValue) {
-      validationErrors.push(`Departure City ${city}: Adult Price is required for all pricing entries.`);
-      adultPrice.classList.add("is-invalid");
-    } else {
-      adultPrice.classList.remove("is-invalid");
-    }
+        // Validate dates
+        if (dates.length === 0) {
+          validationErrors.push(`Departure City ${city}: At least one date is required.`);
+          entry.querySelector(".error-msg").classList.remove("d-none");
+        } else {
+          entry.querySelector(".error-msg").classList.add("d-none");
+        }
 
-    return {
-      transferType: transferTypeValue,
-      childPrice: parseFloat(childPriceValue) || 0,
-      adultPrice: parseFloat(adultPriceValue) || 0
-    };
-  });
+        // Validate pricing
+        const price = Array.from(pricingRows).map(row => {
+          const transferType = row.querySelector(".transferType");
+          const childPrice = row.querySelector(".childPrice");
+          const adultPrice = row.querySelector(".adultPrice");
+          const transferTypeValue = transferType.value.trim();
+          const childPriceValue = childPrice.value.trim();
+          const adultPriceValue = adultPrice.value.trim();
 
-  return {
-    City: city,
-    State: state,
-    tripDuration,
-    dates: formatDatesForMongoDB(dates), // Pass Date objects directly
-    price
-  };
-});
+          if (!transferTypeValue) {
+            validationErrors.push(`Departure City ${city}: Transfer Type is required for all pricing entries.`);
+            transferType.classList.add("is-invalid");
+          } else {
+            transferType.classList.remove("is-invalid");
+          }
+          if (!childPriceValue) {
+            validationErrors.push(`Departure City ${city}: Child Price is required for all pricing entries.`);
+            childPrice.classList.add("is-invalid");
+          } else {
+            childPrice.classList.remove("is-invalid");
+          }
+          if (!adultPriceValue) {
+            validationErrors.push(`Departure City ${city}: Adult Price is required for all pricing entries.`);
+            adultPrice.classList.add("is-invalid");
+          } else {
+            adultPrice.classList.remove("is-invalid");
+          }
 
-  // Derive trip_dates from deptcities dates (if this is the intended behavior)
-  const allDates = deptCitiesData.flatMap(city => city.dates.map(date => ({
-    Year: date.Year,
-    Month: date.Month,
-    dates: date.dates
-  })));
-  const uniqueTripDates = Array.from(new Map(allDates.map(item => [`${item.Year}-${item.Month}-${item.dates}`, item])).values());
+          return {
+            transferType: transferTypeValue,
+            childPrice: parseFloat(childPriceValue) || 0,
+            adultPrice: parseFloat(adultPriceValue) || 0
+          };
+        });
 
-  // Step 2: Display validation errors if any
-  if (validationErrors.length > 0) {
-    alert("Please fix the following errors:\n- " + validationErrors.join("\n- "));
-    return;
-  }
+        return {
+          City: city,
+          State: state,
+          tripDuration,
+          dates: formatDatesForMongoDB(dates), // Pass Date objects directly
+          price
+        };
+      });
 
-  // Step 3: Prepare form data for submission
-  const formData = new FormData(this);
+      // Derive trip_dates from deptcities dates (if this is the intended behavior)
+      const allDates = deptCitiesData.flatMap(city => city.dates.map(date => ({
+        Year: date.Year,
+        Month: date.Month,
+        dates: date.dates
+      })));
+      const uniqueTripDates = Array.from(new Map(allDates.map(item => [`${item.Year}-${item.Month}-${item.dates}`, item])).values());
 
-  // Append editor content
-  editorFields.forEach(field => {
-    const fieldName = field.id.replace("-editor", "");
-    formData.set(fieldName, staticEditors[field.id].root.innerHTML);
-  });
-
-  // Append itinerary data
-  formData.set("itinerary", JSON.stringify(itineraryData));
-
-  // Append deptcities data
-  formData.set("deptcities", JSON.stringify(deptCitiesData));
-
-  // Append trip_dates
-  formData.set("trip_dates", JSON.stringify(uniqueTripDates));
-
-  // Step 4: Submit the form
-  fetch("/admin/postNewAddTours", {
-    method: "POST",
-    body: formData
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (data) {
-        alert("Trip saved successfully!");
-        window.location.reload();
-      } else if (data.exists) {
-        alert("Trip name must be unique!");
-        document.getElementById("nameError").classList.remove("d-none");
-      } else {
-        alert("Error saving trip: " + (data.message || "Unknown error"));
+      // Step 2: Display validation errors if any
+      if (validationErrors.length > 0) {
+        alert("Please fix the following errors:\n- " + validationErrors.join("\n- "));
+        return;
       }
-    })
-    .catch(err => {
-      console.error("Submission error:", err);
-      alert("An error occurred while submitting the form. Please try again.");
+
+      // Step 3: Prepare form data for submission
+      const formData = new FormData(this);
+
+      // Append editor content
+      editorFields.forEach(field => {
+        const fieldName = field.id.replace("-editor", "");
+        formData.set(fieldName, staticEditors[field.id].root.innerHTML);
+      });
+
+      // Append itinerary data
+      formData.set("itinerary", JSON.stringify(itineraryData));
+
+      // Append deptcities data
+      formData.set("deptcities", JSON.stringify(deptCitiesData));
+
+      // Append trip_dates
+      formData.set("trip_dates", JSON.stringify(uniqueTripDates));
+
+      // Step 4: Submit the form
+      fetch("/admin/postNewAddTours", {
+          method: "POST",
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data) {
+            alert("Trip saved successfully!");
+            window.location.reload();
+          } else if (data.exists) {
+            alert("Trip name must be unique!");
+            document.getElementById("nameError").classList.remove("d-none");
+          } else {
+            alert("Error saving trip: " + (data.message || "Unknown error"));
+          }
+        })
+        .catch(err => {
+          console.error("Submission error:", err);
+          alert("An error occurred while submitting the form. Please try again.");
+        });
     });
-});
 
-/**
- * Formats dates into the structure expected by MongoDB.
- * @param {string[]} dates - Array of dates in "YYYY-MM-DD" format.
- * @returns {Object[]} Array of objects with Year, Month, and dates.
- */
-function formatUTCDate(date) {
-  const year = date.getUTCFullYear();
-  const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Months are 0-based
-  const day = String(date.getUTCDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
+    /**
+     * Formats dates into the structure expected by MongoDB.
+     * @param {string[]} dates - Array of dates in "YYYY-MM-DD" format.
+     * @returns {Object[]} Array of objects with Year, Month, and dates.
+     */
+    function formatUTCDate(date) {
+      const year = date.getUTCFullYear();
+      const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Months are 0-based
+      const day = String(date.getUTCDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
 
-/**
- * Formats dates into the structure expected by MongoDB, using UTC.
- * @param {string[]} dates - Array of dates in "YYYY-MM-DD" format or Date objects.
- * @returns {Object[]} Array of objects with Year, Month, and dates.
- */
-function formatDatesForMongoDB(dates) {
-  const grouped = {};
-  dates.forEach(date => {
-    // If date is a string (e.g., "2025-03-20"), parse it as a local date
-    const d = typeof date === "string" ? new Date(date) : date;
-    // Convert to UTC
-    const utcDate = new Date(Date.UTC(
-      d.getFullYear(),
-      d.getMonth(),
-      d.getDate()
-    ));
-    const utcDateStr = formatUTCDate(utcDate); // e.g., "2025-03-19" in UTC
-    const [year, month, day] = utcDateStr.split("-");
-    const monthName = new Date(utcDate).toLocaleString("en-US", { month: "long", timeZone: "UTC" });
-    if (!grouped[year]) grouped[year] = {};
-    if (!grouped[year][monthName]) grouped[year][monthName] = [];
-    grouped[year][monthName].push(day);
-  });
-  return Object.entries(grouped).flatMap(([year, months]) =>
-    Object.entries(months).map(([month, days]) => ({
-      Year: year,
-      Month: month,
-      dates: days.join(", ")
-    }))
-  );
-}
-
+    /**
+     * Formats dates into the structure expected by MongoDB, using UTC.
+     * @param {string[]} dates - Array of dates in "YYYY-MM-DD" format or Date objects.
+     * @returns {Object[]} Array of objects with Year, Month, and dates.
+     */
+    function formatDatesForMongoDB(dates) {
+      const grouped = {};
+      dates.forEach(date => {
+        // If date is a string (e.g., "2025-03-20"), parse it as a local date
+        const d = typeof date === "string" ? new Date(date) : date;
+        // Convert to UTC
+        const utcDate = new Date(Date.UTC(
+          d.getFullYear(),
+          d.getMonth(),
+          d.getDate()
+        ));
+        const utcDateStr = formatUTCDate(utcDate); // e.g., "2025-03-19" in UTC
+        const [year, month, day] = utcDateStr.split("-");
+        const monthName = new Date(utcDate).toLocaleString("en-US", {
+          month: "long",
+          timeZone: "UTC"
+        });
+        if (!grouped[year]) grouped[year] = {};
+        if (!grouped[year][monthName]) grouped[year][monthName] = [];
+        grouped[year][monthName].push(day);
+      });
+      return Object.entries(grouped).flatMap(([year, months]) =>
+        Object.entries(months).map(([month, days]) => ({
+          Year: year,
+          Month: month,
+          dates: days.join(", ")
+        }))
+      );
+    }
   </script>
 </body>
 
