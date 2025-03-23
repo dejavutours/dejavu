@@ -453,6 +453,7 @@
 
         <!-- Booking Form -->
         <div class="col-lg-4 col-md-5 col-12 mt-3 mt-md-0">
+          <form id="procedToBook" action="/bookingTour" method="GET">
           <div class="card p-3">
             <h6>Joining from</h6>
             <select class="form-select mb-3" id="selectedCity" onchange="updateDates()">
@@ -468,6 +469,7 @@
             </select>
             <button class="btn btn-primary proceed-btn-book w-100">Proceed to book</button>
           </div>
+        </form>
         </div>
       </div>
 

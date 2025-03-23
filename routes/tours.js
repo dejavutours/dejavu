@@ -400,4 +400,19 @@ router.post("/getCheckToursUnique", toursController.getCheckToursUnique);
 router.post('/admin/updateImageUrl', ensureLoggedIn, isAuth, toursController.updateImageUrl);
 router.post('/admin/updateBannerImages', ensureLoggedIn, isAuth, toursController.updateBannerImages);
 router.post('/admin/removeBannerImage', ensureLoggedIn, isAuth, toursController.removeBannerImage);
+
+// book tour 
+router.get(
+  '/bookingTour/:tripid',
+  ensureLoggedIn,
+  toursController.renderBookingTourPage
+);
+
+router.post(
+  '/bookingTour',
+  ensureLoggedIn,
+  toursController.submitBookingTourPage
+);
+
+
 module.exports = router;

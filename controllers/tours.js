@@ -1753,3 +1753,30 @@ exports.changeTripStatus = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error", error });
   }
 };
+
+exports.renderBookingTourPage = async (req,res) =>{
+  const tripId = req?.params?.tripid;
+  const existingTrip = await NewTours.findById(tripId).lean();
+  if(existingTrip && existingTrip.deptcities && existingTrip.deptcities.length > 0){
+    existingTrip.deptcities.forEach(cityDetail =>{
+      cityDetail.dateList= [];
+      if(cityDetail && cityDetail.dates && cityDetail.dates.length > 0){
+        cityDetail.dates.forEach(dateBlock => {
+          const { Month, Year, dates } = dateBlock;
+          const dateList = dates.split(',');
+          dateList.forEach(day => {
+              // Format: DD-MM-YYYY
+              const formatted = `${day.padStart(2, '0')}-${Month}-${Year}`;
+              cityDetail.dateList.push(formatted);
+          });
+      });
+
+      }
+    })
+  }
+  res.render('pages/bookingTour' ,{tourDetails: existingTrip});
+};
+
+exports.submitBookingTourPage = async (req,res) =>{
+  res.render('pages/bookingTour');
+}
