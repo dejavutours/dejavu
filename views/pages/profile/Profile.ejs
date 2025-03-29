@@ -400,6 +400,9 @@
           newDataElement.classList.remove('d-none');
         }
 
+        const paginationContainer = document.getElementById('pagination-container');
+        paginationContainer.innerHTML = "";
+        
         // Update the currently loaded tab index
         crrLoadedTabIdx = newTabIndex;
 
