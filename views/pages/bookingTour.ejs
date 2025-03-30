@@ -71,6 +71,7 @@
         border-radius: 6px;
         margin-bottom: 0.4rem;
       }
+
       .cm-input-number {
         border: 1px solid transparent;
         background-color: #f1f1f1;
@@ -79,12 +80,13 @@
         width: 20%;
         border-radius: 11%;
       }
+
       .cm-row {
         display: flex;
         gap: 1rem;
       }
 
-      .cm-row > div {
+      .cm-row>div {
         flex: 1;
       }
 
@@ -101,6 +103,7 @@
         align-items: center;
         gap: 0.5rem;
       }
+
       .count-group button {
         background-color: #002d66;
         color: white;
@@ -147,6 +150,7 @@
           flex-direction: column;
         }
       }
+
       .cm-margin-top {
         margin-top: 5px !important;
       }
@@ -170,9 +174,11 @@
     <h2 class="cm-margin">Booking initiated</h2>
     <p>Please enter your details below and proceed to payment. Leave the rest to us.</p>
 
-    <form action="/booking" method="POST" id="bookingForm">
+    <form action="/bookingTour" method="POST" id="bookingForm">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-    <div class="b_container">
+      <!-- price only for calculate hidden -->
+      <input type="hidden" name="cityBasedprice" id="cityBasedprice">
+      <div class="b_container">
         <div class="form-section">
           <label class="cm-label">Joining from</label>
           <select class="cm-field" name="joiningFrom" id="joiningFrom" onchange="populateDates()">
@@ -191,74 +197,83 @@
             <div>
               <label class="cm-label cm-margin-top">Adults (10+): </label>
               <button type="button" onclick="increDecreValue('adults','decrement')">-</button>
-              <input id="adults" class="cm-input-number" type="number" value="1" />
+              <input id="adults" name="adults" class="cm-input-number" type="number" value="1" />
               <!-- <span id="adults">2</span> -->
               <button type="button" onclick="increDecreValue('adults','increment')">+</button>
             </div>
             <div>
               <label class="cm-label cm-margin-top">Children (5-10):</label>
-               <button type="button" onclick="increDecreValue('children','decrement')">-</button>
-               <input id="children" class="cm-input-number" type="number" value="1" />
+              <button type="button" onclick="increDecreValue('children','decrement')">-</button>
+              <input id="children" name="children" class="cm-input-number" type="number" value="1" />
               <!-- <span id="children">2</span> -->
               <button type="button" onclick="increDecreValue('children','increment')">+</button>
             </div>
           </div>
-
           <h3>Person’s details</h3>
-          <div class="cm-row">
-            <div>
-              <label class="cm-label">First name*</label>
-              <input class="cm-field" type="text" required placeholder="Your name here" />
-            </div>
-            <div>
-              <label class="cm-label">Surname*</label>
-              <input class="cm-field" type="text" required placeholder="Your surname here" />
+          <div id="personDetailsContainer">
+            <!-- Do not remove below class('person-details') as some dependance  -->
+            <div class="person-details">
+              <h4>Person 1</h4>
+              <div class="cm-row">
+                <div>
+                  <label class="cm-label">First name*</label>
+                  <input id="firstName" name="personDetails[0][firstName]" class="cm-field" type="text" required
+                    placeholder="Your name here" />
+                </div>
+                <div>
+                  <label class="cm-label">Surname*</label>
+                  <input id="Surname" name="personDetails[0][Surname]" class="cm-field" type="text" required
+                    placeholder="Your surname here" />
+                </div>
+              </div>
+              <div class="cm-row">
+                <div>
+                  <label class="cm-label">Birth date*</label>
+                  <input id="dateofbirth" name="personDetails[0][dateofbirth]" class="cm-field" required type="date" />
+                </div>
+                <div>
+                  <label class="cm-label">Gender*</label>
+                  <select id="Gender" name="personDetails[0][Gender]" class="cm-field" required>
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+              </div>
+              <label class="cm-label">Mobile number*</label>
+              <input id="mobileno" name="personDetails[0][mobileno]" class="cm-field" type="tel"
+                placeholder="+91 Enter your mobile number" />
+              <label class="cm-label">Alternative number</label>
+              <input id="alternateNumber" name="personDetails[0][alternateNumber]" class="cm-field" type="tel"
+                placeholder="+91 Enter alt mobile number" />
             </div>
           </div>
 
-          <div class="cm-row">
-            <div>
-              <label class="cm-label">Birth date*</label>
-              <input class="cm-field" required type="date" />
-            </div>
-            <div>
-              <label class="cm-label">Gender*</label>
-              <select class="cm-field" required>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-              </select>
-            </div>
-          </div>
-
-          <label class="cm-label">Mobile number*</label>
-          <input class="cm-field" type="tel" placeholder="+91 Enter your mobile number" />
-
-          <label class="cm-label">Alternative number</label>
-          <input class="cm-field" type="tel" placeholder="+91 Enter alt mobile number" />
-
-          <button style="margin-top: 1rem;">+ Add all person's detail</button>
-
+          <button type="button" style="margin-top: 1rem;" onclick="addPerson()">+ Add all person's detail</button>
           <label class="cm-label" style="margin-top: 1rem;">Additional services (optional)</label>
         </div>
 
         <div class="summary-section">
           <h3>Booking summary</h3>
-          <p><strong><%= tourDetails.name %></strong></p>
-          <p><%= tourDetails.days %></p>
+          <p><strong>
+              <%= tourDetails.name %>
+            </strong></p>
+          <p>
+            <%= tourDetails.days %>
+          </p>
           <p>Pickup from: <span id="pickupFrom"></span></p>
           <p>Travel date: 8 May 2024 to 16 May 2024</p>
           <p><strong>Total costs:</strong>₹<span id="totalCost"></span></p>
           <p><a href="#">View breakdown</a></p>
 
-          <div class="payment-options">
+          <!-- <div class="payment-options">
             <button>Pay full payment</button>
             <button>Pay part payment</button>
-          </div>
+          </div> -->
 
           <label class="cm-label">Enter amount to pay now</label>
-          <input id="payingAmount" class="cm-field" type="text" value="23307"/>
-          <p>Minimum should be 30% of total amount</p>
+          <input id="payingAmount" name="payingAmount" class="cm-field" type="text" />
+          <!-- <p>Minimum should be 30% of total amount</p> -->
 
           <button id="submit" class="payment-btn">Pay ₹<span id="payingAmountDisplay"></span> now</button>
         </div>
@@ -267,59 +282,125 @@
 
     <%- include('../partials/footer'); %>
       <%- include('../partials/scripttag'); %>
-</body>
-<!-- bind  travel Date based on Joining from Selection  -->
-<script>
-  const deptcities = <%-JSON.stringify(tourDetails.deptcities) %>;
-  function populateDates() {
-    const selectedCity = document.getElementById('joiningFrom').value.trim();
-    const travelDateSelect = document.getElementById('travelDate');
-    const pickupFrom = document.getElementById('pickupFrom');
-    const cityObj = deptcities.find(loc => loc.City.trim() === selectedCity);
-    while (travelDateSelect.options.length > 1) {travelDateSelect.remove(0); }// remove from index 1 onward
-    travelDateSelect.innerHTML = ''; // Optionally, reset default value
-    pickupFrom.innerHTML = selectedCity;
-    if (cityObj && cityObj.dates && cityObj.dateList.length > 0) {
-      cityObj.dateList.forEach(element => {
-        const option = document.createElement('option');
-        option.value = element;
-        option.textContent = element;
-        travelDateSelect.appendChild(option);
-      });
-      if(cityObj && cityObj.price && cityObj.price.length > 0){
-        const NoofAdutts = document.getElementById('adults').value.trim();
-        const NoofChild = document.getElementById('children').value.trim();
-        const totalCost = document.getElementById('totalCost');
-        const payingAmountDisplay = document.getElementById('payingAmountDisplay');
-        const payingAmount = document.getElementById('payingAmount');
-        totalCost.innerHTML = payingAmountDisplay.innerHTML = payingAmount.value =  parseInt(NoofAdutts) * cityObj.price[0].adultPrice +  parseInt(NoofChild) * cityObj.price[0].childPrice;
-      }
-    } else {
-      const option = document.createElement('option');
-      option.textContent = 'No travel dates available';
-      travelDateSelect.appendChild(option);
-    }
-    if ($.fn.niceSelect) {
-      $('#travelDate').niceSelect('destroy');
-      $('#travelDate').niceSelect();
-    }
-  }
-</script>
-<!-- Increase and Decrease Functions  -->
-<script>
-  function increDecreValue(type,operation) {
-    const el = document.getElementById(type);
-    if(operation === 'increment'){
-      el.value = parseInt(el.value) + 1;
-    }else{
-      el.value = parseInt(el.value) - 1;
-    }
-  }
-</script>
 
-<script>
-  // on load Script
-  window.addEventListener("DOMContentLoaded", populateDates());
-</script>
+
+        <!-- bind  travel Date based on Joining from Selection  -->
+        <script>
+          const deptcities = <%-JSON.stringify(tourDetails.deptcities) %>;
+          function populateDates() {
+            const selectedCity = document.getElementById('joiningFrom').value.trim();
+            const travelDateSelect = document.getElementById('travelDate');
+            const pickupFrom = document.getElementById('pickupFrom');
+            const cityObj = deptcities.find(loc => loc.City.trim() === selectedCity);
+            while (travelDateSelect.options.length > 1) { travelDateSelect.remove(0); }// remove from index 1 onward
+            travelDateSelect.innerHTML = ''; // Optionally, reset default value
+            pickupFrom.innerHTML = selectedCity;
+            if (cityObj && cityObj.dates && cityObj.dateList.length > 0) {
+              cityObj.dateList.forEach(element => {
+                const option = document.createElement('option');
+                option.value = element;
+                option.textContent = element;
+                travelDateSelect.appendChild(option);
+              });
+              if (cityObj && cityObj.price && cityObj.price.length > 0) {
+                const cityBasedprice = document.getElementById('cityBasedprice');
+                cityBasedprice.value = `${cityObj.price[0].adultPrice},${cityObj.price[0].childPrice}`;
+                recalculateCost();
+                const NoofAdutts = document.getElementById('adults').value.trim();
+                const NoofChild = document.getElementById('children').value.trim();
+                const totalCost = document.getElementById('totalCost');
+                const payingAmountDisplay = document.getElementById('payingAmountDisplay');
+                const payingAmount = document.getElementById('payingAmount');
+                totalCost.innerHTML = payingAmountDisplay.innerHTML = payingAmount.value = parseInt(NoofAdutts) * cityObj.price[0].adultPrice + parseInt(NoofChild) * cityObj.price[0].childPrice;
+              }
+            } else {
+              const option = document.createElement('option');
+              option.textContent = 'No travel dates available';
+              travelDateSelect.appendChild(option);
+            }
+            if ($.fn.niceSelect) {
+              $('#travelDate').niceSelect('destroy');
+              $('#travelDate').niceSelect();
+            }
+          }
+        </script>
+        <!-- Cost Calculate -->
+        <script>
+          function recalculateCost() {
+            const NoofAdutts = document.getElementById('adults').value.trim();
+            const NoofChild = document.getElementById('children').value.trim();
+            const totalCost = document.getElementById('totalCost');
+            const payingAmountDisplay = document.getElementById('payingAmountDisplay');
+            const payingAmount = document.getElementById('payingAmount');
+            const cityBasedprice = document.getElementById('cityBasedprice').value;
+            totalCost.innerHTML = payingAmountDisplay.innerHTML = payingAmount.value = parseInt(NoofAdutts) * parseInt(cityBasedprice.split(',')[0]) + parseInt(NoofChild) * parseInt(cityBasedprice.split(',')[1]);
+          }
+        </script>
+        <!-- Increase and Decrease Functions  -->
+        <script>
+          function increDecreValue(type, operation) {
+            const el = document.getElementById(type);
+            if (operation === 'increment') {
+              el.value = parseInt(el.value) + 1;
+            } else {
+              el.value = parseInt(el.value) - 1;
+            }
+            recalculateCost();
+          }
+        </script>
+        <!-- Add person Field  -->
+        <script>
+          function addPerson() {
+            const personContainer = document.getElementById("personDetailsContainer");
+            const personCount = personContainer.children.length + 1;
+
+            let personDiv = document.createElement("div");
+            personDiv.classList.add("person-details");
+            personDiv.innerHTML = `
+          <h4>Person ${personCount} </h4>
+          <div class="cm-row">
+            <div>
+              <label class="cm-label">First name*</label>
+              <input id="firstName" name="personDetails[${personCount - 1}][firstName]" class="cm-field" type="text" required placeholder="Your name here" />
+            </div>
+            <div>
+              <label class="cm-label">Surname*</label>
+              <input id="Surname" name="personDetails[${personCount - 1}][Surname]" class="cm-field" type="text" required placeholder="Your surname here" />
+            </div>
+          </div>
+          <div class="cm-row">
+            <div>
+              <label class="cm-label">Birth date*</label>
+              <input id="dateofbirth" name="personDetails[${personCount - 1}][dateofbirth]" class="cm-field" required type="date" />
+            </div>
+            <div>
+              <label class="cm-label">Gender*</label>
+              <select id="Gender" name="personDetails[${personCount - 1}][Gender]" class="cm-field" required>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+          <label class="cm-label">Mobile number*</label>
+          <input id="mobileno" name="personDetails[${personCount - 1}][mobileno]" class="cm-field" type="tel" placeholder="+91 Enter your mobile number" />
+          <label class="cm-label">Alternative number</label>
+          <input id="alternateNumber" name="personDetails[${personCount - 1}][alternateNumber]" class="cm-field" type="tel" placeholder="+91 Enter alt mobile number" />
+          `;
+            personContainer.appendChild(personDiv);
+          }
+        </script>
+        <!-- on load Script -->
+        <script>
+          window.addEventListener("DOMContentLoaded", () => {
+            populateDates();
+            const selectedInfo1 = <%-JSON.stringify(tourDetails.selectedInfo || {}) %>;
+            if (selectedInfo1) {
+              document.getElementById("joiningFrom").value = selectedInfo.joinFrom;
+              document.getElementById("travelDate").value = selectedInfo.date;
+            }
+          });
+        </script>
+</body>
 
 </html>
