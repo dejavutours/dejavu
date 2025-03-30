@@ -1626,33 +1626,43 @@ exports.getTripDetial = async (req, res, next) => {
       return res.status(404).render("pages/404", { message: "Trip not found" });
     }
 
-    // Extract departure city names from NewTours
-    const departureCityNames = tripdetails.deptcities.map((city) => city.City);
+    // Extract departure cities and states
+    const departureCities = tripdetails.deptcities.map(({ City, State }) => ({
+      City: City.toLowerCase(),
+      State: State.toLowerCase(),
+    }));
 
-    // Find matching cities in City collection
-    const matchedCities = await City.find({ name: { $in: departureCityNames } });
+    // Fetch only matching city images
+    const matchedCities = await City.find(
+      { 
+        $or: departureCities.map(({ City, State }) => ({ 
+          name: { $regex: new RegExp(`^${City}$`, "i") }, 
+          state: { $regex: new RegExp(`^${State}$`, "i") } 
+        })) 
+      },
+      { image: 1, name: 1, state: 1 } // Only fetch image, name, and state
+    );
 
     // Map city images to deptcities
     const deptCitiesWithImages = tripdetails.deptcities.map((deptCity) => {
-      const cityMatch = matchedCities.find((city) => city.name.toLowerCase() === deptCity.City.toLowerCase());
+      const cityMatch = matchedCities.find(
+        (city) => city.name.toLowerCase() === deptCity.City.toLowerCase() &&
+                  city.state.toLowerCase() === deptCity.State.toLowerCase()
+      );
       return {
         ...deptCity._doc,
-        image: cityMatch ? cityMatch.image : "/images/cities/default.jpg",
+        image: cityMatch ? cityMatch.image : "",
       };
     });
 
-    // Update tripdetails with the new deptcities array
-    tripdetails.deptcities = deptCitiesWithImages;
-
-    // Debug: Log the deptcities to ensure images are mapped
-    console.log("deptCitiesWithImages:", deptCitiesWithImages);
-
-    res.render("pages/TripDetail", { trips: tripdetails });
-  } catch (err) {
-    console.error("Error in getTourDetails:", err);
-    res.status(500).render("pages/500", { message: "Server error" });
+    //res.status(200).json({ ...tripdetails._doc, deptcities: deptCitiesWithImages });
+    res.render("pages/TripDetail", { trips: { ...tripdetails._doc, deptcities: deptCitiesWithImages } });
+  } catch (error) {
+    console.error("Error fetching trip details:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
+
 
 
 // Trip detial page new API and controller from the UI

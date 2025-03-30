@@ -307,9 +307,9 @@
                       <div class="row pricingRow">
                         <div class="col-12 col-md-4">
                           <div class="mb-3">
-                            <label class="form-label">Transfer Type</label>
-                            <input type="text" class="form-control transferType" name="transferType[]" placeholder="Transfer Type" required>
-                            <div class="invalid-feedback">Transfer Type is required and must be unique.</div>
+                            <label class="form-label">Transport Type</label>
+                            <input type="text" class="form-control transferType" name="transferType[]" placeholder="Transport Type" required>
+                            <div class="invalid-feedback">Transport Type is required and must be unique.</div>
                           </div>
                         </div>
                         <div class="col-12 col-md-4">
@@ -842,9 +842,9 @@
       <div class="row pricingRow">
         <div class="col-12 col-md-4">
           <div class="mb-3">
-            <label class="form-label">Transfer Type</label>
-            <input type="text" class="form-control transferType" name="transferType[]" placeholder="Transfer Type" required>
-            <div class="invalid-feedback">Transfer Type is required and must be unique.</div>
+            <label class="form-label">Transport Type</label>
+            <input type="text" class="form-control transferType" name="transferType[]" placeholder="Transport Type" required>
+            <div class="invalid-feedback">Transport Type is required and must be unique.</div>
           </div>
         </div>
         <div class="col-12 col-md-4">
@@ -956,7 +956,7 @@
             newRow.querySelector(".transferType").addEventListener("blur", function() {
               if (transferTypes.includes(this.value.trim()) && this.value.trim()) {
                 this.classList.add("is-invalid");
-                this.nextElementSibling.textContent = "Transfer Type must be unique within this city.";
+                this.nextElementSibling.textContent = "Transport Type must be unique within this city.";
               } else {
                 this.classList.remove("is-invalid");
               }
@@ -1004,9 +1004,9 @@
         row.innerHTML = `
       <div class="col-12 col-md-4">
         <div class="mb-3">
-          <label class="form-label">Transfer Type</label>
-          <input type="text" class="form-control transferType" name="transferType[]" placeholder="Transfer Type" required>
-          <div class="invalid-feedback">Transfer Type is required and must be unique.</div>
+          <label class="form-label">Transport Type</label>
+          <input type="text" class="form-control transferType" name="transferType[]" placeholder="Transport Type" required>
+          <div class="invalid-feedback">Transport Type is required and must be unique.</div>
         </div>
       </div>
       <div class="col-12 col-md-4">
@@ -1051,10 +1051,10 @@
             .filter((v, i, self) => v && self.indexOf(v) === i);
           if (transferTypes.filter(t => t === this.value.trim()).length > 1) {
             this.classList.add("is-invalid");
-            this.nextElementSibling.textContent = "Transfer Type must be unique within this city.";
+            this.nextElementSibling.textContent = "Transport Type must be unique within this city.";
           } else {
             this.classList.remove("is-invalid");
-            this.nextElementSibling.textContent = "Transfer Type is required and must be unique.";
+            this.nextElementSibling.textContent = "Transport Type is required and must be unique.";
           }
           updateAddPricingButtonState(entry);
         });
@@ -1868,7 +1868,7 @@
           const adultPriceValue = adultPrice.value.trim();
 
           if (!transferTypeValue) {
-            validationErrors.push(`Departure City ${city}: Transfer Type is required for all pricing entries.`);
+            validationErrors.push(`Departure City ${city}: Transport Type is required for all pricing entries.`);
             transferType.classList.add("is-invalid");
           } else {
             transferType.classList.remove("is-invalid");
