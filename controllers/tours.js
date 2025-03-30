@@ -1604,11 +1604,23 @@ exports.postNewAddTours = async (req, res) => {
   }
 };
 
-
+//Old trip detial by trip id ::DM after complete development remove this api and manage it's logic
 exports.getTourDetails = async (req, res, next) => {
   try {
     const token = req.params.token;
-    const tripdetails = await NewTours.findById(token);
+    const tripdetails = await Tours.find({ _id: token });
+    const tests = await Tours.find().distinct("name");
+    res.render("pages/TripDetails", { trips: tripdetails[0], test: tests });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// New trip detail by trip id
+exports.getTripDetial = async (req, res, next) => {
+  try {
+    const tripId = req.params.tripId;
+    const tripdetails = await NewTours.findById(tripId);
 
     if (!tripdetails) {
       return res.status(404).render("pages/404", { message: "Trip not found" });
@@ -1635,7 +1647,7 @@ exports.getTourDetails = async (req, res, next) => {
     // Debug: Log the deptcities to ensure images are mapped
     console.log("deptCitiesWithImages:", deptCitiesWithImages);
 
-    res.render("pages/TripDetails", { trips: tripdetails });
+    res.render("pages/TripDetail", { trips: tripdetails });
   } catch (err) {
     console.error("Error in getTourDetails:", err);
     res.status(500).render("pages/500", { message: "Server error" });
