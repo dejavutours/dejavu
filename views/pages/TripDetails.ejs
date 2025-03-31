@@ -1,732 +1,412 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html class="no-js" lang="zxx">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= trips.name %> - Trip Details</title>
   <%- include('../partials/headtag'); %>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
-  <style>
-    :root {
-      --primary-blue: #1a4b8e;
-      --light-gray: #f8f9fa;
-    }
+    <style>
+      .bs-example {
+        margin: 20px;
+      }
 
-    .image-slider {
-      width: 100%;
-      height: 500px;
-      border-radius: 12px;
-      overflow: hidden;
-      position: relative;
-    }
+      .modal-dialog iframe {
+        margin: 0 auto;
+        display: block;
+      }
 
-    .image-slider .swiper-slide {
-      width: 100%;
-      height: 100%;
-    }
+      .play-btn {
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(rgba(35, 235, 142, 0.8) 60%, rgba(255, 255, 255, 1) 62%);
+        border-radius: 50%;
+        position: relative;
+        display: block;
+        margin: 100px auto;
+        box-shadow: 0px 0px 25px 3px rgba(35, 235, 142, 0.8);
+      }
 
-    .image-slider img {
-      width: 100%;
-      min-height: 500px;
-      object-fit: cover;
-    }
+      /* triangle */
+      .play-btn::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        -webkit-transform: translateX(-40%) translateY(-50%);
+        transform: translateX(-40%) translateY(-50%);
+        transform-origin: center center;
+        width: 0;
+        height: 0;
+        border-top: 15px solid transparent;
+        border-bottom: 15px solid transparent;
+        border-left: 25px solid #fff;
+        z-index: 100;
+        -webkit-transition: all 400ms cubic-bezier(0.55, 0.055, 0.675, 0.19);
+        transition: all 400ms cubic-bezier(0.55, 0.055, 0.675, 0.19);
+      }
 
-    .image-slider .swiper-button-next,
-    .image-slider .swiper-button-prev {
-      color: white;
-      background: rgba(0, 0, 0, 0.3);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-    }
+      /* pulse wave */
+      .play-btn:before {
+        content: "";
+        position: absolute;
+        width: 150%;
+        height: 150%;
+        -webkit-animation-delay: 0s;
+        animation-delay: 0s;
+        -webkit-animation: pulsate1 2s;
+        animation: pulsate1 2s;
+        -webkit-animation-direction: forwards;
+        animation-direction: forwards;
+        -webkit-animation-iteration-count: infinite;
+        animation-iteration-count: infinite;
+        -webkit-animation-timing-function: steps;
+        animation-timing-function: steps;
+        opacity: 1;
+        border-radius: 50%;
+        border: 5px solid rgba(255, 255, 255, .75);
+        top: -30%;
+        left: -30%;
+        background: rgba(198, 16, 0, 0);
+      }
 
-    .image-slider .swiper-button-next:after,
-    .image-slider .swiper-button-prev:after {
-      font-size: 20px;
-    }
+      @-webkit-keyframes pulsate1 {
+        0% {
+          -webkit-transform: scale(0.6);
+          transform: scale(0.6);
+          opacity: 1;
+          box-shadow: inset 0px 0px 25px 3px rgba(255, 255, 255, 0.75), 0px 0px 25px 10px rgba(255, 255, 255, 0.75);
+        }
 
-    .image-slider .swiper-pagination-bullet {
-      background: white;
-      opacity: 0.7;
-    }
+        100% {
+          -webkit-transform: scale(1);
+          transform: scale(1);
+          opacity: 0;
+          box-shadow: none;
 
-    .image-slider .swiper-pagination-bullet-active {
-      opacity: 1;
-    }
+        }
+      }
 
-    .trek-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 0;
-    }
+      @keyframes pulsate1 {
+        0% {
+          -webkit-transform: scale(0.6);
+          transform: scale(0.6);
+          opacity: 1;
+          box-shadow: inset 0px 0px 25px 3px rgba(255, 255, 255, 0.75), 0px 0px 25px 10px rgba(255, 255, 255, 0.75);
+        }
 
-    .trek-title {
-      margin: 0;
-    }
+        100% {
+          -webkit-transform: scale(1, 1);
+          transform: scale(1);
+          opacity: 0;
+          box-shadow: none;
 
-    .trek-subtitle {
-      color: #6c757d;
-      font-size: 14px;
-    }
+        }
+      }
+    </style>
+    <script>
+      $(document).ready(function () {
+        /* Get iframe src attribute value i.e. YouTube video url
+        and store it in a variable */
+        var url = $("#cartoonVideo").attr('src');
 
-    .btn-book-now {
-      background: var(--primary-blue);
-      color: white;
-      padding: 8px 24px;
-      border-radius: 10px;
-      text-decoration: none;
-      margin: 2px;
-    }
+        /* Assign empty url value to the iframe src attribute when
+        modal hide, which stop the video playing */
+        $("#myModal").on('hide.bs.modal', function () {
+          $("#cartoonVideo").attr('src', '');
+        });
 
-    .btn-book-now:hover {
-      color: white;
-      padding: 8px 24px;
-      border-radius: 10px;
-      text-decoration: none;
-      margin: 2px;
-    }
-
-    .city-card {
-      width: 150px;
-      flex-shrink: 0;
-      text-align: center;
-      background: #fff;
-      padding: 10px;
-      border: 1px solid #dee2e6;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: border-color 0.3s;
-    }
-
-    .city-card.active {
-      border-color: var(--primary-blue);
-    }
-
-    .city-card img {
-      width: 100%;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 5px;
-    }
-
-    #carouselTrack {
-      white-space: nowrap;
-      scroll-behavior: smooth;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-
-    #carouselTrack::-webkit-scrollbar {
-      display: none;
-    }
-
-    .carousel-control-prev,
-    .carousel-control-next {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 10;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-    }
-
-    .carousel-control-prev {
-      left: 10px;
-    }
-
-    .carousel-control-next {
-      right: 10px;
-    }
-
-    .month-tabs {
-      display: flex;
-      gap: 10px;
-      border-bottom: 2px solid #e0e0e0;
-      margin-bottom: 15px;
-    }
-
-    .month-tab {
-      background: none;
-      border: none;
-      padding: 8px 16px;
-      cursor: pointer;
-      font-weight: 500;
-      font-size: 14px;
-      border-bottom: 3px solid transparent;
-      transition: border-color 0.3s;
-    }
-
-    .month-tab.active {
-      border-color: var(--primary-blue);
-      color: var(--primary-blue);
-    }
-
-    .date-selector {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 8px 0;
-    }
-
-    .date-item {
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid #dee2e6;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .date-item.active {
-      background: var(--primary-blue);
-      color: white;
-      border-color: var(--primary-blue);
-    }
-
-    .nice-select {
-      width: 100%;
-    }
-
-    .nice-select .list {
-      width: 100%;
-      min-width: 100%;
-    }
-
-    .nice-select .option {
-      width: 100%;
-      text-align: left;
-      padding: 8px 12px;
-    }
-
-    .proceed-btn-book {
-      background-color: var(--primary-blue);
-    }
-
-    .itinerary-section {
-      background-color: #fff;
-      border-radius: 10px;
-      margin-bottom: 15px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .itinerary-header {
-      padding: 15px 20px;
-      background-color: #e7e7e7c7;
-      border-top-left-radius: 10px;
-      border-top-right-radius: 10px;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: bold;
-      font-size: larger;
-    }
-
-    .itinerary-content {
-      padding: 15px 20px;
-      display: none;
-      animation: fadeIn 0.3s ease-in-out;
-      background-color: #eee7e7c7;
-    }
-
-    .itinerary-content img {
-      border: 2px solid #333;
-      border-radius: 10px;
-      margin: 5px;
-      max-width: 100%;
-    }
-
-    .itinerary-content ul {
-      all: unset;
-      display: block;
-      margin-left: 40px;
-    }
-
-    .itinerary-content li {
-      display: list-item;
-      list-style-type: disc;
-    }
-
-    .itinerary-section.active .itinerary-content {
-      display: block;
-    }
-
-    .arrow-icon {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      border-left: 2px solid #a1a1a1;
-      border-bottom: 2px solid #a1a1a1;
-      transform: rotate(45deg);
-      margin: 5px;
-    }
-
-    .arrow-icon.down {
-      transform: rotate(315deg);
-    }
-
-    .arrow-icon.up {
-      transform: rotate(135deg);
-    }
-
-    .tab-menu {
-      display: flex;
-      gap: 15px;
-      border-bottom: 2px solid #e0e0e0;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-
-    .tab {
-      background: none;
-      border: none;
-      padding: 10px 16px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 16px;
-      border-bottom: 3px solid transparent;
-      transition: border-color 0.3s;
-    }
-
-    .tab:hover,
-    .tab.active {
-      border-color: #111;
-      color: #111;
-    }
-
-    .tab-content {
-      display: none;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    .tab-content.active ul {
-      all: unset;
-    }
-
-    .tab-content.active li {
-      display: list-item;
-      list-style-type: disc;
-    }
-  </style>
+        /* Assign the initially stored url back to the iframe src
+        attribute when modal is displayed again */
+        $("#myModal").on('show.bs.modal', function () {
+          $("#cartoonVideo").attr('src', url);
+        });
+      });
+    </script>
 </head>
 
 <body>
+
   <%- include('../partials/header'); %>
-  <div class="container py-4">
-    <!-- Header -->
-    <div class="trek-header">
-      <div>
-        <h1 class="trek-title"><%= trips.name %></h1>
-        <div class="trek-subtitle"><%- trips.destinations %></div>
-      </div>
-      <div class="d-flex align-items-center gap-3 bg-light p-3 rounded-4">
-        <div class="fs-5">₹<%= trips.price %><span class="fs-6">/person</span></div>
-        <a href="#" class="btn-book-now rounded-5">Book now</a>
-      </div>
-    </div>
 
-    <!-- Image Slider -->
-    <div class="swiper image-slider">
-      <div class="swiper-wrapper">
-        <% if (trips.bannerimages && trips.bannerimages.length > 0) { %>
-        <% trips.bannerimages.forEach((img, index) => { %>
-        <div class="swiper-slide">
-          <img src="<%= img %>" alt="Banner Image <%= index + 1 %>" />
-        </div>
-        <% }); %>
-        <% } else { %>
-        <div class="swiper-slide">
-          <img src="<%= trips.imageurl %>" alt="Main Image" />
-        </div>
-        <% } %>
-      </div>
-      <div class="swiper-pagination"></div>
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
-    </div>
-
-    <!-- About Section -->
-    <div class="container my-5">
-      <div class="row">
-        <div class="col-lg-7">
-          <h5 class="fw-bold">About</h5>
-          <%- trips.about %>
-          <button class="btn btn-light border rounded-pill px-4 py-2">
-            <i class="bi bi-download"></i> Download Itinerary
-          </button>
-        </div>
-        <div class="col-lg-5 mt-4 mt-lg-0">
-          <div class="row g-3">
-            <div class="col-6 d-flex align-items-center">
-              <div class="icon-circle me-2">
-                <i class="bi bi-calendar-event"></i>
+    <% if(trips?.bannerimage==null){ %>
+      <div class="destination_banner_wrap overlay" style="background-image: url('/images/<%= trips?.imageurl %>');">
+        <% } else{ %>
+          <div class="destination_banner_wrap overlay"
+            style="background-image: url('/images/<%= trips?.bannerimage %>');">
+            <% } %>
+              <div class="destination_text text-center">
+                <h3>
+                  <%= trips.name %>
+                </h3>
+                <p>
+                  <%= trips.tag %>
+                </p>
+                <p>₹<%= trips.price %> &nbsp; <%= trips.destinations %>
+                </p>
+                <form action="/getbooktrip" method="POST">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="tripname" id="tripname" value="<%= trips.name %>">
+                  <input type="hidden" name="triprate" id="triprate" value="<%= trips.price %>">
+                  <button class="boxed-btn4 mt-2" type="submit">Please Login/SignUp to book<br>Book Now</button>
+                </form>
+                <% if(trips.youtubeUrl.length> 0){ %>
+                  <a href="#myModal" class="play-btn" data-toggle="modal"></a>
+                  <% } %>
               </div>
-              <div>
-                <small class="text-muted">Duration</small>
-                <p class="mb-0 fw-semibold"><%= trips.days %></p>
-              </div>
-            </div>
-            <div class="col-6 d-flex align-items-center">
-              <div class="icon-circle me-2">
-                <i class="bi bi-bar-chart"></i>
-              </div>
-              <div>
-                <small class="text-muted">Difficulty</small>
-                <p class="mb-0 fw-semibold"><%= trips.tripType %></p>
-              </div>
-            </div>
-            <div class="col-6 d-flex align-items-center">
-              <div class="icon-circle me-2">
-                <i class="bi bi-signpost"></i>
-              </div>
-              <div>
-                <small class="text-muted">Altitude</small>
-                <p class="mb-0 fw-semibold"><%= trips.altitude %></p>
-              </div>
-            </div>
-            <div class="col-6 d-flex align-items-center">
-              <div class="icon-circle me-2">
-                <i class="bi bi-cloud-sun"></i>
-              </div>
-              <div>
-                <small class="text-muted">Best season</small>
-                <p class="mb-0 fw-semibold"><%= trips.bestSession %></p>
-              </div>
-            </div>
-            <div class="col-6 d-flex align-items-center">
-              <div class="icon-circle me-2">
-                <i class="bi bi-geo-alt"></i>
-              </div>
-              <div>
-                <small class="text-muted">Region</small>
-                <p class="mb-0 fw-semibold"><%= trips.state %>, India</p>
-              </div>
-            </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Departure City Section -->
-  <div class="container-fluid py-2 my-2 bg-light">
-    <div class="container">
-      <h2 class="fw-bold my-3">Departure City</h2>
-      <div class="row">
-        <div class="col-lg-8 col-md-6 col-sm-8 col-12">
-          <div class="position-relative">
-            <div class="d-flex gap-3 overflow-auto" id="carouselTrack">
-              <% if (trips.deptcities && trips.deptcities.length > 0) { %>
-              <% trips.deptcities.forEach((city, index) => { %>
-              <div class="city-card bg-light" onclick="selectCity(this, '<%= city.City %>', <%= city.price && city.price[0] ? city.price[0].adultPrice : 0 %>)">
-                <img src="<%= city.image %>" alt="<%= city.City %>" />
-                <h6 class="mt-2 mb-1"><%= city.City %></h6>
-                <small><i class="bi bi-calendar"></i> <%= city.tripDuration %></small><br />
-                <small class="fw-semibold text-dark">₹<%= city.price && city.price[0] ? city.price[0].adultPrice : 'N/A' %>/person</small>
+          <div class="destination_details_info">
+            <div class="container">
+              <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-9">
+                  <div class="destination_info">
+                    <% if (trips.upcomingtrip.length> 0) { %>
+                      <h3>Book For Upcoming Trip</h3>
+                      <% } %>
+                        <% if (!profile || profile?.email !==process.env.GMAIL_ADMIN) { %>
+                          <% for (var i=0; i < trips.upcomingtrip.length; i++) { %>
+                            <form style='display:inline-block;' action="/bookdate" method="POST">
+                              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                              <input type="hidden" value="<%= trips.name %>" id="tripname" name="tripname">
+                              <input type="hidden" value="<%= trips.price %>" id="triprate" name="triprate">
+                              <input type="hidden" value="<%= trips.upcomingtrip[i] %>" id="tripdate" name="tripdate">
+                              <button class="btn btn-success mt-2" type="submit">
+                                <%= trips.upcomingtrip[i] %>
+                              </button>
+                            </form>
+                            <% } %>
+                              <% } %>
+                                <% if (profile?.email===process.env.GMAIL_ADMIN) { %>
+                                  <% for (var i=0; i < trips.upcomingtrip.length; i++) { %>
+                                    <form style='display:inline-block;' action="/admin/deleteupcomingdate"
+                                      method="POST">
+                                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                      <input type="hidden" value="<%= trips._id %>" id="tripid" name="tripid">
+                                      <input type="hidden" value="<%= i %>" id="tripdateindex" name="tripdateindex">
+                                      <button class="btn btn-info mt-2" type="submit">Del&nbsp;<%= trips.upcomingtrip[i]
+                                          %></button>
+                                    </form>
+                                    <% } %>
+                                      <% } %>
+                                        <br><br>
+                                        <h3>About <%= trips.name %>
+                                        </h3>
+                                        <%- trips.about %>
+
+                                          <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                            <li class="nav-item">
+                                              <a class="nav-link active" id="tab1-tab" data-toggle="tab" href="#tab1"
+                                                role="tab" aria-controls="tab1" aria-selected="true">Places To Visit</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="tab2-tab" data-toggle="tab" href="#tab2"
+                                                role="tab" aria-controls="tab2" aria-selected="false">Activities &
+                                                Attraction</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="tab3-tab" data-toggle="tab" href="#tab3"
+                                                role="tab" aria-controls="tab3" aria-selected="false">Itinerary</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="tab4-tab" data-toggle="tab" href="#tab4"
+                                                role="tab" aria-controls="tab4" aria-selected="false">Things to
+                                                Carry</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="tab5-tab" data-toggle="tab" href="#tab5"
+                                                role="tab" aria-controls="tab5" aria-selected="false">Include &
+                                                Exclude</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="tab6-tab" data-toggle="tab" href="#tab6"
+                                                role="tab" aria-controls="tab6" aria-selected="false">Package Cost</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="tab7-tab" data-toggle="tab" href="#tab7"
+                                                role="tab" aria-controls="tab7" aria-selected="false">Info & FAQs</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="tab8-tab" data-toggle="tab" href="#tab8"
+                                                role="tab" aria-controls="tab8" aria-selected="false">Booking &
+                                                Cancellation</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="tab9-tab" data-toggle="tab" href="#tab9"
+                                                role="tab" aria-controls="tab9" aria-selected="false">Travel
+                                                Guidelines</a>
+                                            </li>
+                                          </ul>
+
+                                          <div class="tab-content" id="myTabContent">
+                                            <!-- Tab 1 content -->
+                                            <div class="tab-pane fade show active" id="tab1" role="tabpanel"
+                                              aria-labelledby="tab1-tab">
+                                              <div class="single_destination mt-3 ml-3">
+
+                                                <%- trips.placestovisit %>
+
+                                              </div>
+                                            </div>
+                                            <!-- Tab 2 content -->
+                                            <div class="tab-pane fade" id="tab2" role="tabpanel"
+                                              aria-labelledby="tab2-tab">
+                                              <div class="single_destination mt-3 ml-3">
+
+                                                <%- trips.activities %>
+
+                                              </div>
+                                            </div>
+                                            <!-- Tab 3 content -->
+                                            <div class="tab-pane fade" id="tab3" role="tabpanel"
+                                              aria-labelledby="tab3-tab">
+                                              <div class="single_destination mt-3 ml-3">
+
+                                                <%- trips.itinerary %>
+
+                                              </div>
+                                            </div>
+                                            <!-- Tab 4 content -->
+                                            <div class="tab-pane fade" id="tab4" role="tabpanel"
+                                              aria-labelledby="tab4-tab">
+                                              <div class="single_destination mt-3 ml-3">
+
+                                                <%- trips.things_to_carry %>
+
+                                              </div>
+                                            </div>
+                                            <!-- Tab 5 content -->
+                                            <div class="tab-pane fade" id="tab5" role="tabpanel"
+                                              aria-labelledby="tab5-tab">
+                                              <div class="single_destination mt-3 ml-3">
+
+                                                <%- trips.includenexclude %>
+
+                                              </div>
+                                            </div>
+                                            <!-- Tab 6 content -->
+                                            <div class="tab-pane fade" id="tab6" role="tabpanel"
+                                              aria-labelledby="tab6-tab">
+                                              <div class="single_destination mt-3 ml-3">
+
+                                                <%- trips.package_cost %>
+
+                                              </div>
+                                            </div>
+                                            <!-- Tab 7 content -->
+                                            <div class="tab-pane fade" id="tab7" role="tabpanel"
+                                              aria-labelledby="tab7-tab">
+                                              <div class="single_destination mt-3 ml-3">
+
+                                                <%- trips.infonfaq %>
+
+                                              </div>
+                                            </div>
+                                            <!-- Tab 8 content -->
+                                            <div class="tab-pane fade" id="tab8" role="tabpanel"
+                                              aria-labelledby="tab8-tab">
+                                              <div class="single_destination mt-3 ml-3">
+
+                                                <%- trips.Bookncancel %>
+
+                                              </div>
+                                            </div>
+                                            <!-- Tab 9 content -->
+                                            <div class="tab-pane fade" id="tab9" role="tabpanel"
+                                              aria-labelledby="tab9-tab">
+                                              <div class="single_destination mt-3 ml-3">
+
+                                                <%- trips.guidelines %>
+
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <form action="/getbooktrip" method="POST">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <input type="hidden" name="tripname" id="tripname"
+                                              value="<%= trips.name %>">
+                                            <input type="hidden" name="triprate" id="triprate"
+                                              value="<%= trips.price %>">
+                                            <button class="boxed-btn4 mt-2" type="submit">Book Now</button>
+                                          </form>
+                                          <!--- Image Gallary Section start --->
+                                          <div class="section-top-border">
+                                            <% if(trips.imageUrlAll.length> 0){ %>
+                                              <h3>Image Gallery</h3>
+                                              <% } %>
+                                                <div class="row gallery-item">
+                                                  <% for (var i=0; i < trips.imageUrlAll.length; i++) { %>
+                                                    <div class="col-md-6">
+                                                      <a href="/images/<%= trips.imageUrlAll[i] %>" class="img-pop-up">
+                                                        <div class="single-gallery-image"
+                                                          style="background: url('/images/<%= trips.imageUrlAll[i] %>');">
+                                                        </div>
+                                                      </a>
+                                                    </div>
+                                                    <% } %>
+                                                </div>
+                                          </div>
+                                          <!--- Image Gallary Section End --->
+                  </div>
+                </div>
               </div>
-              <% }); %>
-              <% } else { %>
-              <p>No departure cities available.</p>
-              <% } %>
             </div>
-            <button id="prevBtn" class="carousel-control-prev d-none" type="button" onclick="slideLeft()">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button id="nextBtn" class="carousel-control-next d-none" type="button" onclick="slideRight()">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Booking Form -->
-        <div class="col-lg-4 col-md-5 col-12 mt-3 mt-md-0">
-          <form id="procedToBook" action="/bookingTour" method="GET">
-          <div class="card p-3">
-            <h6>Joining from</h6>
-            <select class="form-select mb-3" id="selectedCity" onchange="updateDates()">
-              <% if (trips.deptcities && trips.deptcities.length > 0) { %>
-              <% trips.deptcities.forEach((city) => { %>
-              <option value="<%= city.City %>"><%= city.City %></option>
-              <% }); %>
-              <% } %>
-            </select>
-            <h6>Tour date</h6>
-            <select class="form-select mb-3" id="selectedDate">
-              <!-- Populated dynamically via JavaScript -->
-            </select>
-            <button class="btn btn-primary proceed-btn-book w-100">Proceed to book</button>
-          </div>
-        </form>
-        </div>
-      </div>
-
-      <!-- Available Dates Section -->
-      <div class="mb-4">
-        <h5 class="mb-3">Available dates</h5>
-        <div class="month-tabs" id="monthTabs">
-          <!-- Populated dynamically via JavaScript -->
-        </div>
-        <div class="date-selector" id="dateSelector">
-          <!-- Populated dynamically via JavaScript -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Other Sections -->
-  <div class="container mb-5">
-    <!-- Itinerary -->
-    <% if (trips && trips.itinerary && trips.itinerary.length > 0) { %>
-    <div class="mt-5">
-      <h2>Itinerary</h2>
-      <% trips.itinerary.forEach((item, index) => { %>
-      <div class="itinerary-section mb-3" id="itinerary-<%= index %>">
-        <div class="itinerary-header">
-          <%= item.day %>: <%= item.header %>
-          <span class="toggle-icon"><span class="arrow-icon down"></span></span>
-        </div>
-        <div class="itinerary-content">
-          <%- item.description %>
-        </div>
-      </div>
-      <% }); %>
-    </div>
-    <% } %>
-
-    <!-- More Information -->
-    <div class="mt-5 mb-4">
-      <h2 class="mb-4">More Information</h2>
-      <div class="tab-menu">
-        <button class="tab active" onclick="showTab('package')">Package cost</button>
-        <button class="tab" onclick="showTab('attractions')">Main attractions</button>
-        <button class="tab" onclick="showTab('carry')">Things to carry</button>
-        <button class="tab" onclick="showTab('bookncancel')">Cancellation Policy</button>
-        <button class="tab" onclick="showTab('includenexclude')">Inclusion & Exclusion</button>
-        <button class="tab" onclick="showTab('infonfaq')">Terms & Conditions</button>
-      </div>
-
-      <div id="package" class="tab-content active">
-        <%- trips.package_cost %>
-      </div>
-      <div id="attractions" class="tab-content">
-        <%- trips.activities %>
-      </div>
-      <div id="carry" class="tab-content">
-        <%- trips.things_to_carry %>
-      </div>
-      <div id="bookncancel" class="tab-content">
-        <%- trips.bookncancel %>
-      </div>
-      <div id="includenexclude" class="tab-content">
-        <%- trips.includenexclude %>
-      </div>
-      <div id="infonfaq" class="tab-content">
-        <%- trips.infonfaq %>
-      </div>
-    </div>
-  </div>
-
-  <%- include('../partials/footer'); %>
-  <%- include('../partials/scripttag'); %>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-  <script>
-    // Initialize Swiper for banner images
-    document.addEventListener("DOMContentLoaded", function() {
-      new Swiper(".image-slider", {
-        loop: true,
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        },
-        pagination: {
-          el: ".swiper-pagination",
-          clickable: true,
-        },
-      });
-
-      // Initialize departure city slider
-      checkSlideButtons();
-    });
-
-    // Departure city slider controls
-    function slideLeft() {
-      const container = document.getElementById("carouselTrack");
-      container.scrollBy({
-        left: -200,
-        behavior: "smooth",
-      });
-      checkSlideButtons();
-    }
-
-    function slideRight() {
-      const container = document.getElementById("carouselTrack");
-      container.scrollBy({
-        left: 200,
-        behavior: "smooth",
-      });
-      checkSlideButtons();
-    }
-
-    function checkSlideButtons() {
-      const container = document.getElementById("carouselTrack");
-      const prevBtn = document.getElementById("prevBtn");
-      const nextBtn = document.getElementById("nextBtn");
-
-      if (container.scrollWidth > container.clientWidth) {
-        prevBtn.classList.remove("d-none");
-        nextBtn.classList.remove("d-none");
-
-        if (container.scrollLeft === 0) {
-          prevBtn.classList.add("d-none");
-        }
-
-        if (container.scrollLeft + container.clientWidth >= container.scrollWidth) {
-          nextBtn.classList.add("d-none");
-        }
-      } else {
-        prevBtn.classList.add("d-none");
-        nextBtn.classList.add("d-none");
-      }
-    }
-
-    window.onresize = checkSlideButtons;
-
-    // City selection
-    function selectCity(element, city, price) {
-      document.querySelectorAll(".city-card").forEach((el) => el.classList.remove("active"));
-      element.classList.add("active");
-      document.getElementById("selectedCity").value = city;
-      updateDates();
-    }
-
-    // Available dates logic
-    const deptCities = <%- JSON.stringify(trips.deptcities) %>;
-    let selectedCity = deptCities[0]?.City || "";
-    let selectedMonth = "";
-
-    function updateDates() {
-      selectedCity = document.getElementById("selectedCity").value;
-      const cityData = deptCities.find(city => city.City === selectedCity);
-      const monthTabs = document.getElementById("monthTabs");
-      const dateSelector = document.getElementById("dateSelector");
-      const dateSelect = document.getElementById("selectedDate");
-
-      // Clear existing content
-      monthTabs.innerHTML = "";
-      dateSelector.innerHTML = "";
-      dateSelect.innerHTML = "";
-
-      if (!cityData || !cityData.dates || cityData.dates.length === 0) {
-        monthTabs.innerHTML = "<p>No dates available for this city.</p>";
-        return;
-      }
-
-      // Extract unique months
-      const months = [...new Set(cityData.dates.map(date => date.Month))].sort((a, b) => {
-        const monthOrder = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        return monthOrder.indexOf(a) - monthOrder.indexOf(b);
-      });
-
-      // Populate month tabs
-      months.forEach((month, index) => {
-        const tab = document.createElement("button");
-        tab.className = `month-tab ${index === 0 ? "active" : ""}`;
-        tab.innerText = month;
-        tab.onclick = () => showMonthDates(month);
-        monthTabs.appendChild(tab);
-      });
-
-      // Set default month and show dates
-      selectedMonth = months[0] || "";
-      if (selectedMonth) {
-        showMonthDates(selectedMonth);
-      }
-
-      // Update tour date dropdown
-      cityData.dates.forEach(date => {
-        const datesStr = date.dates.split(", ").join(", ");
-        const option = document.createElement("option");
-        option.value = `${date.Month} ${datesStr}, ${date.Year}`;
-        option.innerText = `${date.Month} ${datesStr}, ${date.Year}`;
-        dateSelect.appendChild(option);
-      });
-    }
-
-    function showMonthDates(month) {
-      selectedMonth = month;
-      const cityData = deptCities.find(city => city.City === selectedCity);
-      if (!cityData || !cityData.dates) return;
-
-      // Update active tab
-      const tabElement = document.querySelector(`.month-tab[innerText="${month}"]`);
-      if (tabElement) {
-        document.querySelectorAll(".month-tab").forEach(tab => tab.classList.remove("active"));
-        tabElement.classList.add("active");
-      }
-
-      // Populate dates
-      const dateSelector = document.getElementById("dateSelector");
-      dateSelector.innerHTML = "";
-      const monthData = cityData.dates.find(d => d.Month === month);
-      if (monthData) {
-        const dates = monthData.dates.split(", ").map(Number).sort((a, b) => a - b);
-        dates.forEach((date, index) => {
-          const div = document.createElement("div");
-          div.className = `date-item ${index === 0 ? "active" : ""}`;
-          div.innerText = date;
-          div.onclick = () => {
-            document.querySelectorAll(".date-item").forEach(d => d.classList.remove("active"));
-            div.classList.add("active");
-          };
-          dateSelector.appendChild(div);
-        });
-      }
-    }
-
-    // Initialize dates on page load
-    updateDates();
-
-    // Itinerary toggle
-    const headers = document.querySelectorAll(".itinerary-header");
-    headers.forEach(header => {
-      header.addEventListener("click", () => {
-        const section = header.parentElement;
-        section.classList.toggle("active");
-        const icon = header.querySelector(".arrow-icon");
-        if (section.classList.contains("active")) {
-          icon.classList.remove("down");
-          icon.classList.add("up");
-        } else {
-          icon.classList.remove("up");
-          icon.classList.add("down");
-        }
-      });
-    });
-
-    // More Information tabs
-    function showTab(tabId) {
-      const tabs = document.querySelectorAll(".tab");
-      const contents = document.querySelectorAll(".tab-content");
-      tabs.forEach(tab => tab.classList.remove("active"));
-      contents.forEach(content => content.classList.remove("active"));
-      document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add("active");
-      document.getElementById(tabId).classList.add("active");
-    }
-  </script>
+            <!-- Modal HTML -->
+            <div id="myModal" class="modal fade">
+              <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">
+                      <%= trips.name %>
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="embed-responsive embed-responsive-16by9">
+                      <iframe id="cartoonVideo" class="embed-responsive-item" width="560" height="315"
+                        src="<%= trips.youtubeUrl[0] %>?autoplay=1&mute=1" allowfullscreen></iframe>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- newletter_area_start  -->
+            <div class="newletter_area overlay">
+              <div class="container">
+                <div class="row justify-content-center align-items-center">
+                  <div class="col-lg-10">
+                    <div class="row align-items-center">
+                      <div class="col-lg-5">
+                        <div class="newsletter_text">
+                          <h4>Subscribe Our Newsletter</h4>
+                          <p>Subscribe newsletter to get offers and about
+                            new places to discover.</p>
+                        </div>
+                      </div>
+                      <div class="col-lg-7">
+                        <div class="mail_form">
+                          <form method="POST" action="/newsletter">
+                            <div class="row no-gutters">
+                              <div class="col-lg-9 col-md-8">
+                                <div class="newsletter_field">
+                                  <input type="email" placeholder="Your mail" name="emailid" id="emailid">
+                                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                </div>
+                              </div>
+                              <div class="col-lg-3 col-md-4">
+                                <div class="newsletter_btn">
+                                  <button class="boxed-btn4 " type="submit">Subscribe</button>
+                                </div>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- newletter_area_end  -->
+            <%- include('../partials/footer'); %>
+              <%- include('../partials/scripttag'); %>
 </body>
 
 </html>
