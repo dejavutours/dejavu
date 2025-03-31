@@ -353,41 +353,47 @@
           function addPerson() {
             const personContainer = document.getElementById("personDetailsContainer");
             const personCount = personContainer.children.length + 1;
+            const NoofAdutts = document.getElementById('adults').value.trim();
+            const NoofChild = document.getElementById('children').value.trim();
+            if(parseInt(personContainer.children.length) < (parseInt(NoofAdutts)+ parseInt(NoofChild))){
+              let personDiv = document.createElement("div");
+              personDiv.classList.add("person-details");
+              personDiv.innerHTML = `
+            <h4>Person ${personCount} </h4>
+            <div class="cm-row">
+              <div>
+                <label class="cm-label">First name*</label>
+                <input id="firstName" name="personDetails[${personCount - 1}][firstName]" class="cm-field" type="text" required placeholder="Your name here" />
+              </div>
+              <div>
+                <label class="cm-label">Surname*</label>
+                <input id="Surname" name="personDetails[${personCount - 1}][Surname]" class="cm-field" type="text" required placeholder="Your surname here" />
+              </div>
+            </div>
+            <div class="cm-row">
+              <div>
+                <label class="cm-label">Birth date*</label>
+                <input id="dateofbirth" name="personDetails[${personCount - 1}][dateofbirth]" class="cm-field" required type="date" />
+              </div>
+              <div>
+                <label class="cm-label">Gender*</label>
+                <select id="Gender" name="personDetails[${personCount - 1}][Gender]" class="cm-field" required>
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+            <label class="cm-label">Mobile number*</label>
+            <input id="mobileno" name="personDetails[${personCount - 1}][mobileno]" class="cm-field" type="tel" placeholder="+91 Enter your mobile number" />
+            <label class="cm-label">Alternative number</label>
+            <input id="alternateNumber" name="personDetails[${personCount - 1}][alternateNumber]" class="cm-field" type="tel" placeholder="+91 Enter alt mobile number" />
+            `;
+              personContainer.appendChild(personDiv);
+              // if(parseInt(personContainer.children.length) == (parseInt(NoofAdutts)+ parseInt(NoofChild))){
 
-            let personDiv = document.createElement("div");
-            personDiv.classList.add("person-details");
-            personDiv.innerHTML = `
-          <h4>Person ${personCount} </h4>
-          <div class="cm-row">
-            <div>
-              <label class="cm-label">First name*</label>
-              <input id="firstName" name="personDetails[${personCount - 1}][firstName]" class="cm-field" type="text" required placeholder="Your name here" />
-            </div>
-            <div>
-              <label class="cm-label">Surname*</label>
-              <input id="Surname" name="personDetails[${personCount - 1}][Surname]" class="cm-field" type="text" required placeholder="Your surname here" />
-            </div>
-          </div>
-          <div class="cm-row">
-            <div>
-              <label class="cm-label">Birth date*</label>
-              <input id="dateofbirth" name="personDetails[${personCount - 1}][dateofbirth]" class="cm-field" required type="date" />
-            </div>
-            <div>
-              <label class="cm-label">Gender*</label>
-              <select id="Gender" name="personDetails[${personCount - 1}][Gender]" class="cm-field" required>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-              </select>
-            </div>
-          </div>
-          <label class="cm-label">Mobile number*</label>
-          <input id="mobileno" name="personDetails[${personCount - 1}][mobileno]" class="cm-field" type="tel" placeholder="+91 Enter your mobile number" />
-          <label class="cm-label">Alternative number</label>
-          <input id="alternateNumber" name="personDetails[${personCount - 1}][alternateNumber]" class="cm-field" type="tel" placeholder="+91 Enter alt mobile number" />
-          `;
-            personContainer.appendChild(personDiv);
+              // }
+            }
           }
         </script>
         <!-- on load Script -->
