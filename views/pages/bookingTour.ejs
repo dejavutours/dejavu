@@ -8,15 +8,18 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/path-to/nice-select.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    
     <!-- jQuery (must be before nice-select) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    
     <!-- Nice Select CSS -->
     <link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" />
-
+    href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" />
+    
     <!-- Nice Select JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <style>
       .back-btn {
@@ -212,7 +215,7 @@
           <h3>Person’s details</h3>
           <div id="personDetailsContainer">
             <!-- Do not remove below class('person-details') as some dependance  -->
-            <div class="person-details">
+            <div class="person-details" id="person1">
               <h4>Person 1</h4>
               <div class="cm-row">
                 <div>
@@ -249,7 +252,7 @@
             </div>
           </div>
 
-          <button type="button" style="margin-top: 1rem;" onclick="addPerson()">+ Add all person's detail</button>
+          <button id="AddPerson" type="button" style="margin-top: 1rem;" onclick="addPerson()">+ Add all person's detail</button>
           <label class="cm-label" style="margin-top: 1rem;">Additional services (optional)</label>
         </div>
 
@@ -340,10 +343,20 @@
         <script>
           function increDecreValue(type, operation) {
             const el = document.getElementById(type);
+            const personCount = document.getElementById("personDetailsContainer").children.length;
+            const NoofAdutts = document.getElementById('adults').value.trim();
+            const NoofChild = document.getElementById('children').value.trim();
+
             if (operation === 'increment') {
               el.value = parseInt(el.value) + 1;
+              const addPerson = document.getElementById('AddPerson');
+              addPerson.style.display = 'block';
             } else {
-              el.value = ((type == 'adults' && parseInt(el.value) == 1) ||parseInt(el.value) == 0) ? el.value : parseInt(el.value) - 1;
+              if(parseInt(personCount) < (parseInt(NoofAdutts) + parseInt(NoofChild)) || ((type == 'adults' && parseInt(el.value) == 1) || parseInt(el.value) == 0)){
+              el.value = ((type == 'adults' && parseInt(el.value) == 1) || parseInt(el.value) == 0) ? el.value : parseInt(el.value) - 1;
+              } else {
+                toastr.error("Person details already added. Remove a person first to reduce the count.");
+              }
             }
             recalculateCost();
           }
@@ -355,11 +368,13 @@
             const personCount = personContainer.children.length + 1;
             const NoofAdutts = document.getElementById('adults').value.trim();
             const NoofChild = document.getElementById('children').value.trim();
-            if(parseInt(personContainer.children.length) < (parseInt(NoofAdutts)+ parseInt(NoofChild))){
+            if (parseInt(personContainer.children.length) < (parseInt(NoofAdutts) + parseInt(NoofChild))) {
               let personDiv = document.createElement("div");
               personDiv.classList.add("person-details");
+              personDiv.id = `person${personCount}`;
               personDiv.innerHTML = `
             <h4>Person ${personCount} </h4>
+             <button id="removePerson${personCount}" type="button" style="margin-top: 1rem;" onclick="removePerson(${personCount})">x</button>
             <div class="cm-row">
               <div>
                 <label class="cm-label">First name*</label>
@@ -390,17 +405,31 @@
             <input id="alternateNumber" name="personDetails[${personCount - 1}][alternateNumber]" class="cm-field" type="tel" placeholder="+91 Enter alt mobile number" />
             `;
               personContainer.appendChild(personDiv);
-              // if(parseInt(personContainer.children.length) == (parseInt(NoofAdutts)+ parseInt(NoofChild))){
 
-              // }
+              const addPerson = document.getElementById('AddPerson');
+              if (parseInt(personContainer.children.length) == (parseInt(NoofAdutts) + parseInt(NoofChild))) {
+                addPerson.style.display = 'none';
+              } else {
+                addPerson.style.display = 'block';
+              }
             }
           }
         </script>
+
+        <!-- remove person Field -->
+         <script>
+          function removePerson(removePersonId) {
+            let div = document.getElementById(`person${removePersonId}`);
+            if (div) {
+              div.remove();
+            }
+          }
+         </script>
         <!-- on load Script -->
         <script>
           window.addEventListener("DOMContentLoaded", () => {
             populateDates();
-            const selectedInfo1 = <%-JSON.stringify(tourDetails.selectedInfo || {}) %>;
+            const selectedInfo1 = <%- JSON.stringify(tourDetails.selectedInfo || undefined) %>;
             if (selectedInfo1) {
               document.getElementById("joiningFrom").value = selectedInfo.joinFrom;
               document.getElementById("travelDate").value = selectedInfo.date;
