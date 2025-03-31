@@ -62,8 +62,11 @@ router.post(
   isAuth,
   toursController.postNewAddTours
 );
-
+//Old get trip detial route, need to remove after complete all changes
 router.get('/tripdetails/:token', toursController.getTourDetails);
+
+//New get trip detial route, based on the trip Id
+router.get('/tripdetail/:tripId', toursController.getTripDetial);
 
 router.post('/newsletter', toursController.postNewsletter);
 
