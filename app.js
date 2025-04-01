@@ -30,7 +30,7 @@ const PORT = process.env.PORT || 5000;
 
 const Tours = require('./models/tours');
 const User = require('./models/user');
-const isProduction = process.env.NODE_ENV === 'development';
+const isProduction = process.env.NODE_ENV === 'production';
 
 const MONGODB_URI = isProduction
   ? `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.ogxnm.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
