@@ -7,7 +7,7 @@
   <title><%= trips.name %> - Trip Details</title>
   <%- include('../partials/headtag'); %>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
   <style>
     :root {
@@ -26,7 +26,7 @@
       position: relative;
     }
 
-    .image-slider .swiper-slide {
+    .swiper-slide {
       width: 100%;
       height: 100%;
     }
@@ -37,39 +37,36 @@
       object-fit: cover;
     }
 
-    /* Slider navigation buttons */
-    .image-slider .swiper-button-next,
-    .image-slider .swiper-button-prev {
+    .swiper-button-next,
+    .swiper-button-prev {
       color: white;
       background: rgba(0, 0, 0, 0.3);
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      transition: background var(--transition); /* Smooth hover effect */
+      transition: background var(--transition);
     }
 
-    .image-slider .swiper-button-next:hover,
-    .image-slider .swiper-button-prev:hover {
-      background: rgba(0, 0, 0, 0.5); /* Darken on hover */
+    .swiper-button-next:hover,
+    .swiper-button-prev:hover {
+      background: rgba(0, 0, 0, 0.5);
     }
 
-    .image-slider .swiper-button-next:after,
-    .image-slider .swiper-button-prev:after {
+    .swiper-button-next:after,
+    .swiper-button-prev:after {
       font-size: 20px;
     }
 
-    /* Slider pagination dots */
-    .image-slider .swiper-pagination-bullet {
+    .swiper-pagination-bullet {
       background: white;
       opacity: 0.7;
       transition: opacity var(--transition);
     }
 
-    .image-slider .swiper-pagination-bullet-active {
+    .swiper-pagination-bullet-active {
       opacity: 1;
     }
 
-    /* Trek header layout */
     .trek-header {
       display: flex;
       justify-content: space-between;
@@ -79,15 +76,14 @@
 
     .trek-title {
       margin: 0;
-      font-size: 2rem; /* Consistent sizing */
+      font-size: 2rem;
     }
 
     .trek-subtitle {
       color: #6c757d;
-      font-size: 0.875rem; /* Smaller subtitle */
+      font-size: 0.875rem;
     }
 
-    /* Book now button styling */
     .btn-book-now {
       background: var(--primary-blue);
       color: white;
@@ -95,15 +91,14 @@
       border-radius: 10px;
       text-decoration: none;
       margin: 2px;
-      transition: background var(--transition); /* Smooth hover transition */
+      transition: background var(--transition);
     }
 
     .btn-book-now:hover {
-      background: #143c73; /* Darker shade since darken() isn’t native CSS */
+      background: #143c73;
       color: white;
     }
 
-    /* City card styling */
     .city-card {
       width: 150px;
       flex-shrink: 0;
@@ -136,15 +131,14 @@
     #carouselTrack {
       white-space: nowrap;
       scroll-behavior: smooth;
-      scrollbar-width: none; /* Hide scrollbar in Firefox */
-      -ms-overflow-style: none; /* Hide scrollbar in IE/Edge */
+      scrollbar-width: none;
+      -ms-overflow-style: none;
     }
 
     #carouselTrack::-webkit-scrollbar {
-      display: none; /* Hide scrollbar in Webkit browsers */
+      display: none;
     }
 
-    /* Carousel navigation buttons */
     .carousel-control-prev,
     .carousel-control-next {
       position: absolute;
@@ -173,16 +167,60 @@
       right: -10px;
     }
 
+    @media (max-width: 768px) {
+      .trek-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 0;
+      }
+
+      .trek-header .d-flex {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 10px;
+      }
+
+      .trek-title {
+        font-size: 1.5rem;
+      }
+
+      .btn-book-now {
+        padding: 6px 16px;
+        font-size: 0.9rem;
+      }
+
+      .trek-header .fs-5 {
+        font-size: 1rem !important;
+      }
+
+      .trek-header .fs-6 {
+        font-size: 0.8rem !important;
+      }
+    }
+
     @media (max-width: 576px) {
       .city-card {
         width: 120px;
       }
+
       .city-card img {
         height: 80px;
       }
+
+      .image-slider {
+        height: 300px;
+      }
+
+      .image-slider img {
+        min-height: 300px;
+      }
+
+      .container {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
     }
 
-    /* Restored and improved styling for Available Dates section */
     .year-tabs {
       display: flex;
       gap: 15px;
@@ -232,12 +270,15 @@
       color: var(--primary-blue);
     }
 
-    /* Date selector styling */
     .date-selector {
       display: flex;
       gap: 8px;
       overflow-x: auto;
       padding: 8px 0;
+    }
+
+    .nice-select ul {
+      width: 100%;
     }
 
     .date-item {
@@ -271,7 +312,6 @@
       background-color: #143c73;
     }
 
-    /* Itinerary section styling */
     .itinerary-section {
       background-color: #fff;
       border-radius: 10px;
@@ -289,7 +329,8 @@
       justify-content: space-between;
       align-items: center;
       font-weight: bold;
-      font-size: 1.25rem;
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      /* Responsive font size */
     }
 
     .itinerary-content {
@@ -300,28 +341,22 @@
     }
 
     .itinerary-content img {
-      border: 2px solid #333;
-      border-radius: 10px;
-      margin: 5px;
       max-width: 100%;
-    }
-
-    .itinerary-content ul {
-      all: unset;
+      /* Ensures the image scales within its container */
+      height: auto;
+      /* Maintains aspect ratio */
       display: block;
-      margin-left: 40px;
-    }
-
-    .itinerary-content li {
-      display: list-item;
-      list-style-type: disc;
+      /* Prevents inline spacing issues */
+      border-radius: 8px;
+      /* Slightly rounded corners */
+      margin: 10px 0;
+      /* Adds spacing above and below */
     }
 
     .itinerary-section.active .itinerary-content {
       display: block;
     }
 
-    /* Arrow icon for collapsible sections */
     .arrow-icon {
       display: inline-block;
       width: 10px;
@@ -339,7 +374,6 @@
       transform: rotate(135deg);
     }
 
-    /* Tab menu styling */
     .tab-menu {
       display: flex;
       gap: 15px;
@@ -373,22 +407,20 @@
       display: block;
     }
 
-    .tab-content.active ul {
-      all: unset;
+    .modal-content {
+      border-radius: 10px;
     }
 
-    .tab-content.active li {
-      display: list-item;
-      list-style-type: disc;
+    .modal-header {
+      background: var(--primary-blue);
+      color: white;
     }
   </style>
 </head>
 
 <body>
-  <!-- Include header partial -->
   <%- include('../partials/header'); %>
   <div class="container py-4">
-    <!-- Trip header with title and booking info -->
     <div class="trek-header">
       <div>
         <h1 class="trek-title"><%= trips.name %></h1>
@@ -396,12 +428,11 @@
       </div>
       <div class="d-flex align-items-center gap-3 bg-light p-3 rounded-4">
         <div class="fs-5">₹<%= trips.price %><span class="fs-6">/person</span></div>
-        <a href="/bookingTour/<%-trips._id%>" target="_blank" class="btn-book-now rounded-5">Book now</a>
+        <button class="btn-book-now rounded-5" data-bs-toggle="modal" data-bs-target="#contactModal">Book now</button>
       </div>
     </div>
 
-    <!-- Image slider for trip banners -->
-    <div class="swiper image-slider">
+    <div class="image-slider swiper">
       <div class="swiper-wrapper">
         <% if (trips.bannerimages && trips.bannerimages.length > 0) { %>
         <% trips.bannerimages.forEach((img, index) => { %>
@@ -420,7 +451,6 @@
       <div class="swiper-button-next"></div>
     </div>
 
-    <!-- About section with trip details -->
     <div class="container my-5">
       <div class="row">
         <div class="col-lg-7">
@@ -434,7 +464,7 @@
           <div class="row g-3">
             <div class="col-6 d-flex align-items-center">
               <div class="icon-circle me-2">
-                <i class="bi bi-calendar-event"></i>
+                <i class="bi bi-calendar-event"></i>
               </div>
               <div>
                 <small class="text-muted">Duration</small>
@@ -483,7 +513,6 @@
     </div>
   </div>
 
-  <!-- Departure city section -->
   <div class="container-fluid py-2 my-2 bg-light">
     <div class="container">
       <h2 class="fw-bold my-3">Departure City</h2>
@@ -493,12 +522,7 @@
             <div class="d-flex gap-3 overflow-auto py-2" id="carouselTrack">
               <% if (trips.deptcities && trips.deptcities.length > 0) { %>
               <% trips.deptcities.forEach((city, index) => { %>
-              <div
-                class="city-card bg-light"
-                onclick="selectCity(this, '<%= city.City %>', '<%= city.State %>', <%= city.price && city.price[0] ? city.price[0].adultPrice : 0 %>)"
-                data-city="<%= city.City %>"
-                data-duration="<%= city.tripDuration %>"
-              >
+              <div class="city-card bg-light" onclick="selectCity(this, '<%= city.City %>', '<%= city.State %>', <%= city.price && city.price[0] ? city.price[0].adultPrice : 0 %>)" data-city="<%= city.City %>" data-duration="<%= city.tripDuration %>">
                 <img src="<%= city.image %>" alt="<%= city.City %>" />
                 <h6 class="mt-2 mb-1"><%= city.City %></h6>
                 <small><i class="bi bi-calendar"></i> <%= city.tripDuration %></small><br />
@@ -521,7 +545,7 @@
             </button>
           </div>
         </div>
-  
+
         <div class="col-lg-4 col-md-6 col-12 mt-3 mt-md-0">
           <form id="proceedToBook" action="/bookingTour/<%- trips._id %>" method="GET">
             <div class="card p-3 shadow-sm">
@@ -534,15 +558,16 @@
                 <% } %>
               </select>
               <h6>Tour Date</h6>
-              <select class="form-select mb-3" id="selectedDate" name="date">
+              <select class="form-select mb-3" id="selectedDate" name="date" disabled>
                 <!-- Populated dynamically via JavaScript -->
+                <option value=""></option>
               </select>
-              <button class="btn btn-primary proceed-btn-book w-100" type="submit">Proceed to Book</button>
+              <button class="btn btn-primary proceed-btn-book w-100" type="button" data-bs-toggle="modal" data-bs-target="#contactModal">Proceed to Book</button>
             </div>
           </form>
         </div>
       </div>
-  
+
       <div class="mb-4 mt-4">
         <h5 class="mb-3">Available Dates</h5>
         <div class="year-tabs" id="yearTabs"></div>
@@ -552,7 +577,27 @@
     </div>
   </div>
 
-
+  <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="contactModalLabel">Contact Details</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- <p><strong>Name:</strong> Chintan Panchal</p> -->
+          <p><strong>Online payment/booking is temporarily disabled.
+            </strong> </p>
+          <p><strong>Please call/whatsapp us :</strong> +91&nbsp;851111&nbsp;7891</p>
+          <!-- <p>Please contact the trip planner for booking confirmation or any further details.</p> -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <!-- <button type="button" class="btn btn-primary" onclick="proceedWithBooking()">Confirm Booking</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="container mb-5">
     <% if (trips && trips.itinerary && trips.itinerary.length > 0) { %>
@@ -607,26 +652,36 @@
   <%- include('../partials/footer'); %>
   <%- include('../partials/scripttag'); %>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      new Swiper(".image-slider", {
-        loop: true,
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        },
-        pagination: {
-          el: ".swiper-pagination",
-          clickable: true,
-        },
-      });
-  
+    document.addEventListener("DOMContentLoaded", function() {
+      // Fix 1: Initialize Swiper with autoplay
+      try {
+        const swiper = new Swiper('.image-slider', {
+          loop: true,
+          autoplay: {
+            delay: 3000, // Slide every 3 seconds
+            disableOnInteraction: false, // Continue autoplay after user interaction
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+        });
+      } catch (e) {
+        console.error("Swiper initialization failed:", e);
+      }
+
+      // Initial setup
       checkSlideButtons();
-      selectFirstCity(); // Select the first city on page load
-      updateDatesAndTabs(); // Initial call on page load
-  
-      // Add event listeners for itinerary sections and tabs
+      selectFirstCity();
+      updateDatesAndTabs();
+
+      // Itinerary toggle functionality
       const headers = document.querySelectorAll(".itinerary-header");
       headers.forEach((header) => {
         header.addEventListener("click", () => {
@@ -643,81 +698,92 @@
         });
       });
     });
-  
+
+    // Carousel navigation functions
     function slideLeft() {
       const container = document.getElementById("carouselTrack");
-      container.scrollBy({ left: -200, behavior: "smooth" });
+      container.scrollBy({
+        left: -200,
+        behavior: "smooth"
+      });
       setTimeout(checkSlideButtons, 300);
     }
-  
+
     function slideRight() {
       const container = document.getElementById("carouselTrack");
-      container.scrollBy({ left: 200, behavior: "smooth" });
+      container.scrollBy({
+        left: 200,
+        behavior: "smooth"
+      });
       setTimeout(checkSlideButtons, 300);
     }
-  
+
     function checkSlideButtons() {
       const container = document.getElementById("carouselTrack");
       const prevBtn = document.getElementById("prevBtn");
       const nextBtn = document.getElementById("nextBtn");
-  
+
       const isOverflowing = container.scrollWidth > container.clientWidth;
       prevBtn.classList.toggle("d-none", !isOverflowing || container.scrollLeft === 0);
       nextBtn.classList.toggle("d-none", !isOverflowing || container.scrollLeft + container.clientWidth >= container.scrollWidth - 1);
     }
-  
+
     window.onresize = checkSlideButtons;
-  
+
     const deptCities = <%- JSON.stringify(trips.deptcities) %>;
     const trip = <%- JSON.stringify(trips) %>;
-    console.log("DM",trip, deptCities);
-  
-    // Select the first city on page load
+
     function selectFirstCity() {
       const firstCityCard = document.querySelector(".city-card");
       if (firstCityCard) {
         const city = firstCityCard.getAttribute("data-city");
         const state = firstCityCard.getAttribute("data-state");
-        const price = firstCityCard.getAttribute("data-price");
+        const price = firstCityCard.getAttribute("data-price") || 0;
         selectCity(firstCityCard, city, state, price);
       }
     }
-  
-    // Handle city selection from slider
+
     function selectCity(element, city, state, price) {
       document.querySelectorAll(".city-card").forEach((el) => el.classList.remove("active"));
       element.classList.add("active");
-  
-      // Update the dropdown
+
       const selectedCityDropdown = document.getElementById("selectedCity");
       selectedCityDropdown.value = city;
-  
-      // Scroll the selected city into view
-      element.scrollIntoView({ behavior: "smooth", inline: "center" });
-  
-      // Update dates and tabs
+
+      element.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "nearest"
+      });
       updateDatesAndTabs();
+      window.scrollTo({
+        top: window.scrollY
+      });
     }
-  
-    // Handle city selection from dropdown
+
     function updateCityFromDropdown() {
       const selectedCity = document.getElementById("selectedCity").value;
       const cityCard = document.querySelector(`.city-card[data-city="${selectedCity}"]`);
       if (cityCard) {
         document.querySelectorAll(".city-card").forEach((el) => el.classList.remove("active"));
         cityCard.classList.add("active");
-        cityCard.scrollIntoView({ behavior: "smooth", inline: "center" });
+        cityCard.scrollIntoView({
+          behavior: "smooth",
+          inline: "center",
+          block: "nearest"
+        });
       }
       updateDatesAndTabs();
+      window.scrollTo({
+        top: window.scrollY
+      });
     }
-  
-    // Parse trip duration (e.g., "4 Day's - 5 Night" -> 4 days)
+
     function parseTripDuration(duration) {
       const match = duration.match(/(\d+)\s*Day/);
       return match ? parseInt(match[1], 10) : 0;
     }
-  
-    // Format date to a readable string
+
     function formatDate(date) {
       return date.toLocaleDateString("en-GB", {
         day: "numeric",
@@ -725,8 +791,8 @@
         year: "numeric",
       });
     }
-  
-    // Update dates and tabs based on selected city
+
+    // Fix 2: Update dates and tabs to reflect all available dates for selected city
     function updateDatesAndTabs() {
       const selectedCity = document.getElementById("selectedCity").value;
       const cityData = deptCities.find((city) => city.City === selectedCity);
@@ -734,112 +800,120 @@
       const monthTabs = document.getElementById("monthTabs");
       const dateSelector = document.getElementById("dateSelector");
       const dateSelect = document.getElementById("selectedDate");
-  
+
       // Clear existing content
       yearTabs.innerHTML = "";
       monthTabs.innerHTML = "";
       dateSelector.innerHTML = "";
       dateSelect.innerHTML = "";
-  
+
       if (!cityData || !cityData.dates || cityData.dates.length === 0) {
         monthTabs.innerHTML = "<p class='text-muted'>No dates available for this city.</p>";
+        dateSelect.innerHTML = "<option value=''>No dates available</option>";
         return;
       }
-  
-      // Organize dates by year and month
+
       const datesByYear = {};
       cityData.dates.forEach((date) => {
+        if (!date.Year || !date.Month || !date.dates) return;
         if (!datesByYear[date.Year]) datesByYear[date.Year] = {};
-        datesByYear[date.Year][date.Month] = date.dates.split(", ").map(Number).sort((a, b) => a - b);
+        if (typeof date.dates === "string") {
+          datesByYear[date.Year][date.Month] = date.dates.split(", ").map(Number).sort((a, b) => a - b);
+        }
       });
-  
+
       const years = Object.keys(datesByYear).sort();
       if (years.length === 0) {
         monthTabs.innerHTML = "<p class='text-muted'>No valid years available.</p>";
+        dateSelect.innerHTML = "<option value=''>No valid years</option>";
         return;
       }
-  
-      // Get trip duration for the selected city
+
       const tripDurationDays = parseTripDuration(cityData.tripDuration);
-  
-      // Populate tour date dropdown with formatted dates
-      let firstDateSet = false;
+
+      // Populate tour date dropdown with all available dates
       const dateOptions = [];
       cityData.dates.forEach((date) => {
-        const dates = date.dates.split(", ").map(Number).sort((a, b) => a - b);
-        dates.forEach((day) => {
-          const startDate = new Date(`${date.Year} ${date.Month} ${day}`);
-          const endDate = new Date(startDate);
-          endDate.setDate(startDate.getDate() + tripDurationDays);
-  
-          const option = document.createElement("option");
-          option.value = `${startDate.toISOString()}|${endDate.toISOString()}`;
-          option.text = `${formatDate(startDate)} - ${formatDate(endDate)}`;
-          dateOptions.push({ startDate, option });
-        });
-      });
-  
-      // Sort options by start date
-      dateOptions.sort((a, b) => a.startDate - b.startDate);
-      dateOptions.forEach(({ option }) => {
-        dateSelect.appendChild(option);
-        if (!firstDateSet) {
-          dateSelect.value = option.value;
-          firstDateSet = true;
+        if (typeof date.dates === "string") {
+          const dates = date.dates.split(", ").map(Number).sort((a, b) => a - b);
+          dates.forEach((day) => {
+            const startDate = new Date(Date.parse(`${date.Month} ${day}, ${date.Year}`));
+            if (isNaN(startDate.getTime())) return; // Skip invalid dates
+            const endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + tripDurationDays);
+
+            const optionValue = `${startDate.toISOString()}|${endDate.toISOString()}`;
+            const optionText = `${formatDate(startDate)} - ${formatDate(endDate)}`;
+            dateOptions.push({
+              startDate,
+              value: optionValue,
+              text: optionText
+            });
+          });
         }
       });
-  
-      // Handle year tabs visibility
-      if (years.length === 1) {
-        yearTabs.style.display = "none";
-        showYear(years[0]);
-      } else {
-        yearTabs.style.display = "flex";
-        years.forEach((year, index) => {
-          const tab = document.createElement("button");
-          tab.className = `year-tab ${index === 0 ? "active" : ""}`;
-          tab.innerText = year;
-          tab.onclick = () => showYear(year);
-          yearTabs.appendChild(tab);
-        });
-        showYear(years[0]);
-      }
+
+      // Sort dates chronologically and populate dropdown
+      dateOptions.sort((a, b) => a.startDate - b.startDate);
+      dateOptions.forEach(({
+        value,
+        text
+      }, index) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.text = text;
+        dateSelect.appendChild(option);
+        if (index === 0) option.selected = true; // Default to first available date
+      });
+
+      // Populate year tabs
+      years.forEach((year, index) => {
+        const tab = document.createElement("button");
+        tab.className = `year-tab ${index === 0 ? "active" : ""}`;
+        tab.innerText = year;
+        tab.onclick = () => showYear(year);
+        // yearTabs.appendChild(tab);
+      });
+
+      if (years[0]) showYear(years[0]);
     }
-  
+
     function showYear(year) {
       const selectedCity = document.getElementById("selectedCity").value;
       const cityData = deptCities.find((city) => city.City === selectedCity);
       const monthTabs = document.getElementById("monthTabs");
       const dateSelector = document.getElementById("dateSelector");
-  
+
       if (!cityData || !cityData.dates) return;
-  
+
       document.querySelectorAll(".year-tab").forEach((tab) => tab.classList.remove("active"));
       const yearTab = Array.from(document.querySelectorAll(".year-tab")).find((tab) => tab.innerText === year);
       if (yearTab) yearTab.classList.add("active");
-  
+
       monthTabs.innerHTML = "";
       dateSelector.innerHTML = "";
-  
+
       const datesByYear = {};
       cityData.dates.forEach((date) => {
+        if (!date.Year || !date.Month || !date.dates) return;
         if (!datesByYear[date.Year]) datesByYear[date.Year] = {};
-        datesByYear[date.Year][date.Month] = date.dates.split(", ").map(Number).sort((a, b) => a - b);
+        if (typeof date.dates === "string") {
+          datesByYear[date.Year][date.Month] = date.dates.split(", ").map(Number).sort((a, b) => a - b);
+        }
       });
-  
-      const months = Object.keys(datesByYear[year]).sort((a, b) => {
-        const monthOrder = [
-          "January", "February", "March", "April", "May", "June",
+
+      const months = Object.keys(datesByYear[year] || {}).sort((a, b) => {
+        const monthOrder = ["January", "February", "March", "April", "May", "June",
           "July", "August", "September", "October", "November", "December"
         ];
         return monthOrder.indexOf(a) - monthOrder.indexOf(b);
       });
-  
+
       if (months.length === 0) {
         monthTabs.innerHTML = "<p class='text-muted'>No months available for this year.</p>";
         return;
       }
-  
+
       months.forEach((month, index) => {
         const tab = document.createElement("button");
         tab.className = `month-tab ${index === 0 ? "active" : ""}`;
@@ -847,29 +921,29 @@
         tab.onclick = () => showMonth(year, month);
         monthTabs.appendChild(tab);
       });
-  
+
       if (months[0]) showMonth(year, months[0]);
     }
-  
+
     function showMonth(year, month) {
       const selectedCity = document.getElementById("selectedCity").value;
       const cityData = deptCities.find((city) => city.City === selectedCity);
       const dateSelector = document.getElementById("dateSelector");
       const dateSelect = document.getElementById("selectedDate");
-  
+
       if (!cityData || !cityData.dates) return;
-  
+
       document.querySelectorAll(".month-tab").forEach((tab) => tab.classList.remove("active"));
       const monthTab = Array.from(document.querySelectorAll(".month-tab")).find((tab) => tab.innerText === month);
       if (monthTab) monthTab.classList.add("active");
-  
+
       dateSelector.innerHTML = "";
-  
+
       const monthData = cityData.dates.find((d) => d.Year === year && d.Month === month);
-      if (monthData) {
+      if (monthData && typeof monthData.dates === "string") {
         const dates = monthData.dates.split(", ").map(Number).sort((a, b) => a - b);
         const tripDurationDays = parseTripDuration(cityData.tripDuration);
-  
+
         dates.forEach((date, index) => {
           const div = document.createElement("div");
           div.className = `date-item ${index === 0 ? "active" : ""}`;
@@ -877,39 +951,28 @@
           div.onclick = () => {
             document.querySelectorAll(".date-item").forEach((d) => d.classList.remove("active"));
             div.classList.add("active");
-  
-            // Update the tour date dropdown based on the selected date
-            const startDate = new Date(`${year} ${month} ${date}`);
+
+            const startDate = new Date(Date.parse(`${month} ${date}, ${year}`));
             const endDate = new Date(startDate);
             endDate.setDate(startDate.getDate() + tripDurationDays);
-  
+
             const newValue = `${startDate.toISOString()}|${endDate.toISOString()}`;
-            const newText = `${formatDate(startDate)} - ${formatDate(endDate)}`;
-  
-            // Check if this date range already exists in the dropdown
-            let optionExists = false;
-            for (let i = 0; i < dateSelect.options.length; i++) {
-              if (dateSelect.options[i].value === newValue) {
-                dateSelect.value = newValue;
-                optionExists = true;
-                break;
-              }
-            }
-  
-            // If the date range doesn't exist, add it and select it
-            if (!optionExists) {
-              const newOption = document.createElement("option");
-              newOption.value = newValue;
-              newOption.text = newText;
-              dateSelect.appendChild(newOption);
-              dateSelect.value = newValue;
-            }
+            dateSelect.value = newValue; // Set the dropdown value directly
           };
           dateSelector.appendChild(div);
         });
+
+        // Sync the first date with the dropdown
+        if (dates.length > 0) {
+          const startDate = new Date(Date.parse(`${month} ${dates[0]}, ${year}`));
+          const endDate = new Date(startDate);
+          endDate.setDate(startDate.getDate() + tripDurationDays);
+          const defaultValue = `${startDate.toISOString()}|${endDate.toISOString()}`;
+          dateSelect.value = defaultValue;
+        }
       }
     }
-  
+
     function showTab(tabId) {
       const tabs = document.querySelectorAll(".tab");
       const contents = document.querySelectorAll(".tab-content");
@@ -917,6 +980,14 @@
       contents.forEach((content) => content.classList.remove("active"));
       document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add("active");
       document.getElementById(tabId).classList.add("active");
+    }
+
+    function proceedWithBooking() {
+      const form = document.getElementById("proceedToBook");
+      const url = `${form.action}?city=${encodeURIComponent(form.city.value)}&date=${encodeURIComponent(form.date.value)}`;
+      window.location.href = url;
+      const modal = bootstrap.Modal.getInstance(document.getElementById("contactModal"));
+      modal.hide();
     }
   </script>
 </body>
