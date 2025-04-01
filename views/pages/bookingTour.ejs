@@ -126,6 +126,15 @@
       .summary-section p {
         margin: 0.5rem 0;
       }
+      .header-section {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+      
+      .border-top-2 {
+        border-top: 1px solid grey;
+      }
 
       .payment-options button {
         margin-right: 0.5rem;
@@ -147,13 +156,34 @@
         cursor: pointer;
         font-weight: bold;
       }
+      .addperson-btn {
+        background-color: #002d66;
+        color: white;
+        padding: 0.8rem;
+        border: none;
+        border-radius: 6px;
+        margin-top: 1rem;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .remove-btn{
+        background-color: #002d66;
+        color: white;
+        padding: 0.3rem 0.5rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+      }
 
       @media (max-width: 768px) {
         .cm-row {
           flex-direction: column;
         }
       }
-
+      .padding-top-1 {
+        padding-top: 1%;
+      }
       .cm-margin-top {
         margin-top: 5px !important;
       }
@@ -183,19 +213,24 @@
       <input type="hidden" name="cityBasedprice" id="cityBasedprice">
       <div class="b_container">
         <div class="form-section">
-          <label class="cm-label">Joining from</label>
-          <select class="cm-field" name="joiningFrom" id="joiningFrom" onchange="populateDates()">
-            <% tourDetails.deptcities.forEach(loc=> { %>
-              <option value="<%= loc.City %>">
-                <%= loc.City %>
-              </option>
-              <% }); %>
-          </select>
-          <label class="cm-label">Tour date</label>
-          <select class="cm-field" name="travelDate" id="travelDate">
-            <!-- populate based on Joining From Selection -->
-          </select>
-
+         <div class="cm-row">
+          <div>
+            <label class="cm-label">Joining from</label>
+            <select class="cm-field" name="joiningFrom" id="joiningFrom" onchange="populateDates()">
+              <% tourDetails.deptcities.forEach(loc=> { %>
+                <option value="<%= loc.City %>">
+                  <%= loc.City %>
+                </option>
+                <% }); %>
+            </select>
+          </div>
+          <div>
+            <label class="cm-label">Tour date</label>
+            <select class="cm-field" name="travelDate" id="travelDate">
+              <!-- populate based on Joining From Selection -->
+            </select>
+          </div>
+         </div>
           <div class="count-group cm-row">
             <div>
               <label class="cm-label cm-margin-top">Adults (10+): </label>
@@ -243,16 +278,22 @@
                   </select>
                 </div>
               </div>
-              <label class="cm-label">Mobile number*</label>
-              <input id="mobileno" name="personDetails[0][mobileno]" class="cm-field" type="tel"
-                placeholder="+91 Enter your mobile number" />
-              <label class="cm-label">Alternative number</label>
-              <input id="alternateNumber" name="personDetails[0][alternateNumber]" class="cm-field" type="tel"
-                placeholder="+91 Enter alt mobile number" />
+              <div class="cm-row">
+                <div>
+                  <label class="cm-label">Mobile number*</label>
+                  <input id="mobileno" name="personDetails[0][mobileno]" class="cm-field" type="tel"
+                    placeholder="+91 Enter your mobile number" />
+                </div>
+                <div>
+                  <label class="cm-label">Alternative number</label>
+                  <input id="alternateNumber" name="personDetails[0][alternateNumber]" class="cm-field" type="tel"
+                    placeholder="+91 Enter alt mobile number" />
+                </div>
+              </div>
             </div>
           </div>
 
-          <button id="AddPerson" type="button" style="margin-top: 1rem;" onclick="addPerson()">+ Add all person's detail</button>
+          <button id="AddPerson" type="button" class="addperson-btn" onclick="addPerson()">+ Add all person's detail</button>
           <label class="cm-label" style="margin-top: 1rem;">Additional services (optional)</label>
         </div>
 
@@ -371,11 +412,14 @@
             if (parseInt(personContainer.children.length) < (parseInt(NoofAdutts) + parseInt(NoofChild))) {
               let personDiv = document.createElement("div");
               personDiv.classList.add("person-details");
+              personDiv.classList.add("border-top-2");
               personDiv.id = `person${personCount}`;
               personDiv.innerHTML = `
-            <h4>Person ${personCount} </h4>
-             <button id="removePerson${personCount}" type="button" style="margin-top: 1rem;" onclick="removePerson(${personCount})">x</button>
-            <div class="cm-row">
+            <div class="cm-row padding-top-1 header-section">
+              <h4>Person ${personCount} </h4>
+             <button id="removePerson${personCount}" type="button" class="remove-btn" onclick="removePerson(${personCount})">x</button>
+            </div>
+             <div class="cm-row">
               <div>
                 <label class="cm-label">First name*</label>
                 <input id="firstName" name="personDetails[${personCount - 1}][firstName]" class="cm-field" type="text" required placeholder="Your name here" />
@@ -399,10 +443,14 @@
                 </select>
               </div>
             </div>
+            <div class="cm-row">
+            <div>
             <label class="cm-label">Mobile number*</label>
             <input id="mobileno" name="personDetails[${personCount - 1}][mobileno]" class="cm-field" type="tel" placeholder="+91 Enter your mobile number" />
+            </div><div>
             <label class="cm-label">Alternative number</label>
             <input id="alternateNumber" name="personDetails[${personCount - 1}][alternateNumber]" class="cm-field" type="tel" placeholder="+91 Enter alt mobile number" />
+            </div>
             `;
               personContainer.appendChild(personDiv);
 
@@ -423,8 +471,22 @@
             if (div) {
               div.remove();
             }
+            const addPerson = document.getElementById('AddPerson');
+              addPerson.style.display = 'block';
           }
          </script>
+         <!-- date range set function -->
+          <script>
+            function setRangeDate(){
+              const stringDays = <%-JSON.stringify(tourDetails.days) %>;
+              const selectedToureDate = document.getElementById('travelDate').value.trim();
+              let start = new Date(selectedToureDate);
+              let totalDays = nights + 1; // Since nights are always 1 less than the days
+              
+              let endDate = new Date(start);
+              endDate.setDate(start.getDate() + totalDays - 1); // Subtract 1 to keep within the range
+            }
+          </script>
         <!-- on load Script -->
         <script>
           window.addEventListener("DOMContentLoaded", () => {
