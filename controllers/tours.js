@@ -70,8 +70,10 @@ exports.getIndexPage = async (req, res, next) => {
   const alltours = await Tours.find().sort({ updatedAt: -1 });
   const allaccomodations = await Accomodations.find().sort({ updatedAt: -1 });
   const tests = await Tours.find().distinct("name");
+  const response = await this.getFiltertourAPIUseOnly(req,res); // Use NewTours instead of NewToursSchema
   res.render("pages/index", {
     Tours: alltours,
+    tourPackages: response.tours,
     accomodations: allaccomodations,
     test: tests,
     user: req.user,
@@ -614,7 +616,7 @@ exports.getStateFilters = async (req, res, next) => {
    req.query.filterValue = JSON.stringify(filter);
 
     const response = await this.getFiltertourAPIUseOnly(req,res);
-    res.render("pages/StateFilter", { Tours: response.tours });
+    res.render("pages/StateFilter", { Tours: response.tours, tourPackages: response.tours });
   } catch (err) {
     console.log(err);
   }
