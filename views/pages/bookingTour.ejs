@@ -7,11 +7,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="/path-to/nice-select.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     
     <!-- jQuery (must be before nice-select) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="assets/plugins/global/plugins.bundle.js"></script>
     
     <!-- Nice Select CSS -->
     <link rel="stylesheet"
@@ -193,12 +195,13 @@
 
 <body>
   <%- include('../partials/header'); %>
-    <div class="back-btn">
-      <a href="#">
+  <div class="container">
+  <div class="back-btn">
+      <a href="#"> &larr;
         <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
           stroke-linejoin="round" class="feather feather-arrow-left">
-          <line x1="19" y1="12" x2="5" y2="12" />
-          <polyline="12 19 5 12 12 5" />
+          &larr; <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline="12 19 5 12 12 5" />&larr;
         </svg>
         Back
       </a>
@@ -226,7 +229,7 @@
           </div>
           <div>
             <label class="cm-label">Tour date</label>
-            <select class="cm-field" name="travelDate" id="travelDate">
+            <select class="cm-field" name="travelDate" id="travelDate" onchange="onchangetoureDate()">
               <!-- populate based on Joining From Selection -->
             </select>
           </div>
@@ -265,8 +268,13 @@
                 </div>
               </div>
               <div class="cm-row">
+                <div class="mb-10">
+                  <label for="" class="form-label">Default input style</label>
+                  <input class="form-control" placeholder="Pick a date" id="kt_datepicker_1"/>
+              </div>
                 <div>
                   <label class="cm-label">Birth date*</label>
+                  <input id="dateofbirth" name="personDetails[0][dateofbirth]"  class="form-control cm-field" required />
                   <input id="dateofbirth" name="personDetails[0][dateofbirth]" class="cm-field" required type="date" />
                 </div>
                 <div>
@@ -306,7 +314,7 @@
             <%= tourDetails.days %>
           </p>
           <p>Pickup from: <span id="pickupFrom"></span></p>
-          <p>Travel date: 8 May 2024 to 16 May 2024</p>
+          <p>Travel date: <span id="travelDateDisplay"></span> </p>
           <p><strong>Total costs:</strong>₹<span id="totalCost"></span></p>
           <p><a href="#">View breakdown</a></p>
 
@@ -323,7 +331,7 @@
         </div>
       </div>
     </form>
-
+  </div>
     <%- include('../partials/footer'); %>
       <%- include('../partials/scripttag'); %>
 
@@ -335,10 +343,11 @@
             const selectedCity = document.getElementById('joiningFrom').value.trim();
             const travelDateSelect = document.getElementById('travelDate');
             const pickupFrom = document.getElementById('pickupFrom');
+            const travelDateDisplay = document.getElementById('travelDateDisplay');
             const cityObj = deptcities.find(loc => loc.City.trim() === selectedCity);
             while (travelDateSelect.options.length > 1) { travelDateSelect.remove(0); }// remove from index 1 onward
             travelDateSelect.innerHTML = ''; // Optionally, reset default value
-            pickupFrom.innerHTML = selectedCity;
+            pickupFrom.innerHTML = selectedCity; // set pickup from value
             if (cityObj && cityObj.dates && cityObj.dateList.length > 0) {
               cityObj.dateList.forEach(element => {
                 const option = document.createElement('option');
@@ -362,10 +371,19 @@
               option.textContent = 'No travel dates available';
               travelDateSelect.appendChild(option);
             }
+            travelDateDisplay.innerHTML = travelDateSelect.value;
             if ($.fn.niceSelect) {
               $('#travelDate').niceSelect('destroy');
               $('#travelDate').niceSelect();
             }
+          }
+        </script>
+        <!-- update on changes of toure date -->
+        <script>
+          function onchangetoureDate(){
+            const travelDateSelect = document.getElementById('travelDate');
+            const travelDateDisplay = document.getElementById('travelDateDisplay');
+            travelDateDisplay.innerHTML = travelDateSelect.value;
           }
         </script>
         <!-- Cost Calculate -->
@@ -453,7 +471,6 @@
             </div>
             `;
               personContainer.appendChild(personDiv);
-
               const addPerson = document.getElementById('AddPerson');
               if (parseInt(personContainer.children.length) == (parseInt(NoofAdutts) + parseInt(NoofChild))) {
                 addPerson.style.display = 'none';
@@ -475,18 +492,7 @@
               addPerson.style.display = 'block';
           }
          </script>
-         <!-- date range set function -->
-          <script>
-            function setRangeDate(){
-              const stringDays = <%-JSON.stringify(tourDetails.days) %>;
-              const selectedToureDate = document.getElementById('travelDate').value.trim();
-              let start = new Date(selectedToureDate);
-              let totalDays = nights + 1; // Since nights are always 1 less than the days
-              
-              let endDate = new Date(start);
-              endDate.setDate(start.getDate() + totalDays - 1); // Subtract 1 to keep within the range
-            }
-          </script>
+
         <!-- on load Script -->
         <script>
           window.addEventListener("DOMContentLoaded", () => {

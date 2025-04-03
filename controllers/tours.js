@@ -1786,13 +1786,25 @@ exports.renderBookingTourPage = async (req,res) =>{
     existingTrip.deptcities.forEach(cityDetail =>{
       cityDetail.dateList= [];
       if(cityDetail && cityDetail.dates && cityDetail.dates.length > 0){
+        const monthMap = {
+          "Jan": 0, "Feb": 1, "Mar": 2, "Apr": 3, "May": 4, "Jun": 5, 
+          "Jul": 6, "Aug": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dec": 11
+      };
         cityDetail.dates.forEach(dateBlock => {
+          // Extract numbers from the string (e.g., "5 days 6 nights" → [5, 6])
+          const durationArr = existingTrip.days.match(/\d+/g).map(Number);
+          const duration = Math.max(...durationArr); // Take the maximum value
+          // Month mapping
           const { Month, Year, dates } = dateBlock;
+          const monthIndex = monthMap[Month]; // Get the month index (0-based)
           const dateList = dates.split(',');
           dateList.forEach(day => {
-              // Format: DD-MM-YYYY
-              const formatted = `${day.padStart(2, '0')}-${Month}-${Year}`;
-              cityDetail.dateList.push(formatted);
+            let startDate = new Date(Year, monthIndex, parseInt(day)); // Create Date object
+        let endDate = new Date(startDate); 
+        endDate.setDate(startDate.getDate() + duration); // Add trip duration
+        // Format dates as DD-MMM-YYYY
+        const formatDate = date => `${String(date.getDate()).padStart(2, '0')} ${Month} ${date.getFullYear()}`;
+        cityDetail.dateList.push(`${formatDate(startDate)} to ${formatDate(endDate)}`);
           });
       });
 
