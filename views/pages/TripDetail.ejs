@@ -353,6 +353,11 @@
       /* Adds spacing above and below */
     }
 
+    .itinerary-content ul li,
+    .itinerary-content ol li{
+      list-style: inherit;
+    }
+
     .itinerary-section.active .itinerary-content {
       display: block;
     }
@@ -406,14 +411,20 @@
     .tab-content.active {
       display: block;
     }
-
-    .modal-content {
+    .tab-content.active ol li, .tab-content.active ul li {
+      list-style: unset;
+    }
+    #contactModal .modal-content {
       border-radius: 10px;
     }
 
-    .modal-header {
+    #contactModal .modal-header {
       background: var(--primary-blue);
       color: white;
+    }
+
+    a {
+      text-decoration: none;
     }
   </style>
 </head>
