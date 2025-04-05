@@ -1813,59 +1813,59 @@
         //   name: "Places to Visit",
         //   errorId: "placestovisitError"
         // },
-        // {
-        //   id: "activities-editor",
-        //   name: "Activities & Attraction",
-        //   errorId: "activitiesError"
-        // },
-        // {
-        //   id: "things_to_carry-editor",
-        //   name: "Things to Carry",
-        //   errorId: "thingsToCarryError"
-        // },
-        // {
-        //   id: "includenexclude-editor",
-        //   name: "Include & Exclude",
-        //   errorId: "includeExcludeError"
-        // },
-        // {
-        //   id: "package_cost-editor",
-        //   name: "Package Cost",
-        //   errorId: "packageCostError"
-        // },
-        // {
-        //   id: "infonfaq-editor",
-        //   name: "Info & FAQs",
-        //   errorId: "infoFaqError"
-        // },
-        // {
-        //   id: "bookncancel-editor",
-        //   name: "Booking & Cancellation",
-        //   errorId: "bookCancelError"
-        // },
-        // {
-        //   id: "guidelines-editor",
-        //   name: "Travel Guidelines",
-        //   errorId: "guidelinesError"
-        // }
+        {
+          id: "activities-editor",
+          name: "Activities & Attraction",
+          errorId: "activitiesError"
+        },
+        {
+          id: "things_to_carry-editor",
+          name: "Things to Carry",
+          errorId: "thingsToCarryError"
+        },
+        {
+          id: "includenexclude-editor",
+          name: "Include & Exclude",
+          errorId: "includeExcludeError"
+        },
+        {
+          id: "package_cost-editor",
+          name: "Package Cost",
+          errorId: "packageCostError"
+        },
+        {
+          id: "infonfaq-editor",
+          name: "Info & FAQs",
+          errorId: "infoFaqError"
+        },
+        {
+          id: "bookncancel-editor",
+          name: "Booking & Cancellation",
+          errorId: "bookCancelError"
+        },
+        {
+          id: "guidelines-editor",
+          name: "Travel Guidelines",
+          errorId: "guidelinesError"
+        }
       ];
 
       editorFields.forEach(field => {
         const content = staticEditors[field.id].root.innerHTML.trim();
         const isEmpty = !content || content === "<p><br></p>";
-        const errorElement = document.getElementById(field.errorId);
-        if (field.name !== "Info & FAQs" && field.name !== "Booking & Cancellation" && field.name !== "Travel Guidelines") {
-          // Required fields
-          if (isEmpty) {
-            validationErrors.push(`${field.name} is required.`);
-            errorElement.classList.remove("d-none");
-          } else {
-            errorElement.classList.add("d-none");
-          }
-        } else {
-          // Optional fields
-          errorElement.classList.add("d-none");
-        }
+        // const errorElement = document.getElementById(field.errorId);
+        // if (field.name !== "Info & FAQs" && field.name !== "Booking & Cancellation" && field.name !== "Travel Guidelines") {
+        //   // Required fields
+        //   if (isEmpty) {
+        //     validationErrors.push(`${field.name} is required.`);
+        //     errorElement.classList.remove("d-none");
+        //   } else {
+        //     errorElement.classList.add("d-none");
+        //   }
+        // } else {
+        //   // Optional fields
+        //   errorElement.classList.add("d-none");
+        // }
       });
 
       // Validate itinerary

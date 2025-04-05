@@ -1510,7 +1510,7 @@ exports.getCheckToursUnique = async (req, res, next) => {
 exports.postNewAddTours = async (req, res) => {
   try {
     const {
-      name, tripId, state, destinations, route, days, price, tripType, about, placestovisit, activities,
+      name, tripId, state, destinations, route, days, price, tripType, about, activities,
       things_to_carry, package_cost, includenexclude, infonfaq, bookncancel, guidelines, altitude, bestSession,
       existingImage, itinerary, deptcities, trip_dates
     } = req.body;
@@ -1563,7 +1563,6 @@ exports.postNewAddTours = async (req, res) => {
       price,
       tripType,
       about,
-      placestovisit,
       activities,
       itinerary: parsedItinerary,
       things_to_carry,
