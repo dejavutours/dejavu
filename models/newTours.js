@@ -15,25 +15,22 @@ const newToursSchema = new Schema(
   
     isActive: { type: Boolean, default: true }, // Added for status toggle
     
-    destinations: { type: String, required: true },
+    destinations: { type: String, default: "" },
     // Purpose: Major destinations covered in the tour (e.g., "Goa, Panaji, Baga Beach").
 
-    route: { type: String, required: true },
+    route: { type: String, default: "" },
     // Purpose: The route taken during the tour (e.g., "Mumbai - Goa - Mumbai").
 
-    days: { type: String, required: true },
+    days: { type: String, default: "" },
     // Purpose: Duration of the tour (e.g., "4 days", "3 days - 2 nights").
 
-    tag: { type: String, default: "" },
-    // Purpose: Keywords for categorization (e.g., "Beach, Adventure").
-
-    price: { type: Number, required: true },
+    price: { type: Number, default: 0 },
     // Purpose: Cost of the tour package per person.
 
-    about: { type: String, required: true },
+    about: { type: String, default: "" },
     // Purpose: Brief description of the tour.
 
-    tripType: { type: String, required: true },
+    tripType: { type: String, default: "" },
     // Purpose: Type of trip (e.g., "Easy to Moderate").
 
     altitude: { type: String, default: "" },
@@ -45,57 +42,71 @@ const newToursSchema = new Schema(
     deptstate: { type: String, default: "" },
     // Purpose: Departure state for the tour.
 
-    deptcities: [
-      {
-        State: String, // Purpose: Departure state (e.g., "GJ").
-        City: String, // Purpose: Departure city (e.g., "AHM").
-        tripDuration: String, // Purpose: Cost per person for the package.
-        dates: [
-          {
-            Year: String,
-            Month: String, // Purpose: Available month (e.g., "May").
-            dates: String, // Purpose: Specific departure dates in that month.
+    deptcities: {
+      type: [
+        {
+          State: { type: String, default: "" }, // e.g., "GJ"
+          City: { type: String, default: "" },  // e.g., "AHM"
+          tripDuration: { type: String, default: "" },
+          dates: {
+            type: [
+              {
+                Year: { type: String, default: "" },
+                Month: { type: String, default: "" }, // e.g., "May"
+                dates: { type: String, default: "" },
+              }
+            ],
+            default: [],
           },
-        ],
-        price:[{
-          transferType: String,
-          adultPrice: Number,
-          childPrice: Number
-         }]
-      },
-    ],
+          price: {
+            type: [
+              {
+                transferType: { type: String, default: "" },
+                adultPrice: { type: Number, default: 0 },
+                childPrice: { type: Number, default: 0 },
+              }
+            ],
+            default: [],
+          }
+        }
+      ],
+      default: [],
+    },
     // Purpose: List of departure cities, their cost, and available travel dates.
 
-    trip_dates: [
+    trip_dates: {
+      type: [
         {
-            Year: String,
-            Month: String,  // Available month (e.g., "May")
-            dates: String   // Specific departure dates in that month
+          Year: { type: String, default: "" },
+          Month: { type: String, default: "" },
+          dates: { type: String, default: "" },
         }
-    ],
+      ],
+      default: [],
+    },
     // Purpose: List of upcoming trip start dates.
 
-    placestovisit: { type: String, required: true },
-    // Purpose: Key attractions covered in the tour (e.g., "Baga Beach, Calangute, Fort Aguada").
-
-    activities: { type: String, required: true },
+    activities: { type: String, default: "" },
     // Purpose: Activities included in the tour (e.g., "Boating, Jet Ski, Paragliding").
 
-    itinerary: [
-      {
-        day: String, // Purpose: Day number (e.g., "Day 1").
-        header:String,
-        description: String, // Purpose: Activities and schedule for the day
-      },
-    ],
+    itinerary: {
+      type: [
+        {
+          day: { type: String, default: "" },
+          header: { type: String, default: "" },
+          description: { type: String, default: "" },
+        }
+      ],
+      default: [],
+    },
     // Purpose: Daily schedule and plan for the tour.
 
-    things_to_carry: { type: String, required: true },
+    things_to_carry: { type: String, default: "" },
     // Purpose: List of recommended items to carry (e.g., "Sunscreen, Sunglasses, Swimsuit").
 
-    includenexclude: { type: String, required: true },
+    includenexclude: { type: String, default: "" },
 
-    package_cost: { type: String, required: true },
+    package_cost: { type: String, default: "" },
     // Purpose: Final cost of the tour package, displayed in user-friendly format (e.g., "₹9,999").
 
     infonfaq: { type: String, default: "" },

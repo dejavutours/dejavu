@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-  <!-- Required meta tags -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <%- include('../partials/headtag'); %>
@@ -145,7 +144,7 @@
     </div>
   </header>
   <h1 class="text-primary">
-    <center>Dejavu Tours&Treks : Add Trip</center>
+    <center>Dejavu Tours&Treks : <%= trips._id ? 'Edit Trip' : 'Add Trip' %></center>
   </h1>
   <form action="/admin/postNewAddTours" method="POST" id="addUpdateTripDetial" enctype="multipart/form-data">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -177,7 +176,7 @@
           <div class="col-12 col-md-6">
             <div class="mb-3">
               <label for="destinations" class="form-label">Destinations</label>
-              <input type="text" class="form-control" name="destinations" id="destinations" value="<%= trips.destinations || '' %>" required />
+              <input type="text" class="form-control" name="destinations" id="destinations" value="<%= trips.destinations || '' %>" />
             </div>
           </div>
         </div>
@@ -199,7 +198,7 @@
           <div class="col-12 col-md-6">
             <div class="mb-3">
               <label for="bannerImages" class="form-label">Upload Banner Images (Multiple) Disabled</label>
-              <input type="file" accept="image/*"  id="bannerImages" class="form-control" multiple>
+              <input type="file" accept="image/*" id="bannerImages" class="form-control" multiple>
               <div class="multiple-preview d-flex mt-2" id="bannerPreviewContainer"></div>
             </div>
           </div>
@@ -209,28 +208,22 @@
           <div class="col-12 col-md-6">
             <div class="mb-3">
               <label for="route" class="form-label">Route</label>
-              <input type="text" class="form-control" name="route" id="route" value="<%= trips.route || '' %>" required />
+              <input type="text" class="form-control" name="route" id="route" value="<%= trips.route || '' %>" />
             </div>
           </div>
           <div class="col-12 col-md-6">
             <div class="mb-3">
               <label for="days" class="form-label">Trip Duration</label>
-              <input type="text" class="form-control" name="days" id="days" value="<%= trips.days || '' %>" required />
+              <input type="text" class="form-control" name="days" id="days" value="<%= trips.days || '' %>" />
             </div>
           </div>
         </div>
-        <!-- Tag Line and Altitude -->
+        <!-- Altitude -->
         <div class="row">
-          <div class="col-12 col-md-6">
-            <div class="mb-3">
-              <label for="tag" class="form-label">Tag Line</label>
-              <input type="text" class="form-control" name="tag" id="tag" value="<%= trips.tag || '' %>" required />
-            </div>
-          </div>
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-12">
             <div class="mb-3">
               <label for="altitude" class="form-label">Altitude (feet)</label>
-              <input type="text" class="form-control" name="altitude" id="altitude" value="<%= trips.altitude || '' %>" required />
+              <input type="text" class="form-control" name="altitude" id="altitude" value="<%= trips.altitude || '' %>" />
             </div>
           </div>
         </div>
@@ -239,13 +232,13 @@
           <div class="col-12 col-md-6">
             <div class="mb-3">
               <label for="tripType" class="form-label">Difficulty</label>
-              <input type="text" class="form-control" name="tripType" id="tripType" value="<%= trips.tripType || '' %>" required />
+              <input type="text" class="form-control" name="tripType" id="tripType" value="<%= trips.tripType || '' %>" />
             </div>
           </div>
           <div class="col-12 col-md-6">
             <div class="mb-3">
               <label for="price" class="form-label">Base Price (Total trip cost)</label>
-              <input type="text" class="form-control" name="price" id="price" value="<%= trips.price || '' %>" required />
+              <input type="text" class="form-control" name="price" id="price" value="<%= trips.price || '' %>" />
             </div>
           </div>
         </div>
@@ -253,8 +246,8 @@
         <div class="row">
           <div class="col-12 col-md-12">
             <div class="mb-3">
-              <label for="bestSession" class="form-label">Best Session</label>
-              <input type="text" class="form-control" name="bestSession" id="bestSession" value="<%= trips.bestSession || '' %>" required />
+              <label for="bestSession" class="form-label">Best Season</label>
+              <input type="text" class="form-control" name="bestSession" id="bestSession" value="<%= trips.bestSession || '' %>" />
             </div>
           </div>
         </div>
@@ -273,7 +266,7 @@
                   <div class="col-12 col-md-4">
                     <div class="mb-3">
                       <h6>Add City</h6>
-                      <select class="form-select city-select" name="city[]" required>
+                      <select class="form-select city-select" name="city[]">
                         <option value="">Select City</option>
                       </select>
                     </div>
@@ -281,7 +274,7 @@
                   <div class="col-12 col-md-2">
                     <div class="mb-3">
                       <label>State</label>
-                      <input type="text" class="form-control state-field" name="stateField[]" placeholder="State" readonly required>
+                      <input type="text" class="form-control state-field" name="stateField[]" placeholder="State" readonly>
                     </div>
                   </div>
                   <div class="col-12 col-md-2">
@@ -293,7 +286,7 @@
                   <div class="col-12 col-md-4">
                     <div class="mb-3">
                       <label class="form-label">Trip Duration from city</label>
-                      <input type="text" class="form-control tripDuration" name="tripDuration[]" placeholder="2 Day -1 Night " required>
+                      <input type="text" class="form-control tripDuration" name="tripDuration[]" placeholder="2 Day -1 Night ">
                       <div class="invalid-feedback">Trip Duration is required</div>
                     </div>
                   </div>
@@ -309,14 +302,14 @@
                         <div class="col-12 col-md-4">
                           <div class="mb-3">
                             <label class="form-label">Transport Type</label>
-                            <input type="text" class="form-control transferType" name="transferType[]" placeholder="Transport Type" required>
+                            <input type="text" class="form-control transferType" name="transferType[]" placeholder="Transport Type">
                             <div class="invalid-feedback">Transport Type is required and must be unique.</div>
                           </div>
                         </div>
                         <div class="col-12 col-md-4">
                           <div class="mb-3">
                             <label class="form-label">Child Price</label>
-                            <input type="number" class="form-control childPrice" name="childPrice[]" placeholder="Enter price per child" required>
+                            <input type="number" class="form-control childPrice" name="childPrice[]" placeholder="Enter price per child">
                             <div class="invalid-feedback">Child Price is required.</div>
                           </div>
                         </div>
@@ -324,7 +317,7 @@
                           <div class="mb-3 position-relative">
                             <label class="form-label">Adult Price</label>
                             <div class="d-flex align-items-center">
-                              <input type="number" class="form-control adultPrice" name="adultPrice[]" placeholder="Enter price per adult" required>
+                              <input type="number" class="form-control adultPrice" name="adultPrice[]" placeholder="Enter price per adult">
                               <div class="invalid-feedback">Adult Price is required.</div>
                               <button type="button" class="btn btn-danger btn-sm removeRow mt-3"><i class="bi bi-x-circle"></i></button>
                             </div>
@@ -392,7 +385,7 @@
             </div>
           </div>
         </div>
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-12 col-md-12">
             <div class="accordion mb-3" id="placestovisitAccordion">
               <div class="accordion-item">
@@ -410,7 +403,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
         <div class="row">
           <div class="col-12 col-md-12">
             <div class="accordion mb-3" id="activitiesAccordion">
@@ -453,7 +446,7 @@
                     <div class="accordion-body">
                       <div class="mb-3">
                         <label class="form-label">Header</label>
-                        <input type="text" class="form-control itinerary-header" name="itinerary-header[]" value="<%= dayItem.header || '' %>" placeholder="Enter Header" required />
+                        <input type="text" class="form-control itinerary-header" name="itinerary-header[]" value="<%= dayItem.header || '' %>" placeholder="Enter Header" />
                         <div class="invalid-feedback">Header is required.</div>
                       </div>
                       <div class="editor-container mb-3" id="editor-<%= index + 1 %>"></div>
@@ -474,7 +467,7 @@
                     <div class="accordion-body">
                       <div class="mb-3">
                         <label class="form-label">Header</label>
-                        <input type="text" class="form-control itinerary-header" name="itinerary-header[]" placeholder="Enter Header" required />
+                        <input type="text" class="form-control itinerary-header" name="itinerary-header[]" placeholder="Enter Header" />
                         <div class="invalid-feedback">Header is required.</div>
                       </div>
                       <div class="editor-container mb-3" id="editor-1"></div>
@@ -627,6 +620,25 @@
     </div>
   </div>
 
+  <!-- Message Modal -->
+  <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="messageModalLabel">Notification</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="messageModalBody">
+          <!-- Message will be injected here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="messageModalClose">Close</button>
+          <button type="button" class="btn btn-primary d-none" id="messageModalAction">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <!-- Load jQuery (only one version) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -657,10 +669,93 @@
     });
 
     const csrfToken = document.querySelector('input[name="_csrf"]').value;
+
+    // Common Response Handler
+    function handleResponse(response, status) {
+      const modal = new bootstrap.Modal(document.getElementById('messageModal'));
+      const modalBody = document.getElementById('messageModalBody');
+      const modalAction = document.getElementById('messageModalAction');
+      const modalClose = document.getElementById('messageModalClose');
+
+      modalAction.classList.add('d-none');
+      modalClose.style.display = 'block';
+
+      if (status >= 200 && status < 300) {
+        // Success cases (add or update)
+        modalBody.innerHTML = `<p class="text-success">${response.message}</p>`;
+        modalAction.classList.remove('d-none');
+        modalAction.textContent = 'OK';
+        modalAction.onclick = () => {
+          modal.hide();
+          // Redirect to the form with the tripid
+          const tripId = response.trip._id;
+          window.location.href = `/admin/addtours?tripid=${tripId}`;
+        };
+        modalClose.style.display = 'none';
+      } else if (status === 400) {
+        // Validation errors
+        modalBody.innerHTML = `<p class="text-danger">${response.message}</p>`;
+        if (response.exists) {
+          document.getElementById('nameError').classList.remove('d-none');
+        }
+      } else {
+        // Server errors (500, etc.)
+        modalBody.innerHTML = `<p class="text-danger">Error: ${response.message || 'An unexpected error occurred'}</p>`;
+      }
+
+      modal.show();
+    }
+
+    /**
+     * Formats dates into the structure expected by MongoDB.
+     * @param {string[]} dates - Array of dates in "YYYY-MM-DD" format.
+     * @returns {Object[]} Array of objects with Year, Month, and dates.
+     */
+    function formatUTCDate(date) {
+      const year = date.getUTCFullYear();
+      const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Months are 0-based
+      const day = String(date.getUTCDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    /**
+     * Formats dates into the structure expected by MongoDB, using UTC.
+     * @param {string[]} dates - Array of dates in "YYYY-MM-DD" format or Date objects.
+     * @returns {Object[]} Array of objects with Year, Month, and dates.
+     */
+    function formatDatesForMongoDB(dates) {
+      const grouped = {};
+      dates.forEach(date => {
+        // If date is a string (e.g., "2025-03-20"), parse it as a local date
+        const d = typeof date === "string" ? new Date(date) : date;
+        // Convert to UTC
+        const utcDate = new Date(Date.UTC(
+          d.getFullYear(),
+          d.getMonth(),
+          d.getDate()
+        ));
+        const utcDateStr = formatUTCDate(utcDate); // e.g., "2025-03-19" in UTC
+        const [year, month, day] = utcDateStr.split("-");
+        const monthName = new Date(utcDate).toLocaleString("en-US", {
+          month: "long",
+          timeZone: "UTC"
+        });
+        if (!grouped[year]) grouped[year] = {};
+        if (!grouped[year][monthName]) grouped[year][monthName] = [];
+        grouped[year][monthName].push(day);
+      });
+      return Object.entries(grouped).flatMap(([year, months]) =>
+        Object.entries(months).map(([month, days]) => ({
+          Year: year,
+          Month: month,
+          dates: days.join(", ")
+        }))
+      );
+    }
     // Quill Editors for static sections
     const staticEditors = {};
     const editorIds = [
-      "about-editor", "placestovisit-editor", "activities-editor",
+      "about-editor", "activities-editor",
       "things_to_carry-editor", "includenexclude-editor", "package_cost-editor",
       "infonfaq-editor", "guidelines-editor", "bookncancel-editor"
     ];
@@ -844,14 +939,14 @@
         <div class="col-12 col-md-4">
           <div class="mb-3">
             <label class="form-label">Transport Type</label>
-            <input type="text" class="form-control transferType" name="transferType[]" placeholder="Transport Type" required>
+            <input type="text" class="form-control transferType" name="transferType[]" placeholder="Transport Type">
             <div class="invalid-feedback">Transport Type is required and must be unique.</div>
           </div>
         </div>
         <div class="col-12 col-md-4">
           <div class="mb-3">
             <label class="form-label">Child Price</label>
-            <input type="number" class="form-control childPrice" name="childPrice[]" placeholder="Enter price per child" required>
+            <input type="number" class="form-control childPrice" name="childPrice[]" placeholder="Enter price per child">
             <div class="invalid-feedback">Child Price is required.</div>
           </div>
         </div>
@@ -859,7 +954,7 @@
           <div class="mb-3 position-relative">
             <label class="form-label">Adult Price</label>
             <div class="d-flex align-items-center">
-              <input type="number" class="form-control adultPrice" name="adultPrice[]" placeholder="Enter price per adult" required>
+              <input type="number" class="form-control adultPrice" name="adultPrice[]" placeholder="Enter price per adult">
               <div class="invalid-feedback">Adult Price is required.</div>
               <button type="button" class="btn btn-danger btn-sm removeRow mt-3" style="display: none;"><i class="bi bi-x-circle"></i></button>
             </div>
@@ -1006,14 +1101,14 @@
       <div class="col-12 col-md-4">
         <div class="mb-3">
           <label class="form-label">Transport Type</label>
-          <input type="text" class="form-control transferType" name="transferType[]" placeholder="Transport Type" required>
+          <input type="text" class="form-control transferType" name="transferType[]" placeholder="Transport Type">
           <div class="invalid-feedback">Transport Type is required and must be unique.</div>
         </div>
       </div>
       <div class="col-12 col-md-4">
         <div class="mb-3">
           <label class="form-label">Child Price</label>
-          <input type="number" class="form-control childPrice" name="childPrice[]" placeholder="Enter price per child" required>
+          <input type="number" class="form-control childPrice" name="childPrice[]" placeholder="Enter price per child">
           <div class="invalid-feedback">Child Price is required.</div>
         </div>
       </div>
@@ -1021,7 +1116,7 @@
         <div class="mb-3 position-relative">
           <label class="form-label">Adult Price</label>
           <div class="d-flex align-items-center">
-            <input type="number" class="form-control adultPrice" name="adultPrice[]" placeholder="Enter price per adult" required>
+            <input type="number" class="form-control adultPrice" name="adultPrice[]" placeholder="Enter price per adult">
             <div class="invalid-feedback">Adult Price is required.</div>
             <button type="button" class="btn btn-danger btn-sm removeRow mt-3"><i class="bi bi-x-circle"></i></button>
           </div>
@@ -1362,7 +1457,7 @@
         <div class="accordion-body">
           <div class="mb-3">
             <label class="form-label">Header</label>
-            <input type="text" class="form-control itinerary-header" name="itinerary-header[]" value="${headerValue}" placeholder="Enter Header" required />
+            <input type="text" class="form-control itinerary-header" name="itinerary-header[]" value="${headerValue}" placeholder="Enter Header" />
             <div class="invalid-feedback">Header is required.</div>
           </div>
           <div class="editor-container mb-3" id="${editorId}"></div>
@@ -1680,38 +1775,6 @@
           id: "state",
           name: "State"
         },
-        {
-          id: "destinations",
-          name: "Destinations"
-        },
-        {
-          id: "route",
-          name: "Route"
-        },
-        {
-          id: "days",
-          name: "Trip Duration"
-        },
-        {
-          id: "price",
-          name: "Base Price"
-        },
-        {
-          id: "tripType",
-          name: "Difficulty"
-        },
-        {
-          id: "tag",
-          name: "Tag Line"
-        },
-        {
-          id: "altitude",
-          name: "Altitude"
-        },
-        {
-          id: "bestSession",
-          name: "Best Session"
-        }
       ];
 
       let validationErrors = [];
@@ -1745,46 +1808,46 @@
           name: "About Information",
           errorId: "aboutError"
         },
-        {
-          id: "placestovisit-editor",
-          name: "Places to Visit",
-          errorId: "placestovisitError"
-        },
-        {
-          id: "activities-editor",
-          name: "Activities & Attraction",
-          errorId: "activitiesError"
-        },
-        {
-          id: "things_to_carry-editor",
-          name: "Things to Carry",
-          errorId: "thingsToCarryError"
-        },
-        {
-          id: "includenexclude-editor",
-          name: "Include & Exclude",
-          errorId: "includeExcludeError"
-        },
-        {
-          id: "package_cost-editor",
-          name: "Package Cost",
-          errorId: "packageCostError"
-        },
-        {
-          id: "infonfaq-editor",
-          name: "Info & FAQs",
-          errorId: "infoFaqError"
-        },
-        {
-          id: "bookncancel-editor",
-          name: "Booking & Cancellation",
-          errorId: "bookCancelError"
-        },
-        {
-          id: "guidelines-editor",
-          name: "Travel Guidelines",
-          errorId: "guidelinesError"
-        }
+        // {
+        //   id: "placestovisit-editor",
+        //   name: "Places to Visit",
+        //   errorId: "placestovisitError"
+        // },
+        // {
+        //   id: "activities-editor",
+        //   name: "Activities & Attraction",
+        //   errorId: "activitiesError"
+        // },
+        // {
+        //   id: "things_to_carry-editor",
+        //   name: "Things to Carry",
+        //   errorId: "thingsToCarryError"
+        // },
+        // {
+        //   id: "includenexclude-editor",
+        //   name: "Include & Exclude",
+        //   errorId: "includeExcludeError"
+        // },
+        // {
+        //   id: "package_cost-editor",
+        //   name: "Package Cost",
+        //   errorId: "packageCostError"
+        // },
+        // {
+        //   id: "infonfaq-editor",
+        //   name: "Info & FAQs",
+        //   errorId: "infoFaqError"
+        // },
+        // {
+        //   id: "bookncancel-editor",
+        //   name: "Booking & Cancellation",
+        //   errorId: "bookCancelError"
+        // },
+        // {
+        //   id: "guidelines-editor",
+        //   name: "Travel Guidelines",
+        //   errorId: "guidelinesError"
+        // }
       ];
 
       editorFields.forEach(field => {
@@ -1838,26 +1901,26 @@
         const tripDuration = entry.querySelector(".tripDuration").value.trim();
 
         // Validate city and state
-        if (!city) {
-          validationErrors.push("Departure City is required for all entries.");
-          citySelect.classList.add("is-invalid");
-        } else {
-          citySelect.classList.remove("is-invalid");
-        }
-        if (!state) {
-          validationErrors.push("State is required for all departure cities.");
-          entry.querySelector(".state-field").classList.add("is-invalid");
-        } else {
-          entry.querySelector(".state-field").classList.remove("is-invalid");
-        }
+        // if (!city) {
+        //   validationErrors.push("Departure City is required for all entries.");
+        //   citySelect.classList.add("is-invalid");
+        // } else {
+        //   citySelect.classList.remove("is-invalid");
+        // }
+        // if (!state) {
+        //   validationErrors.push("State is required for all departure cities.");
+        //   entry.querySelector(".state-field").classList.add("is-invalid");
+        // } else {
+        //   entry.querySelector(".state-field").classList.remove("is-invalid");
+        // }
 
-        // Validate dates
-        if (dates.length === 0) {
-          validationErrors.push(`Departure City ${city}: At least one date is required.`);
-          entry.querySelector(".error-msg").classList.remove("d-none");
-        } else {
-          entry.querySelector(".error-msg").classList.add("d-none");
-        }
+        // // Validate dates
+        // if (dates.length === 0) {
+        //   validationErrors.push(`Departure City ${city}: At least one date is required.`);
+        //   entry.querySelector(".error-msg").classList.remove("d-none");
+        // } else {
+        //   entry.querySelector(".error-msg").classList.add("d-none");
+        // }
 
         // Validate pricing
         const price = Array.from(pricingRows).map(row => {
@@ -1868,24 +1931,24 @@
           const childPriceValue = childPrice.value.trim();
           const adultPriceValue = adultPrice.value.trim();
 
-          if (!transferTypeValue) {
-            validationErrors.push(`Departure City ${city}: Transport Type is required for all pricing entries.`);
-            transferType.classList.add("is-invalid");
-          } else {
-            transferType.classList.remove("is-invalid");
-          }
-          if (!childPriceValue) {
-            validationErrors.push(`Departure City ${city}: Child Price is required for all pricing entries.`);
-            childPrice.classList.add("is-invalid");
-          } else {
-            childPrice.classList.remove("is-invalid");
-          }
-          if (!adultPriceValue) {
-            validationErrors.push(`Departure City ${city}: Adult Price is required for all pricing entries.`);
-            adultPrice.classList.add("is-invalid");
-          } else {
-            adultPrice.classList.remove("is-invalid");
-          }
+          // if (!transferTypeValue) {
+          //   validationErrors.push(`Departure City ${city}: Transport Type is required for all pricing entries.`);
+          //   transferType.classList.add("is-invalid");
+          // } else {
+          //   transferType.classList.remove("is-invalid");
+          // }
+          // if (!childPriceValue) {
+          //   validationErrors.push(`Departure City ${city}: Child Price is required for all pricing entries.`);
+          //   childPrice.classList.add("is-invalid");
+          // } else {
+          //   childPrice.classList.remove("is-invalid");
+          // }
+          // if (!adultPriceValue) {
+          //   validationErrors.push(`Departure City ${city}: Adult Price is required for all pricing entries.`);
+          //   adultPrice.classList.add("is-invalid");
+          // } else {
+          //   adultPrice.classList.remove("is-invalid");
+          // }
 
           return {
             transferType: transferTypeValue,
@@ -1904,10 +1967,10 @@
       });
 
       // Derive trip_dates from deptcities dates (if this is the intended behavior)
-      const allDates = deptCitiesData.flatMap(city => city.dates.map(date => ({
-        Year: date.Year,
-        Month: date.Month,
-        dates: date.dates
+      const allDates = deptCitiesData?.flatMap(city => city?.dates?.map?.(date => ({
+        Year: date.Year || "",
+        Month: date.Month || "",
+        dates: date.dates || ""
       })));
       const uniqueTripDates = Array.from(new Map(allDates.map(item => [`${item.Year}-${item.Month}-${item.dates}`, item])).values());
 
@@ -1936,74 +1999,31 @@
       formData.set("trip_dates", JSON.stringify(uniqueTripDates));
 
       // Step 4: Submit the form
+      // Submit with fetch
       fetch("/admin/postNewAddTours", {
           method: "POST",
           body: formData
         })
-        .then(response => response)
-        .then(data => {
-          if (data) {
-            alert("Trip saved successfully!");
-            window.location.reload();
-          } else if (data.exists) {
-            alert("Trip name must be unique!");
-            document.getElementById("nameError").classList.remove("d-none");
-          } else {
-            alert("Error saving trip: " + (data.message || "Unknown error"));
-          }
+        .then(response => {
+          const status = response.status;
+          return response.json().then(data => ({
+            status,
+            data
+          }));
+        })
+        .then(({
+          status,
+          data
+        }) => {
+          handleResponse(data, status);
         })
         .catch(err => {
           console.error("Submission error:", err);
-          alert("An error occurred while submitting the form. Please try again.");
+          handleResponse({
+            message: "An error occurred while submitting the form. Please try again."
+          }, 500);
         });
     });
-
-    /**
-     * Formats dates into the structure expected by MongoDB.
-     * @param {string[]} dates - Array of dates in "YYYY-MM-DD" format.
-     * @returns {Object[]} Array of objects with Year, Month, and dates.
-     */
-    function formatUTCDate(date) {
-      const year = date.getUTCFullYear();
-      const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Months are 0-based
-      const day = String(date.getUTCDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
-    }
-
-    /**
-     * Formats dates into the structure expected by MongoDB, using UTC.
-     * @param {string[]} dates - Array of dates in "YYYY-MM-DD" format or Date objects.
-     * @returns {Object[]} Array of objects with Year, Month, and dates.
-     */
-    function formatDatesForMongoDB(dates) {
-      const grouped = {};
-      dates.forEach(date => {
-        // If date is a string (e.g., "2025-03-20"), parse it as a local date
-        const d = typeof date === "string" ? new Date(date) : date;
-        // Convert to UTC
-        const utcDate = new Date(Date.UTC(
-          d.getFullYear(),
-          d.getMonth(),
-          d.getDate()
-        ));
-        const utcDateStr = formatUTCDate(utcDate); // e.g., "2025-03-19" in UTC
-        const [year, month, day] = utcDateStr.split("-");
-        const monthName = new Date(utcDate).toLocaleString("en-US", {
-          month: "long",
-          timeZone: "UTC"
-        });
-        if (!grouped[year]) grouped[year] = {};
-        if (!grouped[year][monthName]) grouped[year][monthName] = [];
-        grouped[year][monthName].push(day);
-      });
-      return Object.entries(grouped).flatMap(([year, months]) =>
-        Object.entries(months).map(([month, days]) => ({
-          Year: year,
-          Month: month,
-          dates: days.join(", ")
-        }))
-      );
-    }
   </script>
 </body>
 
