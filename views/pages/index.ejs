@@ -2,426 +2,788 @@
 <html class="no-js" lang="zxx">
 
 <head>
-    <%- include('../partials/headtag'); %>
-    <style>
-        /* Existing styles remain unchanged */
-        .subtitle { color: #f05a5a; font-size: 14px; margin-bottom: 8px; }
-        .subtitle h1 { font-size: 28px; margin-bottom: 20px; color: #222; }
-        .search-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 15px; }
-        .search-bar { display: flex; flex-grow: 1; max-width: 800px; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; background-color: white; }
-        .select-wrapper { position: relative; min-width: 55px; border-right: 1px solid #e0e0e0; }
-        .select-wrapper .select { display: block; width: 100%; padding: 10px 30px 10px 15px; border: none; background-color: white; font-size: 14px; cursor: pointer; color: #333; }
-        .select-wrapper::after { content: "▼"; font-size: 10px; color: #888; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; }
-        .input-wrapper { position: relative; flex-grow: 1; display: flex; align-items: center; }
-        .search-icon { position: absolute; left: 15px; width: 16px; height: 16px; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%239e9e9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>'); background-repeat: no-repeat; background-position: center; }
-        .search-input { width: 100%; padding: 10px 15px 10px 40px; border: none; font-size: 14px; outline: none; color: #333; }
-        .search-input::placeholder { color: #9e9e9e; }
-        .filters-btn { display: flex; align-items: center; padding: 10px 20px; background-color: white; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px; cursor: pointer; gap: 8px; color: #333; }
-        .filters-btn .filters-icon { display: inline-block; width: 16px; height: 16px; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>'); background-repeat: no-repeat; background-position: center; }
-        .packages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
-        .package-card { cursor: pointer; overflow: hidden; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); border-radius: 20px;}
-        .package-card:hover { box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1); }
-        .card-image-container { position: relative; height: 280px; overflow: hidden; border-radius: 12px; }
-        .card-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-        .package-card:hover .card-image { transform: scale(1.05); }
-        .discount-tag { position: absolute; top: 10px; right: 10px; background-color: #ff5a5f; color: white; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-        .region { display: flex; align-items: center; margin-bottom: 10px; color: #666; font-size: 13px; }
-        .region::before { content: ""; display: inline-block; width: 14px; height: 14px; margin-right: 5px; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>'); background-repeat: no-repeat; background-position: center; }
-        .font-weight-bold { font-weight: bold; }
-        .overflow-auto { overflow: auto; }
-        .chip { display: flex; align-items: center; padding: 3px 10px; margin: 0px 0px 11px 7px; font-size: 14px; border-radius: 10px; background-color: #f1f3f5; color: #333; border: 1px solid #d1d1d1; cursor: pointer; }
-        .chip .close { margin-left: 8px; font-size: 16px; cursor: pointer; color: #666; }
-        .chip .close:hover { color: #000; }
-        .location-text { color: #6c757d; font-size: 14px; }
-        .icon-text { display: flex; align-items: center; gap: 6px; font-size: 14px; color: #000000; }
-        .icon-text i { color: #020202; }
-        .details { font-size: 14px; color: #6c757d; }
-        .bottom-info { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-        .price { font-weight: bold; font-size: 18px; color: #000; }
-        .price small { font-size: 14px; color: #6c757d; }
-    
-        /* Modal-specific styles */
-        .image-preview { position: relative; }
-        .image-preview img { border-radius: 8px; }
-        .image-preview .btn { padding: 2px 6px; }
-        .banner-image { position: relative; cursor: pointer; transition: transform 0.2s; }
-        .banner-image:hover { transform: scale(1.05); }
-        .banner-image img { max-width: 150px; max-height: 150px; border-radius: 8px; }
-        .banner-image .remove-btn { position: absolute; top: 5px; right: 5px; padding: 2px 6px; }
-        .modal-dialog { max-width: 800px; }
-    
-        @media (max-width: 768px) { .packages-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); } }
-        @media (max-width: 576px) {
-          .search-container { flex-direction: column; align-items: stretch; }
-          .search-bar { max-width: 100%; }
-          .filters-btn { align-self: flex-end; }
-          .packages-grid { grid-template-columns: 1fr; }
-          .modal-dialog { max-width: 100%; margin: 0.5rem; }
-          .image-preview img, .banner-image img { max-width: 100px; max-height: 100px; }
-        }
-      </style>
+  <%- include('../partials/headtag'); %>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    /* Existing styles remain unchanged */
+    .subtitle {
+      color: #f05a5a;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #222;
+    }
+
+    .search-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 15px;
+    }
+
+    .search-bar {
+      display: flex;
+      flex-grow: 1;
+      max-width: 800px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      overflow: hidden;
+      background-color: white;
+    }
+
+    .select-wrapper {
+      position: relative;
+      min-width: 55px;
+      border-right: 1px solid #e0e0e0;
+    }
+
+    .select-wrapper .select {
+      display: block;
+      width: 100%;
+      padding: 10px 30px 10px 15px;
+      border: none;
+      background-color: white;
+      font-size: 14px;
+      cursor: pointer;
+      color: #333;
+    }
+
+    .select-wrapper::after {
+      content: "▼";
+      font-size: 10px;
+      color: #888;
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .input-wrapper {
+      position: relative;
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      width: 16px;
+      height: 16px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%239e9e9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>');
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 15px 10px 40px;
+      border: none;
+      font-size: 14px;
+      outline: none;
+      color: #333;
+    }
+
+    .search-input::placeholder {
+      color: #9e9e9e;
+    }
+
+    .filters-btn {
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      gap: 8px;
+      color: #333;
+    }
+
+    .filters-btn .filters-icon {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>');
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    /* Ensure grid layout adjusts properly */
+    .packages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 10px;
+    }
+
+    .package-card {
+      cursor: pointer;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      border-radius: 20px;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .package-card:hover {
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .package-card.hidden {
+      display: none;
+      /* Hide cards with this class */
+    }
+
+  /* Style for inactive cards (admin view only) */
+  .package-card.inactive {
+      border: 2px dashed #ff5a5f;
+      background-color: #fff5f5;
+      opacity: 0.9;
+    }
+  .package-card.inactive:hover {
+    box-shadow: 0 12px 20px rgba(255, 90, 95, 0.2);
+  }
+
+    .card-image-container {
+      position: relative;
+      height: 280px;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    .card-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .package-card:hover .card-image {
+      transform: scale(1.05);
+    }
+
+    .discount-tag {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #ff5a5f;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .region {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      color: #666;
+      font-size: 13px;
+    }
+
+    .region::before {
+      content: "";
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      margin-right: 5px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>');
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .font-weight-bold {
+      font-weight: bold;
+    }
+
+    .overflow-auto {
+      overflow: auto;
+    }
+
+    .chip {
+      display: flex;
+      align-items: center;
+      padding: 3px 10px;
+      margin: 0px 0px 11px 7px;
+      font-size: 14px;
+      border-radius: 10px;
+      background-color: #f1f3f5;
+      color: #333;
+      border: 1px solid #d1d1d1;
+      cursor: pointer;
+    }
+
+    .chip .close {
+      margin-left: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .chip .close:hover {
+      color: #000;
+    }
+
+    .location-text {
+      color: #6c757d;
+      font-size: 14px;
+    }
+
+    .icon-text {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: #000000;
+    }
+
+    .icon-text i {
+      color: #020202;
+    }
+
+    .details {
+      font-size: 14px;
+      color: #6c757d;
+    }
+
+    .bottom-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .price {
+      font-weight: bold;
+      font-size: 18px;
+      color: #000;
+    }
+
+    .price small {
+      font-size: 14px;
+      color: #6c757d;
+    }
+
+    /* Modal-specific styles */
+    .image-preview {
+      position: relative;
+    }
+
+    .image-preview img {
+      border-radius: 8px;
+    }
+
+    .image-preview .btn {
+      padding: 2px 6px;
+    }
+
+    .banner-image {
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .banner-image:hover {
+      transform: scale(1.05);
+    }
+
+    .banner-image img {
+      max-width: 150px;
+      max-height: 150px;
+      border-radius: 8px;
+    }
+
+    .banner-image .remove-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      padding: 2px 6px;
+    }
+
+    .modal-dialog {
+      max-width: 800px;
+    }
+
+    @media (max-width: 768px) {
+      .packages-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+
+    @media (max-width: 576px) {
+      .search-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-bar {
+        max-width: 100%;
+      }
+
+      .filters-btn {
+        align-self: flex-end;
+      }
+
+      .packages-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-dialog {
+        max-width: 100%;
+        margin: 0.5rem;
+      }
+
+      .image-preview img,
+      .banner-image img {
+        max-width: 100px;
+        max-height: 100px;
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <%- include('../partials/header'); %>
-    <%- include('../partials/slider'); %>
-    
-        <!-- Tours and Trek event - popular places area start -->
-        <div class="popular_places_area">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-6">
-                        <div class="section_title text-center mb_70">
-                            <h3>Tours & Trek</h3>
-                            <p>We have pre planned schedule for fix departure tours and treks round the year at different locations.</p>
-                        </div>
-                    </div>
-                </div>
+  <%- include('../partials/header'); %>
+  <%- include('../partials/slider'); %>
 
-                <div class="packages-grid">
-                    <% tourPackages.forEach(function(tour) { %>
-                      <div class="package-card p-2 border rounded-4">
-                        <div class="card-image-container">
-                          <a href="/tripdetail/<%= tour._id %>">
-                            <img src="<%= tour.imageurl %>" alt="<%= tour.name %>" class="card-image card-img-top img-fluid rounded-4">
-                          </a>
+  <!-- Tours and Trek event - popular places area start -->
+  <section class="popular_places_area" aria-label="Tour and Trek Packages">
+    <div class="container">
+      <header class="row justify-content-center">
+        <div class="col-lg-6">
+          <div class="section_title text-center mb_70">
+            <h1>Tours & Trek</h1>
+            <p>We have pre planned schedule for fix departure tours and treks round the year at different locations.</p>
+          </div>
+        </div>
+      </header>
+      <div class="packages-grid">
+        <% 
+          // Filter packages based on user role
+          let displayedPackages = profile?.email === process.env.GMAIL_ADMIN 
+            ? tourPackages 
+            : tourPackages.filter(tour => tour.isActive);
+          
+          displayedPackages.forEach(function(tour, index) { 
+        %>
+        <div class="package-card p-2 border rounded-4 <%= !tour.isActive ? 'inactive' : '' %>"
+             onclick="window.location.href='/tripdetail/<%= tour.name %>'"
+             <% if (!tour.isActive && profile?.email === process.env.GMAIL_ADMIN) { %>
+             data-toggle="tooltip" 
+             data-placement="top" 
+             title="This trip is inactive" 
+             <% } %>>
+          <div class="card-image-container">
+            <img src="<%= tour.imageurl %>" 
+                 alt="Tour package - <%= tour.name %> in <%= tour.state %>, India" 
+                 class="card-image card-img-top img-fluid rounded-4" 
+                 loading="lazy">
+          </div>
+          <div class="card-body p-2">
+            <h2 class="card-title fw-bold"><%= tour.name %></h2>
+            <p class="location-text"><%- tour.destinations %></p>
+            <div class="icon-text">
+              <i class="bi bi-geo-alt-fill"></i>
+              <span><%= tour.state %>, India</span>
+            </div>
+            <div class="bottom-info">
+              <span class="details"><i class="bi bi-calendar-event"></i> <%- tour.days %></span>
+              <span class="price">From ₹<%- tour.price %><small>/person</small></span>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="more_place_btn text-center">
+            <button class="btn btn-primary" id="btn-packages">Show More</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Tours and Trek event - popular places area end -->
+
+  <!-- popular_destination_area_start  -->
+  <div class="popular_destination_area">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-6">
+          <div class="section_title text-center mb_70">
+            <h3>Tour Packages</h3>
+            <p>Looking for a statewise multiple packages</p>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4 col-md-6">
+          <div class="single_destination">
+            <div class="thumb">
+              <img src="images/gujarat.jpg" alt="">
+
+            </div>
+            <div class="content">
+              <p class="d-flex align-items-center">Gujarat <a href="https://www.dejavutours.in/filters/Gujarat"> 19 Places</a> </p>
+
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="single_destination">
+            <div class="thumb">
+              <img src="images/maharashtra.jpg" alt="">
+            </div>
+            <div class="content">
+              <p class="d-flex align-items-center">Maharastra<a href="https://www.dejavutours.in/filters/Maharashtra"> 03 Places</a> </p>
+
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="single_destination">
+            <div class="thumb">
+              <img src="images/himalaya.jpg" alt="">
+            </div>
+            <div class="content">
+              <p class="d-flex align-items-center">Himalaya<a href="https://www.dejavutours.in/filters/Himalayan"> 17 Places</a> </p>
+
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="single_destination">
+            <div class="thumb">
+              <img src="images/rajasthan.jpg" alt="">
+            </div>
+            <div class="content">
+              <p class="d-flex align-items-center">Rajasthan<a href="https://www.dejavutours.in/filters/Rajasthan"> 05 Places</a> </p>
+
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="single_destination">
+            <div class="thumb">
+              <img src="images/north-east.jpg" alt="">
+            </div>
+            <div class="content">
+              <p class="d-flex align-items-center">North-East <a href="https://www.dejavutours.in/filters/North-East"> 00 Places</a> </p>
+
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="single_destination">
+            <div class="thumb">
+              <img src="images/south-india.jpg" alt="">
+            </div>
+            <div class="content">
+              <p class="d-flex align-items-center">South India <a href="https://www.dejavutours.in/filters/South-India"> 00 Places</a> </p>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- popular_destination_area_end  -->
+
+  <!-- Accomodation places area start -->
+  <div class="popular_places_area">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-6">
+          <div class="section_title text-center mb_70">
+            <h3>Dejavu Accommodation</h3>
+            <p>Our specially identified local accommodation and delicious food are key ingredients in providing such travel experience. We can understand your travel desire if you want to drive by yourself using your own vehicle or explore places with local transportation, we will help out find such beautiful and unique stay</p>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <% for (let [index, accods] of accomodations.entries() ) { %>
+        <% if(index <= 2){ %>
+        <div class="col-lg-4 col-md-6">
+          <div class="single_place">
+            <div class="thumb">
+              <!-- <img src="images/<%= accods.imageurl %>" alt=""> -->
+              <a href="/accomodationdetails/<%= accods.name %>">
+                <img src="images/<%= accods.imageurl %>" alt="">
+              </a>
+              <a href="/accomodationdetails/<%= accods.name %>" class="prise">₹<%= accods.price %></a>
+            </div>
+            <div class="place_info">
+              <a href="/accomodationdetails/<%= accods.name %>">
+                <h3><%= accods.name %></h3>
+              </a>
+              <p><%= accods.destinations %></p>
+              <!--<p>Ahmedabad to Ahmedabad</p>-->
+              <div class="rating_days d-flex justify-content-between">
+                <!--<span class="d-flex justify-content-center align-items-center">
+                                                     <i class="fa fa-star"></i> 
+                                                     <i class="fa fa-star"></i> 
+                                                     <i class="fa fa-star"></i> 
+                                                     <i class="fa fa-star"></i> 
+                                                     <i class="fa fa-star"></i>
+                                                     <a href="#">(20 Review)</a>
+                                                </span>-->
+                <div class="days">
+                  <i class="fa fa-clock-o"></i>
+                  <a href="#"><%= accods.days %> Days</a>
+                </div>
+                <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
+                <div>
+                  <form action="/admin/accod/edit" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>" />
+                    <button type="submit" class="btn btn-primary">Edit</button>
+                  </form>
+                </div>
+                <div>
+                  <!-- Modal -->
+                  <div class="modal fade" id="myModalaccod" role="dialog">
+                    <div class="modal-dialog">
+
+                      <!-- Modal content-->
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Are you sure to delete the trip ?</h4>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
                         </div>
-                        <div class="card-body p-2">
-                          <h5 class="card-title fw-bold"><%= tour.name %></h5>
-                          <p class="location-text"><%- tour.destinations %></p>
-                          <div class="icon-text">
-                            <i class="bi bi-geo-alt-fill"></i>
-                            <span><%= tour.state %>, India</span>
-                          </div>
-                          <div class="icon-text mt-2">
-                            <i class="bi bi-house-door-fill"></i>
-                            <span><%- tour.route %></span>
-                          </div>
-                          <div class="bottom-info">
-                            <span class="details"><i class="bi bi-calendar-event"></i> <%- tour.days %></span>
-                            <span class="price">From ₹<%- tour.price %><small>/person</small></span>
-                          </div>
+                        <div class="modal-body">
+                          <p class="text-danger">Once Deleted Trip cant be recovered.</p>
+                        </div>
+                        <div class="modal-footer">
+                          <form action="/admin/accod/delete" method="POST">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>" />
+                            <button type="submit" class="btn btn-danger">Yes</button>
+                          </form>
+                          <button type="button" class="btn btn-success" data-dismiss="modal">No</button>
                         </div>
                       </div>
-                    <% }); %>
+
+                    </div>
                   </div>
-                <!-- <div class="row">
-                    <div class="col-lg-12">
-                        <div class="more_place_btn text-center">
-                            <button class="btn btn-primary" id="btntag" onclick="displayall()">Show More</button>
+                  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModalaccod">Delete</button>
+                  <!-- </form> -->
+                </div>
+                <div>
+                  <form action="/admin/accod/AddImage" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>" />
+                    <button type="submit" class="btn btn-secondary">Add Image</button>
+                  </form>
+                </div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% } else{ %>
+        <div class="col-lg-4 col-md-6" name="showmoreaccods" style="display:none;">
+          <div class="single_place">
+            <div class="thumb">
+              <!-- <img src="images/<%= accods.imageurl %>" alt=""> -->
+              <a href="/accomodationdetails/<%= accods.name %>">
+                <img src="images/<%= accods.imageurl %>" alt="">
+              </a>
+              <a href="/accomodationdetails/<%= accods.name %>" class="prise">₹<%= accods.price %></a>
+            </div>
+            <div class="place_info">
+              <a href="/accomodationdetails/<%= accods.name %>">
+                <h3><%= accods.name %></h3>
+              </a>
+              <p><%= accods.destinations %></p>
+              <!--<p>Ahmedabad to Ahmedabad</p>-->
+              <div class="rating_days d-flex justify-content-between">
+                <!--<span class="d-flex justify-content-center align-items-center">
+                                                     <i class="fa fa-star"></i> 
+                                                     <i class="fa fa-star"></i> 
+                                                     <i class="fa fa-star"></i> 
+                                                     <i class="fa fa-star"></i> 
+                                                     <i class="fa fa-star"></i>
+                                                     <a href="#">(20 Review)</a>
+                                                </span>-->
+                <div class="days">
+                  <i class="fa fa-clock-o"></i>
+                  <a href="#"><%= accods.days %> Days</a>
+                </div>
+                <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
+                <div>
+                  <form action="/admin/accod/edit" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>" />
+                    <button type="submit" class="btn btn-primary">Edit</button>
+                  </form>
+                </div>
+                <div>
+                  <!-- Modal -->
+                  <div class="modal fade" id="myModalaccod" role="dialog">
+                    <div class="modal-dialog">
+
+                      <!-- Modal content-->
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Are you sure to delete the trip ?</h4>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
                         </div>
-                    </div>
-                </div> -->
-            </div>
-        </div>
-     <!-- Tours and Trek event - popular places area end -->
-
-<!-- popular_destination_area_start  -->
- <div class="popular_destination_area">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-6">
-                <div class="section_title text-center mb_70">
-                    <h3>Tour Packages</h3>
-                    <p>Looking for a statewise multiple packages</p>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-4 col-md-6">
-                <div class="single_destination">
-                    <div class="thumb">
-                        <img src="images/gujarat.jpg" alt="">
+                        <div class="modal-body">
+                          <p class="text-danger">Once Deleted Trip cant be recovered.</p>
+                        </div>
+                        <div class="modal-footer">
+                          <form action="/admin/accod/delete" method="POST">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>" />
+                            <button type="submit" class="btn btn-danger">Yes</button>
+                          </form>
+                          <button type="button" class="btn btn-success" data-dismiss="modal">No</button>
+                        </div>
+                      </div>
 
                     </div>
-                    <div class="content">
-                        <p class="d-flex align-items-center">Gujarat <a href="https://www.dejavutours.in/filters/Gujarat">  19 Places</a> </p>
-                        
-                    </div>
+                  </div>
+                  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModalaccod">Delete</button>
+                  <!-- </form> -->
                 </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="single_destination">
-                    <div class="thumb">
-                        <img src="images/maharashtra.jpg" alt="">
-                    </div>
-                    <div class="content">
-                        <p class="d-flex align-items-center">Maharastra<a href="https://www.dejavutours.in/filters/Maharashtra">  03 Places</a> </p>
-                        
-                    </div>
+                <div>
+                  <form action="/admin/accod/AddImage" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>" />
+                    <button type="submit" class="btn btn-secondary">Add Image</button>
+                  </form>
                 </div>
+                <% } %>
+              </div>
             </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="single_destination">
-                    <div class="thumb">
-                        <img src="images/himalaya.jpg" alt="">
-                    </div>
-                    <div class="content">
-                        <p class="d-flex align-items-center">Himalaya<a href="https://www.dejavutours.in/filters/Himalayan">  17 Places</a> </p>
-                        
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="single_destination">
-                    <div class="thumb">
-                        <img src="images/rajasthan.jpg" alt="">
-                    </div>
-                    <div class="content">
-                        <p class="d-flex align-items-center">Rajasthan<a href="https://www.dejavutours.in/filters/Rajasthan">  05 Places</a> </p>
-                        
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="single_destination">
-                    <div class="thumb">
-                        <img src="images/north-east.jpg" alt="">
-                    </div>
-                    <div class="content">
-                        <p class="d-flex align-items-center">North-East <a href="https://www.dejavutours.in/filters/North-East">  00 Places</a> </p>
-                        
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="single_destination">
-                    <div class="thumb">
-                        <img src="images/south-india.jpg" alt="">
-                    </div>
-                    <div class="content">
-                        <p class="d-flex align-items-center">South India <a href="https://www.dejavutours.in/filters/South-India">  00 Places</a> </p>
-                        
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+        <% } %>
+        <% } %>
+
+
+      </div>
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="more_place_btn text-center">
+            <button class="btn btn-primary" id="btntagaccods" onclick="displayallaccods()">Show More</button>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
-<!-- popular_destination_area_end  -->
+  </div>
+  <!-- Accomodation places area end -->
 
-             <!-- Accomodation places area start -->
-             <div class="popular_places_area">
-                <div class="container">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-6">
-                            <div class="section_title text-center mb_70">
-                                <h3>Dejavu Accommodation</h3>
-                                <p>Our specially identified local accommodation and delicious food are key ingredients in providing such travel experience. We can understand your travel desire if you want to drive by yourself using your own vehicle or explore places with local transportation, we will help out find such beautiful and unique stay</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <% for (let [index, accods] of accomodations.entries() ) { %>
-                            <% if(index <= 2){ %>
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="single_place">
-                                        <div class="thumb">
-                                            <!-- <img src="images/<%= accods.imageurl %>" alt=""> -->
-                                            <a href="/accomodationdetails/<%= accods.name %>">
-                                                <img src="images/<%= accods.imageurl %>" alt="">
-                                            </a>
-                                            <a href="/accomodationdetails/<%= accods.name %>" class="prise">₹<%= accods.price %></a>
-                                        </div>
-                                        <div class="place_info">
-                                            <a href="/accomodationdetails/<%= accods.name %>"><h3><%= accods.name %></h3></a>
-                                            <p><%= accods.destinations %></p>
-                                            <!--<p>Ahmedabad to Ahmedabad</p>-->
-                                            <div class="rating_days d-flex justify-content-between">
-                                                <!--<span class="d-flex justify-content-center align-items-center">
-                                                     <i class="fa fa-star"></i> 
-                                                     <i class="fa fa-star"></i> 
-                                                     <i class="fa fa-star"></i> 
-                                                     <i class="fa fa-star"></i> 
-                                                     <i class="fa fa-star"></i>
-                                                     <a href="#">(20 Review)</a>
-                                                </span>-->
-                                                <div class="days">
-                                                    <i class="fa fa-clock-o"></i>
-                                                    <a href="#"><%= accods.days %> Days</a>
-                                                </div>
-                                                <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
-                                                <div>
-                                                    <form action="/admin/accod/edit" method="POST">
-                                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                                        <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>"/>
-                                                        <button type="submit" class="btn btn-primary">Edit</button>
-                                                    </form>
-                                                </div>
-                                                <div>
-                                                    <!-- Modal -->
-                                                       <div class="modal fade" id="myModalaccod" role="dialog">
-                                                           <div class="modal-dialog">
-                                                           
-                                                           <!-- Modal content-->
-                                                           <div class="modal-content">
-                                                               <div class="modal-header">
-                                                               <h4 class="modal-title">Are you sure to delete the trip ?</h4>
-                                                               <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                               </div>
-                                                               <div class="modal-body">
-                                                               <p class="text-danger">Once Deleted Trip cant be recovered.</p>
-                                                               </div>
-                                                               <div class="modal-footer">
-                                                                   <form action="/admin/accod/delete" method="POST">
-                                                                       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                                                       <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>"/>
-                                                                       <button type="submit" class="btn btn-danger">Yes</button>
-                                                                   </form>
-                                                               <button type="button" class="btn btn-success" data-dismiss="modal">No</button>
-                                                               </div>
-                                                           </div>
-                                                           
-                                                           </div>
-                                                       </div>
-                                                       <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModalaccod">Delete</button>
-                                                   <!-- </form> -->
-                                               </div>
-                                                <div>
-                                                    <form action="/admin/accod/AddImage" method="POST">
-                                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                                        <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>"/>
-                                                        <button type="submit" class="btn btn-secondary">Add Image</button>
-                                                    </form>
-                                                </div>
-                                                <% } %>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                              <% } else{ %>  
-                                <div class="col-lg-4 col-md-6"  name="showmoreaccods" style="display:none;">
-                                    <div class="single_place">
-                                        <div class="thumb">
-                                            <!-- <img src="images/<%= accods.imageurl %>" alt=""> -->
-                                            <a href="/accomodationdetails/<%= accods.name %>">
-                                                <img src="images/<%= accods.imageurl %>" alt="">
-                                            </a>
-                                            <a href="/accomodationdetails/<%= accods.name %>" class="prise">₹<%= accods.price %></a>
-                                        </div>
-                                        <div class="place_info">
-                                            <a href="/accomodationdetails/<%= accods.name %>"><h3><%= accods.name %></h3></a>
-                                            <p><%= accods.destinations %></p>
-                                            <!--<p>Ahmedabad to Ahmedabad</p>-->
-                                            <div class="rating_days d-flex justify-content-between">
-                                                <!--<span class="d-flex justify-content-center align-items-center">
-                                                     <i class="fa fa-star"></i> 
-                                                     <i class="fa fa-star"></i> 
-                                                     <i class="fa fa-star"></i> 
-                                                     <i class="fa fa-star"></i> 
-                                                     <i class="fa fa-star"></i>
-                                                     <a href="#">(20 Review)</a>
-                                                </span>-->
-                                                <div class="days">
-                                                    <i class="fa fa-clock-o"></i>
-                                                    <a href="#"><%= accods.days %> Days</a>
-                                                </div>
-                                                <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
-                                                <div>
-                                                    <form action="/admin/accod/edit" method="POST">
-                                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                                        <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>"/>
-                                                        <button type="submit" class="btn btn-primary">Edit</button>
-                                                    </form>
-                                                </div>
-                                                <div>
-                                                    <!-- Modal -->
-                                                       <div class="modal fade" id="myModalaccod" role="dialog">
-                                                           <div class="modal-dialog">
-                                                           
-                                                           <!-- Modal content-->
-                                                           <div class="modal-content">
-                                                               <div class="modal-header">
-                                                               <h4 class="modal-title">Are you sure to delete the trip ?</h4>
-                                                               <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                               </div>
-                                                               <div class="modal-body">
-                                                               <p class="text-danger">Once Deleted Trip cant be recovered.</p>
-                                                               </div>
-                                                               <div class="modal-footer">
-                                                                   <form action="/admin/accod/delete" method="POST">
-                                                                       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                                                       <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>"/>
-                                                                       <button type="submit" class="btn btn-danger">Yes</button>
-                                                                   </form>
-                                                               <button type="button" class="btn btn-success" data-dismiss="modal">No</button>
-                                                               </div>
-                                                           </div>
-                                                           
-                                                           </div>
-                                                       </div>
-                                                       <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModalaccod">Delete</button>
-                                                   <!-- </form> -->
-                                               </div>
-                                                <div>
-                                                    <form action="/admin/accod/AddImage" method="POST">
-                                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                                        <input type="hidden" name="accodid" id="accodid" value="<%= accods._id %>"/>
-                                                        <button type="submit" class="btn btn-secondary">Add Image</button>
-                                                    </form>
-                                                </div>
-                                                <% } %>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                             <% } %>
-                        <% } %>
-                        
-                        
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="more_place_btn text-center">
-                                <button class="btn btn-primary" id="btntagaccods" onclick="displayallaccods()">Show More</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-         <!-- Accomodation places area end -->
-  
 
-    <%- include('../partials/footer'); %>
-    <%- include('../partials/scripttag'); %>
+  <%- include('../partials/footer'); %>
+  <%- include('../partials/scripttag'); %>
 </body>
 <script>
-    function displayall() {
-      var showmorebtn = document.getElementById("btntag");
-      if(showmorebtn.innerText == "Show More"){
-        showmorebtn.innerText = "Show Less"
-      }else{
-        showmorebtn.innerText = "Show More"
-      }
-      var x = document.getElementsByName("showmore");
-      var i;
-        for (i = 0; i < x.length; i++) {
-                    if (x[i].style.display === "none") {
-                x[i].style.display = "flex";
-            } else {
-                x[i].style.display = "none";
-            }
-        }
+  function displayall() {
+    var showmorebtn = document.getElementById("btntag");
+    if (showmorebtn.innerText == "Show More") {
+      showmorebtn.innerText = "Show Less"
+    } else {
+      showmorebtn.innerText = "Show More"
     }
+    var x = document.getElementsByName("showmore");
+    var i;
+    for (i = 0; i < x.length; i++) {
+      if (x[i].style.display === "none") {
+        x[i].style.display = "flex";
+      } else {
+        x[i].style.display = "none";
+      }
+    }
+  }
 
-    function displayallaccods() {
-      var showmorebtn = document.getElementById("btntagaccods");
-      if(showmorebtn.innerText == "Show More"){
-        showmorebtn.innerText = "Show Less"
-      }else{
-        showmorebtn.innerText = "Show More"
-      }
-      var x = document.getElementsByName("showmoreaccods");
-      var i;
-        for (i = 0; i < x.length; i++) {
-                    if (x[i].style.display === "none") {
-                x[i].style.display = "flex";
-            } else {
-                x[i].style.display = "none";
-            }
-        }
+  function displayallaccods() {
+    var showmorebtn = document.getElementById("btntagaccods");
+    if (showmorebtn.innerText == "Show More") {
+      showmorebtn.innerText = "Show Less"
+    } else {
+      showmorebtn.innerText = "Show More"
     }
-    
+    var x = document.getElementsByName("showmoreaccods");
+    var i;
+    for (i = 0; i < x.length; i++) {
+      if (x[i].style.display === "none") {
+        x[i].style.display = "flex";
+      } else {
+        x[i].style.display = "none";
+      }
+    }
+  }
+
+  // Packages Show More Logic
+  document.addEventListener("DOMContentLoaded", function() {
+    // Initialize Bootstrap tooltips
+    $('[data-toggle="tooltip"]').tooltip();
+
+    // Packages Show More Logic
+    const grid = document.querySelector(".packages-grid");
+    const cards = grid.querySelectorAll(".package-card");
+    const showMoreBtn = document.getElementById("btn-packages");
+    const maxInitialCards = 6;
+
+    // Hide cards beyond initial limit
+    cards.forEach((card, index) => {
+      if (index >= maxInitialCards) {
+        card.style.display = "none";
+      }
+    });
+
+    // Toggle visibility on button click
+    showMoreBtn.addEventListener("click", function() {
+      const isShowingMore = showMoreBtn.innerText === "Show Less";
+      showMoreBtn.innerText = isShowingMore ? "Show More" : "Show Less";
+      
+      cards.forEach((card, index) => {
+        if (index >= maxInitialCards) {
+          card.style.display = isShowingMore ? "none" : "block";
+        }
+      });
+    });
+
+    // Hide button if fewer than maxInitialCards
+    if (cards.length <= maxInitialCards) {
+      showMoreBtn.style.display = "none";
+    }
+  });
 </script>
+<!-- SEO Schema Markup -->
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "TravelAgency",
+    "name": "Dejavu Tours",
+    "url": "https://www.dejavutours.in",
+    "offers": [
+      <% 
+        let displayedPackage = profile?.email === process.env.GMAIL_ADMIN 
+          ? tourPackages 
+          : tourPackages.filter(tour => tour.isActive);
+        displayedPackage.forEach(function(tour, index) { 
+      %>
+      {
+        "@type": "Offer",
+        "name": "<%= tour.name %>",
+        "description": "Tour package to <%= tour.destinations %>",
+        "price": "<%= tour.price %>",
+        "priceCurrency": "INR",
+        "availability": "<%= tour.isActive ? 'InStock' : 'OutOfStock' %>",
+        "url": "https://www.dejavutours.in/tripdetail/<%= tour.name %>"
+      }<%= index < displayedPackage.length - 1 ? ',' : '' %>
+      <% }); %>
+    ]
+  }
+  </script>
 
 </html>

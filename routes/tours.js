@@ -66,7 +66,7 @@ router.post(
 router.get('/tripdetails/:token', toursController.getTourDetails);
 
 //New get trip detial route, based on the trip Id
-router.get('/tripdetail/:tripId', toursController.getTripDetial);
+router.get('/tripdetail/:name', toursController.getTripDetialbyName);
 
 router.post('/newsletter', toursController.postNewsletter);
 
@@ -416,6 +416,9 @@ router.post(
   ensureLoggedIn,
   toursController.submitBookingTourPage
 );
+
+router.post("/admin/changeTripStatus", ensureLoggedIn, isAuth, toursController.changeTripStatus);
+router.post("/admin/deleteTripDetail", ensureLoggedIn, isAuth, toursController.deleteTrip);
 
 
 module.exports = router;

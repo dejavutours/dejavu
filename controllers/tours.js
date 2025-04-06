@@ -1506,11 +1506,12 @@ exports.getCheckToursUnique = async (req, res, next) => {
 };
 
 
+// Add new trip detail 
 exports.postNewAddTours = async (req, res) => {
   try {
     const {
-      name, tripId, state, destinations, route, days, price, tripType, about, placestovisit, activities,
-      things_to_carry, package_cost, includenexclude, infonfaq, bookncancel, guidelines, tag, altitude, bestSession,
+      name, tripId, state, destinations, route, days, price, tripType, about, activities,
+      things_to_carry, package_cost, includenexclude, infonfaq, bookncancel, guidelines, altitude, bestSession,
       existingImage, itinerary, deptcities, trip_dates
     } = req.body;
 
@@ -1520,7 +1521,7 @@ exports.postNewAddTours = async (req, res) => {
       if (req.files && req.files.length > 0) {
         req.files.forEach(file => fileHelper.deleteFile(`images/tours/${file.filename}`));
       }
-      return res.status(400).json({ exists: true, message: "Trip name must be unique" });
+      return res.status(400).json({ success: false, message: "Trip name must be unique", exists: true });
     }
 
     // Parse JSON fields if they are strings
@@ -1530,10 +1531,10 @@ exports.postNewAddTours = async (req, res) => {
     const parsedTripDates = parseJSONField(trip_dates);
 
     // Validate required fields
-    const requiredFields = ["name", "state", "destinations", "route", "days", "price", "about", "tripType", "placestovisit", "activities", "things_to_carry", "package_cost"];
+    const requiredFields = ["name", "state"];
     const missingFields = requiredFields.filter((field) => !req.body[field]);
     if (missingFields.length > 0) {
-      return res.status(400).json({ error: `Missing required fields: ${missingFields.join(", ")}` });
+      return res.status(400).json({ success: false, message: `Missing required fields: ${missingFields.join(", ")}` });
     }
 
     // Handle image uploads
@@ -1548,21 +1549,20 @@ exports.postNewAddTours = async (req, res) => {
     }
 
     if (!imageurl && !tripId) {
-      return res.status(400).json({ error: "Main image is required for new trips" });
+      return res.status(400).json({ success: false, message: "Main image is required for new trips" });
     }
 
     const tourData = {
       name,
       state,
       imageurl,
-      bannerimages, // Corrected to array
+      bannerimages,
       destinations,
       route,
       days,
       price,
       tripType,
       about,
-      placestovisit,
       activities,
       itinerary: parsedItinerary,
       things_to_carry,
@@ -1573,7 +1573,6 @@ exports.postNewAddTours = async (req, res) => {
       guidelines,
       trip_dates: parsedTripDates,
       deptcities: parsedDeptCities,
-      tag,
       altitude,
       bestSession
     };
@@ -1584,25 +1583,20 @@ exports.postNewAddTours = async (req, res) => {
       if (imageurl && imageurl !== existingTrip.imageurl) {
         fileHelper.deleteFile(existingTrip.imageurl.replace("/images/tours/", "images/tours/"));
       }
-      await NewTours.findByIdAndUpdate(tripId, tourData);
-      return res.json({ message: "Trip updated successfully" });
+      const updatedTrip = await NewTours.findByIdAndUpdate(tripId, tourData, { new: true });
+      return res.status(200).json({ success: true, message: "Trip updated successfully", trip: updatedTrip });
     } else {
       // Create new trip
       const newTour = new NewTours(tourData);
-      await newTour.save();
-      const tours = await NewTours.find({});
-      res.render("pages/tourlist", {
-        tourPackages: tours,
-        filterChips: [],
-        Searchvalue: "",
-      });
+      const savedTour = await newTour.save();
+      return res.status(201).json({ success: true, message: "Trip created successfully", trip: savedTour });
     }
   } catch (error) {
     console.error("Error in postNewAddTours:", error);
     if (req.files && req.files.length > 0) {
       req.files.forEach(file => fileHelper.deleteFile(`images/tours/${file.filename}`));
     }
-    res.status(500).json({ success: false, message: "Server error", error });
+    return res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 };
 
@@ -1618,47 +1612,101 @@ exports.getTourDetails = async (req, res, next) => {
   }
 };
 
-// New trip detail by trip id
-exports.getTripDetial = async (req, res, next) => {
+/* New trip detail by trip id
+* POST /admin/deleteTrip - Deletes a NewTours trip by ID
+* @param {Object} req - Express request object with tripId
+* @param {Object} res - Express response object
+*/
+exports.deleteTrip = async (req, res) => {
   try {
-    const tripId = req.params.tripId;
-    const tripdetails = await NewTours.findById(tripId);
+    const { tripId } = req.body;
+
+    console.log("deleteTrip called with tripId:", tripId); // Debug log
+
+    if (!tripId) {
+      return res.status(400).json({ success: false, message: "Trip ID is required" });
+    }
+
+    const result = await NewTours.deleteOne({ _id: tripId });
+    console.log("Delete result:", result); // Debug log
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ success: false, message: "Trip not found" });
+    }
+
+    res.json({ success: true, message: "Trip deleted successfully" });
+  } catch (error) {
+    console.error("Error in deleteTrip:", error);
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+};
+// New trip detail by trip id
+exports.getTripDetialbyName = async (req, res, next) => {
+  try {
+    const tripId = req.params?.name;
+    const tripdetails = await NewTours.findOne({ name: tripId });
 
     if (!tripdetails) {
       return res.status(404).render("pages/404", { message: "Trip not found" });
     }
 
-    // Extract departure cities and states
-    const departureCities = tripdetails.deptcities.map(({ City, State }) => ({
-      City: City.toLowerCase(),
-      State: State.toLowerCase(),
-    }));
+    // Define a default image path for unmatched or missing departure cities
+    const defaultImage = "/images/default-departure.png"; // Change as needed
+
+    // Ensure deptcities exists and has valid values
+    if (!tripdetails.deptcities || tripdetails.deptcities.length === 0) {
+      tripdetails.deptcities = [
+        {
+          City: "Unknown",
+          State: "Unknown",
+          image: defaultImage, // Assign default image
+        },
+      ];
+    }
+
+    // Extract departure cities with valid values
+    const departureCities = tripdetails.deptcities
+      .filter(({ City, State }) => City && State) // Ensure valid city/state values
+      .map(({ City, State }) => ({
+        City: City.trim().toLowerCase(),
+        State: State.trim().toLowerCase(),
+      }));
 
     // Fetch only matching city images
-    const matchedCities = await City.find(
-      { 
-        $or: departureCities.map(({ City, State }) => ({ 
-          name: { $regex: new RegExp(`^${City}$`, "i") }, 
-          state: { $regex: new RegExp(`^${State}$`, "i") } 
-        })) 
-      },
-      { image: 1, name: 1, state: 1 } // Only fetch image, name, and state
-    );
+    let matchedCities = [];
+    if (departureCities.length > 0) {
+      matchedCities = await City.find(
+        {
+          $or: departureCities.map(({ City, State }) => ({
+            name: { $regex: new RegExp(`^${City}$`, "i") },
+            state: { $regex: new RegExp(`^${State}$`, "i") },
+          })),
+        },
+        { image: 1, name: 1, state: 1 } // Fetch only image, name, and state
+      );
+    }
 
     // Map city images to deptcities
     const deptCitiesWithImages = tripdetails.deptcities.map((deptCity) => {
+      if (!deptCity.City || !deptCity.State) {
+        // If city or state is missing, assign default values
+        return { ...deptCity, City: "Unknown", State: "Unknown", image: defaultImage };
+      }
+
       const cityMatch = matchedCities.find(
-        (city) => city.name.toLowerCase() === deptCity.City.toLowerCase() &&
-                  city.state.toLowerCase() === deptCity.State.toLowerCase()
+        (city) =>
+          city.name.toLowerCase() === deptCity.City.trim().toLowerCase() &&
+          city.state.toLowerCase() === deptCity.State.trim().toLowerCase()
       );
+
       return {
         ...deptCity._doc,
-        image: cityMatch ? cityMatch.image : "",
+        image: cityMatch ? cityMatch.image : defaultImage, // Use default image if no match
       };
     });
 
-    //res.status(200).json({ ...tripdetails._doc, deptcities: deptCitiesWithImages });
-    res.render("pages/TripDetail", { trips: { ...tripdetails._doc, deptcities: deptCitiesWithImages } });
+    res.render("pages/TripDetail", {
+      trips: { ...tripdetails._doc, deptcities: deptCitiesWithImages },
+    });
   } catch (error) {
     console.error("Error fetching trip details:", error);
     res.status(500).json({ message: "Server error" });

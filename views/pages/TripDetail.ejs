@@ -354,7 +354,7 @@
     }
 
     .itinerary-content ul li,
-    .itinerary-content ol li{
+    .itinerary-content ol li {
       list-style: inherit;
     }
 
@@ -411,9 +411,12 @@
     .tab-content.active {
       display: block;
     }
-    .tab-content.active ol li, .tab-content.active ul li {
+
+    .tab-content.active ol li,
+    .tab-content.active ul li {
       list-style: unset;
     }
+
     #contactModal .modal-content {
       border-radius: 10px;
     }
@@ -438,7 +441,9 @@
         <div class="trek-subtitle"><%- trips.destinations %></div>
       </div>
       <div class="d-flex align-items-center gap-3 bg-light p-3 rounded-4">
+        <% if (trips.price && trips.price?.trim?.() !== '' && trips.price !== '0') { %>
         <div class="fs-5">₹<%= trips.price %><span class="fs-6">/person</span></div>
+        <% } %>
         <button class="btn-book-now rounded-5" data-bs-toggle="modal" data-bs-target="#contactModal">Book now</button>
       </div>
     </div>
@@ -473,6 +478,7 @@
         </div>
         <div class="col-lg-5 mt-4 mt-lg-0">
           <div class="row g-3">
+            <% if (trips.days && trips.days.trim() !== '') { %>
             <div class="col-6 d-flex align-items-center">
               <div class="icon-circle me-2">
                 <i class="bi bi-calendar-event"></i>
@@ -482,6 +488,8 @@
                 <p class="mb-0 fw-semibold"><%= trips.days %></p>
               </div>
             </div>
+            <% } %>
+            <% if (trips.tripType && trips.tripType.trim() !== '') { %>
             <div class="col-6 d-flex align-items-center">
               <div class="icon-circle me-2">
                 <i class="bi bi-bar-chart"></i>
@@ -491,6 +499,8 @@
                 <p class="mb-0 fw-semibold"><%= trips.tripType %></p>
               </div>
             </div>
+            <% } %>
+            <% if (trips.altitude && trips.altitude.trim() !== '') { %>
             <div class="col-6 d-flex align-items-center">
               <div class="icon-circle me-2">
                 <i class="bi bi-signpost"></i>
@@ -500,6 +510,8 @@
                 <p class="mb-0 fw-semibold"><%= trips.altitude %></p>
               </div>
             </div>
+            <% } %>
+            <% if (trips.bestSession && trips.bestSession.trim() !== '' ) { %>
             <div class="col-6 d-flex align-items-center">
               <div class="icon-circle me-2">
                 <i class="bi bi-cloud-sun"></i>
@@ -509,6 +521,8 @@
                 <p class="mb-0 fw-semibold"><%= trips.bestSession %></p>
               </div>
             </div>
+            <% } %>
+            <% if (trips.state && trips.state.trim() !== '') { %>
             <div class="col-6 d-flex align-items-center">
               <div class="icon-circle me-2">
                 <i class="bi bi-geo-alt"></i>
@@ -518,12 +532,14 @@
                 <p class="mb-0 fw-semibold"><%= trips.state %>, India</p>
               </div>
             </div>
+            <% } %>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Departure City Section  -->
   <div class="container-fluid py-2 my-2 bg-light">
     <div class="container">
       <h2 class="fw-bold my-3">Departure City</h2>
@@ -588,6 +604,7 @@
     </div>
   </div>
 
+  <!-- Contact Modal -->
   <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -596,15 +613,11 @@
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <!-- <p><strong>Name:</strong> Chintan Panchal</p> -->
-          <p><strong>Online payment/booking is temporarily disabled.
-            </strong> </p>
-          <p><strong>Please call/whatsapp us :</strong> +91&nbsp;851111&nbsp;7891</p>
-          <!-- <p>Please contact the trip planner for booking confirmation or any further details.</p> -->
+          <p><strong>Online payment/booking is temporarily disabled.</strong></p>
+          <p><strong>Please call/whatsapp us:</strong> +91 851111 7891</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <!-- <button type="button" class="btn btn-primary" onclick="proceedWithBooking()">Confirm Booking</button> -->
         </div>
       </div>
     </div>
@@ -630,33 +643,65 @@
 
     <div class="mt-5 mb-4">
       <h2 class="mb-4">More Information</h2>
+      <% 
+        // Helper function to check if content is meaningful
+        const isContentValid = (content) => {
+          if (!content) return false;
+          const trimmed = content.trim();
+          return trimmed !== '' && trimmed !== '<p><br></p>' && trimmed !== '<p></p>';
+        };
+      %>
       <div class="tab-menu">
+        <% if (isContentValid(trips.package_cost)) { %>
         <button class="tab active" onclick="showTab('package')">Package cost</button>
+        <% } %>
+        <% if (isContentValid(trips.activities)) { %>
         <button class="tab" onclick="showTab('attractions')">Main attractions</button>
+        <% } %>
+        <% if (isContentValid(trips.things_to_carry)) { %>
         <button class="tab" onclick="showTab('carry')">Things to carry</button>
+        <% } %>
+        <% if (isContentValid(trips.bookncancel)) { %>
         <button class="tab" onclick="showTab('bookncancel')">Cancellation Policy</button>
+        <% } %>
+        <% if (isContentValid(trips.includenexclude)) { %>
         <button class="tab" onclick="showTab('includenexclude')">Inclusion & Exclusion</button>
+        <% } %>
+        <% if (isContentValid(trips.infonfaq)) { %>
         <button class="tab" onclick="showTab('infonfaq')">Terms & Conditions</button>
+        <% } %>
       </div>
 
+      <% if (isContentValid(trips.package_cost)) { %>
       <div id="package" class="tab-content active">
         <%- trips.package_cost %>
       </div>
+      <% } %>
+      <% if (isContentValid(trips.activities)) { %>
       <div id="attractions" class="tab-content">
         <%- trips.activities %>
       </div>
+      <% } %>
+      <% if (isContentValid(trips.things_to_carry)) { %>
       <div id="carry" class="tab-content">
         <%- trips.things_to_carry %>
       </div>
+      <% } %>
+      <% if (isContentValid(trips.bookncancel)) { %>
       <div id="bookncancel" class="tab-content">
         <%- trips.bookncancel %>
       </div>
+      <% } %>
+      <% if (isContentValid(trips.includenexclude)) { %>
       <div id="includenexclude" class="tab-content">
         <%- trips.includenexclude %>
       </div>
+      <% } %>
+      <% if (isContentValid(trips.infonfaq)) { %>
       <div id="infonfaq" class="tab-content">
         <%- trips.infonfaq %>
       </div>
+      <% } %>
     </div>
   </div>
 
@@ -666,13 +711,13 @@
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      // Fix 1: Initialize Swiper with autoplay
+      // Swiper initialization
       try {
         const swiper = new Swiper('.image-slider', {
           loop: true,
           autoplay: {
-            delay: 3000, // Slide every 3 seconds
-            disableOnInteraction: false, // Continue autoplay after user interaction
+            delay: 3000,
+            disableOnInteraction: false,
           },
           navigation: {
             nextEl: '.swiper-button-next',
@@ -708,6 +753,12 @@
           }
         });
       });
+
+      // Ensure first tab is active if any tabs exist
+      const firstTab = document.querySelector(".tab-menu .tab");
+      if (firstTab) {
+        firstTab.classList.add("active");
+      }
     });
 
     // Carousel navigation functions
@@ -989,8 +1040,11 @@
       const contents = document.querySelectorAll(".tab-content");
       tabs.forEach((tab) => tab.classList.remove("active"));
       contents.forEach((content) => content.classList.remove("active"));
-      document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add("active");
-      document.getElementById(tabId).classList.add("active");
+      const activeTab = document.querySelector(`[onclick="showTab('${tabId}')"]`);
+      if (activeTab) {
+        activeTab.classList.add("active");
+        document.getElementById(tabId).classList.add("active");
+      }
     }
 
     function proceedWithBooking() {
