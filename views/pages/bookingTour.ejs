@@ -22,7 +22,7 @@
     <!-- Nice Select JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <style>
       .back-btn {
         display: flex;
@@ -189,6 +189,13 @@
       .cm-margin-top {
         margin-top: 5px !important;
       }
+      .red{
+        color: red;
+      }
+      .blocked {
+        cursor: not-allowed !important;
+        opacity: 0.6;
+      }
     </style>
 
 </head>
@@ -211,25 +218,37 @@
     <p>Please enter your details below and proceed to payment. Leave the rest to us.</p>
 
     <form action="/bookingTour" method="POST" id="bookingForm">
-      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
       <!-- price only for calculate hidden -->
-      <input type="hidden" name="cityBasedprice" id="cityBasedprice">
+      <input type="hidden" name="Adultprice" id="Adultprice"/>
+      <input type="hidden" name="childprice" id="childprice"/>
       <div class="b_container">
         <div class="form-section">
+          <div class="cm-row">
+            <label class="cm-label">Transport Type</label>
+            <select class="cm-field" name="transportType" id="transportType" onchange="populateForm()">
+              <option value="" disabled selected>Select Transport Type</option>
+              <% tourDetails.transportList.forEach(loc=> { %>
+                <option value="<%= loc.transferType %>">
+                  <%= loc.transferType %>
+                </option>
+                <% }); %>
+            </select>
+          </div>
          <div class="cm-row">
           <div>
             <label class="cm-label">Joining from</label>
-            <select class="cm-field" name="joiningFrom" id="joiningFrom" onchange="populateDates()">
+            <select class="cm-field" name="joiningFrom" id="joiningFrom" onchange="populateDates()" disabled>
               <% tourDetails.deptcities.forEach(loc=> { %>
-                <option value="<%= loc.City %>">
+                <option value="<%= loc.City %>" <%= tourDetails.selectedInfo.city == loc.City ? 'selected' : '' %> >
                   <%= loc.City %>
                 </option>
                 <% }); %>
             </select>
           </div>
           <div>
-            <label class="cm-label">Tour date</label>
-            <select class="cm-field" name="travelDate" id="travelDate" onchange="onchangetoureDate()">
+            <label class="cm-label ">Tour date <span class="red">*</span></label>
+            <select class="cm-field enable-disable" name="travelDate" id="travelDate" onchange="onchangetoureDate()">
               <!-- populate based on Joining From Selection -->
             </select>
           </div>
@@ -237,17 +256,17 @@
           <div class="count-group cm-row">
             <div>
               <label class="cm-label cm-margin-top">Adults (10+): </label>
-              <button type="button" onclick="increDecreValue('adults','decrement')">-</button>
-              <input id="adults" name="adults" class="cm-input-number" type="number" value="1" />
+              <button class="enable-disable" type="button" onclick="increDecreValue('adults','decrement')">-</button>
+              <input id="adults" name="adults" class="cm-input-number enable-disable" type="number" value="1" />
               <!-- <span id="adults">2</span> -->
-              <button type="button" onclick="increDecreValue('adults','increment')">+</button>
+              <button class="enable-disable" type="button" onclick="increDecreValue('adults','increment')">+</button>
             </div>
             <div>
               <label class="cm-label cm-margin-top">Children (5-10):</label>
-              <button type="button" onclick="increDecreValue('children','decrement')">-</button>
+              <button class="enable-disable" type="button" onclick="increDecreValue('children','decrement')">-</button>
               <input id="children" name="children" class="cm-input-number" type="number" value="1" />
               <!-- <span id="children">2</span> -->
-              <button type="button" onclick="increDecreValue('children','increment')">+</button>
+              <button class="enable-disable" type="button" onclick="increDecreValue('children','increment')">+</button>
             </div>
           </div>
           <h3>Person’s details</h3>
@@ -257,29 +276,24 @@
               <h4>Person 1</h4>
               <div class="cm-row">
                 <div>
-                  <label class="cm-label">First name*</label>
-                  <input id="firstName" name="personDetails[0][firstName]" class="cm-field" type="text" required
+                  <label class="cm-label">First name <span class="red">*</span></label>
+                  <input id="firstName" name="personDetails[0][firstName]" class="cm-field enable-disable" type="text" required
                     placeholder="Your name here" />
                 </div>
                 <div>
-                  <label class="cm-label">Surname*</label>
-                  <input id="Surname" name="personDetails[0][Surname]" class="cm-field" type="text" required
+                  <label class="cm-label">Surname <span class="red">*</span></label>
+                  <input id="Surname" name="personDetails[0][Surname]" class="cm-field enable-disable" type="text" required
                     placeholder="Your surname here" />
                 </div>
               </div>
               <div class="cm-row">
-                <div class="mb-10">
-                  <label for="" class="form-label">Default input style</label>
-                  <input class="form-control" placeholder="Pick a date" id="kt_datepicker_1"/>
-              </div>
                 <div>
-                  <label class="cm-label">Birth date*</label>
-                  <input id="dateofbirth" name="personDetails[0][dateofbirth]"  class="form-control cm-field" required />
-                  <input id="dateofbirth" name="personDetails[0][dateofbirth]" class="cm-field" required type="date" />
+                  <label class="cm-label">Birth date <span class="red">*</span></label>
+                  <input id="dateofbirth" name="personDetails[0][dateofbirth]" class="cm-field enable-disable" required type="date" />
                 </div>
                 <div>
-                  <label class="cm-label">Gender*</label>
-                  <select id="Gender" name="personDetails[0][Gender]" class="cm-field" required>
+                  <label class="cm-label">Gender<span class="red">*</span></label>
+                  <select id="Gender" name="personDetails[0][Gender]" class="cm-field enable-disable" required>
                     <option>Male</option>
                     <option>Female</option>
                     <option>Other</option>
@@ -288,20 +302,20 @@
               </div>
               <div class="cm-row">
                 <div>
-                  <label class="cm-label">Mobile number*</label>
-                  <input id="mobileno" name="personDetails[0][mobileno]" class="cm-field" type="tel"
+                  <label class="cm-label">Mobile number <span class="red">*</span></label>
+                  <input id="mobileno" name="personDetails[0][mobileno]" class="cm-field enable-disable" type="tel"
                     placeholder="+91 Enter your mobile number" />
                 </div>
                 <div>
                   <label class="cm-label">Alternative number</label>
-                  <input id="alternateNumber" name="personDetails[0][alternateNumber]" class="cm-field" type="tel"
+                  <input id="alternateNumber" name="personDetails[0][alternateNumber]" class="cm-field enable-disable" type="tel"
                     placeholder="+91 Enter alt mobile number" />
                 </div>
               </div>
             </div>
           </div>
 
-          <button id="AddPerson" type="button" class="addperson-btn" onclick="addPerson()">+ Add all person's detail</button>
+          <button id="AddPerson" type="button" class="addperson-btn enable-disable" onclick="addPerson()">+ Add all person's detail</button>
           <label class="cm-label" style="margin-top: 1rem;">Additional services (optional)</label>
         </div>
 
@@ -316,26 +330,103 @@
           <p>Pickup from: <span id="pickupFrom"></span></p>
           <p>Travel date: <span id="travelDateDisplay"></span> </p>
           <p><strong>Total costs:</strong>₹<span id="totalCost"></span></p>
-          <p><a href="#">View breakdown</a></p>
+          <p>
+            <!-- <a href="#">View breakdown</a> -->
+            <!-- <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#costBreakdownModal">View Cost Breakdown</a> -->
+            <a href="#" class="btn btn-primary" id="openCostModalBtn">
+              View Cost Breakdown
+            </a>
+        </p>
 
           <!-- <div class="payment-options">
             <button>Pay full payment</button>
             <button>Pay part payment</button>
           </div> -->
 
-          <label class="cm-label">Enter amount to pay now</label>
-          <input id="payingAmount" name="payingAmount" class="cm-field" type="text" />
+          <label class="cm-label">Amount to pay now</label>
+          <input id="payingAmount" name="payingAmount" class="cm-field" type="text" readonly />
           <!-- <p>Minimum should be 30% of total amount</p> -->
 
-          <button id="submit" class="payment-btn">Pay ₹<span id="payingAmountDisplay"></span> now</button>
+          <button id="submit" class="payment-btn enable-disable">Pay ₹<span id="payingAmountDisplay"></span> now</button>
         </div>
       </div>
     </form>
+  </div>
+  <!-- popup -->
+  <div class="modal fade" id="costBreakdownModal" tabindex="-1" aria-labelledby="costBreakdownModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content shadow-lg rounded-4">
+        <div class="modal-header">
+          <h5 class="modal-title" id="costBreakdownModalLabel">Cost Breakdown</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+  
+        <div class="modal-body">
+          <h6 class="fw-bold"><%= tourDetails.name %></h6>
+          <p class="mb-2 text-muted"><%= tourDetails.days %></p>
+  
+          <div class="row mb-3">
+            <div class="col-md-6"><strong>Pickup from:</strong> <span id="pickupFrom"></span></div>
+            <div class="col-md-6"><strong>Travel date:</strong> <span id="travelDateDisplay"></span></div>
+          </div>
+  
+          <h6 class="fw-bold mb-3">Total cost</h6>
+  
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Price</th>
+                <th>Final Amount</th>
+              </tr>
+            </thead>
+            <tbody id="costTableBody">
+            </tbody>
+          </table>
+  
+          <div class="d-flex justify-content-between border-top pt-2">
+            <strong>Subtotal</strong>
+            <span id="MSubtotal">₹0000</span>
+          </div>
+          <div class="d-flex justify-content-between">
+            <strong>GST(5%)</strong>
+            <span id="MGst">₹0000</span>
+          </div>
+          <div class="d-flex justify-content-between border-top pt-2 fs-5">
+            <strong>Total</strong>
+            <strong id="MTotal">₹0000</strong>
+          </div>
+  
+          <div class="alert alert-warning mt-4 mb-0">
+            3AC train ticket and flight ticket charges will be applied after the actual ticket booking.
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
     <%- include('../partials/footer'); %>
       <%- include('../partials/scripttag'); %>
 
 
+      <!-- Transport Selection Set Form and Price -->
+       <script>
+        function populateForm () {
+          // enable all field on selection
+          const allFields = document.querySelectorAll('.enable-disable');
+          allFields.forEach(field => field.disabled = false);
+          allFields.forEach(field => field.classList.remove('blocked'));
+          
+          // set Price based on Transport Type and City Selected\
+          const  transportType = document.getElementById('transportType');
+          const transportList = <%-JSON.stringify(tourDetails.transportList) %>;
+          const priceBaseOnTransportType = transportList.find((t)=>t.transferType === transportType.value);
+          const Adultprice = document.getElementById('Adultprice');
+          const childprice = document.getElementById('childprice');
+          Adultprice.value = priceBaseOnTransportType.adultPrice;
+          childprice.value = priceBaseOnTransportType.childPrice;
+          populateDates();
+        };
+       </script>
         <!-- bind  travel Date based on Joining from Selection  -->
         <script>
           const deptcities = <%-JSON.stringify(tourDetails.deptcities) %>;
@@ -356,15 +447,15 @@
                 travelDateSelect.appendChild(option);
               });
               if (cityObj && cityObj.price && cityObj.price.length > 0) {
-                const cityBasedprice = document.getElementById('cityBasedprice');
-                cityBasedprice.value = `${cityObj.price[0].adultPrice},${cityObj.price[0].childPrice}`;
                 recalculateCost();
-                const NoofAdutts = document.getElementById('adults').value.trim();
-                const NoofChild = document.getElementById('children').value.trim();
-                const totalCost = document.getElementById('totalCost');
-                const payingAmountDisplay = document.getElementById('payingAmountDisplay');
-                const payingAmount = document.getElementById('payingAmount');
-                totalCost.innerHTML = payingAmountDisplay.innerHTML = payingAmount.value = parseInt(NoofAdutts) * cityObj.price[0].adultPrice + parseInt(NoofChild) * cityObj.price[0].childPrice;
+                // const AdultpriceValue = document.getElementById('Adultprice').value.trim();
+                // const childpriceValue = document.getElementById('childprice').value.trim();
+                // const NoofAdutts = document.getElementById('adults').value.trim();
+                // const NoofChild = document.getElementById('children').value.trim();
+                // const totalCost = document.getElementById('totalCost');
+                // const payingAmountDisplay = document.getElementById('payingAmountDisplay');
+                // const payingAmount = document.getElementById('payingAmount');
+                // totalCost.innerHTML = payingAmountDisplay.innerHTML = payingAmount.value = parseInt(NoofAdutts) * parseInt(AdultpriceValue) + parseInt(NoofChild) * parseInt(childpriceValue);
               }
             } else {
               const option = document.createElement('option');
@@ -389,13 +480,19 @@
         <!-- Cost Calculate -->
         <script>
           function recalculateCost() {
+            const AdultpriceValue = document.getElementById('Adultprice').value.trim();
+            const childpriceValue = document.getElementById('childprice').value.trim();
             const NoofAdutts = document.getElementById('adults').value.trim();
             const NoofChild = document.getElementById('children').value.trim();
             const totalCost = document.getElementById('totalCost');
             const payingAmountDisplay = document.getElementById('payingAmountDisplay');
             const payingAmount = document.getElementById('payingAmount');
-            const cityBasedprice = document.getElementById('cityBasedprice').value;
-            totalCost.innerHTML = payingAmountDisplay.innerHTML = payingAmount.value = parseInt(NoofAdutts) * parseInt(cityBasedprice.split(',')[0]) + parseInt(NoofChild) * parseInt(cityBasedprice.split(',')[1]);
+            if(isNaN(parseInt(AdultpriceValue)) && isNaN(parseInt(childpriceValue))){
+              totalCost.innerHTML = payingAmountDisplay.innerHTML = '-';
+              
+            } else {
+              totalCost.innerHTML = payingAmountDisplay.innerHTML = payingAmount.value = parseInt(NoofAdutts) * parseInt(AdultpriceValue) + parseInt(NoofChild) * parseInt(childpriceValue);
+            }
           }
         </script>
         <!-- Increase and Decrease Functions  -->
@@ -480,7 +577,6 @@
             }
           }
         </script>
-
         <!-- remove person Field -->
          <script>
           function removePerson(removePersonId) {
@@ -492,18 +588,98 @@
               addPerson.style.display = 'block';
           }
          </script>
-
         <!-- on load Script -->
         <script>
-          window.addEventListener("DOMContentLoaded", () => {
+          window.onload = () =>{
+           // const typeSelect = document.getElementById('type');
+            const allFields = document.querySelectorAll('.enable-disable');
+
+            // Focus on the Type dropdown
+           // typeSelect.focus();
+
+            // Disable all other fields
+            allFields.forEach(field => field.disabled = true);
+            allFields.forEach(field => field.classList.add('blocked'));
+            // // Enable them on Type selection
+            // typeSelect.addEventListener('change', function () {
+            //   const hasValue = typeSelect.value !== "";
+            //   allFields.forEach(field => field.disabled = !hasValue);
+            // });
+              //document.getElementById("travelDate").value = selectedInfo1.date;
             populateDates();
-            const selectedInfo1 = <%- JSON.stringify(tourDetails.selectedInfo || undefined) %>;
-            if (selectedInfo1) {
-              document.getElementById("joiningFrom").value = selectedInfo.joinFrom;
-              document.getElementById("travelDate").value = selectedInfo.date;
-            }
+          };
+          // window.addEventListener("DOMContentLoaded", () => {
+          //   populateDates();
+          // });
+        </script>
+        <!-- Submit Form  with Validation -->
+         <script>
+           document.getElementById('bookingForm').addEventListener('submit', function (e){
+            e.preventDefault();
+            // validation 
+
+            // create object for send data 
+            const form = document.querySelector('bookingForm');
+            const formData = new FormData(form);
+            const data = {
+                  adultPrice: formData.get('Adultprice'),
+                  adults: formData.get('adults'),
+                  childPrice: formData.get('childprice'),
+                  children: formData.get('children'),
+                  payingAmount: formData.get('payingAmount'),
+                  transportType: formData.get('transportType'),
+                  travelDate: formData.get('travelDate'),
+                  personDetails: [
+                    {
+                      firstName: formData.get('personDetails[0][firstName]'),
+                      surname: formData.get('personDetails[0][Surname]'),
+                      gender: formData.get('personDetails[0][Gender]'),
+                      dateOfBirth: formData.get('personDetails[0][dateofbirth]'),
+                      mobileNo: formData.get('personDetails[0][mobileno]'),
+                      alternateNumber: formData.get('personDetails[0][alternateNumber]')
+                    }
+                  ]
+                };
+            console.log("submit");
+           });
+         </script>
+         <!-- open Model with update trigger -->
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+          const costModal = new bootstrap.Modal(document.getElementById("costBreakdownModal"));
+          document.getElementById("openCostModalBtn").addEventListener("click", function () {
+            const costTable = document.getElementById("costTableBody");
+            costTable.innerHTML = "";
+            // Get value 
+            const AdultpriceValue = document.getElementById('Adultprice').value.trim();
+            const childpriceValue = document.getElementById('childprice').value.trim();
+            const NoofAdutts = document.getElementById('adults').value.trim();
+            const NoofChild = document.getElementById('children').value.trim();
+            const totalCost = document.getElementById('totalCost');
+            const costDetails = [
+                { label: "Adults", quantity: NoofAdutts, price: AdultpriceValue, total: NoofAdutts* AdultpriceValue },
+                { label: "Child", quantity: NoofChild, price: childpriceValue, total: NoofChild* childpriceValue},
+                { label: "Couple stay", quantity: 1, price: 3000, total: 3000 }
+              ]
+              const subtotalAmountValue = (NoofAdutts* AdultpriceValue) + (NoofChild* childpriceValue) + 3000;
+              const gstAmountValue = subtotalAmountValue * 0.05;
+              const totalAmount = subtotalAmountValue + gstAmountValue;
+            // Adding row
+            costDetails.forEach(item => {
+                const row = `<tr>
+                  <td>${item.label}</td>
+                  <td>${item.quantity} x ₹${item.price}</td>
+                  <td>₹${item.total}</td>
+                </tr>`;
+                costTable.innerHTML += row;
+              });  
+              document.getElementById("MSubtotal").textContent = `₹${subtotalAmountValue}`;
+              document.getElementById("MGst").textContent = `₹${gstAmountValue}`;
+              document.getElementById("MTotal").textContent = `₹${totalAmount}`;
+              costModal.show();
           });
+            // Show the modal manually
+        });
         </script>
 </body>
-
 </html>

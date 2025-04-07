@@ -38,6 +38,7 @@ const TripBookingDetailSchema = new mongoose.Schema(
       {
         name: { type: String, required: true },
         birthdate: { type: Date, required: true },
+        phone:{ type: Number, required:false },
         age: { type: Number, required: true }, // Auto-calculated based on birthdate
         isAdult: { type: Boolean, required: true }, // True if age >= 10
       },

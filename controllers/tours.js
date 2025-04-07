@@ -1829,16 +1829,19 @@ exports.changeTripStatus = async (req, res) => {
 // pass date and join in query
 exports.renderBookingTourPage = async (req,res) =>{
   const tripId = req?.params?.tripid;
+  const city = req?.query?.city || "Pune"; // "Pune" will remove only for test 
   const existingTrip = await NewTours.findById(tripId).lean();
   if(existingTrip && existingTrip.deptcities && existingTrip.deptcities.length > 0){
     existingTrip.deptcities.forEach(cityDetail =>{
       cityDetail.dateList= [];
+      cityDetail.transportList =[];
       if(cityDetail && cityDetail.dates && cityDetail.dates.length > 0){
         const monthMap = {
           "January": 0,"February": 1,"March": 2,"April": 3,
           "May": 4,June: 5,"July": 6,"August": 7,"September": 8,
           "October": 9,"November": 10,"December": 11
       };
+      // city set dates list
         cityDetail.dates.forEach(dateBlock => {
           // Extract numbers from the string (e.g., "5 days 6 nights" → [5, 6])
           const durationArr = existingTrip.days.match(/\d+/g).map(Number);
@@ -1856,12 +1859,16 @@ exports.renderBookingTourPage = async (req,res) =>{
         cityDetail.dateList.push(`${formatDate(startDate)} to ${formatDate(endDate)}`);
           });
       });
-
       }
+       // TransportListOnCity
+       if(cityDetail.City.toLowerCase() === city.toLowerCase()){
+         existingTrip.transportList =  cityDetail && cityDetail.price && cityDetail.price.length > 0 ? cityDetail.price : [] ;
+       }
+     
     });
     if(req.query){
       existingTrip.selectedInfo = {
-        joinFrom :req.query.join,
+        city :req.query.city || "Pune", // "Pune" will remove only for test 
         date:req.query.date
       }
     }
