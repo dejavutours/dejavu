@@ -453,12 +453,12 @@
         <% if (trips.bannerimages && trips.bannerimages.length > 0) { %>
         <% trips.bannerimages.forEach((img, index) => { %>
         <div class="swiper-slide">
-          <img src="<%= img %>" alt="Banner Image <%= index + 1 %>" />
+          <img src="<%= img %>" alt="Banner Image <%= index + 1 %>"  onerror="this.onerror=null; this.src='/images/placholderbanner.jpg';"/>
         </div>
         <% }); %>
         <% } else { %>
         <div class="swiper-slide">
-          <img src="<%= trips.imageurl %>" alt="Main Image" />
+          <img src="<%= trips.imageurl %>" alt="Main Image " onerror="this.onerror=null; this.src='/images/placholderbanner.jpg';">
         </div>
         <% } %>
       </div>
@@ -550,7 +550,7 @@
               <% if (trips.deptcities && trips.deptcities.length > 0) { %>
               <% trips.deptcities.forEach((city, index) => { %>
               <div class="city-card bg-light" onclick="selectCity(this, '<%= city.City %>', '<%= city.State %>', <%= city.price && city.price[0] ? city.price[0].adultPrice : 0 %>)" data-city="<%= city.City %>" data-duration="<%= city.tripDuration %>">
-                <img src="<%= city.image %>" alt="<%= city.City %>" />
+                <img src="<%= city.image %>" alt="<%= city.City %>"  onerror="this.onerror=null; this.src='/images/placeholder.jpg';"/>
                 <h6 class="mt-2 mb-1"><%= city.City %></h6>
                 <small><i class="bi bi-calendar"></i> <%= city.tripDuration %></small><br />
                 <small class="fw-semibold text-dark">

@@ -1797,7 +1797,7 @@ exports.removeBannerImage = async (req, res) => {
       { _id: tripId },
       { $pull: { bannerimages: imageUrl } }
     );
-    fileHelper.deleteFile(imageUrl.replace("/images/tours/", "images/tours/")); // Updated path
+    // fileHelper.deleteFile(imageUrl.replace("/images/tours/", "images/tours/")); // Updated path
 
     res.json({ success: true });
   } catch (error) {
