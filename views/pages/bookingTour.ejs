@@ -24,13 +24,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <style>
-      .back-btn {
+      .back-btn_booking {
         display: flex;
         align-items: center;
         margin-bottom: 1rem;
       }
 
-      .back-btn a {
+      .back-btn_booking a {
         text-decoration: none;
         color: #002d66;
         font-weight: bold;
@@ -38,19 +38,19 @@
         align-items: center;
       }
 
-      .back-btn svg {
+      .back-btn_booking svg {
         margin-right: 0.5rem;
       }
 
-      .b_container {
+      .container_booking {
         display: flex;
         flex-wrap: wrap;
         gap: 2rem;
         justify-content: center;
       }
 
-      .form-section,
-      .summary-section {
+      .form_section_booking,
+      .summary_section_booking {
         background-color: #fff;
         padding: 1.5rem;
         border-radius: 12px;
@@ -59,25 +59,25 @@
         max-width: 600px;
       }
 
-      .cm-margin {
+      .cm_margin_booking {
         margin-bottom: 1rem;
       }
 
-      .cm-label {
+      .cm_label_booking {
         display: block;
         margin-top: 1rem;
         margin-bottom: 0.3rem;
         font-weight: 600;
       }
 
-      .cm-field {
+      .cm_field_booking {
         width: 100%;
         border: 1px solid #ccc;
         border-radius: 6px;
         margin-bottom: 0.4rem;
       }
 
-      .cm-input-number {
+      .cm_input_number_booking {
         border: 1px solid transparent;
         background-color: #f1f1f1;
         padding: 4px;
@@ -86,16 +86,16 @@
         border-radius: 11%;
       }
 
-      .cm-row {
+      .cm_row_booking {
         display: flex;
         gap: 1rem;
       }
 
-      .cm-row>div {
+      .cm_row_booking>div {
         flex: 1;
       }
 
-      .count-group {
+      .count_group_booking {
         display: flex;
         align-items: center;
         gap: 2rem;
@@ -103,13 +103,13 @@
         width: 100%;
       }
 
-      .count-group div {
+      .count_group_booking div {
         display: flex;
         align-items: center;
         gap: 0.5rem;
       }
 
-      .count-group button {
+      .count_group_booking button {
         background-color: #002d66;
         color: white;
         font-weight: bold;
@@ -121,21 +121,17 @@
         cursor: pointer;
       }
 
-      .summary-section {
+      .summary_section_booking {
         background-color: #fff;
       }
 
-      .summary-section p {
+      .summary_section_booking p {
         margin: 0.5rem 0;
       }
-      .header-section {
+      .header_section_booking {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-      }
-      
-      .border-top-2 {
-        border-top: 1px solid grey;
       }
 
       .payment-options button {
@@ -179,22 +175,15 @@
       }
 
       @media (max-width: 768px) {
-        .cm-row {
+        .cm_row_booking {
           flex-direction: column;
         }
       }
-      .padding-top-1 {
-        padding-top: 1%;
-      }
-      .cm-margin-top {
+      .cm_margin_top_booking {
         margin-top: 5px !important;
       }
-      .red{
-        color: red;
-      }
-      .blocked {
+       .cursor_not_allowed_booking {
         cursor: not-allowed !important;
-        opacity: 0.6;
       }
     </style>
 
@@ -203,7 +192,7 @@
 <body>
   <%- include('../partials/header'); %>
   <div class="container">
-  <div class="back-btn">
+  <div class="back-btn_booking">
     <a href="javascript:history.back()" class="text-decoration-none">
       <i class="bi bi-arrow-left"> </i> Back
     </a>        
@@ -217,7 +206,7 @@
       </a> -->
     </div>
 
-    <h2 class="cm-margin">Booking initiated</h2>
+    <h2 class="cm_margin_booking">Booking initiated</h2>
     <p>Please enter your details below and proceed to payment. Leave the rest to us.</p>
 
     <form action="/bookingTour" method="POST" id="bookingForm">
@@ -225,11 +214,11 @@
       <!-- price only for calculate hidden -->
       <input type="hidden" name="Adultprice" id="Adultprice"/>
       <input type="hidden" name="childprice" id="childprice"/>
-      <div class="b_container">
-        <div class="form-section">
-          <div class="cm-row">
-            <label class="cm-label">Transport Type</label>
-            <select class="cm-field" name="transportType" id="transportType" onchange="populateForm()">
+      <div class="container_booking">
+        <div class="form_section_booking">
+          <div class="cm_row_booking">
+            <label class="cm_label_booking">Transport Type</label>
+            <select class="cm_field_booking" name="transportType" id="transportType" onchange="populateForm()">
               <option value="" disabled selected>Select Transport Type</option>
               <% tourDetails.transportList.forEach(loc=> { %>
                 <option value="<%= loc.transferType %>">
@@ -238,10 +227,10 @@
                 <% }); %>
             </select>
           </div>
-         <div class="cm-row">
+         <div class="cm_row_booking">
           <div>
-            <label class="cm-label">Joining from</label>
-            <select class="cm-field" name="joiningFrom" id="joiningFrom" onchange="populateDates()" disabled>
+            <label class="cm_label_booking">Joining from</label>
+            <select class="cm_field_booking" name="joiningFrom" id="joiningFrom" onchange="populateDates()" disabled>
               <% tourDetails.deptcities.forEach(loc=> { %>
                 <option value="<%= loc.City %>" <%= tourDetails.selectedInfo.city == loc.City ? 'selected' : '' %> >
                   <%= loc.City %>
@@ -250,24 +239,24 @@
             </select>
           </div>
           <div>
-            <label class="cm-label ">Tour date <span class="red">*</span></label>
-            <select class="cm-field enable-disable" name="travelDate" id="travelDate" onchange="onchangetoureDate()">
+            <label class="cm_label_booking ">Tour date <span class="text-danger">*</span></label>
+            <select class="cm_field_booking enable-disable" name="travelDate" id="travelDate" onchange="onchangetoureDate()">
               <!-- populate based on Joining From Selection -->
             </select>
           </div>
          </div>
-          <div class="count-group cm-row">
+          <div class="count_group_booking cm_row_booking">
             <div>
-              <label class="cm-label cm-margin-top">Adults (10+): </label>
+              <label class="cm_label_booking cm_margin_top_booking">Adults (10+): </label>
               <button class="enable-disable" type="button" onclick="increDecreValue('adults','decrement')">-</button>
-              <input id="adults" name="adults" class="cm-input-number enable-disable" type="number" value="1" />
+              <input id="adults" name="adults" class="cm_input_number_booking enable-disable" type="number" value="1" />
               <!-- <span id="adults">2</span> -->
               <button class="enable-disable" type="button" onclick="increDecreValue('adults','increment')">+</button>
             </div>
             <div>
-              <label class="cm-label cm-margin-top">Children (5-10):</label>
+              <label class="cm_label_booking cm_margin_top_booking">Children (5-10):</label>
               <button class="enable-disable" type="button" onclick="increDecreValue('children','decrement')">-</button>
-              <input id="children" name="children" class="cm-input-number" type="number" value="1" />
+              <input id="children" name="children" class="cm_input_number_booking enable-disable" type="number" value="1" />
               <!-- <span id="children">2</span> -->
               <button class="enable-disable" type="button" onclick="increDecreValue('children','increment')">+</button>
             </div>
@@ -277,41 +266,41 @@
             <!-- Do not remove below class('person-details') as some dependance  -->
             <div class="person-details" id="person1">
               <h4>Person 1</h4>
-              <div class="cm-row">
+              <div class="cm_row_booking">
                 <div>
-                  <label class="cm-label">First name <span class="red">*</span></label>
-                  <input id="firstName" name="personDetails[0][firstName]" class="cm-field enable-disable" type="text" required
+                  <label class="cm_label_booking">First name <span class="text-danger">*</span></label>
+                  <input id="firstName" name="personDetails[0][firstName]" class="cm_field_booking enable-disable" type="text" required
                     placeholder="Your name here" />
                 </div>
                 <div>
-                  <label class="cm-label">Surname <span class="red">*</span></label>
-                  <input id="Surname" name="personDetails[0][Surname]" class="cm-field enable-disable" type="text" required
+                  <label class="cm_label_booking">Surname <span class="text-danger">*</span></label>
+                  <input id="Surname" name="personDetails[0][Surname]" class="cm_field_booking enable-disable" type="text" required
                     placeholder="Your surname here" />
                 </div>
               </div>
-              <div class="cm-row">
+              <div class="cm_row_booking">
                 <div>
-                  <label class="cm-label">Birth date <span class="red">*</span></label>
-                  <input id="dateofbirth" name="personDetails[0][dateofbirth]" class="cm-field enable-disable" required type="date" />
+                  <label class="cm_label_booking">Birth date <span class="text-danger">*</span></label>
+                  <input id="dateofbirth" name="personDetails[0][dateofbirth]" class="cm_field_booking enable-disable" required type="date" />
                 </div>
                 <div>
-                  <label class="cm-label">Gender<span class="red">*</span></label>
-                  <select id="Gender" name="personDetails[0][Gender]" class="cm-field enable-disable" required>
+                  <label class="cm_label_booking">Gender<span class="text-danger">*</span></label>
+                  <select id="Gender" name="personDetails[0][Gender]" class="cm_field_booking enable-disable" required>
                     <option>Male</option>
                     <option>Female</option>
                     <option>Other</option>
                   </select>
                 </div>
               </div>
-              <div class="cm-row">
+              <div class="cm_row_booking">
                 <div>
-                  <label class="cm-label">Mobile number <span class="red">*</span></label>
-                  <input id="mobileno" name="personDetails[0][mobileno]" class="cm-field enable-disable" type="tel"
+                  <label class="cm_label_booking">Mobile number <span class="text-danger">*</span></label>
+                  <input id="mobileno" name="personDetails[0][mobileno]" class="cm_field_booking enable-disable" type="tel"
                     placeholder="+91 Enter your mobile number" />
                 </div>
                 <div>
-                  <label class="cm-label">Alternative number</label>
-                  <input id="alternateNumber" name="personDetails[0][alternateNumber]" class="cm-field enable-disable" type="tel"
+                  <label class="cm_label_booking">Alternative number</label>
+                  <input id="alternateNumber" name="personDetails[0][alternateNumber]" class="cm_field_booking enable-disable" type="tel"
                     placeholder="+91 Enter alt mobile number" />
                 </div>
               </div>
@@ -319,10 +308,10 @@
           </div>
 
           <button id="AddPerson" type="button" class="addperson-btn enable-disable" onclick="addPerson()">+ Add all person's detail</button>
-          <label class="cm-label" style="margin-top: 1rem;">Additional services (optional)</label>
+          <label class="cm_label_booking" style="margin-top: 1rem;">Additional services (optional)</label>
         </div>
 
-        <div class="summary-section">
+        <div class="summary_section_booking">
           <h3>Booking summary</h3>
           <p><strong>
               <%= tourDetails.name %>
@@ -343,8 +332,8 @@
             <button>Pay part payment</button>
           </div> -->
 
-          <label class="cm-label">Amount to pay now</label>
-          <input id="payingAmount" name="payingAmount" class="cm-field" type="text" readonly />
+          <label class="cm_label_booking">Amount to pay now</label>
+          <input id="payingAmount" name="payingAmount" class="cm_field_booking" type="text" readonly />
           <!-- <p>Minimum should be 30% of total amount</p> -->
 
           <button id="submit" class="payment-btn enable-disable">Pay ₹<span id="payingAmountDisplay"></span> now</button>
@@ -414,7 +403,7 @@
           // enable all field on selection
           const allFields = document.querySelectorAll('.enable-disable');
           allFields.forEach(field => field.disabled = false);
-          allFields.forEach(field => field.classList.remove('blocked'));
+          allFields.forEach(field => field.classList.remove('cursor_not_allowed_booking','opacity-50'));
           
           // set Price based on Transport Type and City Selected\
           const  transportType = document.getElementById('transportType');
@@ -529,44 +518,45 @@
             if (parseInt(personContainer.children.length) < (parseInt(NoofAdutts) + parseInt(NoofChild))) {
               let personDiv = document.createElement("div");
               personDiv.classList.add("person-details");
-              personDiv.classList.add("border-top-2");
+              personDiv.classList.add("border-top");
+              personDiv.classList.add("border-secondary");
               personDiv.id = `person${personCount}`;
               personDiv.innerHTML = `
-            <div class="cm-row padding-top-1 header-section">
+            <div class="cm_row_booking pt-2 header_section_booking">
               <h4>Person ${personCount} </h4>
              <button id="removePerson${personCount}" type="button" class="remove-btn" onclick="removePerson(${personCount})">x</button>
             </div>
-             <div class="cm-row">
+             <div class="cm_row_booking">
               <div>
-                <label class="cm-label">First name*</label>
-                <input id="firstName" name="personDetails[${personCount - 1}][firstName]" class="cm-field" type="text" required placeholder="Your name here" />
+                <label class="cm_label_booking">First name*</label>
+                <input id="firstName" name="personDetails[${personCount - 1}][firstName]" class="cm_field_booking" type="text" required placeholder="Your name here" />
               </div>
               <div>
-                <label class="cm-label">Surname*</label>
-                <input id="Surname" name="personDetails[${personCount - 1}][Surname]" class="cm-field" type="text" required placeholder="Your surname here" />
+                <label class="cm_label_booking">Surname*</label>
+                <input id="Surname" name="personDetails[${personCount - 1}][Surname]" class="cm_field_booking" type="text" required placeholder="Your surname here" />
               </div>
             </div>
-            <div class="cm-row">
+            <div class="cm_row_booking">
               <div>
-                <label class="cm-label">Birth date*</label>
-                <input id="dateofbirth" name="personDetails[${personCount - 1}][dateofbirth]" class="cm-field" required type="date" />
+                <label class="cm_label_booking">Birth date*</label>
+                <input id="dateofbirth" name="personDetails[${personCount - 1}][dateofbirth]" class="cm_field_booking" required type="date" />
               </div>
               <div>
-                <label class="cm-label">Gender*</label>
-                <select id="Gender" name="personDetails[${personCount - 1}][Gender]" class="cm-field" required>
+                <label class="cm_label_booking">Gender*</label>
+                <select id="Gender" name="personDetails[${personCount - 1}][Gender]" class="cm_field_booking" required>
                   <option>Male</option>
                   <option>Female</option>
                   <option>Other</option>
                 </select>
               </div>
             </div>
-            <div class="cm-row">
+            <div class="cm_row_booking">
             <div>
-            <label class="cm-label">Mobile number*</label>
-            <input id="mobileno" name="personDetails[${personCount - 1}][mobileno]" class="cm-field" type="tel" placeholder="+91 Enter your mobile number" />
+            <label class="cm_label_booking">Mobile number*</label>
+            <input id="mobileno" name="personDetails[${personCount - 1}][mobileno]" class="cm_field_booking" type="tel" placeholder="+91 Enter your mobile number" />
             </div><div>
-            <label class="cm-label">Alternative number</label>
-            <input id="alternateNumber" name="personDetails[${personCount - 1}][alternateNumber]" class="cm-field" type="tel" placeholder="+91 Enter alt mobile number" />
+            <label class="cm_label_booking">Alternative number</label>
+            <input id="alternateNumber" name="personDetails[${personCount - 1}][alternateNumber]" class="cm_field_booking" type="tel" placeholder="+91 Enter alt mobile number" />
             </div>
             `;
               personContainer.appendChild(personDiv);
@@ -595,13 +585,14 @@
           window.onload = () =>{
            // const typeSelect = document.getElementById('type');
             const allFields = document.querySelectorAll('.enable-disable');
-
+            const transportType = document.getElementById('transportType').value.trim();
             // Focus on the Type dropdown
            // typeSelect.focus();
-
             // Disable all other fields
-            allFields.forEach(field => field.disabled = true);
-            allFields.forEach(field => field.classList.add('blocked'));
+            if(!transportType){
+              allFields.forEach(field => field.disabled = true);
+              allFields.forEach(field => field.classList.add('cursor_not_allowed_booking','opacity-50'));
+            }
             // // Enable them on Type selection
             // typeSelect.addEventListener('change', function () {
             //   const hasValue = typeSelect.value !== "";
@@ -621,28 +612,63 @@
             // validation 
 
             // create object for send data 
-            const form = document.querySelector('bookingForm');
+            const form = document.getElementById('bookingForm');
             const formData = new FormData(form);
             const data = {
-                  adultPrice: formData.get('Adultprice'),
-                  adults: formData.get('adults'),
+                  _csrf: formData.get('_csrf'),
+                  tourDetails: <%-JSON.stringify(tourDetails) %>,
+                  transportType:formData.get('transportType'),
+                  joiningFrom:document.getElementById('joiningFrom').value.trim(),
+                  travelDate:formData.get('travelDate'),
+                  totalPerson: {
+                    adult: formData.get('adults'),
+                    child: formData.get('children')
+                  },
                   childPrice: formData.get('childprice'),
-                  children: formData.get('children'),
-                  payingAmount: formData.get('payingAmount'),
-                  transportType: formData.get('transportType'),
-                  travelDate: formData.get('travelDate'),
-                  personDetails: [
-                    {
-                      firstName: formData.get('personDetails[0][firstName]'),
-                      surname: formData.get('personDetails[0][Surname]'),
-                      gender: formData.get('personDetails[0][Gender]'),
-                      dateOfBirth: formData.get('personDetails[0][dateofbirth]'),
-                      mobileNo: formData.get('personDetails[0][mobileno]'),
-                      alternateNumber: formData.get('personDetails[0][alternateNumber]')
-                    }
-                  ]
+                  adultPrice: formData.get('Adultprice'),
+                  paidAmount: formData.get('payingAmount'),
+                  totalTripCost: formData.get('payingAmount'), // its change when partial payment implement
+                  bookingStatus: 'Confirmed',  // will changes when implement partial payment
+                  paymentStatus:'Paid'
                 };
+                const NoofAdutts = document.getElementById('adults').value.trim();
+                const NoofChild = document.getElementById('children').value.trim();
+                // persons Details
+                data.personDetails = [];
+                for(let i =0; i<(parseInt(NoofAdutts)+ parseInt(NoofChild)); i++){
+                  if(formData.get('personDetails[' +i+ '][firstName]')){
+                  data.personDetails.push({
+                      firstName: formData.get('personDetails[' +i+ '][firstName]'),
+                      surname: formData.get('personDetails[' +i+ '][Surname]'),
+                      gender: formData.get('personDetails[' +i+ '][Gender]'),
+                      birthdate: formData.get('personDetails[' +i+ '][dateofbirth]'),
+                      phone: parseInt(formData.get('personDetails[' +i+ '][mobileno]')),
+                      altphone: parseInt(formData.get('`personDetails[' +i+ '][alternateNumber]'))
+                    });
+                  }
+                }
             console.log("submit");
+            fetch("/bookingTour", {
+              method: "POST",
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+            }).then(response => {
+                const status = response.status;
+                return response.json().then(data => ({status,data}));
+            }).then(({status,data}) => {
+              toastr.success(data.message);
+            }).then(()=>{
+              setTimeout(()=>{
+                window.location.reload();
+              },1000);
+              //const url = '';
+              //window.location.href = url;
+              //  handleResponse(data, status);
+            }).catch(err => {
+              toastr.error("Booking error:" + err);
+                console.error("Booking error:", err);
+           // handleResponse({message: "An error occurred while Booking. Please try again."}, 500);
+            });
            });
          </script>
          <!-- open Model with update trigger -->

@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const TripBookingDetailSchema = new mongoose.Schema(
   {
     // Unique identifier for each trip booking
-    _id: mongoose.Schema.Types.ObjectId,
+   // _id: mongoose.Schema.Types.ObjectId,
 
     // User ID from users collection
     userId: { type: String },
@@ -16,10 +16,10 @@ const TripBookingDetailSchema = new mongoose.Schema(
     toursSystemId: { type: String },
 
     // Trip name derived from tours collection
-    tripName: { type: String, required: true },
+    tripName: { type: String, required: false },
 
     // Trip code derived from tours collection
-    tripCode: { type: String, required: true },
+    tripCode: { type: String, required: false },
 
     // Tour Image derived from tours collection
     imageName: { type: String },
@@ -36,11 +36,14 @@ const TripBookingDetailSchema = new mongoose.Schema(
     // Array storing all person booking details
     personDetails: [
       {
-        name: { type: String, required: true },
+        firstName: { type: String, required: true },
+        surname: { type: String, required: true },
+        gender: { type: String, required: true },
         birthdate: { type: Date, required: true },
-        phone:{ type: Number, required:false },
-        age: { type: Number, required: true }, // Auto-calculated based on birthdate
-        isAdult: { type: Boolean, required: true }, // True if age >= 10
+        phone:{ type: Number, required:true },
+        altphone: { type: Number, required: false },
+        age: { type: Number, required: false }, // Auto-calculated based on birthdate
+        isAdult: { type: Boolean, required: false }, // True if age >= 10
       },
     ],
 
@@ -63,10 +66,10 @@ const TripBookingDetailSchema = new mongoose.Schema(
     // Array storing payment references
     paidAmountRef: [
       {
-        isThroughPymtGateway: { type: Boolean, required: true }, // True if online, false if offline
+        isThroughPymtGateway: { type: Boolean, required: false }, // True if online, false if offline
         orderId: { type: String }, // Derived from payment collection
         paymentDate: { type: Date }, // Date of offline payment
-        amount: { type: Number, required: true }, // Paid amount in this transaction
+        amount: { type: Number, required: false }, // Paid amount in this transaction
       },
     ],
 
@@ -92,5 +95,36 @@ const TripBookingDetailSchema = new mongoose.Schema(
     timestamps: true, // Automatically adds createdAt and updatedAt fields
   }
 );
+
+
+TripBookingDetailSchema.pre('validate', async function (next) {
+  if (this.bookingNumber) return next(); // already set
+
+  const now = new Date();
+  const yy = now.getFullYear().toString().slice(-2); // last 2 digits of year
+  const mm = (now.getMonth() + 1).toString().padStart(2, '0'); // 2-digit month
+  const prefix = `DJV${yy}${mm}`;
+
+  try {
+    // Find the latest booking for current year & month
+    const lastBooking = await this.constructor.findOne({
+      bookingNumber: { $regex: `^${prefix}` }
+    }).sort({ bookingNumber: -1 });
+
+    let nextIncrement = 1;
+
+    if (lastBooking) {
+      const lastNumber = lastBooking.bookingNumber;
+      const incrementStr = lastNumber.slice(prefix.length); // get the numeric part after prefix
+      const lastIncrement = parseInt(incrementStr, 10);
+      nextIncrement = lastIncrement + 1;
+    }
+
+    this.bookingNumber = `${prefix}${nextIncrement}`;
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 module.exports = mongoose.model('TripBookingDetail', TripBookingDetailSchema);
