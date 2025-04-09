@@ -195,15 +195,7 @@
   <div class="back-btn_booking">
     <a href="javascript:history.back()" class="text-decoration-none">
       <i class="bi bi-arrow-left"> </i> Back
-    </a>        
-      <!-- <a href="#"> &larr;
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-          stroke-linejoin="round" class="feather feather-arrow-left">
-          &larr; <line x1="19" y1="12" x2="5" y2="12" />
-          <polyline="12 19 5 12 12 5" />&larr;
-        </svg>
-        Back
-      </a> -->
+    </a> 
     </div>
 
     <h2 class="cm_margin_booking">Booking initiated</h2>
@@ -220,7 +212,7 @@
             <label class="cm_label_booking">Transport Type</label>
             <select class="cm_field_booking" name="transportType" id="transportType" onchange="populateForm()">
               <option value="" disabled selected>Select Transport Type</option>
-              <% tourDetails.transportList.forEach(loc=> { %>
+              <% tourDetails?.transportList?.forEach(loc=> { %>
                 <option value="<%= loc.transferType %>">
                   <%= loc.transferType %>
                 </option>
