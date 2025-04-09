@@ -1604,43 +1604,30 @@ exports.postNewAddTours = async (req, res) => {
 
 //Old trip detial by trip id ::DM after complete development remove this api and manage it's logic
 exports.getTourDetails = async (req, res, next) => {
+  // try {
+  //   const token = req.params.token;
+  //   const tripdetails = await Tours.find({ name: token });
+  //   const tests = await Tours.find().distinct("name");
+  //   res.render("pages/TripDetails", { trips: tripdetails[0], test: tests });
+  // } catch (err) {
+  //   console.log(err);
+  // }
   try {
-    const token = req.params.token;
-    const tripdetails = await Tours.find({ _id: token });
-    const tests = await Tours.find().distinct("name");
-    res.render("pages/TripDetails", { trips: tripdetails[0], test: tests });
-  } catch (err) {
-    console.log(err);
-  }
-};
+    // Rename the param so it's compatible with the new method
+    req.params.name = req.params.token;
 
-/* New trip detail by trip id
-* POST /admin/deleteTrip - Deletes a NewTours trip by ID
-* @param {Object} req - Express request object with tripId
-* @param {Object} res - Express response object
-*/
-exports.deleteTrip = async (req, res) => {
-  try {
-    const { tripId } = req.body;
+    // Optional: Log this redirection for debugging during development
+    console.warn("Deprecated API 'getTourDetails' called. Redirecting to 'getTripDetialbyName'.");
 
-    console.log("deleteTrip called with tripId:", tripId); // Debug log
-
-    if (!tripId) {
-      return res.status(400).json({ success: false, message: "Trip ID is required" });
-    }
-
-    const result = await NewTours.deleteOne({ _id: tripId });
-    console.log("Delete result:", result); // Debug log
-    if (result.deletedCount === 0) {
-      return res.status(404).json({ success: false, message: "Trip not found" });
-    }
-
-    res.json({ success: true, message: "Trip deleted successfully" });
+    // Forward the request to the new method
+    return await exports.getTripDetialbyName(req, res, next);
   } catch (error) {
-    console.error("Error in deleteTrip:", error);
+    console.error("Error in fallback from getTourDetails to getTripDetialbyName:", error);
     res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 };
+
+// Trip detial page new API and controller from the UI
 // New trip detail by trip id
 exports.getTripDetialbyName = async (req, res, next) => {
   try {
@@ -1648,7 +1635,7 @@ exports.getTripDetialbyName = async (req, res, next) => {
     const tripdetails = await NewTours.findOne({ name: tripId });
 
     if (!tripdetails) {
-      return res.status(404).render("pages/404", { message: "Trip not found" });
+      return res.status(404).json({success: false,  message: "Trip not found" });
     }
 
     // Define a default image path for unmatched or missing departure cities
@@ -1717,7 +1704,34 @@ exports.getTripDetialbyName = async (req, res, next) => {
 
 
 
-// Trip detial page new API and controller from the UI
+/* New trip detail by trip id
+* POST /admin/deleteTrip - Deletes a NewTours trip by ID
+* @param {Object} req - Express request object with tripId
+* @param {Object} res - Express response object
+*/
+exports.deleteTrip = async (req, res) => {
+  try {
+    const { tripId } = req.body;
+
+    console.log("deleteTrip called with tripId:", tripId); // Debug log
+
+    if (!tripId) {
+      return res.status(400).json({ success: false, message: "Trip ID is required" });
+    }
+
+    const result = await NewTours.deleteOne({ _id: tripId });
+    console.log("Delete result:", result); // Debug log
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ success: false, message: "Trip not found" });
+    }
+
+    res.json({ success: true, message: "Trip deleted successfully" });
+  } catch (error) {
+    console.error("Error in deleteTrip:", error);
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+};
+
 /**
  * POST /admin/updateImageUrl - Updates the single required imageurl for a NewTours trip
  * Replaces the existing imageurl with a new one; deletion not allowed.
@@ -1799,7 +1813,7 @@ exports.removeBannerImage = async (req, res) => {
       { _id: tripId },
       { $pull: { bannerimages: imageUrl } }
     );
-    fileHelper.deleteFile(imageUrl.replace("/images/tours/", "images/tours/")); // Updated path
+    // fileHelper.deleteFile(imageUrl.replace("/images/tours/", "images/tours/")); // Updated path
 
     res.json({ success: true });
   } catch (error) {
