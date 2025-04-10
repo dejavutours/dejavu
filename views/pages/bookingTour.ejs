@@ -4,25 +4,23 @@
 <head>
   <%- include('../partials/headtag'); %>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="/path-to/nice-select.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- Nice Select CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- jQuery (must be before nice-select) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="assets/plugins/global/plugins.bundle.js"></script>
-    
-    <!-- Nice Select CSS -->
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Nice Select JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
     <style>
       .back-btn_booking {
         display: flex;
@@ -185,6 +183,13 @@
        .cursor_not_allowed_booking {
         cursor: not-allowed !important;
       }
+      #messageModal .modal-content {
+      border-radius: 10px;
+      }
+      #messageModal .modal-header {
+        background: #1a4b8e;
+        color: white;
+      }
     </style>
 
 </head>
@@ -210,7 +215,7 @@
         <div class="form_section_booking">
           <div class="cm_row_booking">
             <label class="cm_label_booking">Transport Type</label>
-            <select class="cm_field_booking" name="transportType" id="transportType" onchange="populateForm()">
+            <select class="cm_field_booking form-select" name="transportType" id="transportType" onchange="populateForm()">
               <option value="" disabled selected>Select Transport Type</option>
               <% tourDetails?.transportList?.forEach(loc=> { %>
                 <option value="<%= loc.transferType %>">
@@ -222,7 +227,7 @@
          <div class="cm_row_booking">
           <div>
             <label class="cm_label_booking">Joining from</label>
-            <select class="cm_field_booking" name="joiningFrom" id="joiningFrom" onchange="populateDates()" disabled>
+            <select class="cm_field_booking form-select" name="joiningFrom" id="joiningFrom" onchange="populateDates()" disabled>
               <% tourDetails.deptcities.forEach(loc=> { %>
                 <option value="<%= loc.City %>" <%= tourDetails.selectedInfo.city == loc.City ? 'selected' : '' %> >
                   <%= loc.City %>
@@ -276,8 +281,8 @@
                   <input id="dateofbirth" name="personDetails[0][dateofbirth]" class="cm_field_booking enable-disable" required type="date" />
                 </div>
                 <div>
-                  <label class="cm_label_booking">Gender<span class="text-danger">*</span></label>
-                  <select id="Gender" name="personDetails[0][Gender]" class="cm_field_booking enable-disable" required>
+                  <label class="cm_label_booking form-label">Gender<span class="text-danger">*</span></label>
+                  <select id="Gender" name="personDetails[0][Gender]" class="cm_field_booking enable-disable form-select" required>
                     <option>Male</option>
                     <option>Female</option>
                     <option>Other</option>
@@ -318,12 +323,10 @@
             <!-- <a href="#">View breakdown</a> -->
             <a href="#" id="openCostModalBtn"  data-bs-toggle="modal" data-bs-target="#costBreakdownModal">View Cost Breakdown</a>
         </p>
-
-          <!-- <div class="payment-options">
-            <button>Pay full payment</button>
-            <button>Pay part payment</button>
-          </div> -->
-
+        <div class="payment-options">
+            <button disabled>Pay full payment</button>
+            <button disabled>Pay part payment</button>
+          </div>
           <label class="cm_label_booking">Amount to pay now</label>
           <input id="payingAmount" name="payingAmount" class="cm_field_booking" type="text" readonly />
           <!-- <p>Minimum should be 30% of total amount</p> -->
@@ -333,7 +336,7 @@
       </div>
     </form>
   </div>
-  <!-- popup -->
+  <!-- View Cost Breakdown popup -->
   <div class="modal fade" id="costBreakdownModal" tabindex="-1" aria-labelledby="costBreakdownModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <div class="modal-content shadow-lg rounded-4">
@@ -341,7 +344,6 @@
           <h5 class="modal-title" id="costBreakdownModalLabel">Cost Breakdown</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" data-bs-target="#costBreakdownModal" aria-label="Close"></button>
         </div>
-  
         <div class="modal-body">
           <h6 class="fw-bold"><%= tourDetails.name %></h6>
           <p class="mb-2 text-muted"><%= tourDetails.days %></p>
@@ -385,12 +387,29 @@
       </div>
     </div>
   </div>
+
+  <button hidden href="#" data-bs-toggle="modal" data-bs-target="#messageModalLabel"></button>
+  <!-- Message -->
+  <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="messageModalLabel">Message</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-bs-target="#messageModalLabel" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="messageBody">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-target="#messageModalLabel">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
     <%- include('../partials/footer'); %>
       <%- include('../partials/scripttag'); %>
-
-
       <!-- Transport Selection Set Form and Price -->
-       <script>
+      <script>
         function populateForm () {
           // enable all field on selection
           const allFields = document.querySelectorAll('.enable-disable');
@@ -411,7 +430,7 @@
         <!-- bind  travel Date based on Joining from Selection  -->
         <script>
           const deptcities = <%-JSON.stringify(tourDetails.deptcities) %>;
-          function populateDates() {
+          function populateDates(isFromLoad) {
             const selectedCity = document.getElementById('joiningFrom').value.trim();
             const travelDateSelect = document.getElementById('travelDate');
             const pickupFrom = document.getElementById('pickupFrom');
@@ -442,7 +461,7 @@
               }
             } else {
               const option = document.createElement('option');
-              option.textContent = 'No travel dates available';
+              option.textContent = 'No Tour dates available';
               travelDateSelect.appendChild(option);
             }
             travelDateDisplay.innerHTML = ModeltravelDate.innerHTML = travelDateSelect.value;
@@ -535,7 +554,7 @@
               </div>
               <div>
                 <label class="cm_label_booking">Gender*</label>
-                <select id="Gender" name="personDetails[${personCount - 1}][Gender]" class="cm_field_booking" required>
+                <select id="Gender" name="personDetails[${personCount - 1}][Gender]" class="cm_field_booking form-select" required>
                   <option>Male</option>
                   <option>Female</option>
                   <option>Other</option>
@@ -591,77 +610,130 @@
             //   allFields.forEach(field => field.disabled = !hasValue);
             // });
               //document.getElementById("travelDate").value = selectedInfo1.date;
-            populateDates();
+            populateDates('onload');
           };
           // window.addEventListener("DOMContentLoaded", () => {
           //   populateDates();
           // });
         </script>
+        <!-- close Message Modal -->
+         <script>
+          function closeMsgModal(){
+            const modalEl = document.getElementById("messageModal");
+              const newInstance = new bootstrap.Modal(modalEl);
+              newInstance.hide();
+            // const msgModal = new bootstrap.Modal(document.getElementById("messageModal"));
+            // msgModal.hide();
+          }
+         </script>
         <!-- Submit Form  with Validation -->
          <script>
+           // Get today's date
+            const today = new Date();
+          // Function to calculate age
+            function calculateAge(dobString) {
+              const dob = new Date(dobString);
+              let age = today.getFullYear() - dob.getFullYear();
+              const monthDiff = today.getMonth() - dob.getMonth();
+              const dayDiff = today.getDate() - dob.getDate();
+              if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+                age--;
+              }
+              return age;
+            }
            document.getElementById('bookingForm').addEventListener('submit', function (e){
-            e.preventDefault();
-            // validation 
-
-            // create object for send data 
-            const form = document.getElementById('bookingForm');
-            const formData = new FormData(form);
-            const data = {
-                  _csrf: formData.get('_csrf'),
-                  tourDetails: <%-JSON.stringify(tourDetails) %>,
-                  transportType:formData.get('transportType'),
-                  joiningFrom:document.getElementById('joiningFrom').value.trim(),
-                  travelDate:formData.get('travelDate'),
-                  totalPerson: {
-                    adult: formData.get('adults'),
-                    child: formData.get('children')
-                  },
-                  childPrice: formData.get('childprice'),
-                  adultPrice: formData.get('Adultprice'),
-                  paidAmount: formData.get('payingAmount'),
-                  totalTripCost: formData.get('payingAmount'), // its change when partial payment implement
-                  bookingStatus: 'Confirmed',  // will changes when implement partial payment
-                  paymentStatus:'Paid'
-                };
-                const NoofAdutts = document.getElementById('adults').value.trim();
-                const NoofChild = document.getElementById('children').value.trim();
-                // persons Details
-                data.personDetails = [];
-                for(let i =0; i<(parseInt(NoofAdutts)+ parseInt(NoofChild)); i++){
-                  if(formData.get('personDetails[' +i+ '][firstName]')){
-                  data.personDetails.push({
-                      firstName: formData.get('personDetails[' +i+ '][firstName]'),
-                      surname: formData.get('personDetails[' +i+ '][Surname]'),
-                      gender: formData.get('personDetails[' +i+ '][Gender]'),
-                      birthdate: formData.get('personDetails[' +i+ '][dateofbirth]'),
-                      phone: parseInt(formData.get('personDetails[' +i+ '][mobileno]')),
-                      altphone: parseInt(formData.get('`personDetails[' +i+ '][alternateNumber]'))
-                    });
+             e.preventDefault();
+             // validation 
+             const NoofAdutts = document.getElementById('adults').value.trim();
+             const NoofChild = document.getElementById('children').value.trim();
+             let isAdultAvailable = false;
+             let isShowMessage = false;
+             let nofAdlutDetail = 0;
+             let noofChildDetail = 0;
+             let message = '';
+             const dobList = document.querySelectorAll('[id="dateofbirth"]');
+             dobList.forEach((ele)=>{
+              const age = calculateAge(ele.value);
+              if (age > 10 && !isAdultAvailable){
+                nofAdlutDetail = nofAdlutDetail+1;
+                isAdultAvailable = true;
+              } else{
+                noofChildDetail = noofChildDetail+1;
+              }
+             });
+             if(!isAdultAvailable){
+              isShowMessage =true;
+              message += "<li class='list-group-item'>At least one Adult person's detail is required based on the date of birth provided.</li>"
+             }
+             if(parseInt(nofAdlutDetail) > parseInt(NoofAdutts) || parseInt(noofChildDetail) > parseInt(NoofChild)){
+              isShowMessage =true;
+              message += "<li class='list-group-item'>The number of adults and children you selected doesn't match the ages provided. Please update the person details to include the correct number of adults and children as selected.</li>";
+             }
+             if(isShowMessage){
+              const messageBody = document.getElementById('messageBody');
+              messageBody.innerHTML = '<ul >' + message + '</ul>';
+               const msgModal = new bootstrap.Modal(document.getElementById("messageModal"));
+               msgModal.show();
+             }
+             else {
+              // create object for send data 
+              const form = document.getElementById('bookingForm');
+              const formData = new FormData(form);
+              const data = {
+                    _csrf: formData.get('_csrf'),
+                    tourDetails: <%-JSON.stringify(tourDetails) %>,
+                    transportType:formData.get('transportType'),
+                    joiningFrom:document.getElementById('joiningFrom').value.trim(),
+                    travelDate:formData.get('travelDate'),
+                    totalPerson: {
+                      adult: formData.get('adults'),
+                      child: formData.get('children')
+                    },
+                    childPrice: formData.get('childprice'),
+                    adultPrice: formData.get('Adultprice'),
+                    paidAmount: formData.get('payingAmount'),
+                    totalTripCost: formData.get('payingAmount'), // its change when partial payment implement
+                    bookingStatus: 'Confirmed',  // will changes when implement partial payment
+                    paymentStatus:'Paid'
+                  };
+                  // persons Details
+                  data.personDetails = [];
+                  for(let i =0; i<(parseInt(NoofAdutts)+ parseInt(NoofChild)); i++){
+                    if(formData.get('personDetails[' +i+ '][firstName]')){
+                    data.personDetails.push({
+                        firstName: formData.get('personDetails[' +i+ '][firstName]'),
+                        surname: formData.get('personDetails[' +i+ '][Surname]'),
+                        gender: formData.get('personDetails[' +i+ '][Gender]'),
+                        birthdate: formData.get('personDetails[' +i+ '][dateofbirth]'),
+                        phone: parseInt(formData.get('personDetails[' +i+ '][mobileno]')),
+                        altphone: parseInt(formData.get('`personDetails[' +i+ '][alternateNumber]'))
+                      });
+                    }
                   }
-                }
-            console.log("submit");
-            fetch("/bookingTour", {
-              method: "POST",
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(data)
-            }).then(response => {
-                const status = response.status;
-                return response.json().then(data => ({status,data}));
-            }).then(({status,data}) => {
-              toastr.success(data.message);
-            }).then(()=>{
-              setTimeout(()=>{
-                window.location.reload();
-              },1000);
-              //const url = '';
-              //window.location.href = url;
-              //  handleResponse(data, status);
-            }).catch(err => {
-              toastr.error("Booking error:" + err);
-                console.error("Booking error:", err);
-           // handleResponse({message: "An error occurred while Booking. Please try again."}, 500);
-            });
-           });
+              fetch("/bookingTour", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+              }).then(response => {
+                  const status = response.status;
+                  return response.json().then(data => ({status,data}));
+              }).then(({status,data}) => {
+                toastr.success(data.message);
+              }).then(()=>{
+                setTimeout(()=>{
+                  window.location.reload();
+                },1000);
+                //const url = '';
+                //window.location.href = url;
+                //  handleResponse(data, status);
+              }).catch(err => {
+                toastr.error("Booking error:" + err);
+                  console.error("Booking error:", err);
+            // handleResponse({message: "An error occurred while Booking. Please try again."}, 500);
+              });
+          }
+          // END 
+          });
          </script>
          <!-- open Model with update trigger -->
         <script>
@@ -698,7 +770,6 @@
               document.getElementById("MTotal").textContent = `₹${totalAmount}`;
               //costModal.show();
           });
-            // Show the modal manually
         });
         </script>
 </body>

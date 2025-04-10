@@ -444,7 +444,7 @@
         <% if (trips.price && trips.price?.trim?.() !== '' && trips.price !== '0') { %>
         <div class="fs-5">₹<%= trips.price %><span class="fs-6">/person</span></div>
         <% } %>
-        <button class="btn-book-now rounded-5" data-bs-toggle="modal" data-bs-target="#contactModal">Book now</button>
+        <button class="btn-book-now rounded-5" onclick="proceedWithBooking()">Book now</button>
       </div>
     </div>
 
@@ -589,7 +589,8 @@
                 <!-- Populated dynamically via JavaScript -->
                 <option value=""></option>
               </select>
-              <button class="btn btn-primary proceed-btn-book w-100" type="button" data-bs-toggle="modal" data-bs-target="#contactModal">Proceed to Book</button>
+              <!-- <button class="btn btn-primary proceed-btn-book w-100" type="button" data-bs-toggle="modal" data-bs-target="#contactModal">Proceed to Book</button> -->
+              <button class="btn btn-primary proceed-btn-book w-100" type="button" onclick="proceedWithBooking()">Proceed to Book</button>
             </div>
           </form>
         </div>
@@ -618,7 +619,6 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-secondary"  onclick="proceedWithBooking()">ok</button>
         </div>
       </div>
     </div>
@@ -1049,11 +1049,20 @@
     }
 
     function proceedWithBooking() {
+      if(trip && trip.deptcities.length > 0 && trip.deptcities.some(city => city.dates && city.dates.length > 0 && city.price && city.price.length > 0 )){
       const form = document.getElementById("proceedToBook");
       const url = `${form.action}?city=${encodeURIComponent(form.city.value)}&date=${encodeURIComponent(form.date.value)}`;
       window.location.href = url;
-      const modal = bootstrap.Modal.getInstance(document.getElementById("contactModal"));
-      modal.hide();
+      } else {
+        const modal = bootstrap.Modal.getInstance(document.getElementById("contactModal"));
+        if(modal){
+          modal.show();
+        } else{
+          const modalElement = document.getElementById("contactModal");
+          const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+          modal.show();
+      }
+      }
     }
   </script>
 </body>
