@@ -119,8 +119,7 @@ TripBookingDetailSchema.pre('validate', async function (next) {
       const lastIncrement = parseInt(incrementStr, 10);
       nextIncrement = lastIncrement + 1;
     }
-
-    this.bookingNumber = `${prefix}${nextIncrement}`;
+    this.bookingNumber = `${prefix}${String(nextIncrement).padStart(4, '0')}`;
     next();
   } catch (err) {
     next(err);
