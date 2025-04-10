@@ -7,20 +7,21 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css"/>
-    <link rel="stylesheet" href="/path-to/nice-select.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <!-- Nice Select CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery (must be before nice-select) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="assets/plugins/global/plugins.bundle.js"></script>
-    <!-- Nice Select JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
+    <!-- <link rel="stylesheet" href="/path-to/nice-select.css"> -->
+     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" /> -->
+     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"> -->
+     
+     <!-- jQuery (must be before nice-select) -->
+     <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+     <!-- Nice Select JS -->
+     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"></script> -->
+      
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+     <script src="assets/plugins/global/plugins.bundle.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+     
     <style>
       .back-btn_booking {
         display: flex;
@@ -199,7 +200,7 @@
   <div class="container">
   <div class="back-btn_booking">
     <a href="javascript:history.back()" class="text-decoration-none">
-      <i class="bi bi-arrow-left"> </i> Back
+      <i class="bi bi-arrow-left"> </i><span> </span> Back
     </a> 
     </div>
 
@@ -237,7 +238,7 @@
           </div>
           <div>
             <label class="cm_label_booking ">Tour date <span class="text-danger">*</span></label>
-            <select class="cm_field_booking enable-disable" name="travelDate" id="travelDate" onchange="onchangetoureDate()">
+            <select class="cm_field_booking enable-disable form-select" name="travelDate" id="travelDate" onchange="onchangetoureDate()">
               <!-- populate based on Joining From Selection -->
             </select>
           </div>
@@ -387,20 +388,18 @@
       </div>
     </div>
   </div>
-
-  <button hidden href="#" data-bs-toggle="modal" data-bs-target="#messageModalLabel"></button>
   <!-- Message -->
   <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="messageModalLabel">Message</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-bs-target="#messageModalLabel" aria-label="Close"></button>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-bs-target="#messageModalLabel" aria-label="Close" onclick="closeMsgModal()"></button>
         </div>
         <div class="modal-body" id="messageBody">
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-target="#messageModalLabel">Close</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-target="#messageModalLabel" onclick="closeMsgModal()">Close</button>
         </div>
       </div>
     </div>
@@ -450,15 +449,7 @@
               });
               if (cityObj && cityObj.price && cityObj.price.length > 0) {
                 recalculateCost();
-                // const AdultpriceValue = document.getElementById('Adultprice').value.trim();
-                // const childpriceValue = document.getElementById('childprice').value.trim();
-                // const NoofAdutts = document.getElementById('adults').value.trim();
-                // const NoofChild = document.getElementById('children').value.trim();
-                // const totalCost = document.getElementById('totalCost');
-                // const payingAmountDisplay = document.getElementById('payingAmountDisplay');
-                // const payingAmount = document.getElementById('payingAmount');
-                // totalCost.innerHTML = payingAmountDisplay.innerHTML = payingAmount.value = parseInt(NoofAdutts) * parseInt(AdultpriceValue) + parseInt(NoofChild) * parseInt(childpriceValue);
-              }
+                 }
             } else {
               const option = document.createElement('option');
               option.textContent = 'No Tour dates available';
@@ -467,7 +458,9 @@
             travelDateDisplay.innerHTML = ModeltravelDate.innerHTML = travelDateSelect.value;
             if ($.fn.niceSelect) {
               $('#travelDate').niceSelect('destroy');
-              $('#travelDate').niceSelect();
+              $('#joiningFrom').niceSelect('destroy');
+              $('#transportType').niceSelect('destroy');
+              $('#Gender').niceSelect('destroy');
             }
           }
         </script>
@@ -618,10 +611,9 @@
         </script>
         <!-- close Message Modal -->
          <script>
+          const msgModal = new bootstrap.Modal(document.getElementById("messageModal"));
           function closeMsgModal(){
-            const modalEl = document.getElementById("messageModal");
-              const newInstance = new bootstrap.Modal(modalEl);
-              newInstance.hide();
+              msgModal.hide();
             // const msgModal = new bootstrap.Modal(document.getElementById("messageModal"));
             // msgModal.hide();
           }
@@ -663,16 +655,15 @@
              });
              if(!isAdultAvailable){
               isShowMessage =true;
-              message += "<li class='list-group-item'>At least one Adult person's detail is required based on the date of birth provided.</li>"
+              message += "<li><p class='text-danger'>&bull; At least one Adult person's detail is required based on the date of birth provided.</p></li>"
              }
              if(parseInt(nofAdlutDetail) > parseInt(NoofAdutts) || parseInt(noofChildDetail) > parseInt(NoofChild)){
               isShowMessage =true;
-              message += "<li class='list-group-item'>The number of adults and children you selected doesn't match the ages provided. Please update the person details to include the correct number of adults and children as selected.</li>";
+              message += "<li><p class='text-danger'>&bull; The number of adults and children you selected doesn't match the ages provided. Please update the person details to include the correct number of adults and children as selected.</p></li>";
              }
              if(isShowMessage){
               const messageBody = document.getElementById('messageBody');
-              messageBody.innerHTML = '<ul >' + message + '</ul>';
-               const msgModal = new bootstrap.Modal(document.getElementById("messageModal"));
+              messageBody.innerHTML = '<ul>' + message + '</ul>';
                msgModal.show();
              }
              else {
@@ -729,7 +720,6 @@
               }).catch(err => {
                 toastr.error("Booking error:" + err);
                   console.error("Booking error:", err);
-            // handleResponse({message: "An error occurred while Booking. Please try again."}, 500);
               });
           }
           // END 
