@@ -22,6 +22,12 @@
      <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
      <script src="assets/plugins/global/plugins.bundle.js"></script>
      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+     
+    <!-- Store JSON data -->
+    <script>
+      const tourData = <%- JSON.stringify(tourDetails) %>;
+    </script>
      
     <style>
       .back-btn_booking {
@@ -260,7 +266,7 @@
               <button class="enable-disable" type="button" onclick="increDecreValue('children','increment')">+</button>
             </div>
           </div>
-          <h3>Person’s details</h3>
+          <h3>Person's details</h3>
           <div id="personDetailsContainer">
             <!-- Do not remove below class('person-details') as some dependance  -->
             <div class="person-details" id="person1">
@@ -329,13 +335,13 @@
             <a href="#" id="openCostModalBtn"  data-bs-toggle="modal" data-bs-target="#costBreakdownModal">View Cost Breakdown</a>
         </p>
         <div class="payment-options">
-            <button class="cursor_not_allowed_booking" disabled>Pay full payment</button>
-            <button class="cursor_not_allowed_booking" disabled>Pay part payment</button>
+            <button class="payment-btn enable-disable" type="button" id="fullPaymentBtn">Pay full payment</button>
+            <button class="cursor_not_allowed_booking" type="button" disabled>Pay part payment</button>
           </div>
           <label class="cm_label_booking">Amount to pay now</label>
           <input id="payingAmount" name="payingAmount" class="cm_field_booking" type="text" readonly />
           <!-- <p>Minimum should be 30% of total amount</p> -->
-          <button id="submit" class="payment-btn enable-disable">Pay ₹<span id="payingAmountDisplay"></span> now</button>
+          <button id="submit" type="button" class="payment-btn enable-disable" style="display: none;">Pay ₹<span id="payingAmountDisplay"></span> now</button>
         </div>
       </div>
     </form>
@@ -401,6 +407,39 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-target="#messageModalLabel" onclick="closeMsgModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Payment Modal -->
+  <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="paymentModalLabel">Payment Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="paymentForm">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="cost" id="paymentCost">
+            <div class="mb-3">
+              <label for="name" class="form-label">Name</label>
+              <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+              <label for="contact" class="form-label">Contact Number</label>
+              <input type="tel" class="form-control" id="contact" name="contact" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="proceedToPayment">Proceed to Payment</button>
         </div>
       </div>
     </div>
@@ -769,6 +808,125 @@
               //costModal.show();
           });
         });
+        </script>
+        <!-- Payment handling -->
+        <script>
+          document.getElementById('fullPaymentBtn').addEventListener('click', function() {
+            console.log('Full payment button clicked');
+            const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+            document.getElementById('paymentCost').value = document.getElementById('totalCost').textContent;
+            console.log('Payment amount:', document.getElementById('totalCost').textContent);
+            paymentModal.show();
+          });
+
+          document.getElementById('proceedToPayment').addEventListener('click', function() {
+            console.log('Proceed to payment clicked');
+            const paymentForm = document.getElementById('paymentForm');
+            const formData = new FormData(paymentForm);
+            
+            // Log form data
+            console.log('Form data:', {
+              cost: formData.get('cost'),
+              name: formData.get('name'),
+              email: formData.get('email'),
+              contact: formData.get('contact')
+            });
+            
+            // Create order and proceed to payment
+            fetch('/payment/order', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                _csrf: formData.get('_csrf'),
+                cost: formData.get('cost'),
+                name: formData.get('name'),
+                email: formData.get('email'),
+                contact: formData.get('contact'),
+                destination: '<%= tourDetails.name %>',
+                tripdate: document.getElementById('travelDate').value,
+                travellers: document.getElementById('adults').value + ' Adults, ' + document.getElementById('children').value + ' Children'
+              })
+            })
+            .then(response => {
+              console.log('Payment order response status:', response.status);
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              return response.json();
+            })
+            .then(data => {
+              console.log('Payment order response:', data);
+              if (data.success) {
+                const options = {
+                  key: data.razorpayKeyId,
+                  amount: data.paymentDetail.amount,
+                  currency: data.paymentDetail.currency,
+                  name: "Trip Payment",
+                  description: "Trip Payment",
+                  order_id: data.paymentDetail.orderId,
+                  handler: function (response) {
+                    console.log('Razorpay payment response:', response);
+                    // Verify payment
+                    fetch('/payment/verify', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify({
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_signature: response.razorpay_signature,
+                        _csrf: formData.get('_csrf')
+                      })
+                    })
+                    .then(response => {
+                      console.log('Payment verification response status:', response.status);
+                      if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                      }
+                      return response.json();
+                    })
+                    .then(data => {
+                      console.log('Payment verification response:', data);
+                      if (data.success) {
+                        console.log('Payment verified successfully, submitting booking form');
+                        // Submit the booking form
+                        document.getElementById('bookingForm').submit();
+                      } else {
+                        console.error('Payment verification failed:', data.message);
+                        toastr.error(data.message || 'Payment verification failed');
+                      }
+                    })
+                    .catch(error => {
+                      console.error('Payment verification error:', error);
+                      toastr.error('Payment verification failed. Please try again.');
+                    });
+                  },
+                  modal: {
+                    ondismiss: function() {
+                      console.log('Payment modal dismissed');
+                      toastr.error('Payment cancelled');
+                    }
+                  },
+                  theme: {
+                    color: '#002d66'
+                  }
+                };
+                console.log('Opening Razorpay modal with options:', options);
+                const razorpay = new Razorpay(options);
+                razorpay.open();
+              } else {
+                console.error('Failed to create payment order:', data.message);
+                toastr.error(data.message || 'Failed to create payment order');
+              }
+            })
+            .catch(error => {
+              console.error('Payment order error:', error);
+              toastr.error('Failed to create payment order. Please try again.');
+            });
+          });
         </script>
 </body>
 </html>
