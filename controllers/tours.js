@@ -1845,7 +1845,7 @@ exports.changeTripStatus = async (req, res) => {
 // pass date and join in query
 exports.renderBookingTourPage = async (req,res) =>{
   const tripId = req?.params?.tripid;
-  const city = req?.query?.city || "Pune"; // "Pune" will remove only for test 
+  const city = req?.query?.city;
   const existingTrip = await NewTours.findById(tripId).lean();
   if(existingTrip && existingTrip.deptcities && existingTrip.deptcities.length > 0){
     existingTrip.deptcities.forEach(cityDetail =>{
@@ -1884,7 +1884,7 @@ exports.renderBookingTourPage = async (req,res) =>{
     });
     if(req.query){
       existingTrip.selectedInfo = {
-        city :req.query.city || "Pune", // "Pune" will remove only for test 
+        city :req.query.city
         date:req.query.date
       }
     }
