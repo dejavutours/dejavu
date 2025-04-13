@@ -1884,7 +1884,7 @@ exports.renderBookingTourPage = async (req,res) =>{
     });
     if(req.query){
       existingTrip.selectedInfo = {
-        city :req.query.city
+        city :req.query.city,
         date:req.query.date
       }
     }
