@@ -5,186 +5,93 @@ const Razorpay = require("razorpay");
 const PaymentDetail = require("../models/payment-detail");
 const { nanoid } = require("nanoid");
 
-// Create an instance of Razorpay
-let razorPayInstance = new Razorpay({
+const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
+  key_secret: process.env.RAZORPAY_KEY_SECRET
 });
 
-/**
- * Make Donation Page
- *
- */
-// router.get('/', function(req, res, next) {
-// 	// Render form for accepting amount
-// 	res.render('pages/payment/order', {
-// 		title: 'Donate for Animals'
-// 	});
-// });
-
-/**
- * Create Payment Order
- */
-router.post("/order", function (req, res, next) {
-  // Validate and format the tripdate
-  let tripdate;
+// Create Razorpay Order
+router.post('/order', async (req, res) => {
   try {
-    // Parse the date string which is in format "09 Sep 2025 to 12 Sep 2025"
-    const dateString = req.body.tripdate;
-    // Extract the start date (first part before "to")
-    const startDateStr = dateString.split(' to ')[0];
-    // Parse the date using the format "DD MMM YYYY"
-    const [day, month, year] = startDateStr.split(' ');
-    const monthMap = {
-      'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06',
-      'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+    const { amount, bookingId } = req.body;
+    if (!amount || !bookingId) {
+      return res.status(400).json({ success: false, message: 'Amount and bookingId are required' });
+    }
+
+    const booking = await TripBookingDetail.findById(bookingId);
+    if (!booking) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+
+    if (parseFloat(amount).toFixed(2) !== parseFloat(booking.paidAmount).toFixed(2)) {
+      return res.status(400).json({ success: false, message: 'Amount mismatch with booking' });
+    }
+
+    const options = {
+      amount: Math.round(parseFloat(amount) * 100), // Convert to paise
+      currency: 'INR',
+      receipt: `receipt_${bookingId}`
     };
-    // Create a proper date string in YYYY-MM-DD format
-    const formattedDate = `${year}-${monthMap[month]}-${day.padStart(2, '0')}`;
-    tripdate = new Date(formattedDate);
-    
-    // Validate if it's a valid date
-    if (isNaN(tripdate.getTime())) {
-      throw new Error('Invalid date format');
-    }
-  } catch (error) {
-    console.error('Date parsing error:', error);
-    return res.status(400).json({
-      success: false,
-      message: "Invalid date format for trip date"
+
+    const order = await razorpay.orders.create(options);
+    return res.status(200).json({
+      success: true,
+      orderId: order.id,
+      amount: options.amount,
+      currency: options.currency
     });
-  }
-
-  params = {
-    amount: req.body.cost * 100,
-    currency: "INR",
-    receipt: nanoid(),
-    payment_capture: "1",
-  };
-  razorPayInstance.orders
-    .create(params)
-    .then(async (response) => {
-      const razorpayKeyId = process.env.RAZORPAY_KEY_ID;
-      // Save orderId and other payment details
-      const paymentDetail = new PaymentDetail({
-        orderId: response.id,
-        receiptId: response.receipt,
-        amount: response.amount,
-        currency: response.currency,
-        createdAt: response.created_at,
-        status: response.status,
-        name: req.body.name,
-        email: req.body.email,
-        travellers: req.body.travellers,
-        cost: req.body.cost,
-        contact: Number(req.body.contact.replace(/\s/g, "")),
-        destination: req.body.destination,
-        tripdate: tripdate, // Use the properly formatted date
-      });
-      try {
-        // Save payment details
-        await paymentDetail.save();
-        res.json({
-          success: true,
-          razorpayKeyId: razorpayKeyId,
-          paymentDetail: paymentDetail
-        });
-      } catch (err) {
-        console.log(err);
-        res.status(500).json({
-          success: false,
-          message: "Failed to save payment details"
-        });
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        success: false,
-        message: "Failed to create payment order"
-      });
-    });
-});
-
-/**
- * Verify Payment
- */
-router.post("/verify", async function (req, res, next) {
-  try {
-    console.log('Payment verification request received:', req.body);
-    
-    // Validate required fields
-    if (!req.body.razorpay_order_id || !req.body.razorpay_payment_id || !req.body.razorpay_signature) {
-      console.error('Missing required fields in verification request');
-      return res.status(400).json({
-        success: false,
-        message: "Missing required payment verification fields"
-      });
-    }
-
-    // Check if order exists
-    const existingOrder = await PaymentDetail.findOne({ orderId: req.body.razorpay_order_id });
-    if (!existingOrder) {
-      console.error('Order not found:', req.body.razorpay_order_id);
-      return res.status(404).json({
-        success: false,
-        message: "Order not found"
-      });
-    }
-
-    // Generate signature
-    const body = req.body.razorpay_order_id + "|" + req.body.razorpay_payment_id;
-    console.log('Signature body:', body);
-    
-    const crypto = require("crypto");
-    const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-      .update(body.toString())
-      .digest("hex");
-
-    console.log('Expected signature:', expectedSignature);
-    console.log('Received signature:', req.body.razorpay_signature);
-
-    // Compare signatures
-    if (expectedSignature === req.body.razorpay_signature) {
-      console.log('Signature verification successful');
-      
-      // Update payment status
-      const updatedPayment = await PaymentDetail.findOneAndUpdate(
-        { orderId: req.body.razorpay_order_id },
-        {
-          paymentId: req.body.razorpay_payment_id,
-          signature: req.body.razorpay_signature,
-          status: "paid",
-        },
-        { new: true }
-      );
-
-      if (!updatedPayment) {
-        console.error('Failed to update payment status');
-        return res.status(500).json({
-          success: false,
-          message: "Failed to update payment status"
-        });
-      }
-
-      console.log('Payment updated successfully:', updatedPayment);
-      return res.json({
-        success: true,
-        message: "Payment verified successfully"
-      });
-    } else {
-      console.error('Signature verification failed');
-      return res.status(400).json({
-        success: false,
-        message: "Payment verification failed - Invalid signature"
-      });
-    }
   } catch (error) {
-    console.error('Error in payment verification:', error);
+    console.error('Error creating Razorpay order:', error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error during payment verification"
+      message: 'Failed to create payment order',
+      error: error.message
+    });
+  }
+});
+
+// Verify Payment
+router.post('/verify', async (req, res) => {
+  try {
+    const { razorpay_payment_id, razorpay_order_id, razorpay_signature, bookingId } = req.body;
+
+    if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature || !bookingId) {
+      return res.status(400).json({ success: false, message: 'Missing payment details' });
+    }
+
+    // Verify signature
+    const body = razorpay_order_id + '|' + razorpay_payment_id;
+    const expectedSignature = crypto
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+      .update(body.toString())
+      .digest('hex');
+
+    if (expectedSignature !== razorpay_signature) {
+      return res.status(400).json({ success: false, message: 'Invalid payment signature' });
+    }
+
+    // Update booking
+    const booking = await TripBookingDetail.findById(bookingId);
+    if (!booking) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+
+    booking.paymentStatus = 'Completed';
+    booking.bookingStatus = 'Confirmed';
+    booking.paidAmountRef = razorpay_payment_id;
+    booking.updatedAt = new Date();
+    await booking.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Payment verified and booking confirmed'
+    });
+  } catch (error) {
+    console.error('Error verifying payment:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to verify payment',
+      error: error.message
     });
   }
 });

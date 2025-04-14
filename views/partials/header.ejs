@@ -50,13 +50,9 @@
                         <% if(profile?.email===process.env.GMAIL_ADMIN) { %>
                         <li><a href="/admin/login">Admin</a></li>
                         <% } %>
-                        <!-- <li><a href="/profile">Profile</a></li> -->
                         <li><a href="/profile">Profile</a></li>
-                        <!-- <li><a href="/logout">Sign Out</a></li> -->
                         <li>
                           <form id="my_form" action="/logout" method="post">
-                            <!-- <a href="#" type="submit">Sign Out</a> -->
-                            <!-- <button class="btn btn-light" type="submit"><a>Sign out</a></button> -->
                             <a href="javascript:{}" onclick="signout(accessTokens)">Sign Out</a>
                             <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                           </form>
@@ -64,9 +60,6 @@
                       </ul>
                     </li>
                     <%} else { %>
-                    <!-- <li>
-                                            <button class="btn btn-sm btn-primary"><a href="/login/federated/google" style="color: white;">SignIn with Google</a></button>
-                                          </li> -->
                     <li>
                       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                         Sign In
@@ -99,7 +92,6 @@
                         <i class="fa fa-facebook"></i>
                       </a>
                     </li>
-                    <!-- <li><a href="https://twitter.com/dejavutours_in" target="_blank" rel="nofollow noopener"> <i class="fa fa-twitter"></i> </a></li> -->
                   </ul>
                 </div>
               </div>
@@ -175,10 +167,10 @@
           </p>
           <div class="otp-container">
             <input type="text" class="otp-input" maxlength="1" id="otp1" required ">
-            <input type="text" class="otp-input" maxlength="1" id="otp2" required ">
-            <input type="text" class="otp-input" maxlength="1" id="otp3" required ">
-            <input type="text" class="otp-input" maxlength="1" id="otp4" required ">
-            <input type="hidden" class="form-control" id="mobileNumber2" name="phone2" placeholder="Enter Phone Number" />
+            <input type=" text" class="otp-input" maxlength="1" id="otp2" required ">
+            <input type=" text" class="otp-input" maxlength="1" id="otp3" required ">
+            <input type=" text" class="otp-input" maxlength="1" id="otp4" required ">
+            <input type=" hidden" class="form-control" id="mobileNumber2" name="phone2" placeholder="Enter Phone Number" />
             <input type="hidden" class="form-control" id="otp" name="otp" placeholder="Enter OTP" />
           </div>
           <p class="mt-3">
@@ -320,7 +312,7 @@
 
       fetch("/verifyotp", {
           method: "POST",
-          body: new FormData(verifyForm),
+          body: new FormData(verifyForm)
         })
         .then((response) => response.json())
         .then((data) => {
@@ -332,7 +324,7 @@
             alert("Verification failed. Please try again.");
           }
         })
-        .catch((error) => console.error("Error:", error))
+        .catch(error => console.error("Error:", error))
         .finally(() => {
           verifyBtn.innerHTML = "Verify Code";
           verifyBtn.disabled = false;

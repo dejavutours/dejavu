@@ -406,14 +406,12 @@ router.post('/admin/removeBannerImage', ensureLoggedIn, isAuth, toursController.
 
 // book tour 
 router.get(
-  '/bookingTour/:tripid',
-  ensureLoggedIn,
-  toursController.renderBookingTourPage
+  '/bookingTour/:tripid', toursController.renderBookingTourPage
 );
 
 router.post(
   '/bookingTour',
-  ensureLoggedIn,
+  ensuremultiplelogin,
   toursController.submitBookingTourPage
 );
 
