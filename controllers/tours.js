@@ -1889,7 +1889,7 @@ exports.renderBookingTourPage = async (req,res) =>{
       }
     }
   }
-  res.render('pages/bookingTour' ,{tourDetails: existingTrip});
+  res.render('pages/bookingTour' ,{tourDetails: existingTrip, tempUserID: req.user.email || req.verifiedPhoneNumber });
 };
 
 exports.submitBookingTourPage = async (req,res) =>{

@@ -3,6 +3,7 @@ var express = require("express");
 var router = express.Router();
 const Razorpay = require("razorpay");
 const PaymentDetail = require("../models/payment-detail");
+const TripBookingDetail = require("../models/TripBookingDetail");
 const { nanoid } = require("nanoid");
 
 // Create an instance of Razorpay
@@ -168,11 +169,71 @@ router.post("/verify", async function (req, res, next) {
         });
       }
 
-      console.log('Payment updated successfully:', updatedPayment);
-      return res.json({
-        success: true,
-        message: "Payment verified successfully"
-      });
+      // Create TripBookingDetail entry
+      try {
+        const tripBookingDetail = new TripBookingDetail({
+          // User information
+          userId: req.body.userId || null,
+          tempUserID: req.body.tempUserID || null,
+          
+          // Tour information
+          toursSystemId: req.body.toursSystemId,
+          tripName: req.body.tripName,
+          tripCode: req.body.tripCode,
+          imageName: req.body.imageName,
+          
+          // Person details
+          totalPerson: {
+            adult: parseInt(req.body.totalPerson.adult),
+            child: parseInt(req.body.totalPerson.child)
+          },
+          personDetails: req.body.personDetails.map(person => ({
+            firstName: person.firstName,
+            surname: person.surname,
+            gender: person.gender,
+            birthdate: new Date(person.birthdate),
+            phone: person.phone,
+            altphone: person.altphone,
+            age: person.age,
+            isAdult: person.isAdult
+          })),
+          
+          // Location and dates
+          joiningFrom: req.body.joiningFrom,
+          tripStartDate: new Date(req.body.tripStartDate),
+          tripEndDate: new Date(req.body.tripEndDate),
+          
+          // Payment information
+          totalTripCost: parseFloat(req.body.totalTripCost),
+          paidAmount: parseFloat(req.body.paidAmount),
+          paidAmountRef: [{
+            isThroughPymtGateway: true,
+            orderId: req.body.razorpay_order_id,
+            amount: parseFloat(req.body.paidAmount)
+          }],
+          duePayment: parseFloat(req.body.totalTripCost) - parseFloat(req.body.paidAmount),
+          paymentStatus: parseFloat(req.body.totalTripCost) === parseFloat(req.body.paidAmount) ? 'Paid' : 'Partial',
+          
+          // Booking status
+          bookingStatus: 'Confirmed'
+        });
+
+        await tripBookingDetail.save();
+        console.log('TripBookingDetail created successfully:', tripBookingDetail);
+
+        return res.json({
+          success: true,
+          message: "Payment verified and booking created successfully",
+          bookingId: tripBookingDetail._id
+        });
+
+      } catch (error) {
+        console.error('Error creating TripBookingDetail:', error);
+        return res.status(500).json({
+          success: false,
+          message: "Payment verified but failed to create booking record: " + error.message
+        });
+      }
     } else {
       console.error('Signature verification failed');
       return res.status(400).json({
@@ -184,7 +245,7 @@ router.post("/verify", async function (req, res, next) {
     console.error('Error in payment verification:', error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error during payment verification"
+      message: "Internal server error during payment verification: " + error.message
     });
   }
 });

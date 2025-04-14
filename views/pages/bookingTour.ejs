@@ -878,7 +878,59 @@
                         razorpay_payment_id: response.razorpay_payment_id,
                         razorpay_order_id: response.razorpay_order_id,
                         razorpay_signature: response.razorpay_signature,
-                        _csrf: formData.get('_csrf')
+                        _csrf: formData.get('_csrf'),
+                        // User information
+                        userId: '<%= user ? user._id : null %>',
+                        tempUserID: '<%= tempUserID || null %>',
+                        // Tour information
+                        toursSystemId: '<%= tourDetails._id %>',
+                        tripName: '<%= tourDetails.name %>',
+                        tripCode: '<%= tourDetails.code %>',
+                        imageName: '<%= tourDetails.imageName %>',
+                        // Person details
+                        totalPerson: {
+                          adult: document.getElementById('adults').value,
+                          child: document.getElementById('children').value
+                        },
+                        personDetails: Array.from(document.querySelectorAll('.person-details')).map((person, index) => {
+                          const firstName = person.querySelector(`[name="personDetails[${index}][firstName]"]`).value;
+                          const surname = person.querySelector(`[name="personDetails[${index}][Surname]"]`).value;
+                          const gender = person.querySelector(`[name="personDetails[${index}][Gender]"]`).value;
+                          const birthdate = person.querySelector(`[name="personDetails[${index}][dateofbirth]"]`).value;
+                          const phone = person.querySelector(`[name="personDetails[${index}][mobileno]"]`).value;
+                          const altphone = person.querySelector(`[name="personDetails[${index}][alternateNumber]"]`).value;
+                          
+                          // Calculate age and isAdult
+                          const today = new Date();
+                          const birthDate = new Date(birthdate);
+                          let age = today.getFullYear() - birthDate.getFullYear();
+                          const monthDiff = today.getMonth() - birthDate.getMonth();
+                          if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                            age--;
+                          }
+                          
+                          return {
+                            firstName,
+                            surname,
+                            gender,
+                            birthdate,
+                            phone: parseInt(phone),
+                            altphone: altphone ? parseInt(altphone) : null,
+                            age,
+                            isAdult: age >= 10
+                          };
+                        }),
+                        // Location and dates
+                        joiningFrom: document.getElementById('joiningFrom').value,
+                        tripStartDate: document.getElementById('travelDate').value,
+                        tripEndDate: document.getElementById('travelDate').value, // This should be calculated based on tour duration
+                        // Payment information
+                        totalTripCost: document.getElementById('totalCost').textContent,
+                        paidAmount: document.getElementById('totalCost').textContent,
+                        // Additional details
+                        transportType: document.getElementById('transportType').value,
+                        adultPrice: document.getElementById('Adultprice').value,
+                        childPrice: document.getElementById('childprice').value
                       })
                     })
                     .then(response => {
