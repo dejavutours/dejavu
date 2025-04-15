@@ -336,7 +336,7 @@
         </p>
         <div class="payment-options">
             <button class="payment-btn enable-disable" type="button" id="fullPaymentBtn">Pay full payment</button>
-            <button class="cursor_not_allowed_booking" type="button" disabled>Pay part payment</button>
+            <!-- <button class="cursor_not_allowed_booking" type="button" disabled>Pay part payment</button> -->
           </div>
           <label class="cm_label_booking">Amount to pay now</label>
           <input id="payingAmount" name="payingAmount" class="cm_field_booking" type="text" readonly />
@@ -813,10 +813,71 @@
         <script>
           document.getElementById('fullPaymentBtn').addEventListener('click', function() {
             console.log('Full payment button clicked');
-            const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
-            document.getElementById('paymentCost').value = document.getElementById('totalCost').textContent;
-            console.log('Payment amount:', document.getElementById('totalCost').textContent);
-            paymentModal.show();
+            
+            // Get and validate travel date
+            const travelDate = document.getElementById('travelDate').value;
+            if (!travelDate) {
+              toastr.error('Please select a valid travel date');
+              return;
+            }
+
+            // Parse the date string which is in format "09 Sep 2025 to 12 Sep 2025"
+            const dateParts = travelDate.split(' to ');
+            if (dateParts.length !== 2) {
+              toastr.error('Invalid date format. Please select a valid date range');
+              return;
+            }
+
+            // Parse start and end dates
+            const startDateStr = dateParts[0].trim();
+            const endDateStr = dateParts[1].trim();
+            
+            // Parse dates using the format "DD MMM YYYY"
+            const monthMap = {
+              'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06',
+              'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+            };
+
+            try {
+              // Parse start date
+              const [startDay, startMonth, startYear] = startDateStr.split(' ');
+              const formattedStartDate = `${startYear}-${monthMap[startMonth]}-${startDay.padStart(2, '0')}`;
+              const startDate = new Date(formattedStartDate);
+              
+              // Parse end date
+              const [endDay, endMonth, endYear] = endDateStr.split(' ');
+              const formattedEndDate = `${endYear}-${monthMap[endMonth]}-${endDay.padStart(2, '0')}`;
+              const endDate = new Date(formattedEndDate);
+
+              // Validate dates
+              if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                throw new Error('Invalid date format');
+              }
+
+              // Ensure end date is not before start date
+              if (endDate < startDate) {
+                throw new Error('End date cannot be before start date');
+              }
+
+              // Check if dates are in the future
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+              if (startDate < today) {
+                throw new Error('Start date cannot be in the past');
+              }
+
+              console.log("startDate", startDate);
+              console.log("endDate", endDate);
+
+              // If all validations pass, proceed with payment
+              const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+              document.getElementById('paymentCost').value = document.getElementById('totalCost').textContent;
+              paymentModal.show();
+
+            } catch (error) {
+              console.error('Date validation error:', error);
+              toastr.error(error.message || 'Invalid date selection');
+            }
           });
 
           document.getElementById('proceedToPayment').addEventListener('click', function() {
@@ -824,12 +885,32 @@
             const paymentForm = document.getElementById('paymentForm');
             const formData = new FormData(paymentForm);
             
+            // Get the travel date
+            const travelDate = document.getElementById('travelDate').value;
+            const dateParts = travelDate.split(' to ');
+            const startDateStr = dateParts[0].trim();
+            const endDateStr = dateParts[1].trim();
+            
+            // Format dates for backend
+            const monthMap = {
+              'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06',
+              'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+            };
+            
+            const [startDay, startMonth, startYear] = startDateStr.split(' ');
+            const formattedStartDate = `${startYear}-${monthMap[startMonth]}-${startDay.padStart(2, '0')}`;
+            
+            const [endDay, endMonth, endYear] = endDateStr.split(' ');
+            const formattedEndDate = `${endYear}-${monthMap[endMonth]}-${endDay.padStart(2, '0')}`;
+            
             // Log form data
             console.log('Form data:', {
               cost: formData.get('cost'),
               name: formData.get('name'),
               email: formData.get('email'),
-              contact: formData.get('contact')
+              contact: formData.get('contact'),
+              startDate: formattedStartDate,
+              endDate: formattedEndDate
             });
             
             // Create order and proceed to payment
@@ -845,7 +926,7 @@
                 email: formData.get('email'),
                 contact: formData.get('contact'),
                 destination: '<%= tourDetails.name %>',
-                tripdate: document.getElementById('travelDate').value,
+                tripdate: travelDate,
                 travellers: document.getElementById('adults').value + ' Adults, ' + document.getElementById('children').value + ' Children'
               })
             })
@@ -880,7 +961,6 @@
                         razorpay_signature: response.razorpay_signature,
                         _csrf: formData.get('_csrf'),
                         // User information
-                        userId: '<%= user ? user._id : null %>',
                         tempUserID: '<%= tempUserID || null %>',
                         // Tour information
                         toursSystemId: '<%= tourDetails._id %>',
@@ -922,8 +1002,8 @@
                         }),
                         // Location and dates
                         joiningFrom: document.getElementById('joiningFrom').value,
-                        tripStartDate: document.getElementById('travelDate').value,
-                        tripEndDate: document.getElementById('travelDate').value, // This should be calculated based on tour duration
+                        tripStartDate: formattedStartDate,
+                        tripEndDate: formattedEndDate,
                         // Payment information
                         totalTripCost: document.getElementById('totalCost').textContent,
                         paidAmount: document.getElementById('totalCost').textContent,

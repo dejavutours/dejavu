@@ -169,6 +169,33 @@ router.post("/verify", async function (req, res, next) {
         });
       }
 
+      // Validate and format dates
+      let tripStartDate, tripEndDate;
+      try {
+        // Parse start date
+        tripStartDate = new Date(req.body.tripStartDate);
+        if (isNaN(tripStartDate.getTime())) {
+          throw new Error('Invalid start date format');
+        }
+
+        // Parse end date
+        tripEndDate = new Date(req.body.tripEndDate);
+        if (isNaN(tripEndDate.getTime())) {
+          throw new Error('Invalid end date format');
+        }
+
+        // Ensure end date is not before start date
+        if (tripEndDate < tripStartDate) {
+          throw new Error('End date cannot be before start date');
+        }
+      } catch (error) {
+        console.error('Date validation error:', error);
+        return res.status(400).json({
+          success: false,
+          message: error.message
+        });
+      }
+
       // Create TripBookingDetail entry
       try {
         const tripBookingDetail = new TripBookingDetail({
@@ -200,8 +227,8 @@ router.post("/verify", async function (req, res, next) {
           
           // Location and dates
           joiningFrom: req.body.joiningFrom,
-          tripStartDate: new Date(req.body.tripStartDate),
-          tripEndDate: new Date(req.body.tripEndDate),
+          tripStartDate: tripStartDate,
+          tripEndDate: tripEndDate,
           
           // Payment information
           totalTripCost: parseFloat(req.body.totalTripCost),
