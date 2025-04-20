@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <%- include('../partials/headtag'); %>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-  <link href="/assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css"/>
+  <link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-  <script src="/assets/plugins/global/plugins.bundle.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <!-- Razorpay SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script src="assets/plugins/global/plugins.bundle.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <style>
+    /* Existing styles unchanged */
     .back-btn_booking {
       display: flex;
       align-items: center;
@@ -66,8 +67,7 @@
       padding: 4px;
       font-size: 16px;
       width: 20%;
-      border-radius: 6px;
-      text-align: center;
+      border-radius: 11%;
     }
     .cm_row_booking {
       display: flex;
@@ -81,8 +81,7 @@
       align-items: center;
       gap: 2rem;
       margin-bottom: 1rem;
-      width: 100;
-      margin-top: 10px;
+      width: 100%;
     }
     .count_group_booking div {
       display: flex;
@@ -123,7 +122,6 @@
       border-radius: 6px;
       background-color: #f0f0f0;
       cursor: pointer;
-      flex: 1;
     }
     .payment-btn {
       background-color: #002d66;
@@ -145,7 +143,6 @@
       margin-top: 1rem;
       cursor: pointer;
       font-weight: bold;
-      width: 100%;
     }
     .remove-btn {
       background-color: #002d66;
@@ -155,21 +152,10 @@
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
-      font-size: 0.9rem;
     }
     @media (max-width: 768px) {
       .cm_row_booking {
         flex-direction: column;
-      }
-      .container_booking {
-        flex-direction: column;
-      }
-      .payment-options {
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-      .payment-options button {
-        width: 100%;
       }
     }
     .cm_margin_top_booking {
@@ -178,85 +164,86 @@
     .cursor_not_allowed_booking {
       cursor: not-allowed !important;
     }
-
-    #messageModal .modal-content {
-      border-radius: 10px; /* Rounded modal */
+    #messageModal .modal-content,
+    #paymentModal .modal-content {
+      border-radius: 10px;
     }
-
-    #messageModal .modal-header {
+    #messageModal .modal-header,
+    #paymentModal .modal-header {
       background: #1a4b8e;
       color: white;
     }
-    #costBreakdownModal .modal-dialog {
-      max-width: 800px;
+    .traveler-info-modal-label {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: 600;
     }
-    #costBreakdownModal .modal-body {
-      padding: 1.5rem;
-    }
-    #costBreakdownModal .d-flex {
-      margin-bottom: 0.5rem;
-    }
-    #costBreakdownModal .alert-warning {
-      margin-top: 1rem;
-    }
-
-    /* Style for notes */
-    .note {
-      background-color: #fff3cd;
-      border: 1px solid #ffeeba;
+    .traveler-info-modal-field {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
       border-radius: 6px;
-      padding: 0.75rem;
-      margin-bottom: 1rem;
-      font-size: 0.9rem;
-      color: #856404;
+      margin-bottom: 0.4rem;
+    }
+    .error-message {
+      display: none;
+      color: red;
+      font-size: 0.8rem;
     }
   </style>
 </head>
+
 <body>
   <%- include('../partials/header'); %>
   <div class="container">
     <div class="back-btn_booking">
       <a href="javascript:history.back()" class="text-decoration-none">
         <i class="bi bi-arrow-left"></i><span> </span> Back
-      </a> 
+      </a>
     </div>
+
     <h2 class="cm_margin_booking">Booking initiated</h2>
     <p>Please enter your details below and proceed to payment. Leave the rest to us.</p>
-    <div class="note">
-      <strong>Note:</strong> Please select a transport type first to enable the form and set the pricing. This step is required to proceed with your booking.
-    </div>
-    <form id="bookingForm" action="/bookingTour" method="POST">
-      <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
-      <input type="hidden" name="Adultprice" id="Adultprice"/>
-      <input type="hidden" name="childprice" id="childprice"/>
+
+    <form action="/payment/order" method="POST" id="bookingForm">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <input type="hidden" name="tourId" value="<%= tourDetails._id %>" />
+      <input type="hidden" name="Adultprice" id="Adultprice" />
+      <input type="hidden" name="childprice" id="childprice" />
+      <input type="hidden" name="email" id="userEmail" value="<%= userData?.email || '' %>" />
+      <input type="hidden" name="firstName" id="firstName" value="<%= userData?.firstName || '' %>" />
+      <input type="hidden" name="lastName" id="lastName" value="<%= userData?.lastName || '' %>" />
+      <input type="hidden" name="phone" id="phone" value="<%= userData?.phone || '' %>" />
+      <input type="hidden" name="userId" id="userId" value="<%= userData?.id || '' %>" />
+      <!-- <input type="hidden" name="city" id="userCity" value="<%= userData?.city || '' %>" /> -->
       <div class="container_booking">
         <div class="form_section_booking">
           <div class="cm_row_booking">
             <label class="cm_label_booking" style="min-width: fit-content;">Transport Type</label>
-            <select class="cm_field_booking form-select" name="transportType" id="transportType" onchange="populateForm()" required>
+            <select class="cm_field_booking form-select" name="transportType" id="transportType" onchange="populateForm()">
               <option value="" disabled selected>Select Transport Type</option>
               <% tourDetails?.transportList?.forEach(loc=> { %>
-                <option value="<%= loc.transferType %>">
-                  <%= loc.transferType %>
-                </option>
+              <option value="<%= loc.transferType %>">
+                <%= loc.transferType %>
+              </option>
               <% }); %>
             </select>
           </div>
           <div class="cm_row_booking">
             <div>
               <label class="cm_label_booking">Joining from</label>
-              <select class="cm_field_booking form-select cursor_not_allowed_booking" name="joiningFrom" id="joiningFrom" onchange="populateDates()" disabled required>
+              <select class="cm_field_booking form-select cursor_not_allowed_booking" name="joiningFrom" id="joiningFrom" onchange="populateDates()" disabled>
                 <% tourDetails.deptcities.forEach(loc=> { %>
-                  <option value="<%= loc.City %>" <%= tourDetails.selectedInfo.city == loc.City ? 'selected' : '' %> >
-                    <%= loc.City %>
-                  </option>
+                <option value="<%= loc.City %>" <%= tourDetails.selectedInfo.city == loc.City ? 'selected' : '' %>>
+                  <%= loc.City %>
+                </option>
                 <% }); %>
               </select>
             </div>
             <div>
-              <label class="cm_label_booking">Tour date <span class="text-danger">*</span></label>
-              <select class="cm_field_booking enable-disable form-select" name="travelDate" id="travelDate" onchange="onchangetoureDate()" required>
-                <option value="" disabled selected>Select a date</option>
+              <label class="cm_label_booking ">Tour date <span class="text-danger">*</span></label>
+              <select class="cm_field_booking enable-disable form-select" name="travelDate" id="travelDate" onchange="onchangetoureDate()">
+                <!-- populate based on Joining From Selection -->
               </select>
             </div>
           </div>
@@ -264,57 +251,53 @@
             <div>
               <label class="cm_label_booking cm_margin_top_booking">Adults (10+): </label>
               <button class="enable-disable" type="button" onclick="increDecreValue('adults','decrement')">-</button>
-              <input id="adults" name="adults" class="cm_input_number_booking enable-disable" type="number" value="1" min="1" required />
+              <input id="adults" name="adults" class="cm_input_number_booking enable-disable" type="number" value="1" />
               <button class="enable-disable" type="button" onclick="increDecreValue('adults','increment')">+</button>
             </div>
             <div>
               <label class="cm_label_booking cm_margin_top_booking">Children (5-10):</label>
               <button class="enable-disable" type="button" onclick="increDecreValue('children','decrement')">-</button>
-              <input id="children" name="children" class="cm_input_number_booking enable-disable" type="number" value="0" min="0" required />
+              <input id="children" name="children" class="cm_input_number_booking enable-disable" type="number" value="0" />
               <button class="enable-disable" type="button" onclick="increDecreValue('children','increment')">+</button>
             </div>
           </div>
-          <div class="note">
-            <strong>Note:</strong> The "Add all person's detail" button will be enabled only after you increase the adult or child counter. Adjust the counters to add more persons.
-          </div>
-          <h4 class="mt-5">Person’s details</h4>
+          <h3>Person’s details</h3>
           <div id="personDetailsContainer">
             <div class="person-details" id="person1">
-              <div class="header_section_booking">
-                <h4>Person 1</h4>
-              </div>
+              <h4>Person 1</h4>
               <div class="cm_row_booking">
                 <div>
-                  <label class="cm_label_booking">First name <span class="text-danger">*</span></label>
-                  <input id="firstName" name="personDetails[0][firstName]" class="cm_field_booking enable-disable" type="text" required placeholder="Your name here" />
+                  <label class="cm_label_booking form-label">First name <span class="text-danger">*</span></label>
+                  <input id="firstName" name="personDetails[0][firstName]" class="cm_field_booking enable-disable" type="text" placeholder="Your name here" required value="<%= userData?.firstName || '' %>" />
                 </div>
                 <div>
-                  <label class="cm_label_booking">Surname <span class="text-danger">*</span></label>
-                  <input id="Surname" name="personDetails[0][Surname]" class="cm_field_booking enable-disable" type="text" required placeholder="Your surname here" />
+                  <label class="cm_label_booking form-label">Last name <span class="text-danger">*</span></label>
+                  <input id="Surname" name="personDetails[0][Surname]" class="cm_field_booking enable-disable" type="text" placeholder="Please enter last name" required value="<%= userData?.lastName || '' %>" />
                 </div>
               </div>
               <div class="cm_row_booking">
                 <div>
                   <label class="cm_label_booking">Birth date <span class="text-danger">*</span></label>
-                  <input id="dateofbirth" name="personDetails[0][dateofbirth]" class="cm_field_booking enable-disable form-control" required type="date" />
+                  <input id="dateofbirth" name="personDetails[0][dateofbirth]" class="cm_field_booking enable-disable form-control" required type="date" value="<%= userData?.birthDate ? new Date(userData.birthDate).toISOString().split('T')[0] : '' %>" />
                 </div>
                 <div>
-                  <label class="cm_label_booking form-label">Gender<span class="text-danger">*</span></label>
+                  <label class="cm_label_booking form-label">Gender <span class="text-danger">*</span></label>
                   <select id="Gender" name="personDetails[0][Gender]" class="cm_field_booking enable-disable form-select" required>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
+                    <option value="" disabled <%= !userData?.gender ? 'selected' : '' %>>Select Gender</option>
+                    <option value="Male" <%= userData?.gender === 'Male' ? 'selected' : '' %>>Male</option>
+                    <option value="Female" <%= userData?.gender === 'Female' ? 'selected' : '' %>>Female</option>
+                    <option value="Other" <%= userData?.gender === 'Other' ? 'selected' : '' %>>Other</option>
                   </select>
                 </div>
               </div>
               <div class="cm_row_booking">
                 <div>
                   <label class="cm_label_booking">Mobile number <span class="text-danger">*</span></label>
-                  <input id="mobileno" name="personDetails[0][mobileno]" class="cm_field_booking enable-disable" type="tel" placeholder="+91 Enter your mobile number" required pattern="\d{10}" />
+                  <input id="mobileno" name="personDetails[0][mobileno]" class="cm_field_booking enable-disable" type="tel" required placeholder="+91 Enter your mobile number" value="<%= userData?.phone || '' %>" />
                 </div>
                 <div>
                   <label class="cm_label_booking">Alternative number</label>
-                  <input id="alternateNumber" name="personDetails[0][alternateNumber]" class="cm_field_booking enable-disable" type="tel" placeholder="+91 Enter alt mobile number" pattern="\d{10}?" />
+                  <input id="alternateNumber" name="personDetails[0][alternateNumber]" class="cm_field_booking enable-disable" type="tel" placeholder="+91 Enter alt mobile number" value="<%= userData?.alternateNumber || '' %>" />
                 </div>
               </div>
             </div>
@@ -324,19 +307,16 @@
         </div>
         <div class="summary_section_booking">
           <h3>Booking summary</h3>
-          <p><strong><%= tourDetails.name %></strong></p>
-          <p><%= tourDetails.days %></p>
-          <p>Pickup from: <span id="pickupFrom"></span></p>
-          <p>Travel date: <span id="travelDateDisplay"></span></p>
-          <p><strong>Total costs:</strong>₹<span id="totalCost"></span></p>
+          <p><strong>Trip :</strong><strong><%= tourDetails.name %></strong></p>
+          <p><strong>Duretion :</strong><%= tourDetails.days %></p>
+          <p><strong>Pickup from :</strong><span id="pickupFrom"></span></p>
+          <p><strong>Travel date :</strong><span id="travelDateDisplay"></span></p>
+          <p><strong>Total costs:</strong> &nbsp; ₹ <span id="totalCost"> 0 </span></p>
           <p>
             <a href="#" id="openCostModalBtn" data-bs-toggle="modal" data-bs-target="#costBreakdownModal">View Cost Breakdown</a>
           </p>
-          <div class="alert alert-warning mt-4 mb-3">
+          <div class="alert alert-warning mt-4 mb-1">
             3AC train ticket and flight ticket charges will be applied after the actual ticket booking.
-          </div>
-          <div class="note">
-            <strong>Note:</strong> Currently, only the full payment option is available. For advance payment, please contact us directly.
           </div>
           <div class="payment-options">
             <button class="cursor_not_allowed_booking" disabled>Pay full payment</button>
@@ -344,8 +324,7 @@
           </div>
           <label class="cm_label_booking">Amount to pay now</label>
           <input id="payingAmount" name="payingAmount" class="cm_field_booking" type="text" readonly />
-          <p>Minimum should be 30% of total amount</p>
-          <button id="submit" type="submit" class="payment-btn enable-disable">Pay ₹<span id="payingAmountDisplay"></span> now</button>
+          <button id="submit" class="payment-btn enable-disable">Pay ₹<span id="payingAmountDisplay"></span> now</button>
         </div>
       </div>
     </form>
@@ -395,7 +374,6 @@
       </div>
     </div>
   </div>
-
   <!-- Message Modal -->
   <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -411,78 +389,140 @@
       </div>
     </div>
   </div>
+  <!-- Traveler Info Modal -->
+  <div class="modal fade" id="travelerInfoModal" tabindex="-1" aria-labelledby="travelerInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="travelerInfoModalLabel">Update Information</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="closeTravelerInfoModal()"></button>
+        </div>
+        <div class="modal-body">
+          <div>
+            <label class="traveler-info-modal-label">First Name</label>
+            <input id="modalFirstName" class="traveler-info-modal-field" type="text" placeholder="Your first name" />
+            <span class="error-message" id="modalFirstNameError">Please enter your first name.</span>
+          </div>
+          <div>
+            <label class="traveler-info-modal-label">Last Name</label>
+            <input id="modalSurname" class="traveler-info-modal-field" type="text" placeholder="Your last name" />
+            <span class="error-message" id="modalSurnameError">Please enter your last name.</span>
+          </div>
+          <div>
+            <label class="traveler-info-modal-label">Email</label>
+            <input id="modalEmail" class="traveler-info-modal-field" type="email" placeholder="Your email"
+            <% if (!userData?.isloginFrommobile) { %>
+              disabled
+            <% } %>
+            />
+            <span class="error-message" id="modalEmailError">Please enter a valid email.</span>
+          </div>
+          <div>
+            <label class="traveler-info-modal-label">Mobile Number <span class="text-danger">*</span></label>
+            <input id="modalMobileNo" class="traveler-info-modal-field" type="tel" required placeholder="+91 Enter your mobile number" 
+             <% if (userData?.isloginFrommobile) { %>
+              disabled
+            <% } %>/>
+            <span class="error-message" id="modalMobileNoError">Please enter a valid mobile number.</span>
+          </div>
+          <div>
+            <label class="traveler-info-modal-label">Alternate Number</label>
+            <input id="modalAlternateNumber" class="traveler-info-modal-field" type="tel" placeholder="+91 Enter alternate number" />
+            <span class="error-message" id="modalAlternateNumberError">Please enter a valid alternate number.</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeTravelerInfoModal()">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="saveTravelerInfo()">Save and Proceed</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Payment Status Modal -->
+  <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="paymentModalLabel">Payment Status</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="closePaymentModal()"></button>
+        </div>
+        <div class="modal-body" id="paymentModalBody"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closePaymentModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <%- include('../partials/footer'); %>
   <%- include('../partials/scripttag'); %>
-
-  <!-- Transport Selection Set Form and Price -->
-  <script>
+<script>
+    // Existing functions unchanged
     function populateForm() {
       const allFields = document.querySelectorAll('.enable-disable');
-      allFields.forEach(field => {
-        field.disabled = false;
-        field.classList.remove('cursor_not_allowed_booking', 'opacity-50');
-      });
+      allFields.forEach(field => field.disabled = false);
+      allFields.forEach(field => field.classList.remove('cursor_not_allowed_booking', 'opacity-50'));
       const transportType = document.getElementById('transportType');
-      const transportList = <%- JSON.stringify(tourDetails.transportList) %>;
+      const transportList = <%-JSON.stringify(tourDetails.transportList) %>;
       const priceBaseOnTransportType = transportList.find((t) => t.transferType === transportType.value);
       const Adultprice = document.getElementById('Adultprice');
       const childprice = document.getElementById('childprice');
-      Adultprice.value = priceBaseOnTransportType?.adultPrice || "0";
-      childprice.value = priceBaseOnTransportType?.childPrice || "0";
+      Adultprice.value = priceBaseOnTransportType.adultPrice;
+      childprice.value = priceBaseOnTransportType.childPrice;
       populateDates();
     }
-  </script>
-
-  <!-- Bind Travel Date based on Joining from Selection -->
-  <script>
-    const deptcities = <%- JSON.stringify(tourDetails.deptcities) %>;
+  
+    const deptcities = <%-JSON.stringify(tourDetails.deptcities) %>;
+  
     function populateDates(isFromLoad) {
-      const selectedCity = (document.getElementById('joiningFrom').value || '').trim();
+      const selectedCity = document.getElementById('joiningFrom').value.trim();
       const travelDateSelect = document.getElementById('travelDate');
       const pickupFrom = document.getElementById('pickupFrom');
       const ModelpickupFrom = document.getElementById('ModelpickupFrom');
       const ModeltravelDate = document.getElementById('ModeltravelDate');
       const travelDateDisplay = document.getElementById('travelDateDisplay');
-      const cityObj = deptcities.find(loc => loc.City && loc.City.trim() === selectedCity);
-      travelDateSelect.innerHTML = '<option value="" disabled selected>Select a date</option>';
-      pickupFrom.innerHTML = ModelpickupFrom.innerHTML = selectedCity || 'N/A';
-      if (cityObj && cityObj.dateList && cityObj.dateList.length > 0) {
+      const cityObj = deptcities.find(loc => loc.City.trim() === selectedCity);
+      while (travelDateSelect.options.length > 0) {
+        travelDateSelect.remove(0);
+      }
+      pickupFrom.innerHTML = ModelpickupFrom.innerHTML = selectedCity;
+      if (cityObj && cityObj.dates && cityObj.dateList.length > 0) {
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Select Date';
+        defaultOption.disabled = true;
+        defaultOption.selected = true;
+        travelDateSelect.appendChild(defaultOption);
         cityObj.dateList.forEach(element => {
           const option = document.createElement('option');
           option.value = element;
           option.textContent = element;
           travelDateSelect.appendChild(option);
         });
-        if (!isFromLoad && cityObj.dateList[0]) {
-          travelDateSelect.value = cityObj.dateList[0];
+        if (cityObj && cityObj.price && cityObj.price.length > 0) {
+          recalculateCost();
         }
       } else {
         const option = document.createElement('option');
         option.textContent = 'No Tour dates available';
         travelDateSelect.appendChild(option);
       }
-      travelDateDisplay.innerHTML = ModeltravelDate.innerHTML = travelDateSelect.value || 'N/A';
-      console.log("Dates populated, selected:", travelDateSelect.value);
-      recalculateCost();
-      if (typeof $.fn.niceSelect !== 'undefined') {
-        $('#travelDate, #joiningFrom, #transportType, #Gender').each(function() {
-          $(this).niceSelect('destroy').niceSelect();
-        });
+      travelDateDisplay.innerHTML = ModeltravelDate.innerHTML = travelDateSelect.value || 'Select Date';
+      if ($.fn.niceSelect) {
+        $('#travelDate').niceSelect('destroy');
+        $('#joiningFrom').niceSelect('destroy');
+        $('#transportType').niceSelect('destroy');
+        $('#Gender').niceSelect('destroy');
       }
     }
-  </script>
-
-  <!-- Update on changes of tour date -->
-  <script>
+  
     function onchangetoureDate() {
       const travelDateSelect = document.getElementById('travelDate');
       const travelDateDisplay = document.getElementById('travelDateDisplay');
       const ModeltravelDate = document.getElementById('ModeltravelDate');
-      travelDateDisplay.innerHTML = ModeltravelDate.innerHTML = travelDateSelect.value || 'N/A';
-      recalculateCost();
+      travelDateDisplay.innerHTML = ModeltravelDate.innerHTML = travelDateSelect.value;
     }
- 
+  
     function recalculateCost() {
       const AdultpriceValue = document.getElementById('Adultprice').value.trim();
       const childpriceValue = document.getElementById('childprice').value.trim();
@@ -492,13 +532,15 @@
       const payingAmountDisplay = document.getElementById('payingAmountDisplay');
       const payingAmount = document.getElementById('payingAmount');
       if (isNaN(parseInt(AdultpriceValue)) && isNaN(parseInt(childpriceValue))) {
-        totalCost.innerHTML = payingAmountDisplay.innerHTML = '-';
-        payingAmount.value = '';
+        totalCost.innerHTML = payingAmountDisplay.innerHTML = '0';
       } else {
-        const total = parseInt(NoofAdutts) * parseInt(AdultpriceValue) + parseInt(NoofChild) * parseInt(childpriceValue);
-        totalCost.innerHTML = payingAmountDisplay.innerHTML = payingAmount.value = total;
+        const subtotal = parseInt(NoofAdutts) * parseInt(AdultpriceValue) + parseInt(NoofChild) * parseInt(childpriceValue);
+        const gst = subtotal * 0.05;
+        const total = subtotal + gst;
+        totalCost.innerHTML = payingAmountDisplay.innerHTML = payingAmount.value = total.toFixed(2);
       }
     }
+  
     function increDecreValue(type, operation) {
       const el = document.getElementById(type);
       const personCount = document.getElementById("personDetailsContainer").children.length;
@@ -517,7 +559,7 @@
       }
       recalculateCost();
     }
-
+  
     function addPerson() {
       const personContainer = document.getElementById("personDetailsContainer");
       const personCount = personContainer.children.length + 1;
@@ -534,22 +576,23 @@
           </div>
           <div class="cm_row_booking">
             <div>
-              <label class="cm_label_booking">First name*</label>
+              <label class="cm_label_booking">First name <span class="text-danger">*</span></label>
               <input id="firstName" name="personDetails[${personCount - 1}][firstName]" class="cm_field_booking" type="text" required placeholder="Your name here" />
             </div>
             <div>
-              <label class="cm_label_booking">Surname*</label>
-              <input id="Surname" name="personDetails[${personCount - 1}][Surname]" class="cm_field_booking" type="text" required placeholder="Your surname here" />
+              <label class="cm_label_booking">Last name <span class="text-danger">*</span></label>
+              <input id="Surname" name="personDetails[${personCount - 1}][Surname]" class="cm_field_booking" type="text" required placeholder="Please enter last name" />
             </div>
           </div>
           <div class="cm_row_booking">
             <div>
-              <label class="cm_label_booking">Birth date*</label>
-              <input id="dateofbirth" name="personDetails[${personCount - 1}][dateofbirth]" class="cm_field_booking" required type="date" />
+              <label class="cm_label_booking">Birth date <span class="text-danger">*</span></label>
+              <input id="dateofbirth" name="personDetails[${personCount - 1}][dateofbirth]" class="cm_field_booking form-control" required type="date" />
             </div>
             <div>
-              <label class="cm_label_booking">Gender*</label>
+              <label class="cm_label_booking">Gender <span class="text-danger">*</span></label>
               <select id="Gender" name="personDetails[${personCount - 1}][Gender]" class="cm_field_booking form-select" required>
+                <option value="" disabled selected>Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>
@@ -558,25 +601,26 @@
           </div>
           <div class="cm_row_booking">
             <div>
-              <label class="cm_label_booking">Mobile number*</label>
-              <input id="mobileno" name="personDetails[${personCount - 1}][mobileno]" class="cm_field_booking" type="tel" placeholder="+91 Enter your mobile number" required pattern="\d{10}" />
+              <label class="cm_label_booking">Mobile number <span class="text-danger">*</span></label>
+              <input id="mobileno" name="personDetails[${personCount - 1}][mobileno]" class="cm_field_booking" type="tel" required placeholder="+91 Enter your mobile number" />
             </div>
             <div>
               <label class="cm_label_booking">Alternative number</label>
-              <input id="alternateNumber" name="personDetails[${personCount - 1}][alternateNumber]" class="cm_field_booking" type="tel" placeholder="+91 Enter alt mobile number" pattern="\d{10}?" />
+              <input id="alternateNumber" name="personDetails[${personCount - 1}][alternateNumber]" class="cm_field_booking" type="tel" placeholder="+91 Enter alt mobile number" />
             </div>
-          </div>`;
+          </div>
+        `;
         personContainer.appendChild(personDiv);
         const addPerson = document.getElementById('AddPerson');
-        addPerson.style.display = parseInt(personContainer.children.length) == (parseInt(NoofAdutts) + parseInt(NoofChild)) ? 'none' : 'block';
-        if (typeof $.fn.niceSelect !== 'undefined') {
-          $(`#person${personCount} #Gender`).niceSelect();
+        if (parseInt(personContainer.children.length) == (parseInt(NoofAdutts) + parseInt(NoofChild))) {
+          addPerson.style.display = 'none';
+        } else {
+          addPerson.style.display = 'block';
         }
       }
     }
-
+  
     function removePerson(removePersonId) {
-      console.log("removePerson called:", removePersonId);
       let div = document.getElementById(`person${removePersonId}`);
       if (div) {
         div.remove();
@@ -584,32 +628,317 @@
       const addPerson = document.getElementById('AddPerson');
       addPerson.style.display = 'block';
     }
-
+  
     window.onload = () => {
       const allFields = document.querySelectorAll('.enable-disable');
       const transportType = document.getElementById('transportType').value.trim();
       if (!transportType) {
-        allFields.forEach(field => {
-          field.disabled = true;
-          field.classList.add('cursor_not_allowed_booking', 'opacity-50');
-        });
+        allFields.forEach(field => field.disabled = true);
+        allFields.forEach(field => field.classList.add('cursor_not_allowed_booking', 'opacity-50'));
       }
       populateDates('onload');
     };
-  </script>
-
-  <!-- Close Message Modal -->
-  <script>
+  
     const msgModal = new bootstrap.Modal(document.getElementById("messageModal"));
+    const travelerInfoModal = new bootstrap.Modal(document.getElementById("travelerInfoModal"));
+    const paymentModal = new bootstrap.Modal(document.getElementById("paymentModal"));
+  
     function closeMsgModal() {
       msgModal.hide();
     }
-  </script>
-
-  <!-- Cost Breakdown Modal Trigger -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      document.getElementById("openCostModalBtn").addEventListener("click", function () {
+  
+    function closeTravelerInfoModal() {
+      travelerInfoModal.hide();
+    }
+  
+    function closePaymentModal() {
+      paymentModal.hide();
+    }
+  
+    function openTravelerInfoModal() {
+      const firstName = document.querySelector('input[name="firstName"]').value;
+      const surname = document.querySelector('input[name="lastName"]').value;
+      const email = document.querySelector('input[name="email"]').value;
+      const mobileNo = document.querySelector('input[name="phone"]').value;
+      const alternateNumber = document.querySelector('input[name="personDetails[0][alternateNumber]"]').value;
+      document.getElementById('modalFirstName').value = firstName || '';
+      document.getElementById('modalSurname').value = surname || '';
+      document.getElementById('modalEmail').value = email || '';
+      document.getElementById('modalMobileNo').value = mobileNo || '';
+      document.getElementById('modalAlternateNumber').value = alternateNumber || '';
+      travelerInfoModal.show();
+    }
+  
+    async function saveTravelerInfo() {
+      const mobileNo = document.getElementById('modalMobileNo').value.trim();
+      const firstName = document.getElementById('modalFirstName').value.trim();
+      const surname = document.getElementById('modalSurname').value.trim();
+      const email = document.getElementById('modalEmail').value.trim();
+      const alternateNumber = document.getElementById('modalAlternateNumber').value.trim();
+      let isValid = true;
+      let isSubmitting = false; // Prevent multiple submissions
+  
+      // Validate required fields
+      if (!mobileNo || !mobileNo.match(/^\+?\d{10,15}$/)) {
+        document.getElementById('modalMobileNoError').style.display = 'block';
+        isValid = false;
+      } else {
+        document.getElementById('modalMobileNoError').style.display = 'none';
+      }
+  
+      if (!firstName) {
+        document.getElementById('modalFirstNameError').style.display = 'block';
+        isValid = false;
+      } else {
+        document.getElementById('modalFirstNameError').style.display = 'none';
+      }
+  
+      if (!surname) {
+        document.getElementById('modalSurnameError').style.display = 'block';
+        isValid = false;
+      } else {
+        document.getElementById('modalSurnameError').style.display = 'none';
+      }
+  
+      if (!email || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        document.getElementById('modalEmailError').style.display = 'block';
+        isValid = false;
+      } else {
+        document.getElementById('modalEmailError').style.display = 'none';
+      }
+  
+      if (alternateNumber && !alternateNumber.match(/^\+?\d{10,15}$/)) {
+        document.getElementById('modalAlternateNumberError').style.display = 'block';
+        isValid = false;
+      } else {
+        document.getElementById('modalAlternateNumberError').style.display = 'none';
+      }
+  
+      if (isValid && !isSubmitting) {
+        isSubmitting = true;
+        try {
+          const profileData = {
+            mobileNumber: mobileNo,
+            firstName,
+            lastName: surname,
+            email,
+            alternateNumber: alternateNumber || ''
+          };
+          const response = await fetch('/profile/update', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'CSRF-Token': document.querySelector('input[name="_csrf"]').value
+            },
+            body: JSON.stringify(profileData)
+          });
+          const result = await response.json();
+          if (result.message.includes('successfully')) {
+            toastr.success('Profile updated successfully.');
+            // Update hidden profile inputs only
+            document.querySelector('input[name="email"]').value = email;
+            document.querySelector('input[name="firstName"]').value = firstName;
+            document.querySelector('input[name="lastName"]').value = surname;
+            document.querySelector('input[name="phone"]').value = mobileNo;
+            isSubmitting=true;
+            closeTravelerInfoModal();
+            setTimeout(()=>{
+              document.getElementById('bookingForm').dispatchEvent(new Event('submit'));
+            },100)
+          } else {
+            toastr.error('Failed to update profile: ' + result.message);
+          }
+        } catch (err) {
+          toastr.error('Error updating profile: ' + err.message);
+          console.error('Profile update error:', err);
+        } finally {
+          isSubmitting = false;
+        }
+      }
+    }
+  
+    const today = new Date();
+  
+    function calculateAge(dobString) {
+      const dob = new Date(dobString);
+      let age = today.getFullYear() - dob.getFullYear();
+      const monthDiff = today.getMonth() - dob.getMonth();
+      const dayDiff = today.getDate() - dob.getDate();
+      if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
+      }
+      return age;
+    }
+  
+    document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+  
+      // Check userData for required fields
+      const userData = <%- JSON.stringify(userData || {}) %>;
+      const requiredFields = ['firstName', 'lastName', 'email', 'phone'];
+      const isProfileComplete = requiredFields.every(field => userData[field] && userData[field].trim() !== '');
+  
+      // if (!isProfileComplete) {
+      //   openTravelerInfoModal();
+      //   return; // Stop submission until profile is updated
+      // }  
+      // Existing adult/child validation
+      const NoofAdutts = document.getElementById('adults').value.trim();
+      const NoofChild = document.getElementById('children').value.trim();
+      let isAdultAvailable = false;
+      let isShowMessage = false;
+      let nofAdlutDetail = 0;
+      let noofChildDetail = 0;
+      let message = '';
+      const dobList = document.querySelectorAll('[id="dateofbirth"]');
+      dobList.forEach((ele) => {
+        const age = calculateAge(ele.value);
+        if (age > 10) {
+          nofAdlutDetail += 1;
+          isAdultAvailable = true;
+        } else if (age >= 5 && age <= 10) {
+          noofChildDetail += 1;
+        } else {
+          isShowMessage = true;
+          message += "<li><p class='text-danger'>• Invalid age for person based on birth date.</p></li>";
+        }
+      });
+      if (!isAdultAvailable) {
+        isShowMessage = true;
+        message += "<li><p class='text-danger'>• At least one Adult person's detail is required based on the date of birth provided.</p></li>";
+      }
+      if (parseInt(nofAdlutDetail) > parseInt(NoofAdutts) || parseInt(noofChildDetail) > parseInt(NoofChild)) {
+        isShowMessage = true;
+        message += "<li><p class='text-danger'>• The number of adults and children you selected doesn't match the ages provided. Please update the person details to include the correct number of adults and children as selected.</p></li>";
+      }
+      if (isShowMessage) {
+        const messageBody = document.getElementById('messageBody');
+        messageBody.innerHTML = '<ul>' + message + '</ul>';
+        msgModal.show();
+        return;
+      }
+  
+      // Prepare data for /payment/order
+      const form = document.getElementById('bookingForm');
+      const formData = new FormData(form);
+      const data = {
+        _csrf: formData.get('_csrf'),
+        tourId: formData.get('tourId'),
+        userId: formData.get('userId'),
+        transportType: formData.get('transportType'),
+        joiningFrom: document.getElementById('joiningFrom').value.trim(),
+        travelDate: formData.get('travelDate'),
+        adults: formData.get('adults'),
+        children: formData.get('children'),
+        Adultprice: formData.get('Adultprice'),
+        childprice: formData.get('childprice'),
+        payingAmount: formData.get('payingAmount'),
+        name: `${formData.get('firstName') || 'Guest'}}`.trim(),
+        email: formData.get('email') || userData.email,
+        contact: formData.get('phone') || (userData.isloginFromNumber ? userData.phone : userData.email) || '',
+        personDetails: []
+      };
+  
+      // Construct personDetails
+      for (let i = 0; i < (parseInt(NoofAdutts) + parseInt(NoofChild)); i++) {
+        if (formData.get(`personDetails[${i}][mobileno]`)) {
+          data.personDetails.push({
+            firstName: formData.get(`personDetails[${i}][firstName]`) || '',
+            surname: formData.get(`personDetails[${i}][Surname]`) || '',
+            gender: formData.get(`personDetails[${i}][Gender]`),
+            birthdate: formData.get(`personDetails[${i}][dateofbirth]`),
+            phone: formData.get(`personDetails[${i}][mobileno]`),
+            altphone: formData.get(`personDetails[${i}][alternateNumber]`) || ''
+          });
+        }
+      }
+  
+      // Submit to /payment/order
+      try {
+        const response = await fetch('/payment/order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'CSRF-Token': formData.get('_csrf')
+          },
+          body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        if (result.success) {
+          // Open Razorpay payment modal
+          const options = {
+            key: result.razorpayKeyId,
+            amount: result.order.amount,
+            currency: result.order.currency,
+            name: 'Travel Booking',
+            description: `Payment for booking ${result.bookingId}`,
+            order_id: result.order.id,
+            handler: async function (response) {
+              // Verify payment
+              try {
+                const verifyResponse = await fetch('/payment/verify', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'CSRF-Token': formData.get('_csrf')
+                  },
+                  body: JSON.stringify({
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_signature: response.razorpay_signature,
+                    bookingId: result.bookingId
+                  })
+                });
+                const verifyResult = await verifyResponse.json();
+                const paymentModalBody = document.getElementById('paymentModalBody');
+                if (verifyResult.success) {
+                  paymentModalBody.innerHTML = `
+                    <p class="text-success">Payment successful! Your booking is confirmed.</p>
+                    <p>Booking ID: ${result.bookingId}</p>
+                    <p>Amount Paid: ₹${result.order.amount / 100}</p>
+                  `;
+                } else {
+                  paymentModalBody.innerHTML = `
+                    <p class="text-danger">Payment verification failed. Please try again.</p>
+                    <p>Error: ${verifyResult.message}</p>
+                  `;
+                }
+                paymentModal.show();
+              } catch (err) {
+                document.getElementById('paymentModalBody').innerHTML = `
+                  <p class="text-danger">Error verifying payment: ${err.message}</p>
+                `;
+                paymentModal.show();
+              }
+            },
+            prefill: {
+              name: result.name,
+              email: result.email,
+              contact: result.contact
+            },
+            theme: {
+              color: '#002d66'
+            }
+          };
+          const rzp = new Razorpay(options);
+          rzp.on('payment.failed', function (response) {
+            document.getElementById('paymentModalBody').innerHTML = `
+              <p class="text-danger">Payment failed: ${response.error.description}</p>
+            `;
+            paymentModal.show();
+          });
+          rzp.open();
+        } else {
+          toastr.error(result.message || 'Failed to initiate payment.');
+        }
+      } catch (err) {
+        toastr.error('Error initiating payment: ' + err.message);
+        console.error('Payment error:', err);
+      }
+    });
+  
+    document.addEventListener("DOMContentLoaded", function() {
+      document.getElementById("openCostModalBtn").addEventListener("click", function() {
         const costTable = document.getElementById("costTableBody");
         costTable.innerHTML = "";
         const AdultpriceValue = document.getElementById('Adultprice').value.trim();
@@ -618,7 +947,7 @@
         const NoofChild = document.getElementById('children').value.trim();
         const costDetails = [
           { label: "Adults", quantity: NoofAdutts, price: AdultpriceValue, total: NoofAdutts * AdultpriceValue },
-          { label: "Child", quantity: NoofChild, price: childpriceValue, total: NoofChild * childpriceValue },
+          { label: "Child", quantity: NoofChild, price: childpriceValue, total: NoofChild * childpriceValue }
         ];
         const subtotalAmountValue = (NoofAdutts * AdultpriceValue) + (NoofChild * childpriceValue);
         const gstAmountValue = subtotalAmountValue * 0.05;
@@ -631,489 +960,10 @@
           </tr>`;
           costTable.innerHTML += row;
         });
-        document.getElementById("MSubtotal").textContent = `₹${subtotalAmountValue}`;
-        document.getElementById("MGst").textContent = `₹${gstAmountValue}`;
-        document.getElementById("MTotal").textContent = `₹${totalAmount}`;
+        document.getElementById("MSubtotal").textContent = ` ₹${subtotalAmountValue}`;
+        document.getElementById("MGst").textContent = ` ₹${gstAmountValue}`;
+        document.getElementById("MTotal").textContent = ` ₹${totalAmount}`;
       });
-    });
-  </script>
-
-  <!-- Login and Payment Handling -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      // Initialize modals
-      let loginModal, verifyModal, msgModal;
-      try {
-        loginModal = new bootstrap.Modal(document.getElementById("loginModal"), { keyboard: false });
-        verifyModal = new bootstrap.Modal(document.getElementById("verifyModal"), { keyboard: false });
-        msgModal = new bootstrap.Modal(document.getElementById("messageModal"), { keyboard: false });
-      } catch (error) {
-        console.error("Modal initialization error:", error);
-        toastr.error("Failed to initialize modals.");
-        return;
-      }
-
-      let tempBookingData = null;
-
-      // Check if user is logged in
-   
-
-      // Validate mobile number
-      document.getElementById("phoneNumber").addEventListener("input", function() {
-        console.log("Phone number input");
-        const sendCodeBtn = document.getElementById("sendCodeBtn");
-        const isValid = /^\d{10}$/.test(this.value);
-        sendCodeBtn.disabled = !isValid;
-        sendCodeBtn.classList.toggle("btn-disabled", !isValid);
-      });
-
-      // Handle Send OTP
-      document.getElementById("getotp").addEventListener("submit", function(event) {
-        event.preventDefault();
-        console.log("getotp form submitted");
-        const mobileNumber = document.getElementById("phoneNumber").value;
-        const formData = new FormData(document.getElementById("getotp"));
-        formData.append("phone", mobileNumber);
-
-        fetch("/getotp", {
-          method: "POST",
-          body: formData
-        })
-        .then(response => {
-          console.log("getotp response status:", response.status);
-          return response.json();
-        })
-        .then(data => {
-          console.log("getotp response data:", data);
-          if (data.success) {
-            toastr.success("OTP sent successfully.");
-            document.getElementById("mobileNumber2").value = mobileNumber;
-            document.getElementById("phoneNumberDisplay").textContent = "+91 " + mobileNumber;
-            loginModal.hide();
-            verifyModal.show();
-          } else {
-            toastr.error(data.message || "Failed to send OTP.");
-          }
-        })
-        .catch(err => {
-          console.error("getotp error:", err);
-          toastr.error("Error sending OTP.");
-        });
-      });
-
-      // Handle Edit Phone Number
-      document.getElementById("editPhone").addEventListener("click", function() {
-        console.log("Edit phone clicked");
-        const phoneNumber = document.getElementById("phoneNumberDisplay").textContent.replace("+91 ", "");
-        document.getElementById("phoneNumber").value = phoneNumber;
-        verifyModal.hide();
-        loginModal.show();
-      });
-
-      // Handle OTP Input
-      const otpInputs = document.querySelectorAll(".otp-input");
-      otpInputs.forEach((input, index) => {
-        input.addEventListener("input", function() {
-          console.log(`OTP input ${index + 1}:`, this.value);
-          this.value = this.value.replace(/\D/g, "");
-          if (this.value && index < otpInputs.length - 1) {
-            otpInputs[index + 1].focus();
-          }
-          validateOTP();
-        });
-        input.addEventListener("keydown", function(e) {
-          if (e.key === "Backspace" && !this.value && index > 0) {
-            otpInputs[index - 1].focus();
-          }
-        });
-      });
-
-      function validateOTP() {
-        console.log("Validating OTP");
-        const allFilled = [...otpInputs].every(input => /^[0-9]$/.test(input.value));
-        const verifyBtn = document.getElementById("verifyBtn");
-        verifyBtn.disabled = !allFilled;
-        verifyBtn.classList.toggle("btn-disabled", !allFilled);
-      }
-
-      // Handle Resend OTP
-      document.querySelector(".resend-link").addEventListener("click", function(e) {
-        e.preventDefault();
-        console.log("Resend OTP clicked");
-        const phoneNumber = document.getElementById("mobileNumber2").value;
-        const formData = new FormData(document.getElementById("verifyotp"));
-        formData.append("phone", phoneNumber);
-        startResendTimer();
-
-        fetch("/getotp", {
-          method: "POST",
-          body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            toastr.success("OTP resent successfully.");
-          } else {
-            toastr.error(data.message || "Failed to resend OTP.");
-          }
-        })
-        .catch(err => {
-          console.error("Resend OTP error:", err);
-          toastr.error("Error resending OTP.");
-        });
-      });
-
-      function startResendTimer() {
-        console.log("Starting resend timer");
-        const resendLink = document.querySelector(".resend-link");
-        const timerDisplay = document.getElementById("timerDisplay");
-        resendLink.style.pointerEvents = "none";
-        let timeLeft = 10;
-        const resendTimer = setInterval(() => {
-          if (timeLeft <= 0) {
-            clearInterval(resendTimer);
-            timerDisplay.innerHTML = "";
-            resendLink.style.pointerEvents = "auto";
-          } else {
-            timerDisplay.innerHTML = ` (Wait ${timeLeft--}s)`;
-          }
-        }, 1000);
-      }
-
-      // Handle Verify OTP
-      document.getElementById("verifyotp").addEventListener("submit", function(event) {
-        event.preventDefault();
-        console.log("verifyotp form submitted");
-        const verifyBtn = document.getElementById("verifyBtn");
-        verifyBtn.innerHTML = "Verifying...";
-        verifyBtn.disabled = true;
-
-        const fullOtp = [...otpInputs].map(input => input.value).join("");
-        document.getElementById("otp").value = fullOtp;
-        const formData = new FormData(document.getElementById("verifyotp"));
-
-        fetch("/verifyotp", {
-          method: "POST",
-          body: formData
-        })
-        .then(response => {
-          console.log("verifyotp response status:", response.status);
-          return response.json();
-        })
-        .then(data => {
-          console.log("verifyotp response data:", data);
-          if (data.success) {
-            toastr.success("Login successful.");
-            document.cookie = `accessToken=${data.accessToken}; path=/; SameSite=Strict`;
-            verifyModal.hide();
-            if (tempBookingData) {
-              console.log("Submitting stored booking data");
-              submitBooking(tempBookingData);
-            }
-          } else {
-            toastr.error(data.message || "Invalid OTP.");
-          }
-        })
-        .catch(err => {
-          console.error("verifyotp error:", err);
-          toastr.error("Error verifying OTP.");
-        })
-        .finally(() => {
-          verifyBtn.innerHTML = "Verify Code";
-          verifyBtn.disabled = false;
-        });
-      });
-
-      // Validate and collect form data
-      function validateAndCollectData() {
-        let isShowMessage = false;
-        let message = "";
-        try {
-          const NoofAdutts = document.getElementById("adults").value.trim();
-          const NoofChild = document.getElementById("children").value.trim();
-          const transportType = document.getElementById("transportType").value;
-          const travelDate = document.getElementById("travelDate").value;
-          const joiningFrom = document.getElementById("joiningFrom").value.trim();
-          // Check required fields
-          if (!transportType) {
-            isShowMessage = true;
-            message += "<li><p class='text-danger'>• Please select a transport type.</p></li>";
-          }
-          if (!travelDate) {
-            isShowMessage = true;
-            message += "<li><p class='text-danger'>• Please select a travel date.</p></li>";
-          }
-          if (!joiningFrom) {
-            isShowMessage = true;
-            message += "<li><p class='text-danger'>• Please select a joining city.</p></li>";
-          }
-          if (!NoofAdutts || parseInt(NoofAdutts) < 1) {
-            isShowMessage = true;
-            message += "<li><p class='text-danger'>• At least one adult is required.</p></li>";
-          }
-
-          // Validate person details
-          let nofAdlutDetail = 0;
-          let noofChildDetail = 0;
-          const dobList = document.querySelectorAll('[id="dateofbirth"]');
-          const today = new Date();
-          dobList.forEach((ele, index) => {
-            const dobValue = ele.value;
-            if (!dobValue) {
-              isShowMessage = true;
-              message += `<li><p class='text-danger'>• Birth date for person ${index + 1} is required.</p></li>`;
-              return;
-            }
-            const dob = new Date(dobValue);
-            if (isNaN(dob.getTime())) {
-              isShowMessage = true;
-              message += `<li><p class='text-danger'>• Invalid birth date for person ${index + 1}.</p></li>`;
-              return;
-            }
-            let age = today.getFullYear() - dob.getFullYear();
-            const monthDiff = today.getMonth() - dob.getMonth();
-            const dayDiff = today.getDate() - dob.getDate();
-            if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-              age--;
-            }
-            console.log(`Person ${index + 1} age:`, age);
-            if (age > 10) {
-              nofAdlutDetail++;
-            } else if (age >= 5) {
-              noofChildDetail++;
-            } else {
-              isShowMessage = true;
-              message += `<li><p class='text-danger'>• Person ${index + 1} is too young (age ${age}). Minimum age is 5.</p></li>`;
-            }
-          });
-
-          // Validate counts
-          if (nofAdlutDetail < parseInt(NoofAdutts)) {
-            isShowMessage = true;
-            message += `<li><p class='text-danger'>• Selected ${NoofAdutts} adults, but only ${nofAdlutDetail} provided based on birth dates.</p></li>`;
-          }
-          if (noofChildDetail < parseInt(NoofChild)) {
-            isShowMessage = true;
-            message += `<li><p class='text-danger'>• Selected ${NoofChild} children, but only ${noofChildDetail} provided based on birth dates.</p></li>`;
-          }
-
-          if (isShowMessage) {
-            const messageBody = document.getElementById("messageBody");
-            messageBody.innerHTML = "<ul>" + message + "</ul>";
-            msgModal.show();
-            return null;
-          }
-
-          // Collect form data
-          const form = document.getElementById("bookingForm");
-          const formData = new FormData(form);
-          const data = {
-            _csrf: formData.get("_csrf"),
-            tourDetails: <%- JSON.stringify(tourDetails) %>,
-            transportType,
-            joiningFrom,
-            travelDate,
-            totalPerson: {
-              adult: NoofAdutts,
-              child: NoofChild
-            },
-            childPrice: formData.get("childprice") || "0",
-            adultPrice: formData.get("Adultprice") || "0",
-            paidAmount: formData.get("payingAmount") || "0",
-            totalTripCost: formData.get("payingAmount") || "0",
-            bookingStatus: "Pending",
-            paymentStatus: "Pending",
-            personDetails: []
-          };
-          console.log("Collecting person details...");
-          for (let i = 0; i < (parseInt(NoofAdutts) + parseInt(NoofChild)); i++) {
-            const firstName = formData.get(`personDetails[${i}][firstName]`);
-            if (!firstName) {
-              break;
-            }
-            data.personDetails.push({
-              firstName,
-              surname: formData.get(`personDetails[${i}][Surname]`) || "",
-              gender: formData.get(`personDetails[${i}][Gender]`) || "",
-              birthdate: formData.get(`personDetails[${i}][dateofbirth]`) || "",
-              phone: formData.get(`personDetails[${i}][mobileno]`) || "",
-              altphone: formData.get(`personDetails[${i}][alternateNumber]`) || ""
-            });
-          }
-          debugger;
-          return data;
-        } catch (error) {
-          message = "<li><p class='text-danger'>• An error occurred while validating. Please check your inputs.</p></li>";
-          const messageBody = document.getElementById("messageBody");
-          messageBody.innerHTML = "<ul>" + message + "</ul>";
-          msgModal.show();
-          return null;
-        }
-      }
-
-      // Submit booking to server
-      function submitBooking(data) {
-        fetch("/bookingTour", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
-        })
-        .then(response => {
-          return response.json();
-        })
-        .then(result => {
-          if (result.success) {
-            toastr.success("Booking saved successfully. Proceeding to payment.");
-            proceedToPayment(result.regId);
-          } else {
-            toastr.error(result.message || "Failed to save booking.");
-          }
-        })
-        .catch(err => {
-          toastr.error("Error saving booking.");
-        });
-      }
-
-      // Proceed to Razorpay payment
-      function proceedToPayment(bookingId) {
-        const formData = new FormData(document.getElementById("bookingForm"));
-        const paymentData = {
-          _csrf: formData.get("_csrf"),
-          cost: formData.get("payingAmount"),
-          bookingId: bookingId,
-          name: formData.get("personDetails[0][firstName]") + " " + formData.get("personDetails[0][Surname]"),
-          email: "user@example.com",
-          contact: formData.get("personDetails[0][mobileno]"),
-          destination: "<%= tourDetails.name %>",
-          tripdate: document.getElementById("travelDate").value,
-          travellers: document.getElementById("adults").value + " Adults, " + document.getElementById("children").value + " Children"
-        };
-        fetch("/payment/order", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(paymentData)
-        })
-        .then(response => {
-          console.log("payment/order response status:", response.status);
-          if (!response.ok) throw new Error("Payment order failed");
-          return response.json();
-        })
-        .then(data => {
-          console.log("payment/order response data:", data);
-          if (data.success) {
-            const options = {
-              key: data.razorpayKeyId,
-              amount: data.paymentDetail.amount,
-              currency: data.paymentDetail.currency,
-              name: "Trip Payment",
-              description: "Trip Payment",
-              order_id: data.paymentDetail.orderId,
-              handler: function(response) {
-                console.log("Razorpay payment response:", response);
-                fetch("/payment/verify", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    razorpay_payment_id: response.razorpay_payment_id,
-                    razorpay_order_id: response.razorpay_order_id,
-                    razorpay_signature: response.razorpay_signature,
-                    _csrf: formData.get("_csrf"),
-                    bookingId: bookingId
-                  })
-                })
-                .then(response => {
-                  console.log("payment/verify response status:", response.status);
-                  return response.json();
-                })
-                .then(verifyData => {
-                  console.log("payment/verify response data:", verifyData);
-                  if (verifyData.success) {
-                    const messageBody = document.getElementById("messageBody");
-                    messageBody.innerHTML = "<p class='text-success'>Your trip booking is confirmed! You'll receive a confirmation soon.</p>";
-                    msgModal.show();
-                    setTimeout(() => {
-                      msgModal.hide();
-                      window.location.href = "/profile";
-                    }, 3000);
-                  } else {
-                    toastr.error(verifyData.message || "Payment verification failed.");
-                  }
-                })
-                .catch(err => {
-                  console.error("payment/verify error:", err);
-                  toastr.error("Payment verification failed.");
-                });
-              },
-              modal: {
-                ondismiss: function() {
-                  console.log("Razorpay modal dismissed");
-                  toastr.error("Payment cancelled.");
-                }
-              },
-              theme: { color: "#002d66" }
-            };
-            console.log("Opening Razorpay with options:", options);
-            const razorpay = new Razorpay(options);
-            razorpay.open();
-          } else {
-            toastr.error(data.message || "Failed to create payment order.");
-          }
-        })
-        .catch(err => {
-          console.error("payment/order error:", err);
-          toastr.error("Failed to initiate payment.");
-        });
-      }
-
-      // Form submit handler
-      const form = document.getElementById("bookingForm");
-      if (!form) {
-        console.error("bookingForm not found");
-        toastr.error("Form not found. Please contact support.");
-        return;
-      }
-      form.onsubmit = null; // Clear any existing handlers
-      form.addEventListener("submit", function(e) {
-        e.preventDefault();
-        debugger;
-        console.log("Submit event triggered at:", new Date().toISOString());
-        try {
-          // Check HTML5 validation
-          if (!form.checkValidity()) {
-            console.log("Form failed HTML5 validation");
-            form.reportValidity();
-            return;
-          }
-          console.log("Validating form data...");
-          const data = validateAndCollectData();
-          console.log("Validation result:", data);
-          if (!data) {
-            console.log("Validation failed, stopping.");
-            return;
-          }
-          console.log("Checking login, isUserLoggedIn:", isUserLoggedIn());
-          if (!isUserLoggedIn()) {
-            console.log("Not logged in, storing data and showing modal");
-            tempBookingData = data;
-            loginModal.show();
-          } else {
-            console.log("Logged in, submitting booking");
-            submitBooking(data);
-          }
-        } catch (error) {
-          console.error("Submission error:", error);
-          toastr.error("An error occurred. Check console for details.");
-        }
-      });
-
-      // Reset NiceSelect
-      if (typeof $.fn.niceSelect !== 'undefined') {
-        console.log("Resetting NiceSelect");
-        $('#bookingForm select').each(function() {
-          $(this).niceSelect('destroy');
-          $(this).niceSelect();
-        });
-      }
     });
   </script>
 </body>

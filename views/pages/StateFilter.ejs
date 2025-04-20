@@ -142,7 +142,10 @@
         %>
         <div class="package-card p-2 border rounded-4 <%= !tour.isActive ? 'inactive' : '' %>" onclick="window.location.href='/tripdetail/<%= tour.name %>'" <% if (!tour.isActive && profile?.email === process.env.GMAIL_ADMIN) { %> data-toggle="tooltip" data-placement="top" title="This trip is inactive" <% } %>>
           <div class="card-image-container">
-            <img src="<%= tour.imageurl %>" alt="Tour package - <%= tour.name %> in <%= tour.state %>, India" class="card-image card-img-top img-fluid rounded-4" loading="lazy" onerror="this.onerror=null; this.src='/images/placeholder.jpg';">
+            <img src="<%= tour.imageurl %>" alt="Tour package - <%= tour.name %> in <%= tour.state %>, India" class="card-image card-img-top img-fluid rounded-4" loading="lazy"
+            data-fallback1="/<%= tour.imageurl %>" 
+            data-fallback2="/images/placeholder.jpg"
+            >
           </div>
           <div class="card-body p-2">
             <h2 class="card-title fw-bold"><%= tour.name %></h2>
@@ -164,6 +167,27 @@
   <!-- Tours and Trek event - popular places area end -->
   <%- include('../partials/footer'); %>
   <%- include('../partials/scripttag'); %>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      document.querySelectorAll("img.card-image").forEach(img => {
+        img.onerror = function () {
+          // Track fallback attempts
+          if (!img.dataset.errorCount) {
+            img.dataset.errorCount = "1";
+            img.src = img.dataset.fallback1;
+          } else if (img.dataset.errorCount === "1") {
+            img.dataset.errorCount = "2";
+            img.src = img.dataset.fallback2;
+          }
+        };
+  
+        // Optional: re-trigger onerror if src is already broken
+        if (!img.complete || img.naturalWidth === 0) {
+          img.onerror();
+        }
+      });
+    });
+    </script>
 </body>
 
 </html>

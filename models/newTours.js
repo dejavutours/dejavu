@@ -130,4 +130,47 @@ const newToursSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("NewTours", newToursSchema);
+// const getStateShortCode = (stateName) => {
+//   if (!stateName) return '';
+//   return stateName
+//     .split(' ')
+//     .map(word => word[0].toUpperCase())
+//     .join('');
+// };
+
+// newToursSchema.add({
+//   tripCode: { type: String, unique: true }
+// });
+
+// newToursSchema.pre('validate', async function (next) {
+//   if (this.tripCode) return next();
+
+//   const now = new Date();
+//   const mm = (now.getMonth() + 1).toString().padStart(2, '0');
+//   const yy = now.getFullYear().toString().slice(-2);
+//   const stateShort = getStateShortCode(this.state);
+
+//   const prefix = `${stateShort}${mm}${yy}`;
+
+//   try {
+//     const lastTour = await this.constructor
+//       .findOne({ tripCode: { $regex: `^${prefix}` } })
+//       .sort({ tripCode: -1 });
+
+//     let nextIncrement = 1;
+//     if (lastTour && lastTour.tripCode) {
+//       const lastCode = lastTour.tripCode;
+//       const incrementStr = lastCode.slice(prefix.length);
+//       const lastIncrement = parseInt(incrementStr, 10);
+//       nextIncrement = lastIncrement + 1;
+//     }
+
+//     this.tripCode = `${prefix}${String(nextIncrement).padStart(2, '0')}`;
+//     next();
+//   } catch (err) {
+//     next(err);
+//   }
+// });
+
+
+module.exports = mongoose.models.NewTours || mongoose.model("NewTours", newToursSchema);

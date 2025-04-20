@@ -16,41 +16,12 @@
       border-left: 4px solid #1a3c6c;
     }
 
-    /* .member_profile-container {
-      gap: 30px;
-    }
-
-    .member_profile-container .trip_details {
-      gap: 8px;
-    }
-
-    .member_profile-container .trip-card-expand .inner-content {
-      gap: 15px;
-    }
-
-
-    .member_profile-container .right_block .form-container h2 {
-      text-align: left;
-      margin-bottom: 20px;
-      font-size: 18px;
-      line-height: 28px;
-      color: #111827;
-    }
-
-    .member_profile-container .right_block .form-group {
-      margin-bottom: 15px;
-    } */
-
     .member_profile-container .profile-left-bar p {
       padding: 10px 15px;
       margin: 0;
       cursor: pointer;
       border-left: 4px solid transparent;
     }
-
-    /* .member_profile-container .profile-left-bar {
-      min-width: 300px;
-    } */
 
     .member_profile-container .right_block .form-group label {
       display: block;
@@ -72,55 +43,6 @@
       padding: 8px;
     }
 
-    /* .member_profile-container .right_block .form-row {
-      display: flex;
-      gap: 25px;
-    }
-
-    .member_profile-container .right_block .form-row .form-group {
-      flex: 1;
-    }
-
-    .member_profile-container .right_block .upload-section {
-      align-items: center;
-      gap: 10px;
-    }
-
-    .member_profile-container .right_block .upload-section input[type="file"] {
-      display: none;
-    }
-
-    .member_profile-container .right_block .upload-section label {
-      cursor: pointer;
-    }
-
-    .member_profile-container .right_block .form-group button {
-      width: 100%;
-      padding: 10px;
-      background-color: #007bff;
-      border: none;
-      border-radius: 5px;
-      color: #fff;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .member_profile-container .right_block .form-group button:hover {
-      background-color: #0056b3;
-    }
-
-    .member_profile-container .right_block .upload-section .upload-label {
-      border: 1px dotted #687182;
-      padding: 8px 20px;
-      border-radius: 12px;
-      display: block;
-      max-width: max-content;
-    }
-
-    .member_profile-container .right_block {
-      width: 700px;
-    } */
-
     .member_profile-container .single-trip-card h4 {
       font-size: 20px;
       line-height: 28px;
@@ -131,45 +53,6 @@
     .member_profile-container .trip_details p {
       font-size: 14px;
     }
-
-    /* 
-    @media (max-width: 1024px) {
-      .member_profile-container {
-        flex-wrap: wrap;
-      }
-
-      .member_profile-container .trip-card-expand {
-        margin-top: 20px !important;
-      }
-
-      .member_profile-container .booking_history .search_bar input {
-        min-width: 100% !important;
-      }
-    }
-
-    .member_profile-container .single-trip-card {
-      border-radius: 16px;
-      gap: 10px;
-    }
-
-    .member_profile-container .trip-card-expand {
-      margin-top: 50px;
-    }
-
-    .member_profile-container p {
-      margin: 0;
-      font-size: 14px;
-    }
-
-    .member_profile-container .booking_history .search_bar input {
-      min-width: 500px;
-      padding: 8px 10px;
-      border-radius: 10px;
-      font-size: 14px;
-      outline: 0;
-      box-shadow: none;
-      border: 1px solid #868fa029;
-    } */
 
     /* Add this to your existing styles */
     .member_profile-container .right_block .form-group input,
@@ -182,29 +65,11 @@
       /* Set background color to white */
     }
 
-    /* 
-    .member_profile-container .right_block .upload-section .upload-label {
-      border: 1px dotted #687182;
-      padding: 8px 20px;
-      border-radius: 12px;
-      display: block;
-      max-width: max-content;
-      background-color: #ffffff;
-      /* Set background color to white 
-    } */
-
     .member_profile-container .right_block .nice-select,
     .member_profile-container .right_block .nice-select .list {
       width: 100%;
       /* Ensure dropdowns are full width */
     }
-
-    /* .orderId,
-    .travellers,
-    .booking_status {
-      border-right: 1px solid #ccc;
-      padding-right: 8px;
-    } */
 
     .pagination {
       display: inline-block;
@@ -368,7 +233,6 @@
 
     // Function to handle tab click event
     async function handleProfileTabDivClick(event) {
-      console.log("BT: ello");
       // Get the clicked element
       const clickedElement = event.target;
       const newTabIndex = clickedElement.getAttribute('data-tab-index');
@@ -444,18 +308,17 @@
         tripContainer.innerHTML = ''; // Clear previous content
         if (result.items && result.items.length > 0) {
           let myTrips = result.items;
-
           myTrips.forEach((trip) => {
             let tripHTML = `
 <div
     class="single-trip-card d-flex flex-column flex-md-row gap-4 border order-1 rounded shadow-sm border-opacity-10 p-3 mb-3">
     <div class="text-center text-md-start">
-        <img class="rounded-lg img-fluid" src="../../../images/${trip.imageName || 'ahmedabadcity-tour.jpg'}"
+        <img class="rounded-lg img-fluid" src="${trip.toursSystemId.imageurl}"
             class="img-thumbnail" style="max-width: 150px; height: auto;">
     </div>
     <div class="w-100 m-2">
         <div>
-            <h4 class="trip_title">${trip.tripName}</h4>
+            <h4 class="trip_title">${trip.toursSystemId.name}</h4>
             <p class="trip_date d-flex align-items-center">
                 <span class="me-2">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -540,7 +403,7 @@
                         </span>
                     </summary>
                     <ul>
-                        ${trip.personDetails?.map((person, index) => `<li>${index + 1}. ${person.name} (${person.age})
+                        ${trip.personDetails?.map((person, index) => `<li>${index + 1}. ${person.firstName} (${calculateAge(person.birthdate)})
                         </li>`).join('')}
                     </ul>
                 </details>
@@ -611,6 +474,22 @@
       }
     }
 
+    //
+    function calculateAge(birthdate) {
+    const birth = new Date(birthdate);
+    const today = new Date();
+
+    let age = today.getFullYear() - birth.getFullYear();
+
+    const monthDiff = today.getMonth() - birth.getMonth();
+    const dayDiff = today.getDate() - birth.getDate();
+
+    // If the birthday hasn't occurred yet this year, subtract 1
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+      age--;
+    }
+    return age;
+    }
     // Submit Form
     document.getElementById('profileUpdateForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -641,25 +520,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-  <script>
-    // Filter function
-    // document.getElementById('searchInput').addEventListener('keyup', function() {
-    //     const filter = this.value.toLowerCase();
-    //     const items = document.querySelectorAll('#booking_history .searching');
-    //     console.log(items);
-    //     items.forEach(item => {
-    //         console.log(item)
-    //         const nestedText = item.querySelector('.searchfilter').textContent.toLowerCase();
-    //         console.log(nestedText)
-
-    //         if (nestedText.includes(filter)) {
-    //             item.classList.remove('d-none-list') // Show item
-    //         } else {
-    //             item.classList.add('d-none-list'); // Hide item
-    //         }
-    //     });
-    // });
-  </script>
 </body>
 
 </html>

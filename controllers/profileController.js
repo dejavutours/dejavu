@@ -14,17 +14,33 @@ exports.updateUserProfile = async (req, res, next) => {
     let updatedUser = null;
 
     if (req.verifiedPhoneNumber) {
+      const existingUser = await mobileuser.findOne({ phoneNumber: req.verifiedPhoneNumber });
       updatedUser = await mobileuser.findOneAndUpdate(
         { phoneNumber: req.verifiedPhoneNumber },
-        { details: req.body },
+        {
+          details: {
+            ...existingUser?.details,
+            ...req.body,
+            birthDate: existingUser?.details?.birthDate || req.body.birthDate,
+            gender: existingUser?.details?.gender || req.body.gender
+          }
+        },
         { new: true }
       );
     }
 
     if (!updatedUser && req.user) {
+      const existingUser = await gmailuser.findOne({ email: req.user.email });
       updatedUser = await gmailuser.findOneAndUpdate(
         { email: req.user.email },
-        { details: req.body },
+        {
+          details: {
+            ...existingUser?.details,
+            ...req.body,
+            birthDate: existingUser?.details?.birthDate || req.body.birthDate,
+            gender: existingUser?.details?.gender || req.body.gender
+          }
+        },
         { new: true }
       );
     }
@@ -52,15 +68,27 @@ exports.getBookingHistoryItem = async (req, res, next) => {
     const { crrPage = 1, pageLimit = 10, newTabIndex } = req.body;
     const isUpcomingTrips = newTabIndex === '2';
 
+    let userInfo;
+
+    if (user) {
+      // Google login (session-based)
+      const email = user.email || '';
+      userInfo = await gmailuser.findOne({ email });
+
+    } else if (verifiedPhoneNumber) {
+      // Mobile login (JWT-based)
+      userInfo = await mobileuser.findOne({ phoneNumber: verifiedPhoneNumber });
+    }
+
+    if (!userInfo) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
     const filter = {
       tripStartDate: isUpcomingTrips
         ? { $gte: new Date() }
         : { $lt: new Date() },
-      tempUserID: accessToken
-        ? verifiedPhoneNumber
-          ? Number(verifiedPhoneNumber.slice(-10))
-          : null
-        : user?.email,
+      userId: userInfo._id
     };
 
     const items = await TripBookingDetail.find(filter)
@@ -69,7 +97,6 @@ exports.getBookingHistoryItem = async (req, res, next) => {
       .sort({ tripStartDate: isUpcomingTrips ? 1 : -1 })
       .select([
         'userId',
-        'tempUserID',
         'toursSystemId',
         'tripName',
         'tripCode',
@@ -85,6 +112,7 @@ exports.getBookingHistoryItem = async (req, res, next) => {
         'tripStartDate',
         'tripEndDate',
       ])
+      .populate('toursSystemId')  // Populate the referenced newtrouse schema
       .lean();
 
     // Format date fields

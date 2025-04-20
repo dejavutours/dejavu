@@ -3,6 +3,7 @@ const express = require("express");
 const Tours = require("../models/tours");
 
 const Staycost = require("../models/staycost");
+const gmailuser = require('../models/gmailuser');
 
 const Newsletter = require("../models/newsletter");
 
@@ -1252,6 +1253,7 @@ exports.getotp = async (req, res, next) => {
     );
     // Send SMS
     const data = await sns.publish(params).promise();
+    // res.render('verifyOTP', { phoneNumber: req.body.phone, otpSent: true });
     return res.send(true); // Return OTP in case you need to verify it later
   } catch (err) {
     console.error("Error sending OTP:", err);
@@ -1274,7 +1276,7 @@ exports.verifyotp = async (req, res, next) => {
       // Generate JWT token
       const accessToken = jwt.sign(user.phoneNumber, process.env.JWT_TOKEN);
       // res.send(accessToken);
-      res.json({ accessToken ,user});
+      res.json({ accessToken });
       // res.send('OTP verified successfully');
     } else {
       res.status(401).send("Invalid OTP or OTP expired");
@@ -1842,201 +1844,130 @@ exports.changeTripStatus = async (req, res) => {
 };
 
 // pass date and join in query
+// File: tours.js
 exports.renderBookingTourPage = async (req, res) => {
-  const tripId = req?.params?.tripid;
-  const city = req?.query?.city;
-  const existingTrip = await NewTours.findById(tripId).lean();
-  // Pass user (req.user or null) and isAuthenticated
-  const user = req.user || null;
-  const isAuthenticated = !!req.user || !!req.verifiedPhoneNumber;
-  
-  if (existingTrip && existingTrip.deptcities && existingTrip.deptcities.length > 0) {
-    existingTrip.deptcities.forEach(cityDetail => {
-      cityDetail.dateList = [];
-      cityDetail.transportList = [];
-      if (cityDetail && cityDetail.dates && cityDetail.dates.length > 0) {
-        const monthMap = {
-          "January": 0, "February": 1, "March": 2, "April": 3,
-          "May": 4, "June": 5, "July": 6, "August": 7, "September": 8,
-          "October": 9, "November": 10, "December": 11
-        };
-        cityDetail.dates.forEach(dateBlock => {
-          const durationArr = existingTrip.days.match(/\d+/g)?.map(Number) || [0];
-          const duration = Math.max(...durationArr);
-          const { Month, Year, dates } = dateBlock;
-          const monthIndex = monthMap[Month];
-          const dateList = dates.split(',');
-          dateList.forEach(day => {
-            let startDate = new Date(Year, monthIndex, parseInt(day));
-            let endDate = new Date(startDate);
-            endDate.setDate(startDate.getDate() + duration);
-            const formatDate = date => `${String(date.getDate()).padStart(2, '0')} ${date.toLocaleString("en-US", { month: "short" })} ${date.getFullYear()}`;
-            cityDetail.dateList.push(`${formatDate(startDate)} to ${formatDate(endDate)}`);
-          });
-        });
-      }
-      if (cityDetail.City?.toLowerCase() === city?.toLowerCase()) {
-        existingTrip.transportList = cityDetail?.price?.length > 0 ? cityDetail.price : [];
-      }
-    });
-    if (req.query) {
-      existingTrip.selectedInfo = {
-        city: req.query.city,
-        date: req.query.date
-      };
-      existingTrip.adults = parseInt(req.query.adults) || 1; // Default to 1 adult
-      existingTrip.children = parseInt(req.query.children) || 0; // Default to 0 children
-    } else {
-      existingTrip.adults = 1; // Ensure at least 1 adult
-      existingTrip.children = 0;
-    }
-  }
-  res.render('pages/bookingTour', {
-    tourDetails:existingTrip,
-    csrfToken: req.csrfToken(),
-    user, // Add user to template
-    isAuthenticated // Update authentication flag
-  });
-};
-
-
-exports.submitBookingTourPage = async (req, res) => {
   try {
-    if (!req.body) {
-      return res.status(400).json({ success: false, message: 'No booking data provided' });
-    }
+    const tripId = req?.params?.tripid;
+    const city = req?.query?.city;
+    const existingTrip = await NewTours.findById(tripId).lean();
 
-    const {
-      tourDetails,
-      joiningFrom,
-      travelDate,
-      transportType,
-      totalPerson,
-      personDetails,
-      payingAmount,
-      Adultprice,
-      childprice
-    } = req.body;
-
-    // Validate required fields
-    const requiredFields = ['tourDetails.name', 'tourDetails.id', 'joiningFrom', 'travelDate', 'transportType', 'totalPerson.adult'];
-    const missingFields = requiredFields.filter(field => {
-      const keys = field.split('.');
-      let value = req.body;
-      for (let key of keys) {
-        if (!value[key]) return true;
-        value = value[key];
-      }
-      return false;
-    });
-
-    if (missingFields.length > 0) {
-      return res.status(400).json({ success: false, message: `Missing required fields: ${missingFields.join(', ')}` });
-    }
-
-    // Validate tour exists
-    const tour = await NewTours.findById(tourDetails.id);
-    if (!tour) {
-      return res.status(404).json({ success: false, message: 'Tour not found' });
-    }
-
-    // Parse travel date
-    const [tripStartDate, tripEndDate] = travelDate.split(' to ').map(date => date.trim());
-    if (!tripStartDate || !tripEndDate) {
-      return res.status(400).json({ success: false, message: 'Invalid travel date format' });
-    }
-
-    // Validate person details
-    const totalPersons = (parseInt(totalPerson.adult) || 0) + (parseInt(totalPerson.child) || 0);
-    if (!Array.isArray(personDetails) || personDetails.length !== totalPersons) {
-      return res.status(400).json({ success: false, message: 'Person details count does not match total travellers' });
-    }
-
-    for (const person of personDetails) {
-      if (!person.firstName || !person.firstName.match(/^[A-Za-z ]{2,}$/)) {
-        return res.status(400).json({ success: false, message: 'Invalid first name format' });
-      }
-      if (!person.surname || !person.surname.match(/^[A-Za-z ]{2,}$/)) {
-        return res.status(400).json({ success: false, message: 'Invalid surname format' });
-      }
-      if (!person.birthdate || isNaN(Date.parse(person.birthdate))) {
-        return res.status(400).json({ success: false, message: 'Invalid birth date' });
-      }
-      if (!['Male', 'Female', 'Other'].includes(person.gender)) {
-        return res.status(400).json({ success: false, message: 'Invalid gender' });
-      }
-      if (!person.phone || !/^\+91\d{10}$/.test(person.phone)) {
-        return res.status(400).json({ success: false, message: 'Invalid mobile number format (+91 followed by 10 digits)' });
-      }
-      if (person.altphone && !/^\+91\d{10}$/.test(person.altphone)) {
-        return res.status(400).json({ success: false, message: 'Invalid alternative number format' });
+    if (existingTrip && existingTrip.deptcities && existingTrip.deptcities.length > 0) {
+      existingTrip.deptcities.forEach(cityDetail => {
+        cityDetail.dateList = [];
+        cityDetail.transportList = [];
+        if (cityDetail && cityDetail.dates && cityDetail.dates.length > 0) {
+          const monthMap = {
+            "January": 0, "February": 1, "March": 2, "April": 3,
+            "May": 4, "June": 5, "July": 6, "August": 7, "September": 8,
+            "October": 9, "November": 10, "December": 11
+          };
+          cityDetail.dates.forEach(dateBlock => {
+            const durationArr = existingTrip.days.match(/\d+/g).map(Number);
+            const duration = Math.max(...durationArr);
+            const { Month, Year, dates } = dateBlock;
+            const monthIndex = monthMap[Month];
+            const dateList = dates.split(',');
+            dateList.forEach(day => {
+              let startDate = new Date(Year, monthIndex, parseInt(day));
+              let endDate = new Date(startDate);
+              endDate.setDate(startDate.getDate() + duration);
+              const formatDate = date => `${String(date.getDate()).padStart(2, '0')} ${date.toLocaleString("en-US", { month: "short" })} ${date.getFullYear()}`;
+              cityDetail.dateList.push(`${formatDate(startDate)} to ${formatDate(endDate)}`);
+            });
+          });
+        }
+        if (cityDetail.City.toLowerCase() === city.toLowerCase()) {
+          existingTrip.transportList = cityDetail && cityDetail.price && cityDetail.price.length > 0 ? cityDetail.price : [];
+        }
+      });
+      if (req.query) {
+        existingTrip.selectedInfo = {
+          city: req.query.city,
+          date: req.query.date
+        };
       }
     }
 
-    // Validate costs
-    const totalTripCost = parseFloat(payingAmount);
-    const paidAmount = parseFloat(payingAmount); // Full payment for now
-    if (isNaN(totalTripCost) || totalTripCost <= 0) {
-      return res.status(400).json({ success: false, message: 'Invalid total trip cost' });
-    }
-    if (isNaN(paidAmount) || paidAmount <= 0 || paidAmount > totalTripCost) {
-      return res.status(400).json({ success: false, message: 'Invalid paid amount' });
+    // Redirect to login if not authenticated
+    if (!req.user && !req.verifiedPhoneNumber) {
+      return res.redirect('/login');
     }
 
-    // Generate unique booking number
-    const bookingNumber = `DEJAVU-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-
-    // Prepare booking data
-    const newBookingDetail = {
-      userId: req.user?.id || req.verifiedPhoneNumber,
-      toursSystemId: tourDetails.id,
-      bookingNumber,
-      tripName: tourDetails.name,
-      totalPerson: {
-        adult: parseInt(totalPerson.adult) || 1,
-        child: parseInt(totalPerson.child) || 0
-      },
-      personDetails: personDetails.map(p => ({
-        firstName: p.firstName,
-        surname: p.surname,
-        birthdate: new Date(p.birthdate),
-        gender: p.gender,
-        phone: p.phone,
-        altphone: p.altphone || ''
-      })),
-      joiningFrom,
-      transportType,
-      bookingStatus: 'Reserved',
-      totalTripCost,
-      paidAmount,
-      paymentStatus: 'Pending',
-      tripStartDate,
-      tripEndDate,
-      adultPrice: parseFloat(Adultprice) || 0,
-      childPrice: parseFloat(childprice) || 0,
-      createdAt: new Date(),
-      updatedAt: new Date()
+    // Fetch user data
+    let userData = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      birthDate: '',
+      gender: ''
     };
 
-    if (!newBookingDetail.userId) {
-      return res.status(401).json({ success: false, message: 'User authentication required' });
+    if (req.user) {
+      // Google login (session-based)
+      userData.email = req.user.email || '';
+      const gmailUser = await gmailuser.findOne({ email: req.user.email });
+      if (gmailUser && gmailUser.details) {
+        userData.id= gmailUser._id;
+        userData.firstName = gmailUser.details.firstName || req.user.name?.split(' ')[0] || '';
+        userData.lastName = gmailUser.details.lastName || req.user.name?.split(' ').slice(1).join(' ') || '';
+        userData.email = gmailUser.details.email || req.user.email;
+        userData.phone = gmailUser.details.mobileNumber || '';
+        userData.isloginFromNumber=false;
+      } else {
+        userData.firstName = req.user.name?.split(' ')[0] || 'Guest';
+        userData.lastName = req.user.name?.split(' ').slice(1).join(' ') || '';
+      }
+    } else if (req.verifiedPhoneNumber) {
+      // Mobile login (JWT-based)
+      const mobileUser = await Mobileuser.findOne({ phoneNumber: req.verifiedPhoneNumber });
+      userData.phone = req.verifiedPhoneNumber ? req.verifiedPhoneNumber : '';
+      if (mobileUser && mobileUser.details) {
+        userData.id= mobileUser._id;
+        userData.firstName = mobileUser.details.firstName || 'Guest';
+        userData.lastName = mobileUser.details.lastName || '';
+        userData.email = mobileUser.details.email || '';
+        userData.isloginFromNumber = true;
+      }
     }
 
-    // Save booking
-    const newTripBookingDetail = new TripBookingDetail(newBookingDetail);
-    const savedBooking = await newTripBookingDetail.save();
-
-    return res.status(200).json({
-      success: true,
-      message: 'Booking saved successfully. Proceed to payment.',
-      bookingId: savedBooking._id
+    res.render('pages/bookingTour', {
+      tourDetails: existingTrip,
+      userData,
+      csrfToken: req.csrfToken()
     });
   } catch (error) {
-    console.error('Error in submitBookingTourPage:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to save booking',
-      error: error.message
-    });
+    console.error('Error in renderBookingTourPage:', error);
+    res.status(500).json({ success: false, message: 'Server error', error });
   }
+};
+
+exports.submitBookingTourPage = async (req,res) =>{
+try{
+  if(req && req.body){
+      const tourDate = req.body.travelDate.split('to');
+      const newBookingDetail = {};
+      newBookingDetail.userId = req.user.id;
+      newBookingDetail.tripName = req.body.tourDetails.name;
+      newBookingDetail.totalPerson = {
+        adult: parseInt(req.body.totalPerson.adult), 
+        child: parseInt(req.body.totalPerson.child)
+      };
+      newBookingDetail.personDetails = req.body.personDetails;
+      newBookingDetail.joiningFrom = req.body.joiningFrom;
+      newBookingDetail.bookingStatus = req.body.bookingStatus;
+      newBookingDetail.totalTripCost = parseInt(req.body.totalTripCost);
+      newBookingDetail.paidAmount = parseInt(req.body.paidAmount);
+      newBookingDetail.paymentStatus = req.body.paymentStatus;
+      newBookingDetail.tripStartDate = tourDate[0].trim();
+      newBookingDetail.tripEndDate = tourDate[1].trim();
+      const newTripBookingDetail = new TripBookingDetail(newBookingDetail);
+      const savednewTripBookingDetail = await newTripBookingDetail.save();
+      return res.status(200).json({ success: true, message: "You have successfully booked your trip."});
+  }
+} catch (error) {
+    console.error("Error in booking:", error);
+    res.status(500).json({ success: false, message: "Server error", error });
+  }
+  console.log(req.body);
 };

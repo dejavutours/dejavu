@@ -343,20 +343,21 @@
     .trip-details-proceed-btn-book,
     .booking-modal-btn-proceed {
       background-color: var(--primary-blue);
+      color:whilte;
       transition: background var(--transition);
-      color: #fff;
     }
 
     .trip-details-proceed-btn-book:hover,
     .booking-modal-btn-proceed:hover {
       background-color: #143c73;
-      color: #fff;
+      color:whilte;
     }
 
     .trip-details-proceed-btn-book:disabled,
     .booking-modal-btn-proceed:disabled {
       background-color: #6c757d;
       cursor: not-allowed;
+      color:whilte;
     }
 
     /* NEW: Error message styling */
@@ -553,7 +554,6 @@
     }
 
     .booking-modal-btn-cancel {
-      padding: 10px 20px;
       border-radius: 8px;
     }
 
@@ -661,7 +661,6 @@
 
       .booking-modal-btn-cancel,
       .booking-modal-btn-proceed {
-        padding: 8px 16px;
         font-size: 0.9rem;
       }
     }
@@ -1718,6 +1717,7 @@
             }
           }
         });
+  
         updateModalCitySummary();
         updateDatesAndTabs(true);
         modal.show();

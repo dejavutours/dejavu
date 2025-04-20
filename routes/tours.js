@@ -14,6 +14,8 @@ const isAuth = require('../middleware/is-auth');
 
 const isPhoneAuth = require('../middleware/is-phone-auth');
 
+const validateLogin = require('../middleware/validateLogin');
+
 const jwt = require('jsonwebtoken');
 
 const router = express.Router();
@@ -405,15 +407,10 @@ router.post('/admin/updateBannerImages', ensureLoggedIn, isAuth, toursController
 router.post('/admin/removeBannerImage', ensureLoggedIn, isAuth, toursController.removeBannerImage);
 
 // book tour 
-router.get(
-  '/bookingTour/:tripid', toursController.renderBookingTourPage
-);
-
-router.post(
-  '/bookingTour',
-  ensuremultiplelogin,
-  toursController.submitBookingTourPage
-);
+// Updated route for bookingTour
+// Updated booking routes
+router.get('/bookingTour/:tripid', validateLogin, toursController.renderBookingTourPage);
+router.post('/bookingTour', validateLogin, toursController.submitBookingTourPage);
 
 router.post("/admin/changeTripStatus", ensureLoggedIn, isAuth, toursController.changeTripStatus);
 router.post("/admin/deleteTripDetail", ensureLoggedIn, isAuth, toursController.deleteTrip);
