@@ -1457,7 +1457,7 @@ exports.getFiltertourAPIUseOnly = async (req,res, sortByLatestUpdate) =>{
 // Fetch all tours
 exports.getTours = async (req, res) => {
   try {
-    const response = await this.getFiltertourAPIUseOnly(req,res, false); // Use NewTours instead of NewToursSchema
+    const response = await this.getFiltertourAPIUseOnly(req,res, true); // Use NewTours instead of NewToursSchema
     //res.json(tours);
     res.render("pages/tourlist", {
       tourPackages: response.tours,
@@ -1922,6 +1922,7 @@ exports.renderBookingTourPage = async (req, res) => {
     const existingTrip = await NewTours.findById(tripId).lean();
 
     if (existingTrip && existingTrip.deptcities && existingTrip.deptcities.length > 0) {
+      const now = new Date(); // Current date for filtering
       existingTrip.deptcities.forEach(cityDetail => {
         cityDetail.dateList = [];
         cityDetail.transportList = [];
@@ -1939,10 +1940,13 @@ exports.renderBookingTourPage = async (req, res) => {
             const dateList = dates.split(',');
             dateList.forEach(day => {
               let startDate = new Date(Year, monthIndex, parseInt(day));
-              let endDate = new Date(startDate);
-              endDate.setDate(startDate.getDate() + duration);
-              const formatDate = date => `${String(date.getDate()).padStart(2, '0')} ${date.toLocaleString("en-US", { month: "short" })} ${date.getFullYear()}`;
-              cityDetail.dateList.push(`${formatDate(startDate)} to ${formatDate(endDate)}`);
+              // Filter out past dates
+              if (startDate >= now) {
+                let endDate = new Date(startDate);
+                endDate.setDate(startDate.getDate() + duration);
+                const formatDate = date => `${String(date.getDate()).padStart(2, '0')} ${date.toLocaleString("en-US", { month: "short" })} ${date.getFullYear()}`;
+                cityDetail.dateList.push(`${formatDate(startDate)} to ${formatDate(endDate)}`);
+              }
             });
           });
         }
@@ -1974,26 +1978,24 @@ exports.renderBookingTourPage = async (req, res) => {
     };
 
     if (req.user) {
-      // Google login (session-based)
       userData.email = req.user.email || '';
       const gmailUser = await gmailuser.findOne({ email: req.user.email });
       if (gmailUser && gmailUser.details) {
-        userData.id= gmailUser._id;
+        userData.id = gmailUser._id;
         userData.firstName = gmailUser.details.firstName || req.user.name?.split(' ')[0] || '';
         userData.lastName = gmailUser.details.lastName || req.user.name?.split(' ').slice(1).join(' ') || '';
         userData.email = gmailUser.details.email || req.user.email;
         userData.phone = gmailUser.details.mobileNumber || '';
-        userData.isloginFromNumber=false;
+        userData.isloginFromNumber = false;
       } else {
         userData.firstName = req.user.name?.split(' ')[0] || 'Guest';
         userData.lastName = req.user.name?.split(' ').slice(1).join(' ') || '';
       }
     } else if (req.verifiedPhoneNumber) {
-      // Mobile login (JWT-based)
       const mobileUser = await Mobileuser.findOne({ phoneNumber: req.verifiedPhoneNumber });
       userData.phone = req.verifiedPhoneNumber ? req.verifiedPhoneNumber : '';
       if (mobileUser && mobileUser.details) {
-        userData.id= mobileUser._id;
+        userData.id = mobileUser._id;
         userData.firstName = mobileUser.details.firstName || 'Guest';
         userData.lastName = mobileUser.details.lastName || '';
         userData.email = mobileUser.details.email || '';

@@ -37,9 +37,13 @@ const getBookings = async (req, res) => {
       .limit(limit);
 
     const enrichedBookings = await Promise.all(bookings.map(async (booking) => {
-      let userDetails = await MobileUser.findOne({ 'details.mobileNumber': booking.personDetails[0].phone });
-      if (!userDetails) {
-        userDetails = await GmailUser.findOne({ id: booking.userId });
+      if (mongoose.Types.ObjectId.isValid(booking.userId)) {
+        userDetails = await MobileUser.findOne({ _id: booking.userId });
+        if (!userDetails) {
+          userDetails = await GmailUser.findOne({ _id: booking.userId });
+        }
+      } else {
+        console.warn(`Invalid ObjectId: ${booking.userId}`);
       }
       return {
         ...booking.toObject(),
@@ -186,7 +190,7 @@ const getBookingDetails = async (req, res) => {
     }
 
     // Fetch booking with populated toursSystemId
-    const booking = await TripBookingDetail.findById(id).populate({
+    const booking = await TripBookingDetail.findById({_id:id}).populate({
       path: 'toursSystemId',
       select: 'name state destinations price about activities'
     });
@@ -204,10 +208,10 @@ const getBookingDetails = async (req, res) => {
     let userDetails = null;
     try {
       if (mongoose.Types.ObjectId.isValid(booking.userId)) {
-        userDetails = await MobileUser.findById(booking.userId).select('details');
+        userDetails = await MobileUser.findOne({_id: booking.userId}).select('details');
       }
       if (!userDetails) {
-        userDetails = await GmailUser.findOne({ id: booking.userId }).select('details');
+        userDetails = await GmailUser.findOne({ _id: booking.userId }).select('details');
       }
     } catch (err) {
       console.error(`Error fetching user details for userId: ${booking.userId}`, err);
