@@ -4,44 +4,45 @@ const Schema = mongoose.Schema;
 
 const newToursSchema = new Schema(
   {
-    name: { type: String, required: true },
     // Purpose: Name of the tour package (e.g., "Goa Beach Tour").
-
-    state: { type: String, required: true },
+    name: { type: String, required: true },
     // Purpose: The state where the tour is conducted (e.g., "Goa")
-    imageurl: { type: String }, // Keep this for backward compatibility if needed
+    state: { type: String, required: true },
+    // Keep this for backward compatibility if needed
+    imageurl: { type: String }, 
     // Array of strings for multiple banner images
     bannerimages: [{ type: String }], 
-  
-    isActive: { type: Boolean, default: true }, // Added for status toggle
+    // Added for status toggle
+    isActive: { type: Boolean, default: true }, 
     
-    destinations: { type: String, default: "" },
     // Purpose: Major destinations covered in the tour (e.g., "Goa, Panaji, Baga Beach").
-
-    route: { type: String, default: "" },
+    destinations: { type: String, default: "" },
+    
     // Purpose: The route taken during the tour (e.g., "Mumbai - Goa - Mumbai").
-
-    days: { type: String, default: "" },
+    route: { type: String, default: "" },
+    
     // Purpose: Duration of the tour (e.g., "4 days", "3 days - 2 nights").
-
-    price: { type: Number, default: 0 },
+    days: { type: String, default: "" },
+    
     // Purpose: Cost of the tour package per person.
-
-    about: { type: String, default: "" },
+    price: { type: Number, default: 0 },
+    
     // Purpose: Brief description of the tour.
-
-    tripType: { type: String, default: "" },
+    about: { type: String, default: "" },
+    
     // Purpose: Type of trip (e.g., "Easy to Moderate").
-
-    altitude: { type: String, default: "" },
+    tripType: { type: String, default: "" },
+    
     // Purpose: Altitude of the destination (if applicable) (e.g., "12,000ft").
-
-    bestSession: { type: String, default: "" },
+    altitude: { type: String, default: "" },
+    
     // Purpose: Recommended time of the year for the tour (e.g., "May to October").
-
-    deptstate: { type: String, default: "" },
+    bestSession: { type: String, default: "" },
+    
     // Purpose: Departure state for the tour.
-
+    deptstate: { type: String, default: "" },
+    
+    // Purpose: List of departure cities, their cost, and available travel dates.
     deptcities: {
       type: [
         {
@@ -72,8 +73,8 @@ const newToursSchema = new Schema(
       ],
       default: [],
     },
-    // Purpose: List of departure cities, their cost, and available travel dates.
-
+    
+    // Purpose: List of upcoming trip start dates.
     trip_dates: {
       type: [
         {
@@ -84,11 +85,11 @@ const newToursSchema = new Schema(
       ],
       default: [],
     },
-    // Purpose: List of upcoming trip start dates.
 
-    activities: { type: String, default: "" },
     // Purpose: Activities included in the tour (e.g., "Boating, Jet Ski, Paragliding").
+    activities: { type: String, default: "" },
 
+    // Purpose: Daily schedule and plan for the tour.
     itinerary: {
       type: [
         {
@@ -99,33 +100,34 @@ const newToursSchema = new Schema(
       ],
       default: [],
     },
-    // Purpose: Daily schedule and plan for the tour.
-
-    things_to_carry: { type: String, default: "" },
+    
     // Purpose: List of recommended items to carry (e.g., "Sunscreen, Sunglasses, Swimsuit").
+    things_to_carry: { type: String, default: "" },
 
     includenexclude: { type: String, default: "" },
-
-    package_cost: { type: String, default: "" },
+    
     // Purpose: Final cost of the tour package, displayed in user-friendly format (e.g., "₹9,999").
-
-    infonfaq: { type: String, default: "" },
+    package_cost: { type: String, default: "" },
+    
     // Purpose: Common FAQs related to the tour.
-
-    bookncancel: { type: String, default: "" },
+    infonfaq: { type: String, default: "" },
+    
     // Purpose: Booking and cancellation policy.
-
-    guidelines: { type: String, default: "" },
+    bookncancel: { type: String, default: "" },
+    
     // Purpose: Rules and regulations for travelers (e.g., "No smoking, No littering").
-
-    upcomingtrip: { type: [Date], default: [] },
+    guidelines: { type: String, default: "" },
+    
     // Purpose: List of upcoming trip schedules.
-
-    imageUrlAll: { type: [String], default: [] },
+    upcomingtrip: { type: [Date], default: [] },
+    
     // Purpose: Additional images of the tour package.
+    imageUrlAll: { type: [String], default: [] },
 
-    youtubeUrl: { type: String, default: "" },
     // Purpose: YouTube video link showcasing the tour.
+    youtubeUrl: { type: String, default: "" },
+    // Purpose: Stores the URL of the uploaded PDF document associated with the tour.
+    documentUrl: { type: String, default: "" },
   },
   { timestamps: true }
 );

@@ -1,8 +1,8 @@
 const express = require("express");
 
-const Tours = require("../models/tours");
+// const Tours = require("../models/tours");
 
-const adminController = require("../controllers/admin");
+// const adminController = require("../controllers/admin");
 
 const makepdfController = require("../controllers/makepdf");
 
@@ -10,12 +10,16 @@ const isAuth = require('../middleware/is-auth');
 
 const router = express.Router();
 
-//router.get("/admin/createPdf" , isAuth, adminController.makeTripPdf);
-//router.post("/admin/createPdf" , isAuth, adminController.makeTripPdf);
+const adminBookingController = require('../controllers/adminBookingController');
 
-router.get("/admin/maketripPdf" ,isAuth, makepdfController.maketripPdf);
+router.get('/bookings', isAuth,adminBookingController.getBookings);
+router.get('/bookings/:id',isAuth, adminBookingController.getBookingDetails);
+router.patch('/bookings/:id/status',isAuth, adminBookingController.updateBookingStatus);
+router.patch('/bookings/bulk-status', isAuth, adminBookingController.bulkUpdateBookingStatus);
 
-router.post("/admin/maketripPdf" ,isAuth, makepdfController.postgeneratePdf);
+// router.get("/maketripPdf" ,isAuth, makepdfController.maketripPdf);
+
+// router.post("/maketripPdf" ,isAuth, makepdfController.postgeneratePdf);
 
 router.post("/getstateCities" , makepdfController.getstateCities);
 

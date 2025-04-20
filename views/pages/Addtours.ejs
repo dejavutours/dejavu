@@ -75,6 +75,27 @@
         padding-right: 0;
       }
     }
+    /* Add to existing <style> */
+    .pdf-preview-container {
+      margin-top: 10px;
+      position: relative;
+      max-width: 200px;
+    }
+
+    .pdf-preview-container embed,
+    .pdf-preview-container iframe {
+      width: 100%;
+      height: 200px;
+      border: 1px solid #ddd;
+      cursor: pointer;
+    }
+
+    .pdf-preview-container .remove-pdf {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      padding: 5px;
+    }
   </style>
 </head>
 
@@ -188,7 +209,9 @@
               <input type="file" accept="image/*" name="image" id="file" class="form-control">
               <input type="hidden" name="existingImage" value="<%= trips.imageurl || '' %>">
               <div class="preview-container position-relative" id="mainImagePreviewContainer" style="display: <%= trips.imageurl ? 'block' : 'none' %>; max-width: 200px;">
-                <img id="mainImagePreview" src="<%= trips.imageurl || '' %>" data-bs-toggle="modal" data-bs-target="#imageModal" alt="Preview">
+                <img id="mainImagePreview" src="<%= trips.imageurl || '' %>" data-bs-toggle="modal" data-bs-target="#imageModal" alt="Preview" 
+                onerror="this.onerror=null; this.src='/<%= trips.imageurl%>';"
+                >
                 <button type="button" class="btn btn-danger remove-image" id="removeMainImage" style="position: absolute; top: 5px; right: 5px; padding: 5px; display: <%= trips.imageurl ? 'block' : 'none' %>;">
                   <i class="bi bi-x-circle-fill"></i>
                 </button>
@@ -200,6 +223,23 @@
               <label for="bannerImages" class="form-label">Upload Banner Images (Multiple) Disabled</label>
               <input type="file" accept="image/*" id="bannerImages" class="form-control" multiple>
               <div class="multiple-preview d-flex mt-2" id="bannerPreviewContainer"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Document Upload -->
+        <div class="row">
+          <div class="col-12 col-md-6">
+            <div class="mb-3">
+              <label for="document" class="form-label">Upload PDF Document (Max 5MB)</label>
+              <input type="file" accept="application/pdf" name="image" id="document" class="form-control">
+              <input type="hidden" name="existingDocument" value="<%= trips.documentUrl || '' %>">
+              <small class="text-danger d-none" id="documentError">Invalid file type or size exceeded (Max 5MB).</small>
+              <div class="pdf-preview-container position-relative" id="pdfPreviewContainer" style="display: <%= trips.documentUrl ? 'block' : 'none' %>;">
+                <embed id="pdfPreview" src="<%= trips.documentUrl || '' %>" type="application/pdf" data-bs-toggle="modal" data-bs-target="#pdfModal">
+                <button type="button" class="btn btn-danger remove-pdf" id="removePdf" style="display: <%= trips.documentUrl ? 'block' : 'none' %>;">
+                  <i class="bi bi-x-circle-fill"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -619,6 +659,20 @@
       </div>
     </div>
   </div>
+  <!-- Modal for PDF Full-Size Preview -->
+  <div class="modal fade" id="pdfModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">PDF Preview</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center">
+          <embed id="fullSizePdf" src="" type="application/pdf" style="width: 100%; height: 500px;">
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Message Modal -->
   <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
@@ -873,6 +927,57 @@
       });
     });
 
+    // PDF Upload and Preview
+document.addEventListener("DOMContentLoaded", function () {
+  const documentInput = document.getElementById("document");
+  const pdfPreview = document.getElementById("pdfPreview");
+  const pdfPreviewContainer = document.getElementById("pdfPreviewContainer");
+  const removePdfButton = document.getElementById("removePdf");
+  const documentError = document.getElementById("documentError");
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+  documentInput.addEventListener("change", function () {
+    const file = this.files[0];
+    documentError.classList.add("d-none");
+
+    if (file) {
+        // Validate file type and size
+      if (file.type !== "application/pdf") {
+          documentError.textContent = "Only PDF files are allowed.";
+          documentError.classList.remove("d-none");
+          this.value = "";
+          return;
+        }
+        if (file.size > MAX_FILE_SIZE) {
+          documentError.textContent = "File size exceeds 5MB.";
+          documentError.classList.remove("d-none");
+          this.value = "";
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          pdfPreview.src = e.target.result;
+          pdfPreviewContainer.style.display = "block";
+          removePdfButton.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    pdfPreview.addEventListener("click", function () {
+      document.getElementById("fullSizePdf").src = this.src;
+    });
+
+    removePdfButton.addEventListener("click", function () {
+      pdfPreview.src = "";
+      pdfPreviewContainer.style.display = "none";
+      removePdfButton.style.display = "none";
+      documentInput.value = "";
+      document.querySelector('input[name="existingDocument"]').value = "";
+    });
+  });
+
     // manage city detail add update and all other event are managed from here
     document.addEventListener("DOMContentLoaded", function() {
       const cityContainer = document.getElementById("cityContainer");
@@ -1064,7 +1169,8 @@
           }
         });
 
-        entry.querySelector(".clearDates").addEventListener("click", () => {
+        entry.querySelector(".clearDates").addEventListener("click", (e) => {
+          e.preventDefault();
           const fp = entry.querySelector(".datePicking")._flatpickr;
           fp.clear();
           entry.querySelector(".datePreview").innerHTML = "";
@@ -1766,15 +1872,10 @@
     document.getElementById("addUpdateTripDetial").addEventListener("submit", function(e) {
       e.preventDefault();
 
-      // Step 1: Validate all required fields
-      const requiredFields = [{
-          id: "name",
-          name: "Trip Name"
-        },
-        {
-          id: "state",
-          name: "State"
-        },
+    // Step 1: Validate all required fields
+    const requiredFields = [
+        { id: "name", name: "Trip Name" },
+        { id: "state", name: "State" },
       ];
 
       let validationErrors = [];
@@ -1800,6 +1901,34 @@
         imageInput.classList.add("is-invalid");
       } else {
         imageInput.classList.remove("is-invalid");
+      }
+
+      // Validate PDF (optional, but if provided, ensure it's valid)
+      const documentInput = document.getElementById("document");
+      const existingDocument = document.querySelector('input[name="existingDocument"]').value;
+      if (documentInput.files.length > 0) {
+        const file = documentInput.files[0];
+        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+        if (file.type !== "application/pdf") {
+          validationErrors.push("Document must be a PDF file.");
+          documentInput.classList.add("is-invalid");
+        } else if (file.size > MAX_FILE_SIZE) {
+          validationErrors.push("Document size exceeds 5MB.");
+          documentInput.classList.add("is-invalid");
+        } else {
+          documentInput.classList.remove("is-invalid");
+        }
+      }
+
+      // Validate that only one PDF is uploaded
+      let pdfCount = 0;
+      const allFiles = Array.from(imageInput.files).concat(Array.from(documentInput.files));
+      allFiles.forEach((file) => {
+        if (file.type === "application/pdf") pdfCount++;
+      });
+      if (pdfCount > 1) {
+        validationErrors.push("Only one PDF document is allowed.");
+        documentInput.classList.add("is-invalid");
       }
 
       // Validate editor fields

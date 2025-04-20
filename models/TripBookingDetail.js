@@ -51,6 +51,7 @@ const TripBookingDetailSchema = new Schema(
     totalTripCost: { type: Number, required: true },
 
     // Booking status: 'Pending' (awaiting payment), 'Confirmed' (payment complete), 'Cancelled'
+    // Booking status: Reserved (partial payment) or Confirmed (full payment)
     bookingStatus: {
       type: String,
       enum: ['Pending', 'Confirmed', 'Cancelled'],
@@ -117,4 +118,5 @@ TripBookingDetailSchema.pre('validate', async function (next) {
   }
 });
 
-module.exports = mongoose.model('TripBookingDetail', TripBookingDetailSchema);
+// Export the model, reusing existing model if already compiled
+module.exports = mongoose.models.TripBookingDetail || mongoose.model('TripBookingDetail', TripBookingDetailSchema);

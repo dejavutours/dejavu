@@ -35,6 +35,8 @@ const PDFDocument = require("pdfkit");
 
 const fs = require("fs");
 
+const path = require("path");
+
 const nodemailer = require("nodemailer");
 
 const otpGenerator = require("otp-generator");
@@ -73,7 +75,7 @@ exports.getIndexPage = async (req, res, next) => {
   const alltours = await Tours.find().sort({ updatedAt: -1 });
   const allaccomodations = await Accomodations.find().sort({ updatedAt: -1 });
   const tests = await Tours.find().distinct("name");
-  const response = await this.getFiltertourAPIUseOnly(req,res); // Use NewTours instead of NewToursSchema
+  const response = await this.getFiltertourAPIUseOnly(req,res, true); // Use NewTours instead of NewToursSchema
   res.render("pages/index", {
     Tours: alltours,
     tourPackages: response.tours,
@@ -618,7 +620,7 @@ exports.getStateFilters = async (req, res, next) => {
     };
    req.query.filterValue = JSON.stringify(filter);
 
-    const response = await this.getFiltertourAPIUseOnly(req,res);
+    const response = await this.getFiltertourAPIUseOnly(req,res, false);
     res.render("pages/StateFilter", { Tours: response.tours, tourPackages: response.tours });
   } catch (err) {
     console.log(err);
@@ -1341,7 +1343,7 @@ exports.getAddTours = async (req, res, next) => {
 
 
 // Fetch all Filters tours
-exports.getFiltertourAPIUseOnly = async (req,res) =>{
+exports.getFiltertourAPIUseOnly = async (req,res, sortByLatestUpdate) =>{
   try{
     let filters = [];
     if (req && req.query && req.query.filterValue) {
@@ -1438,7 +1440,12 @@ exports.getFiltertourAPIUseOnly = async (req,res) =>{
     }
     // Execute query with all filters applied
     const query = queryConditions.length > 0 ? { $and: queryConditions } : {};
-    const tourList = await NewTours.find(query); // Use NewTours instead of NewToursSchema
+    let tourQuery = NewTours.find(query);
+    // Sort by recently updated records only if flag is passed
+    if (sortByLatestUpdate) {
+      tourQuery = tourQuery.sort({ updatedAt: -1 });
+    }
+    const tourList = await tourQuery;
     return ({
       tours: tourList,
       filters: filters
@@ -1450,7 +1457,7 @@ exports.getFiltertourAPIUseOnly = async (req,res) =>{
 // Fetch all tours
 exports.getTours = async (req, res) => {
   try {
-    const response = await this.getFiltertourAPIUseOnly(req,res); // Use NewTours instead of NewToursSchema
+    const response = await this.getFiltertourAPIUseOnly(req,res, false); // Use NewTours instead of NewToursSchema
     //res.json(tours);
     res.render("pages/tourlist", {
       tourPackages: response.tours,
@@ -1513,21 +1520,45 @@ exports.getCheckToursUnique = async (req, res, next) => {
 exports.postNewAddTours = async (req, res) => {
   try {
     const {
-      name, tripId, state, destinations, route, days, price, tripType, about, activities,
-      things_to_carry, package_cost, includenexclude, infonfaq, bookncancel, guidelines, altitude, bestSession,
-      existingImage, itinerary, deptcities, trip_dates
+      name,
+      tripId,
+      state,
+      destinations,
+      route,
+      days,
+      price,
+      tripType,
+      about,
+      activities,
+      things_to_carry,
+      package_cost,
+      includenexclude,
+      infonfaq,
+      bookncancel,
+      guidelines,
+      altitude,
+      bestSession,
+      existingImage,
+      existingDocument, // Add this to handle existing PDF
+      itinerary,
+      deptcities,
+      trip_dates,
     } = req.body;
 
     // Check if the tour name already exists
     const existingTour = await NewTours.findOne({ name });
     if (existingTour && (!tripId || existingTour._id.toString() !== tripId.toString())) {
       if (req.files && req.files.length > 0) {
-        req.files.forEach(file => fileHelper.deleteFile(`images/tours/${file.filename}`));
+        req.files.forEach((file) =>
+          fileHelper.deleteFile(
+            file.path.startsWith("images/") ? file.path : `documents/tours/${file.filename}`
+          )
+        );
       }
       return res.status(400).json({ success: false, message: "Trip name must be unique", exists: true });
     }
 
-    // Parse JSON fields if they are strings
+    // Parse JSON fields
     const parseJSONField = (field) => (typeof field === "string" ? JSON.parse(field) : field);
     const parsedItinerary = parseJSONField(itinerary);
     const parsedDeptCities = parseJSONField(deptcities);
@@ -1537,18 +1568,32 @@ exports.postNewAddTours = async (req, res) => {
     const requiredFields = ["name", "state"];
     const missingFields = requiredFields.filter((field) => !req.body[field]);
     if (missingFields.length > 0) {
-      return res.status(400).json({ success: false, message: `Missing required fields: ${missingFields.join(", ")}` });
+      return res.status(400).json({
+        success: false,
+        message: `Missing required fields: ${missingFields.join(", ")}`,
+      });
     }
 
-    // Handle image uploads
+    // Handle image and document uploads
     let imageurl = existingImage || null;
+    let documentUrl = existingDocument || null;
     let bannerimages = tripId ? (await NewTours.findById(tripId))?.bannerimages || [] : [];
+
     if (req.files && req.files.length > 0) {
-      const imageFiles = req.files.map(file => `/images/tours/${file.filename}`);
-      imageurl = imageFiles[0]; // First file is main image
-      if (imageFiles.length > 1) {
-        bannerimages = [...bannerimages, ...imageFiles.slice(1)]; // Remaining files are banner images
-      }
+      req.files.forEach((file) => {
+        if (file.mimetype === "application/pdf") {
+          // Handle PDF
+          documentUrl = `/documents/tours/${file.filename}`;
+        } else {
+          // Handle images
+          const imagePath = `/images/tours/${file.filename}`;
+          if (!imageurl) {
+            imageurl = imagePath; // First image is main image
+          } else {
+            bannerimages.push(imagePath); // Additional images are banner images
+          }
+        }
+      });
     }
 
     if (!imageurl && !tripId) {
@@ -1560,6 +1605,7 @@ exports.postNewAddTours = async (req, res) => {
       state,
       imageurl,
       bannerimages,
+      documentUrl, // Add document URL to tour data
       destinations,
       route,
       days,
@@ -1577,7 +1623,7 @@ exports.postNewAddTours = async (req, res) => {
       trip_dates: parsedTripDates,
       deptcities: parsedDeptCities,
       altitude,
-      bestSession
+      bestSession,
     };
 
     if (tripId) {
@@ -1585,6 +1631,11 @@ exports.postNewAddTours = async (req, res) => {
       const existingTrip = await NewTours.findById(tripId);
       if (imageurl && imageurl !== existingTrip.imageurl) {
         fileHelper.deleteFile(existingTrip.imageurl.replace("/images/tours/", "images/tours/"));
+      }
+      if (documentUrl && documentUrl !== existingTrip.documentUrl) {
+        if (existingTrip.documentUrl) {
+          fileHelper.deleteFile(existingTrip.documentUrl.replace("/documents/tours/", "documents/tours/"));
+        }
       }
       const updatedTrip = await NewTours.findByIdAndUpdate(tripId, tourData, { new: true });
       return res.status(200).json({ success: true, message: "Trip updated successfully", trip: updatedTrip });
@@ -1597,7 +1648,11 @@ exports.postNewAddTours = async (req, res) => {
   } catch (error) {
     console.error("Error in postNewAddTours:", error);
     if (req.files && req.files.length > 0) {
-      req.files.forEach(file => fileHelper.deleteFile(`images/tours/${file.filename}`));
+      req.files.forEach((file) =>
+        fileHelper.deleteFile(
+          file.path.startsWith("images/") ? file.path : `documents/tours/${file.filename}`
+        )
+      );
     }
     return res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
@@ -1636,11 +1691,11 @@ exports.getTripDetialbyName = async (req, res, next) => {
     const tripdetails = await NewTours.findOne({ name: tripId });
 
     if (!tripdetails) {
-      return res.status(404).json({success: false,  message: "Trip not found" });
+      return res.status(404).json({ success: false, message: "Trip not found" });
     }
 
     // Define a default image path for unmatched or missing departure cities
-    const defaultImage = "/images/default-departure.png"; // Change as needed
+    const defaultImage = "/images/default-departure.png";
 
     // Ensure deptcities exists and has valid values
     if (!tripdetails.deptcities || tripdetails.deptcities.length === 0) {
@@ -1648,14 +1703,14 @@ exports.getTripDetialbyName = async (req, res, next) => {
         {
           City: "Unknown",
           State: "Unknown",
-          image: defaultImage, // Assign default image
+          image: defaultImage,
         },
       ];
     }
 
     // Extract departure cities with valid values
     const departureCities = tripdetails.deptcities
-      .filter(({ City, State }) => City && State) // Ensure valid city/state values
+      .filter(({ City, State }) => City && State)
       .map(({ City, State }) => ({
         City: City.trim().toLowerCase(),
         State: State.trim().toLowerCase(),
@@ -1671,14 +1726,13 @@ exports.getTripDetialbyName = async (req, res, next) => {
             state: { $regex: new RegExp(`^${State}$`, "i") },
           })),
         },
-        { image: 1, name: 1, state: 1 } // Fetch only image, name, and state
+        { image: 1, name: 1, state: 1 }
       );
     }
 
     // Map city images to deptcities
     const deptCitiesWithImages = tripdetails.deptcities.map((deptCity) => {
       if (!deptCity.City || !deptCity.State) {
-        // If city or state is missing, assign default values
         return { ...deptCity, City: "Unknown", State: "Unknown", image: defaultImage };
       }
 
@@ -1690,12 +1744,28 @@ exports.getTripDetialbyName = async (req, res, next) => {
 
       return {
         ...deptCity._doc,
-        image: cityMatch ? cityMatch.image : defaultImage, // Use default image if no match
+        image: cityMatch ? cityMatch.image : defaultImage,
       };
     });
 
+    // NEW: Verify if documentUrl points to an existing file
+    let documentUrl = tripdetails.documentUrl || "";
+    if (documentUrl) {
+      const filePath = path.join(__dirname, '..', documentUrl);
+      try {
+        await fs.promises.access(filePath, fs.constants.F_OK);
+      } catch (err) {
+        console.warn(`PDF file not found at ${filePath}`);
+        documentUrl = ""; // Set to empty if file doesn't exist
+      }
+    }
+    // requrie to identify the user is logged in or not, will be find batter idea
+    let loggedGmailUser = null;
+    if(req.user){
+      loggedGmailUser=req.user;
+    };
     res.render("pages/TripDetail", {
-      trips: { ...tripdetails._doc, deptcities: deptCitiesWithImages },
+      trips: { ...tripdetails._doc, deptcities: deptCitiesWithImages, documentUrl, loggedGmailUser },
     });
   } catch (error) {
     console.error("Error fetching trip details:", error);

@@ -221,7 +221,7 @@
           <div class="cm_row_booking">
             <label class="cm_label_booking" style="min-width: fit-content;">Transport Type</label>
             <select class="cm_field_booking form-select" name="transportType" id="transportType" onchange="populateForm()">
-              <option value="" disabled selected>Select Transport Type</option>
+              <option value="" disabled selected><strong>Select Transport Type</strong></option>
               <% tourDetails?.transportList?.forEach(loc=> { %>
               <option value="<%= loc.transferType %>">
                 <%= loc.transferType %>
@@ -355,7 +355,7 @@
             </thead>
             <tbody id="costTableBody"></tbody>
           </table>
-          <div class="d-flex justify-content-between border-top pt-2">
+          <div class="d-flex justify-content-between pt-2">
             <strong>Subtotal</strong>
             <span id="MSubtotal">₹0000</span>
           </div>
@@ -653,6 +653,7 @@
   
     function closePaymentModal() {
       paymentModal.hide();
+      window.location.href = "/";
     }
   
     function openTravelerInfoModal() {
@@ -896,6 +897,7 @@
                     <p class="text-success">Payment successful! Your booking is confirmed.</p>
                     <p>Booking ID: ${result.bookingId}</p>
                     <p>Amount Paid: ₹${result.order.amount / 100}</p>
+                    Note: You can view your booking details under the <strong>Upcoming trips</strong> section on your profile.</p>
                   `;
                 } else {
                   paymentModalBody.innerHTML = `

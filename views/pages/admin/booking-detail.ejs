@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../../partials/headtag'); %>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Booking Details - <%= booking?.bookingNumber || 'N/A' %></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --primary-color: #1E3A8A;
+      --secondary-color: #F97316;
+      --text-color: #1F2937;
+      --bg-color: #F3F4F6;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    .detail-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    .detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .detail-header h1 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .detail-card {
+      background: white;
+      border-radius: 0.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .detail-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .detail-card .card-header {
+      background: var(--primary-color);
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem 0.75rem 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .detail-card.collapsed .card-body {
+      display: none;
+    }
+
+    .detail-card .card-body {
+      padding: 1.5rem;
+    }
+
+    .detail-card .row > div {
+      margin-bottom: 1rem;
+    }
+
+    .detail-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .detail-table th {
+      background: var(--primary-color);
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem;
+      text-align: left;
+      font-size: 0.875rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .detail-table td {
+      padding: 0.75rem;
+      font-size: 0.875rem;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 1rem;
+    }
+
+    .action-btn {
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      transition: background-color 0.2s;
+    }
+
+    .error-toast {
+      display: none;
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: #FEE2E2;
+      color: #B91C1C;
+      padding: 1rem;
+      border-radius: 0.375rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .analytics-card {
+      background: white;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .analytics-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .analytics-card h3 {
+      font-size: 1rem;
+      color: #6B7280;
+      margin-bottom: 0.5rem;
+    }
+
+    .analytics-card p {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .chart-container {
+      position: relative;
+      height: 150px;
+    }
+
+    .alert-error {
+      background: #FEE2E2;
+      color: #B91C1C;
+      padding: 1rem;
+      border-radius: 0.375rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .analytics-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-container {
+        padding: 1rem;
+      }
+
+      .detail-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .detail-card .row {
+        flex-direction: column;
+      }
+
+      .detail-table {
+        font-size: 0.75rem;
+      }
+
+      .detail-table th, .detail-table td {
+        padding: 0.5rem;
+      }
+
+      .action-btn {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
+      }
+
+      .chart-container {
+        height: 120px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .detail-table {
+        display: block;
+        overflow-x: auto;
+      }
+
+      .detail-table thead, .detail-table tbody, .detail-table tr {
+        display: block;
+      }
+
+      .detail-table th, .detail-table td {
+        display: block;
+        text-align: left;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .detail-table th {
+        position: relative;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('../../partials/header'); %>
+  <div class="detail-container">
+    <!-- Header -->
+    <div class="detail-header">
+      <h1>Booking Details - <%= booking?.bookingNumber || 'N/A' %></h1>
+      <div class="d-flex gap-2">
+        <% if (booking) { %>
+          <button id="downloadPdf" class="btn btn-outline-secondary action-btn"><i class="bi bi-file-earmark-pdf"></i> Download PDF</button>
+        <% } %>
+        <a href="/admin/bookings" class="btn btn-secondary action-btn"><i class="bi bi-arrow-left"></i> Back to Bookings</a>
+      </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div id="errorToast" class="error-toast"></div>
+
+    <% if (error) { %>
+      <div class="alert-error"><%= error %></div>
+    <% } %>
+
+    <% if (booking) { %>
+      <!-- Mini Analytics -->
+      <div class="analytics-grid">
+        <div class="analytics-card" data-tippy-content="Total bookings made by this user">
+          <h3>User Total Bookings</h3>
+          <p><%= booking.analytics.totalBookings %></p>
+        </div>
+        <div class="analytics-card" data-tippy-content="Total revenue from this user's paid bookings">
+          <h3>Lifetime Value</h3>
+          <p>₹<%= booking.analytics.lifetimeValue.toLocaleString('en-IN') %></p>
+        </div>
+        <div class="analytics-card" data-tippy-content="Payment status for this booking">
+          <h3>Payment Remaining</h3>
+          <p>₹<%= booking.analytics.paymentBreakdown.remaining.toLocaleString('en-IN') %></p>
+        </div>
+        <div class="analytics-card">
+          <h3>Booking History (6 Months)</h3>
+          <div class="chart-container">
+            <canvas id="bookingHistoryChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Booking Information -->
+      <div class="detail-card" id="bookingInfo">
+        <div class="card-header">
+          <h5>Booking Information</h5>
+          <i class="bi bi-chevron-down toggle-icon"></i>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <p><strong>Booking Number:</strong> <%= booking.bookingNumber %></p>
+              <p><strong>Trip Name:</strong> <%= booking.tourDetails?.name || 'N/A' %></p>
+              <p><strong>Joining From:</strong> <%= booking.joiningFrom || 'N/A' %></p>
+              <p><strong>Total Persons:</strong> Adults: <%= booking.totalPerson.adult %>, Children: <%= booking.totalPerson.child %></p>
+              <p data-tippy-content="Total cost including all fees"><strong>Total Cost:</strong> ₹<%= booking.totalTripCost.toLocaleString('en-IN') %></p>
+              <p data-tippy-content="Amount paid so far"><strong>Paid Amount:</strong> ₹<%= booking.paidAmount.toLocaleString('en-IN') %></p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Booking Status:</strong> 
+                <span class="badge <%= booking.bookingStatus === 'Confirmed' ? 'bg-success' : booking.bookingStatus === 'Pending' ? 'bg-warning text-dark' : 'bg-danger' %>">
+                  <%= booking.bookingStatus %>
+                </span>
+              </p>
+              <p><strong>Payment Status:</strong> 
+                <span class="badge <%= booking.paymentStatus === 'Paid' ? 'bg-success' : booking.paymentStatus === 'Partial' ? 'bg-info text-dark' : booking.paymentStatus === 'Pending' ? 'bg-warning text-dark' : 'bg-danger' %>">
+                  <%= booking.paymentStatus %>
+                </span>
+              </p>
+              <p><strong>Trip Dates:</strong> <%= new Date(booking.tripStartDate).toLocaleDateString('en-GB') %> - <%= new Date(booking.tripEndDate).toLocaleDateString('en-GB') %></p>
+              <p><strong>Created At:</strong> <%= new Date(booking.createdAt).toLocaleString() %></p>
+              <p><strong>Transport Type:</strong> <%= booking.transportType || 'N/A' %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Details -->
+      <div class="detail-card" id="userDetails">
+        <div class="card-header">
+          <h5>User Details</h5>
+          <i class="bi bi-chevron-down toggle-icon"></i>
+        </div>
+        <div class="card-body">
+          <% if (booking.userDetails) { %>
+            <p><strong>Name:</strong> <%= booking.userDetails.details.firstName %> <%= booking.userDetails.details.lastName %></p>
+            <p><strong>Email:</strong> <%= booking.userDetails.details.email || 'N/A' %></p>
+            <p><strong>Mobile:</strong> <%= booking.userDetails.details.mobileNumber || 'N/A' %></p>
+            <p><strong>Alternate Number:</strong> <%= booking.userDetails.details.alternateNumber || 'N/A' %></p>
+            <p><strong>Gender:</strong> <%= booking.userDetails.details.gender || 'N/A' %></p>
+            <p><strong>Birth Date:</strong> <%= booking.userDetails.details.birthDate ? new Date(booking.userDetails.details.birthDate).toLocaleDateString('en-GB') : 'N/A' %></p>
+          <% } else { %>
+            <p>No user details available.</p>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Person Details -->
+      <div class="detail-card" id="personDetails">
+        <div class="card-header">
+          <h5>Person Details</h5>
+          <i class="bi bi-chevron-down toggle-icon"></i>
+        </div>
+        <div class="card-body">
+          <table class="detail-table">
+            <thead>
+              <tr>
+                <th>First Name</th>
+                <th>Surname</th>
+                <th>Gender</th>
+                <th>Birth Date</th>
+                <th>Phone</th>
+                <th>Alternate Phone</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% booking.personDetails.forEach(person => { %>
+                <tr>
+                  <td><%= person.firstName %></td>
+                  <td><%= person.surname %></td>
+                  <td><%= person.gender %></td>
+                  <td><%= new Date(person.birthdate).toLocaleDateString('en-GB') %></td>
+                  <td><%= person.phone %></td>
+                  <td><%= person.altphone || 'N/A' %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tour Details -->
+      <div class="detail-card" id="tourDetails">
+        <div class="card-header">
+          <h5>Tour Details</h5>
+          <i class="bi bi-chevron-down toggle-icon"></i>
+        </div>
+        <div class="card-body">
+          <% if (booking.tourDetails) { %>
+            <p><strong>Tour Name:</strong> <%= booking.tourDetails.name %></p>
+            <p><strong>State:</strong> <%= booking.tourDetails.state || 'N/A' %></p>
+            <p><strong>Destinations:</strong> <%= booking.tourDetails.destinations || 'N/A' %></p>
+            <p><strong>Price:</strong> ₹<%= booking.tourDetails.price.toLocaleString('en-IN') %></p>
+            <p><strong>About:</strong> <%- booking.tourDetails.about || 'N/A' %></p>
+            <p><strong>Activities:</strong> <%- booking.tourDetails.activities || 'N/A' %></p>
+            <a href="/admin/tours/<%= booking.tourDetails._id %>" class="btn btn-sm btn-info action-btn">View Full Tour Details</a>
+          <% } else { %>
+            <p>No tour details available.</p>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="d-flex gap-2 mt-4">
+        <button class="btn btn-warning action-btn update-status" 
+                data-id="<%= booking._id %>" 
+                data-status="Confirmed"
+                aria-label="Confirm booking">
+          <i class="bi bi-check-circle"></i> Confirm Booking
+        </button>
+        <button class="btn btn-danger action-btn update-status" 
+                data-id="<%= booking._id %>" 
+                data-status="Cancelled"
+                aria-label="Cancel booking">
+          <i class="bi bi-x-circle"></i> Cancel Booking
+        </button>
+      </div>
+    <% } %>
+  </div>
+  <%- include('../../partials/footer'); %>
+  <%- include('../../partials/scripttag'); %>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy-bundle.umd.min.js"></script>
+  <script>
+    // Error Toast
+    const showError = (message) => {
+      const toast = document.getElementById('errorToast');
+      toast.textContent = message;
+      toast.style.display = 'block';
+      setTimeout(() => toast.style.display = 'none', 5000);
+    };
+
+    // Toggle Card Sections
+    document.querySelectorAll('.detail-card .card-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const card = header.closest('.detail-card');
+        const body = card.querySelector('.card-body');
+        card.classList.toggle('collapsed');
+        body.style.display = card.classList.contains('collapsed') ? 'none' : 'block';
+        header.querySelector('.toggle-icon').classList.toggle('bi-chevron-down');
+        header.querySelector('.toggle-icon').classList.toggle('bi-chevron-up');
+      });
+    });
+
+    // Status Update with SweetAlert2
+    document.querySelectorAll('.update-status').forEach(button => {
+      button.addEventListener('click', async () => {
+        const bookingId = button.dataset.id;
+        const status = button.dataset.status;
+        const result = await Swal.fire({
+          title: `Confirm ${status} Booking`,
+          text: `Are you sure you want to ${status.toLowerCase()} this booking?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#1E3A8A',
+          cancelButtonColor: '#EF4444',
+          confirmButtonText: 'Yes, proceed'
+        });
+
+        if (result.isConfirmed) {
+          try {
+            button.disabled = true;
+            button.innerHTML = '<i class="bi bi-hourglass-split"></i> Processing...';
+            const response = await fetch(`/admin/bookings/${bookingId}/status`, {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+                'CSRF-Token': '<%= csrfToken %>'
+              },
+              body: JSON.stringify({ bookingStatus: status })
+            });
+            if (response.ok) {
+              Swal.fire('Success', 'Booking status updated', 'success').then(() => {
+                window.location.reload();
+              });
+            } else {
+              const error = await response.json();
+              showError(error.message || 'Failed to update status');
+            }
+          } catch (err) {
+            showError('Network error while updating status');
+          } finally {
+            button.disabled = false;
+            button.innerHTML = `<i class="bi bi-${status === 'Confirmed' ? 'check-circle' : 'x-circle'}"></i> ${status} Booking`;
+          }
+        }
+      });
+    });
+
+    // PDF Download
+    <% if (booking) { %>
+      document.getElementById('downloadPdf').addEventListener('click', () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(16);
+        doc.text('Booking Details', 20, 20);
+        doc.setFontSize(12);
+        let y = 30;
+
+        const addSection = (title, details) => {
+          doc.setFontSize(14);
+          doc.text(title, 20, y);
+          y += 10;
+          doc.setFontSize(10);
+          details.forEach(([key, value]) => {
+            doc.text(`${key}: ${value}`, 20, y);
+            y += 7;
+          });
+          y += 5;
+        };
+
+        addSection('Booking Information', [
+          ['Booking Number', '<%= booking.bookingNumber %>'],
+          ['Trip Name', '<%= booking.tourDetails?.name || 'N/A' %>'],
+          ['Joining From', '<%= booking.joiningFrom || 'N/A' %>'],
+          ['Total Persons', `Adults: <%= booking.totalPerson.adult %>, Children: <%= booking.totalPerson.child %>`],
+          ['Total Cost', '₹<%= booking.totalTripCost.toLocaleString('en-IN') %>'],
+          ['Paid Amount', '₹<%= booking.paidAmount.toLocaleString('en-IN') %>'],
+          ['Booking Status', '<%= booking.bookingStatus %>'],
+          ['Payment Status', '<%= booking.paymentStatus %>'],
+          ['Trip Dates', '<%= new Date(booking.tripStartDate).toLocaleDateString('en-GB') %> - <%= new Date(booking.tripEndDate).toLocaleDateString('en-GB') %>'],
+          ['Transport Type', '<%= booking.transportType || 'N/A' %>']
+        ]);
+
+        addSection('User Details', [
+          ['Name', '<%= booking.userDetails ? `${booking.userDetails.details.firstName} ${booking.userDetails.details.lastName}` : 'N/A' %>'],
+          ['Email', '<%= booking.userDetails?.details.email || 'N/A' %>'],
+          ['Mobile', '<%= booking.userDetails?.details.mobileNumber || 'N/A' %>'],
+          ['Alternate Number', '<%= booking.userDetails?.details.alternateNumber || 'N/A' %>'],
+          ['Gender', '<%= booking.userDetails?.details.gender || 'N/A' %>'],
+          ['Birth Date', '<%= booking.userDetails?.details.birthDate ? new Date(booking.userDetails.details.birthDate).toLocaleDateString('en-GB') : 'N/A' %>']
+        ]);
+
+        addSection('Tour Details', [
+          ['Tour Name', '<%= booking.tourDetails?.name || 'N/A' %>'],
+          ['State', '<%= booking.tourDetails?.state || 'N/A' %>'],
+          ['Destinations', '<%= booking.tourDetails?.destinations || 'N/A' %>'],
+          ['Price', '<%= booking.tourDetails ? `₹${booking.tourDetails.price.toLocaleString('en-IN')}` : 'N/A' %>']
+        ]);
+
+        doc.save(`Booking_${'<%= booking.bookingNumber %>'}.pdf`);
+      });
+    <% } %>
+
+    // Initialize Chart
+    <% if (booking) { %>
+      const bookingHistoryChart = new Chart(document.getElementById('bookingHistoryChart'), {
+        type: 'bar',
+        data: {
+          labels: <%- JSON.stringify(booking.analytics.bookingHistory.map(bh => bh.month)) %>,
+          datasets: [{
+            label: 'Bookings',
+            data: <%- JSON.stringify(booking.analytics.bookingHistory.map(bh => bh.count)) %>,
+            backgroundColor: '#1E3A8A',
+            borderColor: '#1E3A8A',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true, title: { display: true, text: 'Bookings' }, ticks: { stepSize: 1 } },
+            x: { title: { display: true, text: 'Month' } }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: { backgroundColor: '#1E3A8A' }
+          }
+        }
+      });
+    <% } %>
+
+    // Initialize Tooltips
+    tippy('[data-tippy-content]', {
+      placement: 'top',
+      theme: 'light-border',
+      animation: 'scale'
+    });
+
+    // Ensure card bodies are visible on load
+    document.querySelectorAll('.detail-card .card-body').forEach(body => {
+      body.style.display = 'block';
+    });
+  </script>
+</body>
+</html>

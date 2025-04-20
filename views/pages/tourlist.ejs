@@ -429,7 +429,7 @@
           <h5 class="modal-title" id="filtersModalLabel">Filters</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form id="tourList" action="/getNewTours" method="GET" class="overflow-auto">
+        <form id="tourList" action="/triplist" method="GET" class="overflow-auto">
           <div class="modal-body">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <input id="filterValue" name="filterValue" type="hidden">

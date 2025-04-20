@@ -38,6 +38,14 @@ const ensuremultiplelogin = (req, res, next) => {
   return ensureLoggedIn(req, res, next);
 };
 
+// Middleware to set Cache-Control headers for protected routes
+const noCache = (req, res, next) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  next();
+};
+
 router.get('/login', (req, res, next) => {
   res.redirect('/');
 });
@@ -64,11 +72,6 @@ router.post(
   isAuth,
   toursController.postNewAddTours
 );
-//Old get trip detial route, need to remove after complete all changes
-router.get('/tripdetails/:token', toursController.getTourDetails);
-
-//New get trip detial route, based on the trip Id
-router.get('/tripdetail/:name', toursController.getTripDetialbyName);
 
 router.post('/newsletter', toursController.postNewsletter);
 
@@ -396,7 +399,7 @@ router.post('/getotp', toursController.getotp);
 
 router.post('/verifyotp', toursController.verifyotp);
 
-router.get("/getNewTours", toursController.getTours);
+router.get("/triplist", toursController.getTours);
 
 router.post("/uploadImage", toursController.uploadImage);
 
@@ -406,11 +409,14 @@ router.post('/admin/updateImageUrl', ensureLoggedIn, isAuth, toursController.upd
 router.post('/admin/updateBannerImages', ensureLoggedIn, isAuth, toursController.updateBannerImages);
 router.post('/admin/removeBannerImage', ensureLoggedIn, isAuth, toursController.removeBannerImage);
 
-// book tour 
-// Updated route for bookingTour
-// Updated booking routes
-router.get('/bookingTour/:tripid', validateLogin, toursController.renderBookingTourPage);
-router.post('/bookingTour', validateLogin, toursController.submitBookingTourPage);
+//Old get trip detial route, need to remove after complete all changes
+router.get('/tripdetails/:token', toursController.getTourDetails);
+
+//New get trip detial route, based on the trip Id
+router.get('/tripdetail/:name', toursController.getTripDetialbyName);
+
+router.get('/bookingTour/:tripid',noCache, validateLogin, toursController.renderBookingTourPage);
+router.post('/bookingTour', noCache, validateLogin, toursController.submitBookingTourPage);
 
 router.post("/admin/changeTripStatus", ensureLoggedIn, isAuth, toursController.changeTripStatus);
 router.post("/admin/deleteTripDetail", ensureLoggedIn, isAuth, toursController.deleteTrip);

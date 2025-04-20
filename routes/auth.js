@@ -2,6 +2,7 @@ var express = require('express');
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oidc');
 const gmailuser = require("../models/gmailuser");
+const jwt = require('jsonwebtoken');
 // var db = require('../db');
 
 
@@ -98,11 +99,76 @@ router.get('/oauth2/redirect/google', passport.authenticate('google', {
  *
  * This route logs the user out.
  */
-router.post('/logout', function(req, res, next) {
-  req.logout(function(err) {
-    if (err) { return next(err); }
-    res.redirect('/');
-  });
-});
+// Logout route
+router.post("/logout", (req, res) => {
+  try {
+      // Clear Express session (for Google login)
+      if (req.session) {
+          req.session.destroy((err) => {
+              if (err) {
+                  console.error("Session destruction error:", err);
+                  return res.status(500).json({ error: "Failed to log out" });
+              }
+          });
+      }
+
+      // Clear accessToken cookie
+      res.clearCookie("accessToken", {
+          path: "/",
+          sameSite: "lax",
+          secure: process.env.NODE_ENV === "production"
+      });
+
+      // Clear session cookie (e.g., connect.sid)
+      res.clearCookie("connect.sid", {
+          path: "/",
+          sameSite: "lax",
+          secure: process.env.NODE_ENV === "production"
+      });
+
+      // Optionally: Invalidate JWT by storing in a blacklist (if needed)
+      // Example: Add to a Redis or database blacklist
+      // const token = req.cookies.accessToken;
+      // if (token) {
+      //     blacklistToken(token); // Implement as needed
+      // }
+
+      res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+      console.error("Logout error:", error);
+      res.status(500).json({ error: "Server error during logout" });
+  }
+})
+
+// router.get("/check-auth", (req, res) => {
+//   try {
+//     // Check JWT-based authentication (mobile login)
+//     const accessToken = req.cookies.accessToken;
+//     if (accessToken) {
+//       jwt.verify(accessToken, process.env.JWT_TOKEN, (err, verifiedPhoneNumber) => {
+//         if (!err) {
+//           return res.status(200).json({ authenticated: true, type: 'mobile' });
+//         }
+//         // If token is invalid, clear the cookie
+//         res.clearCookie("accessToken", {
+//           path: "/",
+//           sameSite: "lax",
+//           secure: process.env.NODE_ENV === "production"
+//         });
+//       });
+//     }
+
+//     // Check session-based authentication (Google login)
+//     if (req.user) {
+//       return res.status(200).json({ authenticated: true, type: 'google' });
+//     }
+
+//     // Not authenticated
+//     res.status(401).json({ authenticated: false });
+//   } catch (error) {
+//     console.error("Error in check-auth:", error);
+//     res.status(500).json({ authenticated: false, error: "Server error" });
+//   }
+// });
 
 module.exports = router;
