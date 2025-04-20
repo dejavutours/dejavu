@@ -28,6 +28,7 @@
                         <li><a href="/filters/Rajasthan">Rajasthan </a></li>
                         <li><a href="/filters/North-East">North-East </a></li>
                         <li><a href="/filters/South-India">South-India </a></li>
+                        <li><a href="/triplist">All trip list </a></li>
                       </ul>
                     </li>
                     <li><a href="/accomodation">accomodation</a></li>
@@ -49,9 +50,9 @@
                       <ul class="submenu">
                         <% if(profile?.email===process.env.GMAIL_ADMIN) { %>
                         <li><a href="/admin/login">Admin</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/admin/bookings">Bookings(WIP)</a></li>
                         <% } %>
                         <li><a href="/profile">Profile</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/admin/bookings">Bookings</a></li>
                         <li>
                           <form id="my_form" action="/logout" method="post">
                             <a href="javascript:{}" onclick="signout(accessTokens)">Sign Out</a>

@@ -72,11 +72,11 @@ router.post('/order', async (req, res) => {
         return res.status(400).json({ success: false, message: 'Invalid travel date format' });
       }
       // Validate end date (1 day after start for 1-day trip)
-      const expectedEndDate = new Date(tripStartDate);
-      expectedEndDate.setDate(tripStartDate.getDate() + 1);
-      if (tripEndDate.getTime() !== expectedEndDate.getTime()) {
-        return res.status(400).json({ success: false, message: 'End date must be one day after start date' });
-      }
+      // const expectedEndDate = new Date(tripStartDate);
+      // expectedEndDate.setDate(tripStartDate.getDate() + 1);
+      // if (tripEndDate.getTime() !== expectedEndDate.getTime()) {
+      //   return res.status(400).json({ success: false, message: 'End date must be one day after start date' });
+      // }
 
     // Validate person details
     const adultCount = parseInt(adults);

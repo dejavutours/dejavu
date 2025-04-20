@@ -383,7 +383,7 @@
             <p><strong>Price:</strong> ₹<%= booking.tourDetails.price.toLocaleString('en-IN') %></p>
             <p><strong>About:</strong> <%- booking.tourDetails.about || 'N/A' %></p>
             <p><strong>Activities:</strong> <%- booking.tourDetails.activities || 'N/A' %></p>
-            <a href="/admin/tours/<%= booking.tourDetails._id %>" class="btn btn-sm btn-info action-btn">View Full Tour Details</a>
+            <a href="/tripdetail/<%= booking.tourDetails.name %>" class="btn btn-sm btn-info action-btn">View Full Tour Details</a>
           <% } else { %>
             <p>No tour details available.</p>
           <% } %>
