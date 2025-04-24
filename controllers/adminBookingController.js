@@ -208,10 +208,10 @@ const getBookingDetails = async (req, res) => {
     let userDetails = null;
     try {
       if (mongoose.Types.ObjectId.isValid(booking.userId)) {
-        userDetails = await MobileUser.findOne({_id: booking.userId}).select('details');
+        userDetails = await MobileUser.findOne({_id: booking.userId});
       }
       if (!userDetails) {
-        userDetails = await GmailUser.findOne({ _id: booking.userId }).select('details');
+        userDetails = await GmailUser.findOne({ _id: booking.userId });
       }
     } catch (err) {
       console.error(`Error fetching user details for userId: ${booking.userId}`, err);

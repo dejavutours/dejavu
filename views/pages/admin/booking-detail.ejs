@@ -26,7 +26,7 @@
     }
 
     .detail-container {
-      max-width: 1200px;
+      max-width: 1800px;
       margin: 0 auto;
       padding: 1.5rem;
     }
@@ -323,12 +323,12 @@
         </div>
         <div class="card-body">
           <% if (booking.userDetails) { %>
-            <p><strong>Name:</strong> <%= booking.userDetails.details.firstName %> <%= booking.userDetails.details.lastName %></p>
-            <p><strong>Email:</strong> <%= booking.userDetails.details.email || 'N/A' %></p>
-            <p><strong>Mobile:</strong> <%= booking.userDetails.details.mobileNumber || 'N/A' %></p>
-            <p><strong>Alternate Number:</strong> <%= booking.userDetails.details.alternateNumber || 'N/A' %></p>
-            <p><strong>Gender:</strong> <%= booking.userDetails.details.gender || 'N/A' %></p>
-            <p><strong>Birth Date:</strong> <%= booking.userDetails.details.birthDate ? new Date(booking.userDetails.details.birthDate).toLocaleDateString('en-GB') : 'N/A' %></p>
+            <p><strong>Name:</strong> <%= booking.userDetails?.email ? booking.userDetails?.name : booking.userDetails.details?.firstName || "Profile not updated" %></p>
+            <p><strong>Email:</strong> <%= booking.userDetails?.email || booking.userDetails?.details?.email || 'N/A' %></p>
+            <p><strong>Mobile:</strong> <%= booking.userDetails?.phoneNumber||booking.userDetails.details?.mobileNumber || 'N/A' %></p>
+            <p><strong>Alternate Number:</strong> <%= booking.userDetails.details?.alternateNumber || 'N/A' %></p>
+            <p><strong>Gender:</strong> <%= booking.userDetails.details?.gender || 'N/A' %></p>
+            <p><strong>Birth Date:</strong> <%= booking.userDetails.details?.birthDate ? new Date(booking.userDetails.details.birthDate).toLocaleDateString('en-GB') : 'N/A' %></p>
           <% } else { %>
             <p>No user details available.</p>
           <% } %>
@@ -516,12 +516,12 @@
         ]);
 
         addSection('User Details', [
-          ['Name', '<%= booking.userDetails ? `${booking.userDetails.details.firstName} ${booking.userDetails.details.lastName}` : 'N/A' %>'],
-          ['Email', '<%= booking.userDetails?.details.email || 'N/A' %>'],
-          ['Mobile', '<%= booking.userDetails?.details.mobileNumber || 'N/A' %>'],
-          ['Alternate Number', '<%= booking.userDetails?.details.alternateNumber || 'N/A' %>'],
-          ['Gender', '<%= booking.userDetails?.details.gender || 'N/A' %>'],
-          ['Birth Date', '<%= booking.userDetails?.details.birthDate ? new Date(booking.userDetails.details.birthDate).toLocaleDateString('en-GB') : 'N/A' %>']
+          ['Name', '<%= booking.userDetails ? `${booking.userDetails.details?.firstName}` : 'N/A' %>'],
+          ['Email', '<%= booking.userDetails?.email || 'N/A' %>'],
+          ['Mobile', '<%= booking.userDetails?.details?.mobileNumber || 'N/A' %>'],
+          ['Alternate Number', '<%= booking.userDetails?.details?.alternateNumber || 'N/A' %>'],
+          ['Gender', '<%= booking.userDetails?.details?.gender || 'N/A' %>'],
+          ['Birth Date', '<%= booking.userDetails?.details?.birthDate ? new Date(booking.userDetails.details?.birthDate)?.toLocaleDateString('en-GB') : 'N/A' %>']
         ]);
 
         addSection('Tour Details', [

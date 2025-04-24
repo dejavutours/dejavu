@@ -25,7 +25,7 @@
     }
 
     .dashboard-container {
-      max-width: 1400px;
+      max-width: 1800px;
       margin: 0 auto;
       padding: 1.5rem;
     }
@@ -438,7 +438,7 @@
               <td><input type="checkbox" class="booking-select" data-id="<%= booking._id %>"></td>
               <td><%= booking.bookingNumber %></td>
               <td>
-                <%= booking.userDetails ? `${booking.userDetails.details.firstName} ${booking.userDetails.details.lastName}` : 'Unknown' %>
+                <%= booking.userDetails ? booking.userDetails.email : booking.userDetails.phoneNumber %>
                 <br>
                 <small class="text-gray-500"><%= booking.userDetails?.details.email || 'N/A' %></small>
               </td>
