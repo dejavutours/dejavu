@@ -1914,53 +1914,74 @@ exports.changeTripStatus = async (req, res) => {
 };
 
 // pass date and join in query
-// File: tours.js
 exports.renderBookingTourPage = async (req, res) => {
   try {
     const tripId = req?.params?.tripid;
     const city = req?.query?.city;
     const existingTrip = await NewTours.findById(tripId).lean();
 
-    if (existingTrip && existingTrip.deptcities && existingTrip.deptcities.length > 0) {
-      const now = new Date(); // Current date for filtering
-      existingTrip.deptcities.forEach(cityDetail => {
-        cityDetail.dateList = [];
-        cityDetail.transportList = [];
-        if (cityDetail && cityDetail.dates && cityDetail.dates.length > 0) {
-          const monthMap = {
-            "January": 0, "February": 1, "March": 2, "April": 3,
-            "May": 4, "June": 5, "July": 6, "August": 7, "September": 8,
-            "October": 9, "November": 10, "December": 11
-          };
-          cityDetail.dates.forEach(dateBlock => {
-            const durationArr = existingTrip.days.match(/\d+/g).map(Number);
-            const duration = Math.max(...durationArr);
-            const { Month, Year, dates } = dateBlock;
-            const monthIndex = monthMap[Month];
-            const dateList = dates.split(',');
-            dateList.forEach(day => {
-              let startDate = new Date(Year, monthIndex, parseInt(day));
-              // Filter out past dates
-              if (startDate >= now) {
-                let endDate = new Date(startDate);
-                endDate.setDate(startDate.getDate() + duration);
-                const formatDate = date => `${String(date.getDate()).padStart(2, '0')} ${date.toLocaleString("en-US", { month: "short" })} ${date.getFullYear()}`;
-                cityDetail.dateList.push(`${formatDate(startDate)} to ${formatDate(endDate)}`);
-              }
-            });
-          });
-        }
-        if (cityDetail.City.toLowerCase() === city.toLowerCase()) {
-          existingTrip.transportList = cityDetail && cityDetail.price && cityDetail.price.length > 0 ? cityDetail.price : [];
-        }
-      });
-      if (req.query) {
-        existingTrip.selectedInfo = {
-          city: req.query.city,
-          date: req.query.date
-        };
-      }
+    if (!existingTrip || !existingTrip.deptcities || existingTrip.deptcities.length === 0) {
+      return res.status(404).json({ success: false, message: 'Trip or departure cities not found' });
     }
+
+    // Initialize selected city data
+    existingTrip.selectedCityDates = [];
+    existingTrip.transportList = [];
+
+    const selectedCity = existingTrip.deptcities.find(
+      cityDetail => cityDetail.City.toLowerCase() === city?.toLowerCase()
+    );
+
+    if (selectedCity && selectedCity.dates && selectedCity.dates.length > 0) {
+      const now = new Date();
+      now.setUTCHours(0, 0, 0, 0); // Use UTC for filtering
+      const monthMap = {
+        "January": 0, "February": 1, "March": 2, "April": 3, "May": 4, "June": 5,
+        "July": 6, "August": 7, "September": 8, "October": 9, "November": 10, "December": 11
+      };
+
+      // Parse tripDuration as a number, default to 1 if invalid
+      const duration = parseInt(selectedCity.tripDuration, 10) || 1;
+
+      selectedCity.dates.forEach(dateBlock => {
+        const { Month, Year, dates } = dateBlock;
+        const monthIndex = monthMap[Month];
+        if (!dates || !Year || monthIndex === undefined) return;
+
+        const dateList = dates.split(',').map(day => parseInt(day.trim())).filter(day => !isNaN(day));
+        dateList.forEach(day => {
+          const startDate = new Date(Date.UTC(parseInt(Year), monthIndex, day));
+          if (startDate >= now) {
+            const endDate = new Date(startDate);
+            endDate.setUTCDate(startDate.getUTCDate() + duration - 1); // Duration includes start day
+            const formatDate = date => `${String(date.getUTCDate()).padStart(2, '0')} ${date.toLocaleString("en-US", { month: "short", timeZone: "UTC" })} ${date.getUTCFullYear()}`;
+            existingTrip.selectedCityDates.push({
+              value: startDate.toISOString(),
+              text: `${formatDate(startDate)} - ${formatDate(endDate)}`
+            });
+          }
+        });
+      });
+
+      // Sort dates chronologically
+      existingTrip.selectedCityDates.sort((a, b) => new Date(a.value) - new Date(b.value));
+
+      // Set transportList for the selected city
+      existingTrip.transportList = selectedCity.price && selectedCity.price.length > 0 ? selectedCity.price : [];
+    }
+
+    // Set selectedInfo
+    if (req.query) {
+      existingTrip.selectedInfo = {
+        city: req.query.city || '',
+        date: req.query.date || ''
+      };
+    }
+
+    // Filter deptcities to only the selected city for dropdown
+    existingTrip.deptcities = existingTrip.deptcities.filter(
+      cityDetail => cityDetail.City.toLowerCase() === city?.toLowerCase()
+    );
 
     // Redirect to login if not authenticated
     if (!req.user && !req.verifiedPhoneNumber) {
@@ -1986,6 +2007,8 @@ exports.renderBookingTourPage = async (req, res) => {
         userData.lastName = gmailUser.details.lastName || req.user.name?.split(' ').slice(1).join(' ') || '';
         userData.email = gmailUser.details.email || req.user.email;
         userData.phone = gmailUser.details.mobileNumber || '';
+        userData.birthDate =gmailUser.details.birthDate || '';
+        userData.gender =gmailUser.details.gender || '';
         userData.isloginFromNumber = false;
       } else {
         userData.firstName = req.user.name?.split(' ')[0] || 'Guest';
@@ -1993,12 +2016,15 @@ exports.renderBookingTourPage = async (req, res) => {
       }
     } else if (req.verifiedPhoneNumber) {
       const mobileUser = await Mobileuser.findOne({ phoneNumber: req.verifiedPhoneNumber });
-      userData.phone = req.verifiedPhoneNumber ? req.verifiedPhoneNumber : '';
+      userData.phone = req.verifiedPhoneNumber || '';
       if (mobileUser && mobileUser.details) {
         userData.id = mobileUser._id;
         userData.firstName = mobileUser.details.firstName || 'Guest';
         userData.lastName = mobileUser.details.lastName || '';
         userData.email = mobileUser.details.email || '';
+        userData.birthDate =mobileUser.details.birthDate || '';
+        userData.gender =mobileUser.details.gender || '';
+        
         userData.isloginFromNumber = true;
       }
     }

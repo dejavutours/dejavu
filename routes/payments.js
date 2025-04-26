@@ -12,10 +12,19 @@ const razorpayInstance = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
+// Helper function to parse tripDuration (e.g., "6N/7D" → 7)
+const parseTripDuration = (tripDuration) => {
+  if (!tripDuration || typeof tripDuration !== 'string') return null;
+  // Match formats like "6N/7D", "7D/6N", "7 Days", "7D"
+  const match = tripDuration.match(/(\d+)\s*(?:D|Day|Days|d|\/|$)/i)
+  return match ? parseInt(match[1], 10) : null;
+};
+
 // Create Razorpay order and save booking
 router.post('/order', async (req, res) => {
   try {
     const {
+      _csrf,
       tourId,
       userId,
       transportType,
@@ -32,53 +41,89 @@ router.post('/order', async (req, res) => {
       contact,
     } = req.body;
 
-    // Validate inputs
+    // Step 1: Validate required inputs
     if (!tourId || !transportType || !joiningFrom || !travelDate || !adults || !personDetails || !payingAmount) {
       return res.status(400).json({ success: false, message: 'Missing required fields' });
     }
 
-    // Validate tour exists
+    // Step 2: Validate tour exists
     const tour = await NewTours.findById(tourId);
     if (!tour) {
       return res.status(404).json({ success: false, message: 'Tour not found' });
     }
 
-    // Validate transport type exists
-    const transport = tour.deptcities
-      .flatMap(city => city.price)
-      .find(t => t.transferType === transportType);
-    if (!transport) {
-      return res.status(400).json({ success: false, message: 'Invalid transport type' });
+    // Step 3: Find the selected city in deptcities
+    const city = tour.deptcities.find(c => c.City === joiningFrom);
+    if (!city) {
+      return res.status(400).json({ success: false, message: `Invalid joining city: ${joiningFrom}` });
     }
 
-    // Validate joining city and travel date
-      const city = tour.deptcities.find(c => c.City === joiningFrom);
-      if (!city) {
-        return res.status(400).json({ success: false, message: 'Invalid joining city' });
-      }
-      const [startDateStr, endDateStr] = travelDate.split(' to ');
-      const [startDay, startMonth, startYear] = startDateStr.split(' ');
-      const monthMap = { 'Jan': 'January', 'Feb': 'February', 'Mar': 'March', 'Apr': 'April', 'May': 'May', 'Jun': 'June', 'Jul': 'July', 'Aug': 'August', 'Sep': 'September', 'Oct': 'October', 'Nov': 'November', 'Dec': 'December' };
-      const normalizedMonth = monthMap[startMonth] || startMonth;
-      const dateObj = city.dates.find(d => d.Year === startYear && d.Month === normalizedMonth && d.dates.split(', ').includes(parseInt(startDay).toString()));
-      if (!dateObj) {
-        return res.status(400).json({ success: false, message: 'Invalid travel date' });
-      }
+    // Step 4: Validate transport type and prices within the selected city
+    const transport = city.price.find(t => t.transferType === transportType);
+    if (!transport) {
+      return res.status(400).json({ success: false, message: `Invalid transport type: ${transportType} for city ${joiningFrom}` });
+    }
 
-      // Parse travel date (e.g., "13 Jul 2025 to 14 Jul 2025")
-      const tripStartDate = new Date(`${startDay.padStart(2, '0')} ${normalizedMonth} ${startYear} 00:00:00 UTC`);
-      const tripEndDate = new Date(`${endDateStr} 00:00:00 UTC`);
-      if (isNaN(tripStartDate) || isNaN(tripEndDate)) {
-        return res.status(400).json({ success: false, message: 'Invalid travel date format' });
-      }
-      // Validate end date (1 day after start for 1-day trip)
-      // const expectedEndDate = new Date(tripStartDate);
-      // expectedEndDate.setDate(tripStartDate.getDate() + 1);
-      // if (tripEndDate.getTime() !== expectedEndDate.getTime()) {
-      //   return res.status(400).json({ success: false, message: 'End date must be one day after start date' });
-      // }
+    // Step 5: Validate Adultprice and childprice
+    if (parseInt(Adultprice) !== transport.adultPrice || parseInt(childprice) !== transport.childPrice) {
+      return res.status(400).json({
+        success: false,
+        message: `Price mismatch for ${transportType} in ${joiningFrom}: expected adultPrice=${transport.adultPrice}, childPrice=${transport.childPrice}`,
+      });
+    }
 
-    // Validate person details
+    // Step 6: Validate travel date
+    const tripStartDate = new Date(travelDate);
+    if (isNaN(tripStartDate)) {
+      return res.status(400).json({ success: false, message: 'Invalid travel date format' });
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (tripStartDate < today) {
+      return res.status(400).json({ success: false, message: 'Travel date must be in the future' });
+    }
+
+    const year = tripStartDate.getFullYear().toString();
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const month = monthNames[tripStartDate.getMonth()];
+    const day = tripStartDate.getDate().toString().padStart(2, '0');
+
+    if (!city.dates || !Array.isArray(city.dates)) {
+      return res.status(400).json({ success: false, message: `Invalid date configuration for city ${joiningFrom}` });
+    }
+
+    const dateObj = city.dates.find(d => {
+      const dYear = d.Year?.toString();
+      const dMonth = d.Month?.toLowerCase();
+      const dDates = d.dates?.split(', ').map(date => date.padStart(2, '0'));
+      return dYear === year && dMonth === month.toLowerCase() && dDates?.includes(day);
+    });
+
+    if (!dateObj) {
+      return res.status(400).json({
+        success: false,
+        message: `Travel date ${day} ${month} ${year} not available for ${joiningFrom}`,
+      });
+    }
+
+    // Step 7: Validate trip duration
+    const tripDays = parseTripDuration(city.tripDuration);
+    if (!tripDays || tripDays <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid trip duration for ${joiningFrom}: must be a positive number of days`,
+      });
+    }
+
+    // Step 8: Calculate trip end date
+    const tripEndDate = new Date(tripStartDate);
+    tripEndDate.setDate(tripStartDate.getDate() + (tripDays - 1));
+    if (isNaN(tripEndDate)) {
+      return res.status(400).json({ success: false, message: 'Invalid trip end date' });
+    }
+
+    // Step 9: Validate person details
     const adultCount = parseInt(adults);
     const childCount = parseInt(children) || 0;
     if (personDetails.length !== adultCount + childCount) {
@@ -86,35 +131,54 @@ router.post('/order', async (req, res) => {
     }
 
     let adultAgeCount = 0;
-    const today = new Date();
     for (const person of personDetails) {
+      if (!person.firstName || !person.firstName.match(/^[A-Za-z\s]+$/)) {
+        return res.status(400).json({ success: false, message: 'Invalid first name: must contain only letters' });
+      }
+      if (!person.surname || !person.surname.match(/^[A-Za-z\s]+$/)) {
+        return res.status(400).json({ success: false, message: 'Invalid surname: must contain only letters' });
+      }
+      if (!person.gender || !['Male', 'Female', 'Other'].includes(person.gender)) {
+        return res.status(400).json({ success: false, message: 'Invalid gender' });
+      }
       const birthdate = new Date(person.birthdate);
+      if (isNaN(birthdate) || birthdate > today) {
+        return res.status(400).json({ success: false, message: 'Invalid birthdate: must be a valid past date' });
+      }
+      if (!person.phone.match(/^\+?\d{10,15}$/)) {
+        return res.status(400).json({ success: false, message: 'Invalid phone number: must be 10-15 digits' });
+      }
+      if (person.altphone && !person.altphone.match(/^\+?\d{10,15}$/)) {
+        return res.status(400).json({ success: false, message: 'Invalid alternate phone number: must be 10-15 digits' });
+      }
+
       const age = today.getFullYear() - birthdate.getFullYear() - 
         (today.getMonth() < birthdate.getMonth() || 
          (today.getMonth() === birthdate.getMonth() && today.getDate() < birthdate.getDate()) ? 1 : 0);
-      if (age > 10) adultAgeCount++;
-      if (!person.gender || !person.birthdate || !person.phone.match(/^\+?\d{10,15}$/)) {
-        return res.status(400).json({ success: false, message: 'Invalid person details: gender, birthdate, and phone are required' });
+      if (age < 5) {
+        return res.status(400).json({ success: false, message: 'All travelers must be at least 5 years old' });
       }
+      if (age > 10) adultAgeCount++;
     }
+
     if (adultAgeCount === 0) {
       return res.status(400).json({ success: false, message: 'At least one adult is required' });
     }
-    if (adultAgeCount > adultCount || (personDetails.length - adultAgeCount) > childCount) {
+    if (adultAgeCount !== adultCount || (personDetails.length - adultAgeCount) !== childCount) {
       return res.status(400).json({ success: false, message: 'Age-based adult/child counts do not match selected counts' });
     }
 
-    // Calculate total cost
-    const subtotal = (adultCount * parseInt(Adultprice)) + (childCount * parseInt(childprice));
+    // Step 10: Calculate total cost
+    const subtotal = (adultCount * transport.adultPrice) + (childCount * transport.childPrice);
     const gst = subtotal * 0.05;
     const totalTripCost = subtotal + gst;
-    if (parseFloat(payingAmount) !== totalTripCost) {
-      return res.status(400).json({ success: false, message: 'Invalid payment amount' });
+    if (Math.abs(parseFloat(payingAmount) - totalTripCost) > 0.01) {
+      return res.status(400).json({ success: false, message: `Invalid payment amount: expected ${totalTripCost}, received ${payingAmount}` });
     }
 
-    // Create booking
+    // Step 11: Create booking
     const booking = new TripBookingDetail({
-      userId: userId,
+      userId: userId || null,
       toursSystemId: tourId,
       transportType,
       totalPerson: { adult: adultCount, child: childCount },
@@ -124,13 +188,13 @@ router.post('/order', async (req, res) => {
           (today.getMonth() < birthdate.getMonth() || 
            (today.getMonth() === birthdate.getMonth() && today.getDate() < birthdate.getDate()) ? 1 : 0);
         return {
-          firstName: person.firstName || '',
-          surname: person.surname || '',
+          firstName: person.firstName,
+          surname: person.surname,
           gender: person.gender,
           birthdate: birthdate,
           phone: person.phone,
           altphone: person.altphone || '',
-          isAdult: age > 10
+          isAdult: age > 10,
         };
       }),
       joiningFrom,
@@ -145,15 +209,15 @@ router.post('/order', async (req, res) => {
 
     await booking.save();
 
-    // Create Razorpay order
+    // Step 12: Create Razorpay order
     const order = await razorpayInstance.orders.create({
-      amount: totalTripCost * 100, // In paise
+      amount: Math.round(totalTripCost * 100), // In paise
       currency: 'INR',
       receipt: nanoid(),
       payment_capture: '1',
     });
 
-    // Store order details
+    // Step 13: Store order details
     booking.paidAmountRef.push({
       isThroughPymtGateway: true,
       orderId: order.id,
@@ -162,7 +226,7 @@ router.post('/order', async (req, res) => {
     });
     await booking.save();
 
-    // Return order details for frontend modal
+    // Step 14: Return order details
     res.json({
       success: true,
       order: {
@@ -177,7 +241,7 @@ router.post('/order', async (req, res) => {
       contact: contact || '',
     });
   } catch (err) {
-    console.error('Error creating order:', err);
+    console.error(`Error creating order: tourId=${req.body.tourId}, travelDate=${req.body.travelDate}`, err);
     res.status(500).json({ success: false, message: 'Server error', error: err.message });
   }
 });
