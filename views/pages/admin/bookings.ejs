@@ -438,7 +438,7 @@
               <td><input type="checkbox" class="booking-select" data-id="<%= booking._id %>"></td>
               <td><%= booking.bookingNumber %></td>
               <td>
-                <%= booking.userDetails ? booking.userDetails.email : booking.userDetails.phoneNumber %>
+                <%= booking.userDetails.phoneNumber || booking.userDetails.email %>
                 <br>
                 <small class="text-gray-500"><%= booking.userDetails?.details.email || 'N/A' %></small>
               </td>
