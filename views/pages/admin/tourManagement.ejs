@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../../partials/headtag') %>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Tour Management Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <style>
+    :root {
+      --primary-color: #1E3A8A;
+      --secondary-color: #F97316;
+      --text-color: #1F2937;
+      --bg-color: #F3F4F6;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+    .dashboard-container {
+      width: 90%;
+      max-width: 1800px;
+      margin: 0 auto;
+    }
+    .tours-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+    .tour-card {
+      background: white;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      cursor: move;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .tour-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+    .tour-card.sortable-ghost {
+      opacity: 0.4;
+      background: #e0e0e0;
+    }
+    .tour-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .filter-panel, .charts-panel {
+      background: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+    .stats-card {
+      background: white;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+    .btn-custom {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      border-radius: 0.375rem;
+      transition: background-color 0.2s;
+    }
+    .btn-custom:hover {
+      opacity: 0.9;
+    }
+    .image-preview img {
+      max-width: 120px;
+      margin: 0.5rem;
+      border-radius: 0.25rem;
+    }
+    .seo-preview {
+      border: 1px solid #e5e7eb;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      background: #551b01;
+    }
+    .seo-preview-title {
+      color: #1a73e8;
+      font-weight: 600;
+    }
+    .seo-preview-url {
+      color: #006621;
+      font-size: 0.9rem;
+    }
+    .seo-preview-desc {
+      color: #4b5563;
+      font-size: 0.85rem;
+    }
+    .tour-card button {
+      color:black!important;
+    }
+    
+  </style>
+</head>
+<body>
+  <%- include('../../partials/header') %>
+  <div class="dashboard-container p-6">
+    <% if (error) { %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%- error %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+    <h1 class="mb-6 text-3xl font-bold text-gray-800">Tour Management Dashboard (WIP)</h1>
+    <span>Work is going on</span>
+    <div class="d-flex gap-3 mb-5">
+      <input type="text" id="searchInput" class="form-control shadow-sm" placeholder="Search by Tour or Destination">
+      <button id="exportCsv" class="btn btn-outline-secondary btn-custom"><i class="bi bi-download me-1"></i> Export CSV</button>
+    </div>
+
+    <!-- Analytics Section -->
+    <div class="charts-panel">
+      <h3 class="text-xl font-semibold mb-4 text-gray-700">Tour Analytics</h3>
+      <div class="row">
+        <div class="col-md-6 mb-4"><canvas id="statusChart"></canvas></div>
+        <div class="col-md-6 mb-4"><canvas id="bookingChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="row mb-5 g-4">
+      <div class="col-md-4">
+        <div class="stats-card">
+          <h5 class="text-lg font-semibold text-gray-600">Total Tours</h5>
+          <p class="text-2xl font-bold text-gray-800"><%- stats.totalTours || 0 %></p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stats-card">
+          <h5 class="text-lg font-semibold text-gray-600">Active Tours</h5>
+          <p class="text-2xl font-bold text-gray-800"><%- stats.activeTours || 0 %></p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stats-card">
+          <h5 class="text-lg font-semibold text-gray-600">Total Bookings</h5>
+          <p class="text-2xl font-bold text-gray-800"><%- stats.totalBookings || 0 %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-panel">
+      <form id="filterForm" class="row g-3">
+        <input type="hidden" name="_csrf" value="<%- csrfToken %>">
+        <div class="col-md-3">
+          <label for="status" class="form-label font-medium">Status</label>
+          <select id="status" name="status" class="form-select shadow-sm">
+            <option value="">All</option>
+            <option value="true" <%- filters.status === 'true' ? 'selected' : '' %>>Active</option>
+            <option value="false" <%- filters.status === 'false' ? 'selected' : '' %>>Inactive</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="state" class="form-label font-medium">State</label>
+          <select id="state" name="state" class="form-select shadow-sm">
+            <option value="">All</option>
+            <% (states || []).forEach(state => { %>
+              <option value="<%- state %>" <%- filters.state === state ? 'selected' : '' %>><%- state %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="priceMin" class="form-label font-medium">Price Min</label>
+          <input type="number" id="priceMin" name="priceMin" class="form-control shadow-sm" value="<%- filters.priceMin || '' %>">
+        </div>
+        <div class="col-md-3">
+          <label for="priceMax" class="form-label font-medium">Price Max</label>
+          <input type="number" id="priceMax" name="priceMax" class="form-control shadow-sm" value="<%- filters.priceMax || '' %>">
+        </div>
+        <div class="col-md-3">
+          <label for="destinations" class="form-label font-medium">Destinations</label>
+          <input type="text" id="destinations" name="destinations" class="form-control shadow-sm" value="<%- filters.destinations || '' %>">
+        </div>
+        <div class="col-md-3 d-flex align-items-end gap-2">
+          <button type="submit" class="btn bg-blue-600 text-white btn-custom hover:bg-blue-700">Apply Filters</button>
+          <button type="button" id="resetFilters" class="btn btn-outline-secondary btn-custom">Reset</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Bulk Actions -->
+    <div class="mb-5">
+      <div class="d-flex align-items-center gap-3">
+        <label class="d-flex align-items-center gap-2">
+          <input type="checkbox" id="selectAll" class="form-check-input">
+          <span>Select All</span>
+        </label>
+        <select id="bulkAction" class="form-select w-auto shadow-sm" disabled>
+          <option value="">Bulk Actions</option>
+          <option value="enable">Enable</option>
+          <option value="disable">Disable</option>
+          <option value="delete">Delete</option>
+        </select>
+        <button id="applyBulkAction" class="btn bg-blue-600 text-white btn-custom hover:bg-blue-700" disabled>Apply</button>
+      </div>
+    </div>
+
+    <!-- Tours Grid -->
+    <div class="tours-grid" id="toursGrid">
+      <% 
+        // Sort tours by displayOrder
+        const sortedTours = (tourPackages || []).slice().sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+        sortedTours.forEach(tour => { 
+          // Safely parse bannerimages, filter out invalid entries
+          let bannerImages = [];
+          try {
+            bannerImages = Array.isArray(tour.bannerimages) 
+              ? tour.bannerimages.filter(img => typeof img === 'string' && img && img !== '[' && !img.includes('undefined')) 
+              : [];
+          } catch (e) {
+            console.error('Error parsing bannerimages for tour:', tour._id, e);
+          }
+          // Prepend '/' to valid banner images, ensuring no double slashes
+          const formattedBannerImages = bannerImages.map(img => img.startsWith('/') ? img : '/' + img);
+      %>
+        <div class="tour-card" data-id="<%- tour._id %>" data-order="<%- tour.displayOrder || 0 %>">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <input type="checkbox" class="tour-select form-check-input" data-id="<%- tour._id %>">
+            <i class="bi bi-grip-vertical drag-handle text-gray-400" style="font-size: 1.5rem;"></i>
+          </div>
+          <img 
+            src="/<%- tour.imageurl || 'images/default-tour.jpg' %>" 
+            alt="<%- tour.name || 'Tour' %>" 
+            class="img-fluid" 
+          >
+          <h5 class="text-lg font-semibold text-gray-800 mt-3"><%- tour.name || 'Unnamed Tour' %></h5>
+          <p class="text-sm text-gray-600"><strong>State:</strong> <%- tour.state || 'N/A' %></p>
+          <p class="text-sm text-gray-600"><strong>Destinations:</strong> <%- tour.destinations || 'N/A' %></p>
+          <p class="text-sm text-gray-600"><strong>Price:</strong> ₹<%- tour.price ? tour.price.toLocaleString('en-IN') : 'N/A' %></p>
+          <p class="text-sm text-gray-600"><strong>Status:</strong> 
+            <span class="badge <%- tour.isActive ? 'bg-green-500' : 'bg-red-500' %> text-white"><%- tour.isActive ? 'Active' : 'Inactive' %></span>
+          </p>
+          <p class="text-sm text-gray-600"><strong>Order:</strong> <%- tour.displayOrder || 0 %></p>
+          <div class="d-flex gap-2 flex-wrap mt-3">
+            <a href="/admin/addtours?tripid=<%- tour._id %>" class="btn bg-blue-600 text-white btn-custom hover:bg-blue-700">Edit</a>
+            <button class="btn bg-yellow-500 text-white btn-custom hover:bg-yellow-600 manage-images" 
+                    data-id="<%- tour._id %>" 
+                    data-imageurl="/<%- tour.imageurl %>" 
+                    data-bannerimages="<%- JSON.stringify(formattedBannerImages) %>" 
+                    data-documenturl="<%- tour.documentUrl ? '/' + tour.documentUrl : '' %>" disabled>Images</button>
+            <button class="btn bg-gray-500 text-white btn-custom hover:bg-gray-600 edit-seo" 
+                    data-id="<%- tour._id %>" 
+                    data-keywords="<%- (tour.metaKeywords || []).join(',') %>" 
+                    data-description="<%- tour.metaDescription || '' %>" 
+                    data-name="<%- tour.name || '' %>">SEO</button>
+            <button class="btn <%- tour.isActive ? 'bg-red-600' : 'bg-green-600' %> text-white btn-custom hover:opacity-90 change-status" 
+                    data-id="<%- tour._id %>" 
+                    data-active="<%- tour.isActive %>"><%- tour.isActive ? 'Disable' : 'Enable' %></button>
+            <button class="btn bg-red-600 text-white btn-custom hover:bg-red-700 delete-tour" data-id="<%- tour._id %>">Delete</button>
+            <a href="/tripdetail/<%- tour.name || '' %>" class="btn bg-teal-500 btn-custom hover:bg-teal-600" target="_blank">Preview</a>
+            <button class="btn bg-indigo-500 text-white btn-custom hover:bg-indigo-600 duplicate-tour" data-id="<%- tour._id %>">Duplicate</button>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="modal fade" id="imageModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Manage Images</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="imageForm">
+              <input type="hidden" name="_csrf" value="<%- csrfToken %>">
+              <input type="hidden" id="tourId" name="tripId">
+              <div class="mb-4">
+                <label class="form-label font-medium">Card Image (Single)</label>
+                <input type="file" id="cardImageInput" name="image" class="form-control shadow-sm" accept="image/*">
+                <img id="cardImagePreview" src="" class="img-fluid mt-2 rounded" style="max-width: 200px; display: none;">
+              </div>
+              <div class="mb-4">
+                <label class="form-label font-medium">Banner Images (Multiple)</label>
+                <input type="file" id="bannerImagesInput" name="image" class="form-control shadow-sm" accept="image/*" multiple>
+                <div id="bannerImagesPreview" class="image-preview mt-2"></div>
+              </div>
+              <div class="mb-4">
+                <label class="form-label font-medium">PDF Document</label>
+                <input type="file" id="pdfInput" name="image" class="form-control shadow-sm" accept="application/pdf">
+                <a id="pdfPreview" href="" target="_blank" class="mt-2 d-none text-blue-600 hover:underline">View Current PDF</a>
+              </div>
+              <button type="button" id="previewChanges" class="btn bg-teal-500 text-white btn-custom hover:bg-teal-600">Preview Changes</button>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn bg-gray-500 text-white btn-custom hover:bg-gray-600" data-bs-dismiss="modal">Cancel</button>
+            <button id="saveCardImage" class="btn bg-blue-600 text-white btn-custom hover:bg-blue-700" disabled>Save Card Image</button>
+            <button id="saveBannerAndPdf" class="btn bg-blue-600 text-white btn-custom hover:bg-blue-700" disabled>Save Banner & PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEO Modal -->
+    <div class="modal fade" id="seoModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit SEO</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="seoForm">
+              <input type="hidden" name="_csrf" value="<%- csrfToken %>">
+              <input type="hidden" id="seoTourId" name="tourId">
+              <div class="mb-4">
+                <label class="form-label font-medium">Meta Keywords (comma-separated)</label>
+                <input id="metaKeywords" name="metaKeywords" class="form-control shadow-sm" type="text">
+                <p id="keywordHealth" class="text-muted mt-1"></p>
+              </div>
+              <div class="mb-4">
+                <label class="form-label font-medium">Meta Description</label>
+                <textarea id="metaDescription" name="metaDescription" class="form-control shadow-sm" rows="4"></textarea>
+                <p id="descHealth" class="text-muted mt-1"></p>
+              </div>
+              <div class="seo-preview">
+                <div class="seo-preview-title" id="seoPreviewTitle"></div>
+                <div class="seo-preview-url" id="seoPreviewUrl"></div>
+                <div class="seo-preview-desc" id="seoPreviewDesc"></div>
+              </div>
+              <div class="mt-4">
+                <h6 class="font-semibold">SEO Tips:</h6>
+                <ul class="list-disc pl-5 text-sm text-gray-600">
+                  <li>Use 5–15 unique keywords relevant to the tour.</li>
+                  <li>Keep keywords 3–30 characters long.</li>
+                  <li>Write a meta description of 80–140 characters for best results.</li>
+                  <li>Include primary keywords in the description.</li>
+                  <li>Avoid keyword stuffing or irrelevant terms.</li>
+                </ul>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn bg-gray-500 text-white btn-custom hover:bg-gray-600" data-bs-dismiss="modal">Cancel</button>
+            <button id="saveSEO" class="btn bg-blue-600 text-white btn-custom hover:bg-blue-700">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%- include('../../partials/footer') %>
+  <%- include('../../partials/scripttag') %>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+  <script>
+    // Drag-and-Drop for Reordering
+    const toursGrid = document.getElementById('toursGrid');
+    new Sortable(toursGrid, {
+      handle: '.drag-handle',
+      animation: 150,
+      ghostClass: 'sortable-ghost',
+      onEnd: async evt => {
+        const newOrder = Array.from(toursGrid.children).map((card, index) => ({
+          id: card.dataset.id,
+          displayOrder: index
+        }));
+        try {
+          const response = await fetch('/admin/updateTourOrder', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'CSRF-Token': '<%- csrfToken %>' },
+            body: JSON.stringify({ order: newOrder })
+          });
+          const result = await response.json();
+          if (result.success) {
+            Swal.fire('Success', result.message, 'success').then(() => location.reload());
+          } else {
+            toastr.error(result.message || 'Failed to update order');
+          }
+        } catch (err) {
+          toastr.error('Network error');
+        }
+      }
+    });
+
+    // Client-Side Search
+    const originalCards = Array.from(document.querySelectorAll('.tour-card'));
+    document.getElementById('searchInput').addEventListener('input', () => {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      toursGrid.innerHTML = '';
+      originalCards.forEach(card => {
+        const name = card.querySelector('h5').textContent.toLowerCase();
+        const destinations = card.querySelector('p:nth-child(3)').textContent.toLowerCase();
+        if (!query || name.includes(query) || destinations.includes(query)) {
+          toursGrid.appendChild(card);
+        }
+      });
+    });
+
+    // Filter Form
+    document.getElementById('filterForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const params = new URLSearchParams();
+      ['status', 'state', 'priceMin', 'priceMax', 'destinations'].forEach(id => {
+        const value = document.getElementById(id).value;
+        if (value) params.append(id, value);
+      });
+      window.location.href = `/admin/tours?${params.toString()}`;
+    });
+
+    document.getElementById('resetFilters').addEventListener('click', () => {
+      window.location.href = '/admin/tours';
+    });
+
+    // Bulk Actions
+    const selectAll = document.getElementById('selectAll');
+    const tourSelects = document.querySelectorAll('.tour-select');
+    const bulkAction = document.getElementById('bulkAction');
+    const applyBulkAction = document.getElementById('applyBulkAction');
+
+    selectAll.addEventListener('change', () => {
+      tourSelects.forEach(checkbox => checkbox.checked = selectAll.checked);
+      bulkAction.disabled = !tourSelects.some(checkbox => checkbox.checked);
+      applyBulkAction.disabled = bulkAction.disabled;
+    });
+
+    tourSelects.forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        selectAll.checked = tourSelects.length === document.querySelectorAll('.tour-select:checked').length;
+        bulkAction.disabled = !tourSelects.some(c => c.checked);
+        applyBulkAction.disabled = bulkAction.disabled;
+      });
+    });
+
+    applyBulkAction.addEventListener('click', async () => {
+      const action = bulkAction.value;
+      if (!action) return;
+      const tourIds = Array.from(document.querySelectorAll('.tour-select:checked')).map(c => c.dataset.id);
+      if (!tourIds.length) return;
+
+      const result = await Swal.fire({
+        title: `Are you sure you want to ${action} ${tourIds.length} tours?`,
+        icon: 'warning',
+        showCancelButton: true
+      });
+
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch('/admin/bulkUpdateTours', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'CSRF-Token': '<%- csrfToken %>' },
+            body: JSON.stringify({ tourIds, action })
+          });
+          const data = await response.json();
+          if (data.success) {
+            Swal.fire('Success', data.message, 'success').then(() => location.reload());
+          } else {
+            toastr.error(data.message || 'Failed to update tours');
+          }
+        } catch (err) {
+          toastr.error('Network error');
+        }
+      }
+    });
+
+    // Status Change
+    document.querySelectorAll('.change-status').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const tourId = btn.dataset.id;
+        const isActive = btn.dataset.active === 'true';
+        const action = isActive ? 'disable' : 'enable';
+        const result = await Swal.fire({
+          title: `Are you sure you want to ${action} this tour?`,
+          icon: 'warning',
+          showCancelButton: true
+        });
+
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch('/admin/changeTripStatus', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'CSRF-Token': '<%- csrfToken %>' },
+              body: JSON.stringify({ tripId: tourId, isActive: !isActive })
+            });
+            const data = await response.json();
+            if (data.success) {
+              Swal.fire('Success', `Tour ${action}d`, 'success').then(() => location.reload());
+            } else {
+              toastr.error(data.message || `Failed to ${action} tour`);
+            }
+          } catch (err) {
+            toastr.error('Network error');
+          }
+        }
+      });
+    });
+
+    // Delete Tour
+    document.querySelectorAll('.delete-tour').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const tourId = btn.dataset.id;
+        const result = await Swal.fire({
+          title: 'Are you sure you want to delete this tour?',
+          icon: 'warning',
+          showCancelButton: true
+        });
+
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch('/admin/deleteTripDetail', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'CSRF-Token': '<%- csrfToken %>' },
+              body: JSON.stringify({ tripId: tourId })
+            });
+            const data = await response.json();
+            if (data.success) {
+              Swal.fire('Success', 'Tour deleted', 'success').then(() => location.reload());
+            } else {
+              toastr.error(data.message || 'Failed to delete tour');
+            }
+          } catch (err) {
+            toastr.error('Network error');
+          }
+        }
+      });
+    });
+
+    // Duplicate Tour
+    document.querySelectorAll('.duplicate-tour').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const tourId = btn.dataset.id;
+        const result = await Swal.fire({
+          title: 'Duplicate this tour?',
+          icon: 'question',
+          showCancelButton: true
+        });
+
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch('/admin/duplicateTour', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'CSRF-Token': '<%- csrfToken %>' },
+              body: JSON.stringify({ tourId })
+            });
+            const data = await response.json();
+            if (data.success) {
+              Swal.fire('Success', data.message, 'success').then(() => location.reload());
+            } else {
+              toastr.error(data.message || 'Failed to duplicate tour');
+            }
+          } catch (err) {
+            toastr.error('Network error');
+          }
+        }
+      });
+    });
+
+    // Image Management
+    const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+    document.querySelectorAll('.manage-images').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tourId = btn.dataset.id;
+        const imageurl = btn.dataset.imageurl;
+        let bannerimages = [];
+        try {
+          bannerimages = JSON.parse(btn.dataset.bannerimages || '[]');
+          if (!Array.isArray(bannerimages)) {
+            bannerimages = [];
+          }
+        } catch (e) {
+          console.error('Failed to parse bannerimages for tour:', tourId, e);
+          bannerimages = [];
+        }
+        const documentUrl = btn.dataset.documenturl;
+        document.getElementById('tourId').value = tourId;
+        const cardImagePreview = document.getElementById('cardImagePreview');
+        cardImagePreview.src = imageurl || '/images/default-tour.jpg';
+        cardImagePreview.style.display = imageurl ? 'block' : 'none';
+        const bannerImagesPreview = document.getElementById('bannerImagesPreview');
+        bannerImagesPreview.innerHTML = bannerimages
+          .map(img => `<img src="${img}" data-src="${img}" class="rounded" style="max-width: 120px; margin: 0.5rem;">`)
+          .join('');
+        const pdfPreview = document.getElementById('pdfPreview');
+        pdfPreview.href = documentUrl || '#';
+        pdfPreview.classList.toggle('d-none', !documentUrl);
+        document.getElementById('cardImageInput').value = '';
+        document.getElementById('bannerImagesInput').value = '';
+        document.getElementById('pdfInput').value = '';
+        document.getElementById('saveCardImage').disabled = true;
+        document.getElementById('saveBannerAndPdf').disabled = true;
+        imageModal.show();
+      });
+    });
+
+    document.getElementById('cardImageInput').addEventListener('change', () => {
+      document.getElementById('saveCardImage').disabled = !document.getElementById('cardImageInput').files.length;
+    });
+
+    document.getElementById('bannerImagesInput').addEventListener('change', () => {
+      document.getElementById('saveBannerAndPdf').disabled = !(
+        document.getElementById('bannerImagesInput').files.length ||
+        document.getElementById('pdfInput').files.length
+      );
+    });
+
+    document.getElementById('pdfInput').addEventListener('change', () => {
+      document.getElementById('saveBannerAndPdf').disabled = !(
+        document.getElementById('bannerImagesInput').files.length ||
+        document.getElementById('pdfInput').files.length
+      );
+    });
+
+    document.getElementById('previewChanges').addEventListener('click', () => {
+      const cardImageInput = document.getElementById('cardImageInput');
+      const bannerImagesInput = document.getElementById('bannerImagesInput');
+      const pdfInput = document.getElementById('pdfInput');
+      const cardImagePreview = document.getElementById('cardImagePreview');
+      const bannerImagesPreview = document.getElementById('bannerImagesPreview');
+
+      if (cardImageInput.files[0]) {
+        cardImagePreview.src = URL.createObjectURL(cardImageInput.files[0]);
+        cardImagePreview.style.display = 'block';
+      }
+      if (bannerImagesInput.files.length) {
+        Array.from(bannerImagesInput.files).forEach(file => {
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(file);
+          img.style.maxWidth = '120px';
+          img.style.margin = '0.5rem';
+          img.className = 'rounded';
+          bannerImagesPreview.appendChild(img);
+        });
+      }
+      if (pdfInput.files[0]) {
+        document.getElementById('pdfPreview').classList.remove('d-none');
+        document.getElementById('pdfPreview').textContent = `Preview: ${pdfInput.files[0].name}`;
+      }
+    });
+
+    document.getElementById('saveCardImage').addEventListener('click', async () => {
+      const form = document.getElementById('imageForm');
+      const formData = new FormData();
+      formData.append('_csrf', '<%- csrfToken %>');
+      formData.append('tripId', document.getElementById('tourId').value);
+      if (document.getElementById('cardImageInput').files[0]) {
+        formData.append('image', document.getElementById('cardImageInput').files[0]);
+      }
+
+      try {
+        const response = await fetch('/admin/updateImageUrl', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+        if (data.success) {
+          Swal.fire('Success', 'Card image updated', 'success').then(() => location.reload());
+        } else {
+          toastr.error(data.message || 'Failed to update card image');
+        }
+      } catch (err) {
+        toastr.error('Network error');
+      }
+    });
+
+    document.getElementById('saveBannerAndPdf').addEventListener('click', async () => {
+      const form = document.getElementById('imageForm');
+      const formData = new FormData();
+      formData.append('_csrf', '<%- csrfToken %>');
+      formData.append('tourId', document.getElementById('tourId').value);
+      Array.from(document.getElementById('bannerImagesInput').files).forEach(file => {
+        formData.append('image', file);
+      });
+      if (document.getElementById('pdfInput').files[0]) {
+        formData.append('image', document.getElementById('pdfInput').files[0]);
+      }
+
+      try {
+        const response = await fetch('/admin/updateTourImages', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+        if (data.success) {
+          Swal.fire('Success', 'Banner images and PDF updated', 'success').then(() => location.reload());
+        } else {
+          toastr.error(data.message || 'Failed to update banner images or PDF');
+        }
+      } catch (err) {
+        toastr.error('Network error');
+      }
+    });
+
+    // SEO Management
+    const seoModal = new bootstrap.Modal(document.getElementById('seoModal'));
+    document.querySelectorAll('.edit-seo').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tourId = btn.dataset.id;
+        const keywords = btn.dataset.keywords;
+        const description = btn.dataset.description;
+        const tourName = btn.dataset.name;
+        document.getElementById('seoTourId').value = tourId;
+        document.getElementById('metaKeywords').value = keywords;
+        document.getElementById('metaDescription').value = description;
+        document.getElementById('seoPreviewTitle').textContent = tourName || 'Tour Name';
+        document.getElementById('seoPreviewUrl').textContent = `https://dejavutours.in//tripdetail/${tourName || 'tour-name'}`;
+        updateSeoHealth(keywords, description);
+        seoModal.show();
+      });
+    });
+
+    document.getElementById('metaKeywords').addEventListener('input', e => {
+      updateSeoHealth(e.target.value, document.getElementById('metaDescription').value);
+    });
+
+    document.getElementById('metaDescription').addEventListener('input', e => {
+      updateSeoHealth(document.getElementById('metaKeywords').value, e.target.value);
+    });
+
+    function updateSeoHealth(keywords, description) {
+      const keywordArray = (keywords || '').split(',').map(k => k.trim()).filter(k => k);
+      const keywordHealth = document.getElementById('keywordHealth');
+      const descHealth = document.getElementById('descHealth');
+      const seoPreviewDesc = document.getElementById('seoPreviewDesc');
+
+      let keywordMessage = `Keywords: ${keywordArray.length}/15`;
+      let keywordClass = 'text-muted';
+      if (keywordArray.length < 5) {
+        keywordMessage += ' (Add more for better SEO)';
+        keywordClass = 'text-warning';
+      } else if (keywordArray.length > 15) {
+        keywordMessage += ' (Too many keywords)';
+        keywordClass = 'text-danger';
+      } else {
+        keywordClass = 'text-success';
+      }
+      const invalidKeywords = keywordArray.filter(k => k.length < 3 || k.length > 30);
+      if (invalidKeywords.length) {
+        keywordMessage += ` (${invalidKeywords.length} keywords too short or long)`;
+        keywordClass = 'text-warning';
+      }
+      keywordHealth.textContent = keywordMessage;
+      keywordHealth.className = `mt-1 ${keywordClass}`;
+
+      const descLength = (description || '').length;
+      let descMessage = `Length: ${descLength}/160 characters`;
+      let descClass = 'text-muted';
+      if (descLength < 50) {
+        descMessage += ' (Too short)';
+        descClass = 'text-warning';
+      } else if (descLength < 80 || descLength > 140) {
+        descMessage += ' (Good, but 80–140 is ideal)';
+        descClass = 'text-warning';
+      } else if (descLength > 160) {
+        descMessage += ' (Too long)';
+        descClass = 'text-danger';
+      } else {
+        descClass = 'text-success';
+      }
+      descHealth.textContent = descMessage;
+      descHealth.className = `mt-1 ${descClass}`;
+
+      seoPreviewDesc.textContent = description || 'Enter a meta description to see how it appears in search results.';
+    }
+
+    document.getElementById('saveSEO').addEventListener('click', async () => {
+      const form = document.getElementById('seoForm');
+      const formData = new FormData(form);
+      try {
+        const response = await fetch('/admin/updateTourSEO', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'CSRF-Token': '<%- csrfToken %>' },
+          body: JSON.stringify(Object.fromEntries(formData))
+        });
+        const data = await response.json();
+        if (data.success) {
+          Swal.fire('Success', data.message, 'success').then(() => seoModal.hide());
+        } else {
+          toastr.error(data.message || 'Failed to update SEO');
+        }
+      } catch (err) {
+        toastr.error('Network error');
+      }
+    });
+
+    // CSV Export
+    document.getElementById('exportCsv').addEventListener('click', () => {
+      const tours = <%- JSON.stringify((tourPackages || []).map(t => ({
+        name: t.name || '',
+        state: t.state || '',
+        destinations: t.destinations || '',
+        price: t.price || 0,
+        isActive: t.isActive ? 'Active' : 'Inactive',
+        displayOrder: t.displayOrder || 0
+      }))) %>;
+      const csv = [
+        'Name,State,Destinations,Price,Status,DisplayOrder',
+        ...tours.map(t => `"${t.name.replace(/"/g, '""')}","${t.state}","${t.destinations.replace(/"/g, '""')}",${t.price},${t.isActive},${t.displayOrder}`)
+      ].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'tours.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Charts
+    const statusChart = new Chart(document.getElementById('statusChart'), {
+      type: 'pie',
+      data: {
+        labels: ['Active', 'Inactive'],
+        datasets: [{
+          data: [<%- stats.activeTours || 0 %>, <%- stats.totalTours - stats.activeTours || 0 %>],
+          backgroundColor: ['#34D399', '#EF4444']
+        }]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'top' } } }
+    });
+
+    const bookingChart = new Chart(document.getElementById('bookingChart'), {
+      type: 'line',
+      data: {
+        labels: <%- JSON.stringify((stats.bookingTrends || []).map(t => t.date || '')) %>,
+        datasets: [{
+          label: 'Bookings',
+          data: <%- JSON.stringify((stats.bookingTrends || []).map(t => t.count || 0)) %>,
+          borderColor: '#1E3A8A',
+          fill: false
+        }]
+      },
+      options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+  </script>
+</body>
+</html>
