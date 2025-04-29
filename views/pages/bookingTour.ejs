@@ -467,6 +467,7 @@
   <%- include('../partials/footer'); %>
   <%- include('../partials/scripttag'); %>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
   <script>
     const tourDetails = <%- JSON.stringify(tourDetails) %>;
     const userData = <%- JSON.stringify(userData || {}) %>;
@@ -748,9 +749,8 @@
       document.getElementById('modalMobileNo').value = userData.phone || '';
       document.getElementById('modalBirthDate').value = userData.birthDate ? new Date(userData.birthDate).toISOString().split('T')[0] : '';
       document.getElementById('modalGender').value = userData.gender || '';
-      $('#travelerInfoModal').modal('show');
+      // $('#travelerInfoModal').modal('show');
     }
-  
     // Save traveler info and update profile
     async function saveTravelerInfo() {
       const mobileNo = document.getElementById('modalMobileNo').value.trim();
@@ -852,6 +852,7 @@
       const requiredFields = ['firstName', 'birthDate', 'gender'];
       const isEmailOrPhoneComplete = (userData.email && userData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) || (userData.phone && userData.phone.match(/^\+?\d{10,15}$/));
       const isProfileComplete = requiredFields.every(field => userData[field] && userData[field].trim() !== '') && isEmailOrPhoneComplete;
+      openTravelerInfoModal()
       if (!isProfileComplete) {
         $('#travelerInfoModal').modal('show');
         return;
