@@ -1,0 +1,504 @@
+  <nav class="navbar navbar-expand-lg bg-light sticky-top">
+    <div class="container-xl gap-2">
+      <button class="navbar-toggler px-2 border-0 outline-0" type="button" data-bs-toggle="collapse" data-bs-target="#topNavbar" aria-controls="topNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand me-auto" href="/">
+        <img src="/img/logo_2x.png" alt="Deja Vu" height="50" class="d-inline-block align-text-top object-fit-contain" fetchpriority="high" loading="eager">
+      </a>
+      <div class="collapse navbar-collapse" id="topNavbar">
+        <ul class="navbar-nav gap-lg-3 ms-auto mt-2 mt-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="#">Tour packages</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="#">Customize trips</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="#">Global trips</a>
+          </li>
+            <% if(!profile?.email || !accessToken) { %>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" data-bs-toggle="modal" data-bs-target="#signinModal">Login</a>
+                </li>
+            <% } %>
+          <li class="nav-item">
+            <div class="d-flex gap-2">
+              <a class="nav-link" aria-current="page" href="tel:+918511117891">
+                <i class="bi bi-telephone"></i>
+                <span class="visually-hidden">Contact</span>
+              </a>
+              <% if(profile?.email || accessToken) { %>
+                <span class="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle"></i>
+                        <span class="visually-hidden">My Profile</span>
+                    </a>
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                  
+                    <ul class="dropdown-menu dropdown-menu-lg-end">
+                        <% if(profile?.email===process.env.GMAIL_ADMIN) { %>
+                            <li><a class="dropdown-item" href="/admin/login">Admin</a></li>
+                            <li><a class="dropdown-item" href="/admin/bookings">Bookings(WIP)</a></li>
+                            <li><a class="dropdown-item" href="/admin/tours">Trips Management (WIP)</a></li>
+                        <% } %>
+                      <li><a class="dropdown-item" href="/profile">My Profile</a></li>
+                      <li><a class="dropdown-item" href="javascript:{}" onclick="signout(accessTokens)">Sign Out</a></li>
+                    </ul>
+                </span>
+              <% } %>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Modal -->
+  <div class="modal fade" id="signinModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <form id="getotp">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Register</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body pb-5 pt-3">
+            <div class="form-group">
+              <label for="phone">Mobile Number *</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">+91</span>
+                </div>
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                <input type="tel" class="form-control" id="mobileNumber" name="phone" placeholder="Enter your mobile number" pattern="^\d{10}$" required>
+              </div>
+            </div>
+            <p class="text-muted">We'll send you a 4-digit code to this mobile number.</p>
+            <p class="text-center font-weight-bold m-3">OR</p>
+            <div class="d-flex justify-content-center">
+              <button class="btn btn-light w-100">
+                <a href="/login/federated/google"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=">
+                  Sign in with Google</a>
+              </button>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary btn-disabled" id="sendCodeBtn">Send code</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal fade" id="verifyModal" tabindex="-1" aria-labelledby="verifyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="verifyotp">
+          <div class="modal-header">
+            <h5 class="modal-title" id="verifyModalLabel">Verify code</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <p class="mb-2">
+              Code sent to <strong id="phoneNumberDisplay">+91 </strong>
+              <span class="edit-icon" id="editPhone">&#9998;</span>
+            </p>
+            <div class="otp-container">
+              <input type="text" class="otp-input" maxlength="1" id="otp1" required ">
+              <input type="text" class="otp-input" maxlength="1" id="otp2" required ">
+              <input type="text" class="otp-input" maxlength="1" id="otp3" required ">
+              <input type="text" class="otp-input" maxlength="1" id="otp4" required ">
+              <input type="hidden" class="form-control" id="mobileNumber2" name="phone2" placeholder="Enter Phone Number" />
+              <input type="hidden" class="form-control" id="otp" name="otp" placeholder="Enter OTP" />
+            </div>
+            <p class="mt-3">
+              Didn't receive code? <a href="#" class="resend-link">Resend</a>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary btn-disabled" id="verifyBtn">Verify code</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- header-end -->
+  
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+  
+    body {
+      font: 16px Arial;
+    }
+  
+    /*the container must be positioned relative:*/
+    .autocomplete {
+      position: relative;
+      display: inline-block;
+    }
+  
+    input {
+      border: 1px solid transparent;
+      background-color: #f1f1f1;
+      padding: 10px;
+      font-size: 16px;
+    }
+  
+    input[type="text"] {
+      background-color: #f1f1f1;
+      width: 100%;
+    }
+  
+    input[type="submit"] {
+      background-color: DodgerBlue;
+      color: #fff;
+      cursor: pointer;
+    }
+  
+    .autocomplete-items {
+      position: absolute;
+      border: 1px solid #d4d4d4;
+      border-bottom: none;
+      border-top: none;
+      z-index: 99;
+      /*position the autocomplete items to be the same width as the container:*/
+      top: 100%;
+      left: 0;
+      right: 0;
+    }
+  
+    .autocomplete-items div {
+      padding: 10px;
+      cursor: pointer;
+      background-color: #fff;
+      border-bottom: 1px solid #d4d4d4;
+    }
+  
+    /*when hovering an item:*/
+    .autocomplete-items div:hover {
+      background-color: #e9e9e9;
+    }
+  
+    /*when navigating through the items using the arrow keys:*/
+    .autocomplete-active {
+      background-color: DodgerBlue !important;
+      color: #ffffff;
+    }
+  </style>
+  <!-- Modal -->
+  <div class="modal fade custom_search_pop" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="serch_form">
+          <form action="/search/trip" method="POST">
+            <input type="text" placeholder="Search" autocomplete="off" id="SearchTrip" name="SearchTrip" />
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <button type="submit">search</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Navigation bar active link
+    document.addEventListener("DOMContentLoaded", () => {
+      const currentPath = window.location.pathname;
+      document.querySelectorAll("#topNavbar .nav-link").forEach(link => {
+        if (link.getAttribute("href") === currentPath) {
+          link.classList.add("active");
+        }
+      });
+    });
+
+
+    // Autocomplete function for search input
+    function autocomplete(inp, arr) {
+      /*the autocomplete function takes two arguments,
+      the text field element and an array of possible autocompleted values:*/
+      var currentFocus;
+      /*execute a function when someone writes in the text field:*/
+      inp.addEventListener("input", function(e) {
+        var a, b, i, val = this.value;
+        /*close any already open lists of autocompleted values*/
+        closeAllLists();
+        if (!val) {
+          return false;
+        }
+        currentFocus = -1;
+        /*create a DIV element that will contain the items (values):*/
+        a = document.createElement("DIV");
+        a.setAttribute("id", this.id + "autocomplete-list");
+        a.setAttribute("class", "autocomplete-items");
+        /*append the DIV element as a child of the autocomplete container:*/
+        this.parentNode.appendChild(a);
+        /*for each item in the array...*/
+        for (i = 0; i < arr.length; i++) {
+          /*check if the item starts with the same letters as the text field value:*/
+          if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+            /*create a DIV element for each matching element:*/
+            b = document.createElement("DIV");
+            /*make the matching letters bold:*/
+            b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+            b.innerHTML += arr[i].substr(val.length);
+            /*insert a input field that will hold the current array item's value:*/
+            b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+            /*execute a function when someone clicks on the item value (DIV element):*/
+            b.addEventListener("click", function(e) {
+              /*insert the value for the autocomplete text field:*/
+              inp.value = this.getElementsByTagName("input")[0].value;
+              /*close the list of autocompleted values,
+              (or any other open lists of autocompleted values:*/
+              closeAllLists();
+            });
+            a.appendChild(b);
+          }
+        }
+      });
+      /*execute a function presses a key on the keyboard:*/
+      inp.addEventListener("keydown", function(e) {
+        var x = document.getElementById(this.id + "autocomplete-list");
+        if (x) x = x.getElementsByTagName("div");
+        if (e.keyCode == 40) {
+          /*If the arrow DOWN key is pressed,
+          increase the currentFocus variable:*/
+          currentFocus++;
+          /*and and make the current item more visible:*/
+          addActive(x);
+        } else if (e.keyCode == 38) { //up
+          /*If the arrow UP key is pressed,
+          decrease the currentFocus variable:*/
+          currentFocus--;
+          /*and and make the current item more visible:*/
+          addActive(x);
+        } else if (e.keyCode == 13) {
+          /*If the ENTER key is pressed, prevent the form from being submitted,*/
+          e.preventDefault();
+          if (currentFocus > -1) {
+            /*and simulate a click on the "active" item:*/
+            if (x) x[currentFocus].click();
+          }
+        }
+      });
+  
+      function addActive(x) {
+        /*a function to classify an item as "active":*/
+        if (!x) return false;
+        /*start by removing the "active" class on all items:*/
+        removeActive(x);
+        if (currentFocus >= x.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = (x.length - 1);
+        /*add class "autocomplete-active":*/
+        x[currentFocus].classList.add("autocomplete-active");
+      }
+  
+      function removeActive(x) {
+        /*a function to remove the "active" class from all autocomplete items:*/
+        for (var i = 0; i < x.length; i++) {
+          x[i].classList.remove("autocomplete-active");
+        }
+      }
+  
+      function closeAllLists(elmnt) {
+        /*close all autocomplete lists in the document,
+        except the one passed as an argument:*/
+        var x = document.getElementsByClassName("autocomplete-items");
+        for (var i = 0; i < x.length; i++) {
+          if (elmnt != x[i] && elmnt != inp) {
+            x[i].parentNode.removeChild(x[i]);
+          }
+        }
+      }
+      /*execute a function when someone clicks in the document:*/
+      document.addEventListener("click", function(e) {
+        closeAllLists(e.target);
+      });
+    }
+
+    async function signout(accessToken) {
+        try {
+        // Clear client-side storage
+        sessionStorage.clear();
+        localStorage.clear();
+    
+        // Clear all cookies
+        document.cookie.split(";").forEach(cookie => {
+            const name = cookie.split("=")[0].trim();
+            document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
+        });
+    
+        // Submit logout form to server
+        const form = document.getElementById("my_form");
+        const response = await fetch("/logout", {
+            method: "POST",
+            body: new FormData(form),
+            credentials: "include"
+        });
+    
+        if (response.ok) {
+            window.location.href = "/";
+        } else {
+            console.error("Logout failed:", response.statusText);
+            alert("Logout failed. Please try again.");
+        }
+        } catch (error) {
+        console.error("Logout error:", error);
+        alert("An error occurred during logout. Please try again.");
+        }
+    }
+    
+    // Validate mobile number and enable the submit buttons
+    document.getElementById("mobileNumber").addEventListener("input", function() {
+      const sendCodeBtn = document.getElementById("sendCodeBtn");
+      const isValid = /^\d{10}$/.test(this.value);
+  
+      sendCodeBtn.disabled = !isValid;
+      sendCodeBtn.classList.toggle("btn-disabled", !isValid);
+    });
+    
+    //   - On Press of submit button of get otp
+    var accessTokens = "<%= accessToken %>";
+    document.addEventListener("DOMContentLoaded", function() {
+      const getOtpForm = document.getElementById("getotp");
+      const verifyForm = document.getElementById("verifyotp");
+      const verifyBtn = document.getElementById("verifyBtn");
+      const resendLink = document.querySelector(".resend-link");
+      const otpInputs = document.querySelectorAll(".otp-input");
+      const sendCodeBtn = document.getElementById("sendCodeBtn");
+      const timerDisplay = document.createElement("span");
+      resendLink.parentElement.appendChild(timerDisplay);
+      let resendTimer;
+  
+      const editPhoneIcon = document.getElementById("editPhone"); // Edit icon in verifyModal
+  
+      // Handle edit icon click to move back to registration
+      editPhoneIcon.addEventListener("click", function() {
+        const phoneNumber = document.getElementById("phoneNumberDisplay").textContent.replace('+91 ', ''); // Get the phone number
+        document.getElementById("mobileNumber").value = phoneNumber; // Set the phone number in the registration modal
+        $("#verifyModal").modal("hide");
+        $("#signinModal").modal("show");
+      });
+  
+      function requestOTP(mobileNumber) {
+        if (!mobileNumber || !/^(\+?\d{1,3}[-\s]?)?\d{10}$/.test(mobileNumber)) {
+          return alert("Enter a valid mobile number!"); // Validate phone number format
+        }
+        var formData = new FormData(getOtpForm || verifyForm);
+        // Remove the previous 'phone' field if it exists
+        formData.delete('phone');
+  
+        // Append the new phone number
+        formData.append('phone', mobileNumber);
+        fetch("/getotp", {
+            method: "POST",
+            body: formData
+          })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data) {
+              document.getElementById("mobileNumber2").value = mobileNumber;
+              document.getElementById("phoneNumberDisplay").textContent = "+91 " + mobileNumber;
+              $("#signinModal").modal("hide");
+              $("#verifyModal").modal("show");
+            } else {
+              alert("Failed to send OTP. Please try again.");
+            }
+          })
+          .catch((error) => console.log("Error:", error));
+      }
+  
+      // Handle initial OTP request
+      getOtpForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+        const mobileNumber = document.getElementById("mobileNumber").value;
+        requestOTP(mobileNumber);
+      });
+  
+      // Handle Resend OTP button click
+      resendLink.addEventListener("click", function(e) {
+        e.preventDefault();
+        startResendTimer();
+        const phoneNumber = document.getElementById("mobileNumber2").value;
+        requestOTP(phoneNumber);
+      });
+  
+      // Handle OTP input validation
+      otpInputs.forEach((input, index) => {
+        input.addEventListener("input", function() {
+          this.value = this.value.replace(/\D/g, ""); // Only allow numbers
+          if (this.value && index < otpInputs.length - 1) {
+            otpInputs[index + 1].focus();
+          }
+          validateOTP();
+        });
+  
+        input.addEventListener("keydown", function(e) {
+          if (e.key === "Backspace" && !this.value && index > 0) {
+            otpInputs[index - 1].focus();
+          }
+        });
+      });
+  
+      function validateOTP() {
+        const allFilled = [...otpInputs].every((input) => /^[0-9]$/.test(input.value));
+        verifyBtn.disabled = !allFilled;
+        verifyBtn.classList.toggle("btn-disabled", !allFilled);
+      }
+  
+      // Handle OTP Verification
+      verifyForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+        verifyBtn.innerHTML = "Verifying...";
+        verifyBtn.disabled = true;
+  
+        const fullOtp = [...otpInputs].map((input) => input.value).join("");
+        document.getElementById("otp").value = fullOtp;
+  
+        fetch("/verifyotp", {
+            method: "POST",
+            body: new FormData(verifyForm)
+          })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data) {
+              sessionStorage.setItem("accessToken", data.accessToken);
+              document.cookie = `accessToken=${data.accessToken}; Path=/; SameSite=Lax`;
+              window.location.reload(); // Reload to sync authentication state
+            } else {
+              alert("Verification failed. Please try again.");
+            }
+          })
+          .catch(error => console.error("Error:", error))
+          .finally(() => {
+            verifyBtn.innerHTML = "Verify Code";
+            verifyBtn.disabled = false;
+          });
+      });
+  
+      // Start a countdown for the Resend button
+      function startResendTimer() {
+        resendLink.style.pointerEvents = "none";
+        let timeLeft = 10;
+  
+        resendTimer = setInterval(() => {
+          if (timeLeft <= 0) {
+            clearInterval(resendTimer);
+            timerDisplay.innerHTML = "";
+            resendLink.style.pointerEvents = "auto";
+          } else {
+            timerDisplay.innerHTML = ` (Wait ${timeLeft--}s)`;
+          }
+        }, 1000);
+      }
+    });
+  </script>

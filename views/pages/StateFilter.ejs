@@ -140,7 +140,7 @@
           
           displayedPackages.forEach(function(tour, index) { 
         %>
-        <div class="package-card p-2 border rounded-4 <%= !tour.isActive ? 'inactive' : '' %>" onclick="window.location.href='/tripdetail/<%= tour.name %>'" <% if (!tour.isActive && profile?.email === process.env.GMAIL_ADMIN) { %> data-toggle="tooltip" data-placement="top" title="This trip is inactive" <% } %>>
+        <div class="package-card p-2 border rounded-4 <%= !tour.isActive ? 'inactive' : '' %>" onclick="window.location.href='/tripdetail/<%= tour.name %>'" <% if (!tour.isActive && profile?.email === process.env.GMAIL_ADMIN) { %> data-bs-toggle="tooltip" data-placement="top" title="This trip is inactive" <% } %>>
           <div class="card-image-container">
             <img src="<%= tour.imageurl %>" alt="Tour package - <%= tour.name %> in <%= tour.state %>, India" class="card-image card-img-top img-fluid rounded-4" loading="lazy"
             data-fallback1="/<%= tour.imageurl %>" 

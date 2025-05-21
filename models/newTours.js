@@ -12,7 +12,7 @@ const newToursSchema = new Schema(
     // Array of banner image URLs
     bannerimages: [{ type: String }],
     // Tour visibility status
-    isActive: { type: Boolean, default: true },
+    isActive: { type: Boolean, default: false },
     // Major destinations covered (e.g., "Goa, Panaji, Baga Beach")
     destinations: { type: String, default: "" },
     // Route taken during the tour (e.g., "Mumbai - Goa - Mumbai")
@@ -27,11 +27,15 @@ const newToursSchema = new Schema(
     tripType: { type: String, default: "" },
     // Altitude of destination (e.g., "12,000ft")
     altitude: { type: String, default: "" },
-    // Recommended time of year (e.g., "May to October")
-    bestSession: { type: String, default: "" },
-    // Departure state
-    deptstate: { type: String, default: "" },
-    // Departure cities with pricing and dates
+    // Recommended time of year (e.g., ["Summer", "wintor"])
+    bestSession: { type: [String], default: [] },
+    // Category tags for the field trip (e.g., ["Adventure", "School Trip"])
+    tripCategories: { type: [String], default: [] },
+    // Departure cities with pricing, dates, and additional booking details
+    // Best month to visit for this tour (e.g., "June")
+    bestMonthToVisit: { type: [String], default: [] }, // Multiple  month for optimal travel experience
+    // Traveler type (e.g., ["Family", "Solo"])
+    travelerType: { type: [String], default: [] },
     deptcities: {
       type: [
         {
@@ -58,6 +62,12 @@ const newToursSchema = new Schema(
             ],
             default: [],
           },
+          // Number of available slots for this departure city (e.g., "20")
+          availableSlots: { type: String, default: "0" }, // String for UI input flexibility
+          // Partial payment amount required for booking from this city (e.g., "5000")
+          partialPayment: { type: String, default: "0" }, // String for UI input flexibility
+          // Number of days before trip start date to stop online bookings (e.g., "2")
+          bookingCutoffDays: { type: String, default: "0" }, // String for UI input, specifies days prior to trip when bookings close
         },
       ],
       default: [],

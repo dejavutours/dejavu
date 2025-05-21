@@ -154,9 +154,9 @@
     }
 
     .card-body .card-title {
-    font-size: 22px;
-    font-weight: 400 !important;
-    color: #040E27;
+      font-size: 22px;
+      font-weight: 400 !important;
+      color: #040E27;
     }
 
     .discount-tag {
@@ -298,7 +298,8 @@
       padding: 2px 6px;
     }
 
-    .modal-dialog {
+    #imageManagementModal .modal-dialog,
+    #filtersModal .modal-dialog {
       max-width: 800px;
     }
 
@@ -326,7 +327,8 @@
         grid-template-columns: 1fr;
       }
 
-      .modal-dialog {
+      #imageManagementModal .modal-dialog,
+      #filtersModal .modal-dialog {
         max-width: 100%;
         margin: 0.5rem;
       }
@@ -386,7 +388,7 @@
     
     displayedPackages.forEach(function(tour, index) { 
   %>
-      <div class="package-card p-2 border rounded-4 <%= !tour.isActive ? 'inactive' : '' %>" onclick="window.location.href='/tripdetail/<%= tour.name %>'" <% if (!tour.isActive && profile?.email === process.env.GMAIL_ADMIN) { %> data-toggle="tooltip" data-placement="top" title="This trip is inactive" <% } %>>
+      <div class="package-card p-2 border rounded-4 <%= !tour.isActive ? 'inactive' : '' %>" onclick="window.location.href='/tripdetail/<%= tour.name %>'" <% if (!tour.isActive && profile?.email === process.env.GMAIL_ADMIN) { %> data-bs-toggle="tooltip" data-placement="top" title="This trip is inactive" <% } %>>
         <div class="card-image-container">
           <img src="<%= tour.imageurl %>" alt="Tour package - <%= tour.name %> in <%= tour.state %>, India" class="card-image card-img-top img-fluid rounded-4" loading="lazy" onerror="this.onerror=null; this.src='/images/placeholder.jpg';">
         </div>
@@ -688,335 +690,338 @@
 
   <%- include('../partials/footer'); %>
   <%- include('../partials/scripttag'); %>
-</body>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Helper to stop event propagation
-    const stopPropagation = (e) => e.stopPropagation();
 
-    // Filter Logic
-    const filterChips = '<%= filterChips || "" %>'.split(',').filter(Boolean);
-    if (filterChips.length > 0) {
-      filterChips.forEach(chip => {
-        const chipProperty = document.getElementById(chip);
-        if (chipProperty) chipProperty.checked = true;
-      });
-    }
-    const searchValue = '<%= Searchvalue || "" %>';
-    if (searchValue) document.getElementById('searchValue').value = searchValue;
+  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Helper to stop event propagation
+      const stopPropagation = (e) => e.stopPropagation();
 
-    const searchEntry = document.getElementById('SearchEntry');
-    if (searchEntry) {
-      searchEntry.addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-          document.getElementById('searchValue').value = searchEntry.value;
+      // Filter Logic
+      const filterChips = '<%= filterChips || "" %>'.split(',').filter(Boolean);
+      if (filterChips.length > 0) {
+        filterChips.forEach(chip => {
+          const chipProperty = document.getElementById(chip);
+          if (chipProperty) chipProperty.checked = true;
+        });
+      }
+      const searchValue = '<%= Searchvalue || "" %>';
+      if (searchValue) document.getElementById('searchValue').value = searchValue;
+
+      const searchEntry = document.getElementById('SearchEntry');
+      if (searchEntry) {
+        searchEntry.addEventListener('keypress', function(event) {
+          if (event.key === 'Enter') {
+            document.getElementById('searchValue').value = searchEntry.value;
+            updatefilterValueforApiCall();
+            getTourListAPICall();
+          }
+        });
+      }
+
+      // Modal Filter Logic
+      const filterButton = document.getElementById('filterButton');
+      const filtersModal = document.getElementById('filtersModal');
+      const clearButton = document.getElementById('clearButton');
+      const applyFilterButton = document.getElementById('ApplyFilterButton');
+      let modal = filtersModal && typeof bootstrap !== 'undefined' ? new bootstrap.Modal(filtersModal) : null;
+
+      if (filterButton && modal) filterButton.addEventListener('click', () => modal.show());
+      if (clearButton) {
+        clearButton.addEventListener('click', () => {
+          document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
+          document.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+        });
+      }
+      if (applyFilterButton) {
+        applyFilterButton.addEventListener('click', () => {
           updatefilterValueforApiCall();
           getTourListAPICall();
-        }
+          if (modal) modal.hide();
+        });
+      }
+
+      // Button Event Listeners
+      // Edit Button (Option 1: Keep as <a>)
+      document.querySelectorAll('.edit-tour').forEach(button => {
+        button.addEventListener('click', function(e) {
+          stopPropagation(e); // Prevent card redirect
+          // Default <a> behavior will navigate to /admin/addtours?tripid=<id>
+        });
       });
-    }
 
-    // Modal Filter Logic
-    const filterButton = document.getElementById('filterButton');
-    const filtersModal = document.getElementById('filtersModal');
-    const clearButton = document.getElementById('clearButton');
-    const applyFilterButton = document.getElementById('ApplyFilterButton');
-    let modal = filtersModal && typeof bootstrap !== 'undefined' ? new bootstrap.Modal(filtersModal) : null;
-
-    if (filterButton && modal) filterButton.addEventListener('click', () => modal.show());
-    if (clearButton) {
-      clearButton.addEventListener('click', () => {
-        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
-        document.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+      // Edit Button (Option 2: As <button>, uncomment if preferred)
+      /*
+      document.querySelectorAll('.edit-tour').forEach(button => {
+        button.addEventListener('click', function (e) {
+          stopPropagation(e);
+          const tripId = this.dataset.id;
+          window.location.href = `/admin/addtours?tripid=${tripId}`; // Manual navigation
+        });
       });
-    }
-    if (applyFilterButton) {
-      applyFilterButton.addEventListener('click', () => {
-        updatefilterValueforApiCall();
-        getTourListAPICall();
-        if (modal) modal.hide();
+      */
+
+      // Manage Images
+      const imageModalElement = document.getElementById('imageManagementModal');
+      let imageModal = imageModalElement && typeof bootstrap !== 'undefined' ? new bootstrap.Modal(imageModalElement) : null;
+      const allTours = <%- JSON.stringify(tourPackages || []) %>;
+
+      document.querySelectorAll('.manage-images').forEach(button => {
+        button.addEventListener('click', function(e) {
+          stopPropagation(e);
+          openImageModal(this.dataset.id);
+        });
       });
-    }
 
-    // Button Event Listeners
-    // Edit Button (Option 1: Keep as <a>)
-    document.querySelectorAll('.edit-tour').forEach(button => {
-      button.addEventListener('click', function(e) {
-        stopPropagation(e); // Prevent card redirect
-        // Default <a> behavior will navigate to /admin/addtours?tripid=<id>
-      });
-    });
+      // Change Status
+      document.querySelectorAll('.change-status').forEach(button => {
+        button.addEventListener('click', async function(e) {
+          stopPropagation(e);
+          const tripId = this.dataset.id;
+          const currentStatus = this.dataset.active === 'true';
+          const newStatus = !currentStatus;
 
-    // Edit Button (Option 2: As <button>, uncomment if preferred)
-    /*
-    document.querySelectorAll('.edit-tour').forEach(button => {
-      button.addEventListener('click', function (e) {
-        stopPropagation(e);
-        const tripId = this.dataset.id;
-        window.location.href = `/admin/addtours?tripid=${tripId}`; // Manual navigation
-      });
-    });
-    */
-
-    // Manage Images
-    const imageModalElement = document.getElementById('imageManagementModal');
-    let imageModal = imageModalElement && typeof bootstrap !== 'undefined' ? new bootstrap.Modal(imageModalElement) : null;
-    const allTours = <%- JSON.stringify(tourPackages || []) %>;
-
-    document.querySelectorAll('.manage-images').forEach(button => {
-      button.addEventListener('click', function(e) {
-        stopPropagation(e);
-        openImageModal(this.dataset.id);
-      });
-    });
-
-    // Change Status
-    document.querySelectorAll('.change-status').forEach(button => {
-      button.addEventListener('click', async function(e) {
-        stopPropagation(e);
-        const tripId = this.dataset.id;
-        const currentStatus = this.dataset.active === 'true';
-        const newStatus = !currentStatus;
-
-        try {
-          const response = await fetch('/admin/changeTripStatus', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRF-Token': '<%= csrfToken %>'
-            },
-            body: JSON.stringify({
-              tripId,
-              isActive: newStatus
-            })
-          });
-          const result = await response.json();
-          if (result.success) {
-            this.textContent = newStatus ? 'Disable' : 'Enable';
-            this.dataset.active = newStatus;
-            this.closest('.package-card').classList.toggle('inactive', !newStatus);
-            alert(`Trip status changed to ${newStatus ? 'Enabled' : 'Disabled'}`);
-          } else {
-            alert('Failed to change status: ' + result.message);
-          }
-        } catch (error) {
-          console.error('Error changing status:', error);
-          alert('An error occurred while changing the status.');
-        }
-      });
-    });
-
-    // Delete Trip
-    document.querySelectorAll('.delete-tour').forEach(button => {
-      button.addEventListener('click', async function (e) {
-        stopPropagation(e);
-        const tripId = this.dataset.id;
-        if (confirm('Are you sure you want to delete this trip? This action cannot be undone.')) {
           try {
-            // console.log('Sending delete request for tripId:', tripId); // Debug log
-            const response = await fetch('/admin/deleteTripDetail', {
+            const response = await fetch('/admin/changeTripStatus', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-Token': '<%= csrfToken %>' // Ensure this is valid
+                'X-CSRF-Token': '<%= csrfToken %>'
               },
-              body: JSON.stringify({ tripId })
+              body: JSON.stringify({
+                tripId,
+                isActive: newStatus
+              })
             });
-
-            // Log full response details
-            // console.log('Response status:', response.status);
-            if (!response.ok) {
-              const text = await response.text();
-              // console.error('Raw response:', text);
-              throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
             const result = await response.json();
-            // console.log('Response JSON:', result); // Debug log
             if (result.success) {
-              this.closest('.package-card').remove();
-              alert('Trip deleted successfully');
+              this.textContent = newStatus ? 'Disable' : 'Enable';
+              this.dataset.active = newStatus;
+              this.closest('.package-card').classList.toggle('inactive', !newStatus);
+              alert(`Trip status changed to ${newStatus ? 'Enabled' : 'Disabled'}`);
             } else {
-              alert('Failed to delete trip: ' + result.message);
+              alert('Failed to change status: ' + result.message);
             }
           } catch (error) {
-            console.error('Error deleting trip:', error);
-            alert('An error occurred while deleting the trip.');
+            console.error('Error changing status:', error);
+            alert('An error occurred while changing the status.');
           }
-        }
+        });
       });
-    });
-    // Image Management Logic 
-    const tripIdInput = document.getElementById('tripIdForImages');
-    const mainImagePreview = document.getElementById('mainImagePreview')?.querySelector('img');
-    const mainImageInput = document.getElementById('mainImageInput');
-    const bannerImagesPreview = document.getElementById('bannerImagesPreview');
-    const bannerImagesInput = document.getElementById('bannerImagesInput');
-    const saveImagesBtn = document.getElementById('saveImages');
 
-    function openImageModal(tripId) {
-      if (!imageModal || !tripIdInput || !mainImagePreview || !bannerImagesPreview) return;
-      tripIdInput.value = tripId;
-      const tour = allTours.find(t => t._id === tripId);
-      if (!tour) return;
+      // Delete Trip
+      document.querySelectorAll('.delete-tour').forEach(button => {
+        button.addEventListener('click', async function(e) {
+          stopPropagation(e);
+          const tripId = this.dataset.id;
+          if (confirm('Are you sure you want to delete this trip? This action cannot be undone.')) {
+            try {
+              // console.log('Sending delete request for tripId:', tripId); // Debug log
+              const response = await fetch('/admin/deleteTripDetail', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRF-Token': '<%= csrfToken %>' // Ensure this is valid
+                },
+                body: JSON.stringify({
+                  tripId
+                })
+              });
 
-      mainImagePreview.src = tour.imageurl || '/images/default.jpg';
-      mainImageInput.value = '';
-      bannerImagesPreview.innerHTML = '';
-      const bannerImages = tour.bannerimages || [];
-      bannerImages.forEach((img, index) => {
-        const div = document.createElement('div');
-        div.className = 'banner-image';
-        div.innerHTML = `
+              // Log full response details
+              // console.log('Response status:', response.status);
+              if (!response.ok) {
+                const text = await response.text();
+                // console.error('Raw response:', text);
+                throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+
+              const result = await response.json();
+              // console.log('Response JSON:', result); // Debug log
+              if (result.success) {
+                this.closest('.package-card').remove();
+                alert('Trip deleted successfully');
+              } else {
+                alert('Failed to delete trip: ' + result.message);
+              }
+            } catch (error) {
+              console.error('Error deleting trip:', error);
+              alert('An error occurred while deleting the trip.');
+            }
+          }
+        });
+      });
+      // Image Management Logic 
+      const tripIdInput = document.getElementById('tripIdForImages');
+      const mainImagePreview = document.getElementById('mainImagePreview')?.querySelector('img');
+      const mainImageInput = document.getElementById('mainImageInput');
+      const bannerImagesPreview = document.getElementById('bannerImagesPreview');
+      const bannerImagesInput = document.getElementById('bannerImagesInput');
+      const saveImagesBtn = document.getElementById('saveImages');
+
+      function openImageModal(tripId) {
+        if (!imageModal || !tripIdInput || !mainImagePreview || !bannerImagesPreview) return;
+        tripIdInput.value = tripId;
+        const tour = allTours.find(t => t._id === tripId);
+        if (!tour) return;
+
+        mainImagePreview.src = tour.imageurl || '/images/default.jpg';
+        mainImageInput.value = '';
+        bannerImagesPreview.innerHTML = '';
+        const bannerImages = tour.bannerimages || [];
+        bannerImages.forEach((img, index) => {
+          const div = document.createElement('div');
+          div.className = 'banner-image';
+          div.innerHTML = `
           <img src="${img}" alt="Banner ${index + 1}">
           <button class="btn btn-sm btn-danger remove-btn" title="Remove"><i class="bi bi-trash"></i></button>
         `;
-        div.querySelector('.remove-btn').addEventListener('click', () => removeBannerImage(tripId, img));
-        bannerImagesPreview.appendChild(div);
-      });
-      bannerImagesInput.value = '';
-      imageModal.show();
-    }
+          div.querySelector('.remove-btn').addEventListener('click', () => removeBannerImage(tripId, img));
+          bannerImagesPreview.appendChild(div);
+        });
+        bannerImagesInput.value = '';
+        imageModal.show();
+      }
 
-    if (mainImagePreview && mainImageInput) {
-      mainImagePreview.nextElementSibling?.addEventListener('click', () => mainImageInput.click());
-      mainImageInput.addEventListener('change', () => {
-        if (mainImageInput.files.length > 0) {
-          const file = mainImageInput.files[0];
-          if (!file.type.startsWith('image/')) {
-            alert('Please upload a valid image file.');
-            mainImageInput.value = '';
-            return;
+      if (mainImagePreview && mainImageInput) {
+        mainImagePreview.nextElementSibling?.addEventListener('click', () => mainImageInput.click());
+        mainImageInput.addEventListener('change', () => {
+          if (mainImageInput.files.length > 0) {
+            const file = mainImageInput.files[0];
+            if (!file.type.startsWith('image/')) {
+              alert('Please upload a valid image file.');
+              mainImageInput.value = '';
+              return;
+            }
+            mainImagePreview.src = URL.createObjectURL(file);
           }
-          mainImagePreview.src = URL.createObjectURL(file);
-        }
-      });
-    }
+        });
+      }
 
-    async function removeBannerImage(tripId, imageUrl) {
-      if (confirm('Are you sure you want to remove this banner image?')) {
-        try {
-          const response = await fetch('/admin/removeBannerImage', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRF-Token': '<%= csrfToken %>'
-            },
-            body: JSON.stringify({
-              tripId,
-              imageUrl
-            })
-          });
-          const result = await response.json();
-          if (result.success) {
-            const bannerDiv = bannerImagesPreview.querySelector(`img[src="${imageUrl}"]`).parentElement;
-            bannerDiv.remove();
-            alert('Banner image removed successfully');
-          } else {
-            alert('Failed to remove banner image: ' + result.message);
+      async function removeBannerImage(tripId, imageUrl) {
+        if (confirm('Are you sure you want to remove this banner image?')) {
+          try {
+            const response = await fetch('/admin/removeBannerImage', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': '<%= csrfToken %>'
+              },
+              body: JSON.stringify({
+                tripId,
+                imageUrl
+              })
+            });
+            const result = await response.json();
+            if (result.success) {
+              const bannerDiv = bannerImagesPreview.querySelector(`img[src="${imageUrl}"]`).parentElement;
+              bannerDiv.remove();
+              alert('Banner image removed successfully');
+            } else {
+              alert('Failed to remove banner image: ' + result.message);
+            }
+          } catch (error) {
+            console.error('Error removing banner image:', error);
+            alert('An error occurred while removing the banner image.');
           }
-        } catch (error) {
-          console.error('Error removing banner image:', error);
-          alert('An error occurred while removing the banner image.');
         }
       }
-    }
 
-    if (saveImagesBtn) {
-      saveImagesBtn.addEventListener('click', async () => {
-        const tripId = tripIdInput.value;
-        const mainImageFile = mainImageInput.files[0];
-        const bannerImageFiles = bannerImagesInput.files;
+      if (saveImagesBtn) {
+        saveImagesBtn.addEventListener('click', async () => {
+          const tripId = tripIdInput.value;
+          const mainImageFile = mainImageInput.files[0];
+          const bannerImageFiles = bannerImagesInput.files;
 
-        if (mainImageFile) {
-          if (!mainImageFile.type.startsWith('image/')) {
-            alert('Please upload a valid image for the main image.');
-            return;
+          if (mainImageFile) {
+            if (!mainImageFile.type.startsWith('image/')) {
+              alert('Please upload a valid image for the main image.');
+              return;
+            }
+            const mainFormData = new FormData();
+            mainFormData.append('image', mainImageFile);
+            mainFormData.append('tripId', tripId);
+            const mainResponse = await fetch('/admin/updateImageUrl', {
+              method: 'POST',
+              headers: {
+                'X-CSRF-Token': '<%= csrfToken %>'
+              },
+              body: mainFormData
+            });
+            const mainData = await mainResponse.json();
+            if (!mainData.success) {
+              alert('Error updating main image: ' + mainData.message);
+              return;
+            }
           }
-          const mainFormData = new FormData();
-          mainFormData.append('image', mainImageFile);
-          mainFormData.append('tripId', tripId);
-          const mainResponse = await fetch('/admin/updateImageUrl', {
-            method: 'POST',
-            headers: {
-              'X-CSRF-Token': '<%= csrfToken %>'
-            },
-            body: mainFormData
-          });
-          const mainData = await mainResponse.json();
-          if (!mainData.success) {
-            alert('Error updating main image: ' + mainData.message);
-            return;
+
+          if (bannerImageFiles.length > 0) {
+            const invalidFiles = Array.from(bannerImageFiles).filter(file => !file.type.startsWith('image/'));
+            if (invalidFiles.length > 0) {
+              alert('Please upload only valid image files for banner images.');
+              return;
+            }
+            const bannerFormData = new FormData();
+            for (let i = 0; i < bannerImageFiles.length; i++) {
+              bannerFormData.append('image', bannerImageFiles[i]);
+            }
+            bannerFormData.append('tripId', tripId);
+            const bannerResponse = await fetch('/admin/updateBannerImages', {
+              method: 'POST',
+              headers: {
+                'X-CSRF-Token': '<%= csrfToken %>'
+              },
+              body: bannerFormData
+            });
+            const bannerData = await bannerResponse.json();
+            if (!bannerData.success) {
+              alert('Error updating banner images: ' + bannerData.message);
+              return;
+            }
           }
-        }
 
-        if (bannerImageFiles.length > 0) {
-          const invalidFiles = Array.from(bannerImageFiles).filter(file => !file.type.startsWith('image/'));
-          if (invalidFiles.length > 0) {
-            alert('Please upload only valid image files for banner images.');
-            return;
-          }
-          const bannerFormData = new FormData();
-          for (let i = 0; i < bannerImageFiles.length; i++) {
-            bannerFormData.append('image', bannerImageFiles[i]);
-          }
-          bannerFormData.append('tripId', tripId);
-          const bannerResponse = await fetch('/admin/updateBannerImages', {
-            method: 'POST',
-            headers: {
-              'X-CSRF-Token': '<%= csrfToken %>'
-            },
-            body: bannerFormData
-          });
-          const bannerData = await bannerResponse.json();
-          if (!bannerData.success) {
-            alert('Error updating banner images: ' + bannerData.message);
-            return;
-          }
-        }
-
-        alert('Images updated successfully!');
-        getTourListAPICall();
-        if (imageModal) imageModal.hide();
-      });
-    }
-  });
-
-  // Filter Helper Functions
-  function getTourListAPICall() {
-    document.getElementById('tourList').submit();
-  }
-
-  function removeChip(chip, index) {
-    const chipProperty = document.getElementById(chip);
-    if (chipProperty) chipProperty.checked = false;
-    updatefilterValueforApiCall();
-    getTourListAPICall();
-  }
-
-  function removeSearchChip(value) {
-    document.getElementById('searchValue').value = null;
-    updatefilterValueforApiCall();
-    getTourListAPICall();
-  }
-
-  function getCheckedValues() {
-    const categories = {};
-    document.querySelectorAll('.filter-section').forEach(section => {
-      const sectionTitle = section.querySelector('.filter-section-title')?.innerText.trim();
-      if (!sectionTitle) return;
-      const checkedValues = Array.from(section.querySelectorAll('input[type="checkbox"]:checked')).map(input => input.id);
-      categories[sectionTitle] = checkedValues;
+          alert('Images updated successfully!');
+          getTourListAPICall();
+          if (imageModal) imageModal.hide();
+        });
+      }
     });
-    return categories;
-  }
 
-  function updatefilterValueforApiCall() {
-    const filterValue = getCheckedValues();
-    document.getElementById('filterValue').value = JSON.stringify(filterValue);
-  }
-</script>
+    // Filter Helper Functions
+    function getTourListAPICall() {
+      document.getElementById('tourList').submit();
+    }
+
+    function removeChip(chip, index) {
+      const chipProperty = document.getElementById(chip);
+      if (chipProperty) chipProperty.checked = false;
+      updatefilterValueforApiCall();
+      getTourListAPICall();
+    }
+
+    function removeSearchChip(value) {
+      document.getElementById('searchValue').value = null;
+      updatefilterValueforApiCall();
+      getTourListAPICall();
+    }
+
+    function getCheckedValues() {
+      const categories = {};
+      document.querySelectorAll('.filter-section').forEach(section => {
+        const sectionTitle = section.querySelector('.filter-section-title')?.innerText.trim();
+        if (!sectionTitle) return;
+        const checkedValues = Array.from(section.querySelectorAll('input[type="checkbox"]:checked')).map(input => input.id);
+        categories[sectionTitle] = checkedValues;
+      });
+      return categories;
+    }
+
+    function updatefilterValueforApiCall() {
+      const filterValue = getCheckedValues();
+      document.getElementById('filterValue').value = JSON.stringify(filterValue);
+    }
+  </script>
+</body>
 
 </html>

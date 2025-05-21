@@ -75,6 +75,7 @@
         padding-right: 0;
       }
     }
+
     /* Add to existing <style> */
     .pdf-preview-container {
       margin-top: 10px;
@@ -100,70 +101,7 @@
 </head>
 
 <body class="bg-light text-dark">
-  <header>
-    <div class="header-area">
-      <div id="sticky-header" class="main-header-area">
-        <div class="container-fluid">
-          <div class="header_bottom_border">
-            <div class="row align-items-center">
-              <div class="col-xl-2 col-lg-2">
-                <div class="logo">
-                  <a href="index.html">
-                    <img src="/images/logo.png" alt="" />
-                  </a>
-                </div>
-              </div>
-              <div class="col-xl-7 col-lg-7">
-                <div class="main-menu d-none d-lg-block">
-                  <nav>
-                    <ul id="navigation">
-                      <li><a href="/">Home</a></li>
-                      <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
-                      <li><a href="/admin/addtours">AddTours</a></li>
-                      <li><a href="/admin/addaccomodation">AddAccod</a></li>
-                      <li><a href="/admin/accoddetails">Accod</a></li>
-                      <li><a href="/admin/viewregistration">Reg</a></li>
-                      <li><a href="/admin/viewmails">Mail</a></li>
-                      <li><a href="/admin/code">Code</a></li>
-                      <li><a href="/admin/addblog">Blog</a></li>
-                      <li><a href="/cities" target="_blank">Add Cities</a></li>
-                      <li>
-                        <form action="/admin/logout" method="post">
-                          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                          <button type="submit" class="btn btn-primary">Logout</button>
-                        </form>
-                      </li>
-                      <% } %>
-                    </ul>
-                  </nav>
-                </div>
-              </div>
-              <div class="col-xl-3 col-lg-3 d-none d-lg-block">
-                <div class="social_wrap d-flex align-items-center justify-content-end">
-                  <div class="social_links d-none d-xl-block">
-                    <ul>
-                      <li><a href="https://www.instagram.com/dejavutours/"><i class="fa fa-instagram"></i></a></li>
-                      <li><a href="https://www.youtube.com/watch?v=56-u7Pv-cQg"><i class="fa fa-youtube-play"></i></a></li>
-                      <li><a href="https://www.facebook.com/dejavutours.in"><i class="fa fa-facebook"></i></a></li>
-                      <li><a href="https://twitter.com/dejavutours_in"><i class="fa fa-twitter"></i></a></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div class="seach_icon">
-                <a data-toggle="modal" data-target="#exampleModalCenter" href="#">
-                  <i class="fa fa-search"></i>
-                </a>
-              </div>
-              <div class="col-12">
-                <div class="mobile_menu d-block d-lg-none"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
+  <%- include('../partials/header', {title: "Deja-vu tours treks and travel"}); %>
   <h1 class="text-primary">
     <center>Dejavu Tours&Treks : <%= trips._id ? 'Edit Trip' : 'Add Trip' %></center>
   </h1>
@@ -171,6 +109,7 @@
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     <div class="container-fluid">
       <div class="container form-container">
+        <!-- Trip Name -->
         <div class="row">
           <div class="col-12 col-lg-12 col-sm-12">
             <div class="mb-3">
@@ -181,9 +120,21 @@
             </div>
           </div>
         </div>
+        <!-- Is Active -->
+        <div class="row">
+          <div class="col-12 col-lg-12 col-sm-12">
+            <div class="mb-3">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" name="isActive" id="isActive" <%= trips.isActive ? 'checked' : '' %> />
+                <label for="isActive" class="form-check-label">Active (Publish Trip)</label>
+                <small class="form-text text-muted">Check to make the trip visible to users. Unchecked trips are saved as drafts.</small>
+              </div>
+            </div>
+          </div>
+        </div>
         <!-- State and Destinations -->
         <div class="row">
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-4">
             <div class="mb-3">
               <label for="state" class="form-label">State</label>
               <select class="form-control select2" name="state" id="state" data-placeholder="Select a State" style="width: 100%" required>
@@ -194,41 +145,43 @@
               </select>
             </div>
           </div>
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-4">
             <div class="mb-3">
               <label for="destinations" class="form-label">Destinations</label>
               <input type="text" class="form-control" name="destinations" id="destinations" value="<%= trips.destinations || '' %>" />
             </div>
           </div>
+          <div class="col-12 col-md-4">
+            <div class="mb-3">
+              <label for="route" class="form-label">Route</label>
+              <input type="text" class="form-control" name="route" id="route" value="<%= trips.route || '' %>" />
+            </div>
+          </div>
         </div>
         <!-- Image Upload -->
         <div class="row">
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-4">
             <div class="mb-3">
               <label for="file" class="form-label">Upload Image</label>
               <input type="file" accept="image/*" name="image" id="file" class="form-control">
               <input type="hidden" name="existingImage" value="<%= trips.imageurl || '' %>">
               <div class="preview-container position-relative" id="mainImagePreviewContainer" style="display: <%= trips.imageurl ? 'block' : 'none' %>; max-width: 200px;">
-                <img id="mainImagePreview" src="<%= trips.imageurl || '' %>" data-bs-toggle="modal" data-bs-target="#imageModal" alt="Preview" 
-                onerror="this.onerror=null; this.src='/<%= trips.imageurl%>';"
-                >
+                <img id="mainImagePreview" src="<%= trips.imageurl || '' %>" data-bs-toggle="modal" data-bs-target="#imageModal" alt="Preview" onerror="this.onerror=null; this.src='/<%= trips.imageurl%>';">
                 <button type="button" class="btn btn-danger remove-image" id="removeMainImage" style="position: absolute; top: 5px; right: 5px; padding: 5px; display: <%= trips.imageurl ? 'block' : 'none' %>;">
                   <i class="bi bi-x-circle-fill"></i>
                 </button>
               </div>
             </div>
           </div>
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-4">
             <div class="mb-3">
               <label for="bannerImages" class="form-label">Upload Banner Images (Multiple) Disabled</label>
               <input type="file" accept="image/*" id="bannerImages" class="form-control" multiple>
               <div class="multiple-preview d-flex mt-2" id="bannerPreviewContainer"></div>
             </div>
           </div>
-        </div>
-        <!-- Document Upload -->
-        <div class="row">
-          <div class="col-12 col-md-6">
+          <!-- Document Upload -->
+          <div class="col-12 col-md-4">
             <div class="mb-3">
               <label for="document" class="form-label">Upload PDF Document (Max 5MB)</label>
               <input type="file" accept="application/pdf" name="image" id="document" class="form-control">
@@ -247,23 +200,14 @@
         <div class="row">
           <div class="col-12 col-md-6">
             <div class="mb-3">
-              <label for="route" class="form-label">Route</label>
-              <input type="text" class="form-control" name="route" id="route" value="<%= trips.route || '' %>" />
+              <label for="altitude" class="form-label">Altitude (feet)</label>
+              <input type="text" class="form-control" name="altitude" id="altitude" value="<%= trips.altitude || '' %>" />
             </div>
           </div>
           <div class="col-12 col-md-6">
             <div class="mb-3">
               <label for="days" class="form-label">Trip Duration</label>
               <input type="text" class="form-control" name="days" id="days" value="<%= trips.days || '' %>" />
-            </div>
-          </div>
-        </div>
-        <!-- Altitude -->
-        <div class="row">
-          <div class="col-12 col-md-12">
-            <div class="mb-3">
-              <label for="altitude" class="form-label">Altitude (feet)</label>
-              <input type="text" class="form-control" name="altitude" id="altitude" value="<%= trips.altitude || '' %>" />
             </div>
           </div>
         </div>
@@ -282,12 +226,76 @@
             </div>
           </div>
         </div>
-        <!-- Best Session -->
+        <!-- Best Season -->
         <div class="row">
-          <div class="col-12 col-md-12">
+          <div class="col-12 col-md-6">
             <div class="mb-3">
               <label for="bestSession" class="form-label">Best Season</label>
-              <input type="text" class="form-control" name="bestSession" id="bestSession" value="<%= trips.bestSession || '' %>" />
+              <select class="form-control select2" name="bestSession[]" id="bestSession" multiple data-placeholder="Select Best Seasons" style="width: 100%">
+                <option value="Summer" <%= trips.bestSession && trips.bestSession.includes('Summer') ? 'selected' : '' %>>Summer</option>
+                <option value="Winter" <%= trips.bestSession && trips.bestSession.includes('Winter') ? 'selected' : '' %>>Winter</option>
+                <option value="Monsoon" <%= trips.bestSession && trips.bestSession.includes('Monsoon') ? 'selected' : '' %>>Monsoon</option>
+                <option value="Spring" <%= trips.bestSession && trips.bestSession.includes('Spring') ? 'selected' : '' %>>Spring</option>
+                <option value="Autumn" <%= trips.bestSession && trips.bestSession.includes('Autumn') ? 'selected' : '' %>>Autumn</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="mb-3">
+              <label for="bestMonthToVisit" class="form-label">Best Month to Visit</label>
+              <select class="form-control select2" name="bestMonthToVisit[]" id="bestMonthToVisit" multiple data-placeholder="Select Best Months" style="width: 100%">
+                <option value="January" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('January') ? 'selected' : '' %>>January</option>
+                <option value="February" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('February') ? 'selected' : '' %>>February</option>
+                <option value="March" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('March') ? 'selected' : '' %>>March</option>
+                <option value="April" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('April') ? 'selected' : '' %>>April</option>
+                <option value="May" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('May') ? 'selected' : '' %>>May</option>
+                <option value="June" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('June') ? 'selected' : '' %>>June</option>
+                <option value="July" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('July') ? 'selected' : '' %>>July</option>
+                <option value="August" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('August') ? 'selected' : '' %>>August</option>
+                <option value="September" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('September') ? 'selected' : '' %>>September</option>
+                <option value="October" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('October') ? 'selected' : '' %>>October</option>
+                <option value="November" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('November') ? 'selected' : '' %>>November</option>
+                <option value="December" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('December') ? 'selected' : '' %>>December</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <!-- Trip Categories -->
+        <div class="row">
+          <div class="col-12 col-md-6">
+            <div class="mb-3">
+              <label for="tripCategories" class="form-label">Trip Categories</label>
+              <select class="form-control select2" name="tripCategories[]" id="tripCategories" multiple data-placeholder="Select Trip Categories" style="width: 100%">
+                <option value="Adventure" <%= trips.tripCategories && trips.tripCategories.includes('Adventure') ? 'selected' : '' %>>Adventure</option>
+                <option value="Heritage" <%= trips.tripCategories && trips.tripCategories.includes('Heritage') ? 'selected' : '' %>>Heritage</option>
+                <option value="Wildlife" <%= trips.tripCategories && trips.tripCategories.includes('Wildlife') ? 'selected' : '' %>>Wildlife</option>
+                <option value="Safari" <%= trips.tripCategories && trips.tripCategories.includes('Safari') ? 'selected' : '' %>>Safari</option>
+                <option value="Trekking" <%= trips.tripCategories && trips.tripCategories.includes('Trekking') ? 'selected' : '' %>>Trekking</option>
+                <option value="Camping" <%= trips.tripCategories && trips.tripCategories.includes('Camping') ? 'selected' : '' %>>Camping</option>
+                <option value="Sightseeing" <%= trips.tripCategories && trips.tripCategories.includes('Sightseeing') ? 'selected' : '' %>>Sightseeing</option>
+                <option value="Offbeat" <%= trips.tripCategories && trips.tripCategories.includes('Offbeat') ? 'selected' : '' %>>Offbeat</option>
+                <option value="Backpacking" <%= trips.tripCategories && trips.tripCategories.includes('Backpacking') ? 'selected' : '' %>>Backpacking</option>
+                <option value="Spiritual" <%= trips.tripCategories && trips.tripCategories.includes('Spiritual') ? 'selected' : '' %>>Spiritual</option>
+                <option value="Summer" <%= trips.tripCategories && trips.tripCategories.includes('Summer') ? 'selected' : '' %>>Summer</option>
+                <option value="Leisure" <%= trips.tripCategories && trips.tripCategories.includes('Leisure') ? 'selected' : '' %>>Leisure</option>
+                <option value="Himalaya" <%= trips.tripCategories && trips.tripCategories.includes('Himalaya') ? 'selected' : '' %>>Himalaya</option>
+                <option value="Festival" <%= trips.tripCategories && trips.tripCategories.includes('Festival') ? 'selected' : '' %>>Festival</option>
+                <option value="Winter" <%= trips.tripCategories && trips.tripCategories.includes('Winter') ? 'selected' : '' %>>Winter</option>
+                <option value="Monsoon" <%= trips.tripCategories && trips.tripCategories.includes('Monsoon') ? 'selected' : '' %>>Monsoon</option>
+              </select>
+            </div>
+          </div>
+          <!-- Traveler Type -->
+          <div class="col-12 col-md-6">
+            <div class="mb-3">
+              <label for="travelerType" class="form-label">Traveler Type</label>
+              <select class="form-control select2" name="travelerType[]" id="travelerType" multiple data-placeholder="Select Traveler Types" style="width: 100%">
+                <option value="Family" <%= trips.travelerType && trips.travelerType.includes('Family') ? 'selected' : '' %>>Family</option>
+                <option value="Solo" <%= trips.travelerType && trips.travelerType.includes('Solo') ? 'selected' : '' %>>Solo</option>
+                <option value="Couple friendly" <%= trips.travelerType && trips.travelerType.includes('Couple friendly') ? 'selected' : '' %>>Couple friendly</option>
+                <option value="Bachelors" <%= trips.travelerType && trips.travelerType.includes('Bachelors') ? 'selected' : '' %>>Bachelors</option>
+                <option value="Students" <%= trips.travelerType && trips.travelerType.includes('Students') ? 'selected' : '' %>>Students</option>
+              </select>
             </div>
           </div>
         </div>
@@ -333,6 +341,30 @@
                       <div class="invalid-feedback">Trip Duration is required</div>
                     </div>
                   </div>
+
+                  <div class="col-12 col-md-4">
+                    <div class="mb-3">
+                      <label class="form-label">Available Slots</label>
+                      <input type="number" class="form-control availableSlots" name="availableSlots[]" placeholder="Enter available slots (e.g., 20)" min="0">
+                      <div class="invalid-feedback">Available slots must be a non-negative number.</div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <div class="mb-3">
+                      <label class="form-label">Partial Payment (₹)</label>
+                      <input type="number" class="form-control partialPayment" name="partialPayment[]" placeholder="Enter partial payment (e.g., 5000)" min="0">
+                      <div class="invalid-feedback">Partial payment must be a non-negative number.</div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <div class="mb-3">
+                      <label class="form-label">Booking Cutoff Days</label>
+                      <input type="number" class="form-control bookingCutoffDays" name="bookingCutoffDays[]" placeholder="Enter cutoff days (e.g., 2)" min="0">
+                      <div class="invalid-feedback">Booking cutoff days must be a non-negative number.</div>
+                    </div>
+                  </div>
+
+
                 </div>
                 <div class="row">
                   <div class="container mt-4">
@@ -428,25 +460,6 @@
             </div>
           </div>
         </div>
-        <!-- <div class="row">
-          <div class="col-12 col-md-12">
-            <div class="accordion mb-3" id="placestovisitAccordion">
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="placestovisitHeading">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#placestovisitCollapse" aria-expanded="false" aria-controls="placestovisitCollapse">
-                    Places To Visit
-                  </button>
-                </h2>
-                <div id="placestovisitCollapse" class="accordion-collapse collapse" aria-labelledby="placestovisitHeading" data-bs-parent="#placestovisitAccordion">
-                  <div class="accordion-body">
-                    <div class="editor-container mb-3" id="placestovisit-editor"><%- trips.placestovisit || '' %></div>
-                    <small class="text-danger d-none" id="placestovisitError">Places to visit field is required (Max: 500 characters).</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> -->
         <div class="row">
           <div class="col-12 col-md-12">
             <div class="accordion mb-3" id="activitiesAccordion">
@@ -643,6 +656,7 @@
         <div class="row">
           <div class="col-12 col-md-12">
             <button type="submit" id="submitBtn" class="btn btn-primary">Submit</button>
+            <button type="button" id="saveDraftBtn" class="btn btn-secondary ms-2">Save as Draft</button>
           </div>
         </div>
       </div>
@@ -718,7 +732,7 @@
 
   <script>
     $(document).ready(function() {
-      $(".select2").select2();
+      $(".select2").select2(); // Initializes state, bestSession, tripCategories, bestMonthToVisit
       $("#imageModal").on("hidden.bs.modal", function() {
         $(".modal-backdrop").remove();
         $("body").removeClass("modal-open");
@@ -931,55 +945,55 @@
     });
 
     // PDF Upload and Preview
-document.addEventListener("DOMContentLoaded", function () {
-  const documentInput = document.getElementById("document");
-  const pdfPreview = document.getElementById("pdfPreview");
-  const pdfPreviewContainer = document.getElementById("pdfPreviewContainer");
-  const removePdfButton = document.getElementById("removePdf");
-  const documentError = document.getElementById("documentError");
-  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    document.addEventListener("DOMContentLoaded", function() {
+      const documentInput = document.getElementById("document");
+      const pdfPreview = document.getElementById("pdfPreview");
+      const pdfPreviewContainer = document.getElementById("pdfPreviewContainer");
+      const removePdfButton = document.getElementById("removePdf");
+      const documentError = document.getElementById("documentError");
+      const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-  documentInput.addEventListener("change", function () {
-    const file = this.files[0];
-    documentError.classList.add("d-none");
+      documentInput.addEventListener("change", function() {
+        const file = this.files[0];
+        documentError.classList.add("d-none");
 
-    if (file) {
-        // Validate file type and size
-      if (file.type !== "application/pdf") {
-          documentError.textContent = "Only PDF files are allowed.";
-          documentError.classList.remove("d-none");
-          this.value = "";
-          return;
+        if (file) {
+          // Validate file type and size
+          if (file.type !== "application/pdf") {
+            documentError.textContent = "Only PDF files are allowed.";
+            documentError.classList.remove("d-none");
+            this.value = "";
+            return;
+          }
+          if (file.size > MAX_FILE_SIZE) {
+            documentError.textContent = "File size exceeds 5MB.";
+            documentError.classList.remove("d-none");
+            this.value = "";
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            pdfPreview.src = e.target.result;
+            pdfPreviewContainer.style.display = "block";
+            removePdfButton.style.display = "block";
+          };
+          reader.readAsDataURL(file);
         }
-        if (file.size > MAX_FILE_SIZE) {
-          documentError.textContent = "File size exceeds 5MB.";
-          documentError.classList.remove("d-none");
-          this.value = "";
-          return;
-        }
+      });
 
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          pdfPreview.src = e.target.result;
-          pdfPreviewContainer.style.display = "block";
-          removePdfButton.style.display = "block";
-        };
-        reader.readAsDataURL(file);
-      }
-    });
+      pdfPreview.addEventListener("click", function() {
+        document.getElementById("fullSizePdf").src = this.src;
+      });
 
-    pdfPreview.addEventListener("click", function () {
-      document.getElementById("fullSizePdf").src = this.src;
+      removePdfButton.addEventListener("click", function() {
+        pdfPreview.src = "";
+        pdfPreviewContainer.style.display = "none";
+        removePdfButton.style.display = "none";
+        documentInput.value = "";
+        document.querySelector('input[name="existingDocument"]').value = "";
+      });
     });
-
-    removePdfButton.addEventListener("click", function () {
-      pdfPreview.src = "";
-      pdfPreviewContainer.style.display = "none";
-      removePdfButton.style.display = "none";
-      documentInput.value = "";
-      document.querySelector('input[name="existingDocument"]').value = "";
-    });
-  });
 
     // manage city detail add update and all other event are managed from here
     document.addEventListener("DOMContentLoaded", function() {
@@ -1094,6 +1108,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const imageField = entry.querySelector(".city-image");
         const tripDurationField = entry.querySelector(".tripDuration");
         const pricingContainer = entry.querySelector("#pricingContainer");
+        // Add new fields
+        const availableSlotsField = entry.querySelector(".availableSlots");
+        const partialPaymentField = entry.querySelector(".partialPayment");
+        const bookingCutoffDaysField = entry.querySelector(".bookingCutoffDays");
 
         select.value = cityData.City || "";
         const selectedOption = Array.from(select.options).find(option => option.value === cityData.City);
@@ -1103,6 +1121,11 @@ document.addEventListener("DOMContentLoaded", function () {
           imageField.style.display = imageField.src ? "block" : "none";
         }
         tripDurationField.value = cityData.tripDuration || "";
+
+        // Populate new fields
+        availableSlotsField.value = cityData.availableSlots || "";
+        partialPaymentField.value = cityData.partialPayment || "";
+        bookingCutoffDaysField.value = cityData.bookingCutoffDays || "";
         selectedCities.add(cityData.City);
 
         // Clear existing pricing rows and populate from data
@@ -1182,10 +1205,16 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         // Add input listeners for all fields
-        const inputs = entry.querySelectorAll(".transferType, .childPrice, .adultPrice, .tripDuration");
+        const inputs = entry.querySelectorAll(".transferType, .childPrice, .adultPrice, .tripDuration, .availableSlots, .partialPayment, .bookingCutoffDays");
         inputs.forEach(input => {
           input.addEventListener("input", () => {
-            input.classList.toggle("is-invalid", !input.value.trim());
+            if (input.classList.contains("availableSlots") || input.classList.contains("partialPayment") || input.classList.contains("bookingCutoffDays")) {
+              // Optional fields: validate only if value exists
+              input.classList.toggle("is-invalid", input.value.trim() && (isNaN(input.value) || parseFloat(input.value) < 0));
+            } else {
+              // Required fields
+              input.classList.toggle("is-invalid", !input.value.trim());
+            }
             updateAddPricingButtonState(entry);
             updateAddCityButtonState();
           });
@@ -1312,8 +1341,30 @@ document.addEventListener("DOMContentLoaded", function () {
           const citySelect = entry.querySelector(".city-select").value;
           const pricingRows = entry.querySelectorAll(".pricingRow");
           const dates = entry.querySelector(".datePicking")._flatpickr?.selectedDates || [];
-          if (!citySelect || dates.length === 0) allValid = false;
+          const tripDuration = entry.querySelector(".tripDuration").value.trim();
+          // Add new fields
+          const availableSlots = entry.querySelector(".availableSlots").value.trim();
+          const partialPayment = entry.querySelector(".partialPayment").value.trim();
+          const bookingCutoffDays = entry.querySelector(".bookingCutoffDays").value.trim();
+
+          if (!citySelect || dates.length === 0 || !tripDuration) allValid = false;
           if (!citySelect) entry.querySelector(".city-select").classList.add("is-invalid");
+          if (!tripDuration) entry.querySelector(".tripDuration").classList.add("is-invalid");
+
+          // Validate new fields
+          if (availableSlots && (isNaN(availableSlots) || parseFloat(availableSlots) < 0)) {
+            allValid = false;
+            entry.querySelector(".availableSlots").classList.add("is-invalid");
+          }
+          if (partialPayment && (isNaN(partialPayment) || parseFloat(partialPayment) < 0)) {
+            allValid = false;
+            entry.querySelector(".partialPayment").classList.add("is-invalid");
+          }
+          if (bookingCutoffDays && (isNaN(bookingCutoffDays) || parseFloat(bookingCutoffDays) < 0)) {
+            allValid = false;
+            entry.querySelector(".bookingCutoffDays").classList.add("is-invalid");
+          }
+
           pricingRows.forEach(row => {
             const transferType = row.querySelector(".transferType").value.trim();
             const childPrice = row.querySelector(".childPrice").value.trim();
@@ -1338,11 +1389,37 @@ document.addEventListener("DOMContentLoaded", function () {
         const tripDuration = entry.querySelector(".tripDuration").value.trim();
         const pricingRows = entry.querySelectorAll(".pricingRow");
         const dates = entry.querySelector(".datePicking")._flatpickr?.selectedDates || [];
+        // Add new fields
+        const availableSlots = entry.querySelector(".availableSlots").value.trim();
+        const partialPayment = entry.querySelector(".partialPayment").value.trim();
+        const bookingCutoffDays = entry.querySelector(".bookingCutoffDays").value.trim();
+
+        // Validate required fields
         let allValid = citySelect && tripDuration && dates.length > 0;
 
-        // Validate and toggle error states
+        // Validate and toggle error states for required fields
         entry.querySelector(".city-select").classList.toggle("is-invalid", !citySelect);
         entry.querySelector(".tripDuration").classList.toggle("is-invalid", !tripDuration);
+
+        // Validate new fields (optional, but must be non-negative if provided)
+        if (availableSlots && (isNaN(availableSlots) || parseFloat(availableSlots) < 0)) {
+          allValid = false;
+          entry.querySelector(".availableSlots").classList.add("is-invalid");
+        } else {
+          entry.querySelector(".availableSlots").classList.remove("is-invalid");
+        }
+        if (partialPayment && (isNaN(partialPayment) || parseFloat(partialPayment) < 0)) {
+          allValid = false;
+          entry.querySelector(".partialPayment").classList.add("is-invalid");
+        } else {
+          entry.querySelector(".partialPayment").classList.remove("is-invalid");
+        }
+        if (bookingCutoffDays && (isNaN(bookingCutoffDays) || parseFloat(bookingCutoffDays) < 0)) {
+          allValid = false;
+          entry.querySelector(".bookingCutoffDays").classList.add("is-invalid");
+        } else {
+          entry.querySelector(".bookingCutoffDays").classList.remove("is-invalid");
+        }
 
         pricingRows.forEach(row => {
           const transferType = row.querySelector(".transferType").value.trim();
@@ -1875,10 +1952,15 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("addUpdateTripDetial").addEventListener("submit", function(e) {
       e.preventDefault();
 
-    // Step 1: Validate all required fields
-    const requiredFields = [
-        { id: "name", name: "Trip Name" },
-        { id: "state", name: "State" },
+      // Step 1: Validate all required fields
+      const requiredFields = [{
+          id: "name",
+          name: "Trip Name"
+        },
+        {
+          id: "state",
+          name: "State"
+        },
       ];
 
       let validationErrors = [];
@@ -1940,11 +2022,6 @@ document.addEventListener("DOMContentLoaded", function () {
           name: "About Information",
           errorId: "aboutError"
         },
-        // {
-        //   id: "placestovisit-editor",
-        //   name: "Places to Visit",
-        //   errorId: "placestovisitError"
-        // },
         {
           id: "activities-editor",
           name: "Activities & Attraction",
@@ -1985,19 +2062,6 @@ document.addEventListener("DOMContentLoaded", function () {
       editorFields.forEach(field => {
         const content = staticEditors[field.id].root.innerHTML.trim();
         const isEmpty = !content || content === "<p><br></p>";
-        // const errorElement = document.getElementById(field.errorId);
-        // if (field.name !== "Info & FAQs" && field.name !== "Booking & Cancellation" && field.name !== "Travel Guidelines") {
-        //   // Required fields
-        //   if (isEmpty) {
-        //     validationErrors.push(`${field.name} is required.`);
-        //     errorElement.classList.remove("d-none");
-        //   } else {
-        //     errorElement.classList.add("d-none");
-        //   }
-        // } else {
-        //   // Optional fields
-        //   errorElement.classList.add("d-none");
-        // }
       });
 
       // Validate itinerary
@@ -2031,28 +2095,24 @@ document.addEventListener("DOMContentLoaded", function () {
         const pricingRows = entry.querySelectorAll(".pricingRow");
         const dates = entry.querySelector(".datePicking")._flatpickr?.selectedDates || []; // Keep as Date objects
         const tripDuration = entry.querySelector(".tripDuration").value.trim();
+        // Add new fields
+        const availableSlots = entry.querySelector(".availableSlots").value.trim();
+        const partialPayment = entry.querySelector(".partialPayment").value.trim();
+        const bookingCutoffDays = entry.querySelector(".bookingCutoffDays").value.trim();
 
-        // Validate city and state
-        // if (!city) {
-        //   validationErrors.push("Departure City is required for all entries.");
-        //   citySelect.classList.add("is-invalid");
-        // } else {
-        //   citySelect.classList.remove("is-invalid");
-        // }
-        // if (!state) {
-        //   validationErrors.push("State is required for all departure cities.");
-        //   entry.querySelector(".state-field").classList.add("is-invalid");
-        // } else {
-        //   entry.querySelector(".state-field").classList.remove("is-invalid");
-        // }
-
-        // // Validate dates
-        // if (dates.length === 0) {
-        //   validationErrors.push(`Departure City ${city}: At least one date is required.`);
-        //   entry.querySelector(".error-msg").classList.remove("d-none");
-        // } else {
-        //   entry.querySelector(".error-msg").classList.add("d-none");
-        // }
+        // Validate new fields
+        if (availableSlots && (isNaN(availableSlots) || parseFloat(availableSlots) < 0)) {
+          validationErrors.push(`Departure City ${city}: Available slots must be a non-negative number.`);
+          entry.querySelector(".availableSlots").classList.add("is-invalid");
+        }
+        if (partialPayment && (isNaN(partialPayment) || parseFloat(partialPayment) < 0)) {
+          validationErrors.push(`Departure City ${city}: Partial payment must be a non-negative number.`);
+          entry.querySelector(".partialPayment").classList.add("is-invalid");
+        }
+        if (bookingCutoffDays && (isNaN(bookingCutoffDays) || parseFloat(bookingCutoffDays) < 0)) {
+          validationErrors.push(`Departure City ${city}: Booking cutoff days must be a non-negative number.`);
+          entry.querySelector(".bookingCutoffDays").classList.add("is-invalid");
+        }
 
         // Validate pricing
         const price = Array.from(pricingRows).map(row => {
@@ -2063,24 +2123,6 @@ document.addEventListener("DOMContentLoaded", function () {
           const childPriceValue = childPrice.value.trim();
           const adultPriceValue = adultPrice.value.trim();
 
-          // if (!transferTypeValue) {
-          //   validationErrors.push(`Departure City ${city}: Transport Type is required for all pricing entries.`);
-          //   transferType.classList.add("is-invalid");
-          // } else {
-          //   transferType.classList.remove("is-invalid");
-          // }
-          // if (!childPriceValue) {
-          //   validationErrors.push(`Departure City ${city}: Child Price is required for all pricing entries.`);
-          //   childPrice.classList.add("is-invalid");
-          // } else {
-          //   childPrice.classList.remove("is-invalid");
-          // }
-          // if (!adultPriceValue) {
-          //   validationErrors.push(`Departure City ${city}: Adult Price is required for all pricing entries.`);
-          //   adultPrice.classList.add("is-invalid");
-          // } else {
-          //   adultPrice.classList.remove("is-invalid");
-          // }
 
           return {
             transferType: transferTypeValue,
@@ -2094,7 +2136,12 @@ document.addEventListener("DOMContentLoaded", function () {
           State: state,
           tripDuration,
           dates: formatDatesForMongoDB(dates), // Pass Date objects directly
-          price
+          price,
+          // Add new fields
+          availableSlots: availableSlots || "0", // Default to "0" if empty
+          partialPayment: partialPayment || "0", // Default to "0" if empty
+          bookingCutoffDays: bookingCutoffDays || "0" // Default to "0" if empty
+
         };
       });
 
@@ -2153,6 +2200,144 @@ document.addEventListener("DOMContentLoaded", function () {
           console.error("Submission error:", err);
           handleResponse({
             message: "An error occurred while submitting the form. Please try again."
+          }, 500);
+        });
+    });
+
+    // Save as Draft Button Handler
+    document.getElementById("saveDraftBtn").addEventListener("click", function(e) {
+      e.preventDefault();
+
+      const form = document.getElementById("addUpdateTripDetial");
+      const formData = new FormData(form);
+
+      // Ensure isActive is false for drafts
+      formData.set("isActive", "false");
+
+      // Append editor content
+      const editorFields = [{
+          id: "about-editor",
+          name: "about"
+        },
+        {
+          id: "activities-editor",
+          name: "activities"
+        },
+        {
+          id: "things_to_carry-editor",
+          name: "things_to_carry"
+        },
+        {
+          id: "includenexclude-editor",
+          name: "includenexclude"
+        },
+        {
+          id: "package_cost-editor",
+          name: "package_cost"
+        },
+        {
+          id: "infonfaq-editor",
+          name: "infonfaq"
+        },
+        {
+          id: "bookncancel-editor",
+          name: "bookncancel"
+        },
+        {
+          id: "guidelines-editor",
+          name: "guidelines"
+        }
+      ];
+
+      editorFields.forEach(field => {
+        formData.set(field.name, staticEditors[field.id].root.innerHTML);
+      });
+
+      // Append itinerary data
+      const itineraryDays = Array.from(document.querySelectorAll(".itinerary-day"));
+      const itineraryData = itineraryDays.map(day => {
+        const header = day.querySelector('input[name="itinerary-header[]"]').value.trim();
+        const editorId = `editor-${day.dataset.day}`;
+        const description = itineraryEditors[editorId]?.root.innerHTML || "";
+        return {
+          day: `Day ${day.dataset.day}`,
+          header,
+          description
+        };
+      });
+      formData.set("itinerary", JSON.stringify(itineraryData));
+
+      // Append deptcities data
+      const deptCitiesData = Array.from(document.querySelectorAll(".city-entry")).map(entry => {
+        const citySelect = entry.querySelector(".city-select");
+        const city = citySelect.value;
+        const state = entry.querySelector(".state-field").value;
+        const pricingRows = entry.querySelectorAll(".pricingRow");
+        const dates = entry.querySelector(".datePicking")._flatpickr?.selectedDates || [];
+        const tripDuration = entry.querySelector(".tripDuration").value.trim();
+        const availableSlots = entry.querySelector(".availableSlots").value.trim();
+        const partialPayment = entry.querySelector(".partialPayment").value.trim();
+        const bookingCutoffDays = entry.querySelector(".bookingCutoffDays").value.trim();
+
+        const price = Array.from(pricingRows).map(row => {
+          const transferType = row.querySelector(".transferType");
+          const childPrice = row.querySelector(".childPrice");
+          const adultPrice = row.querySelector(".adultPrice");
+          const transferTypeValue = transferType.value.trim();
+          const childPriceValue = childPrice.value.trim();
+          const adultPriceValue = adultPrice.value.trim();
+
+          return {
+            transferType: transferTypeValue,
+            childPrice: parseFloat(childPriceValue) || 0,
+            adultPrice: parseFloat(adultPriceValue) || 0
+          };
+        });
+
+        return {
+          City: city,
+          State: state,
+          tripDuration,
+          dates: formatDatesForMongoDB(dates),
+          price,
+          availableSlots: availableSlots || "0",
+          partialPayment: partialPayment || "0",
+          bookingCutoffDays: bookingCutoffDays || "0"
+        };
+      });
+      formData.set("deptcities", JSON.stringify(deptCitiesData));
+
+      // Append trip_dates
+      const allDates = deptCitiesData?.flatMap(city => city?.dates?.map?.(date => ({
+        Year: date.Year || "",
+        Month: date.Month || "",
+        dates: date.dates || ""
+      })));
+      const uniqueTripDates = Array.from(new Map(allDates.map(item => [`${item.Year}-${item.Month}-${item.dates}`, item])).values());
+      formData.set("trip_dates", JSON.stringify(uniqueTripDates));
+
+      // Submit the form as draft
+      fetch("/admin/postNewAddTours", {
+          method: "POST",
+          body: formData
+        })
+        .then(response => {
+          const status = response.status;
+          return response.json().then(data => ({
+            status,
+            data
+          }));
+        })
+        .then(({
+          status,
+          data
+        }) => {
+          handleResponse(data, status);
+        })
+        .catch(err => {
+          console.error("Draft submission error:", err);
+          handleResponse({
+            message: "An error occurred while saving the draft. Please try again."
           }, 500);
         });
     });
