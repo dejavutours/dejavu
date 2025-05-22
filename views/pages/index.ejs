@@ -9,195 +9,218 @@
   <link rel="stylesheet" href="/css/dashboard.css">
   <style>
     /* Departure City Section */
-    .departure_city_section {
-      padding-bottom: 3rem;
-    }
+.departure_city_section {
+  padding-bottom: 3rem;
+}
 
-    /* Tabs Styling */
-    .departure-city-tabs {
-      border-bottom: 1px solid #dee2e6;
-      gap: 0.5rem;
-    }
+/* Tabs Styling */
+.departure-city-tabs {
+  border-bottom: 1px solid #dee2e6;
+  gap: 0.5rem;
+}
 
-    .departure-city-tabs .nav-link {
-      padding: 0.5rem 1.5rem;
-      border: 1px solid transparent;
-      border-radius: 10px;
-      color: #6c757d;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
+.departure-city-tabs .nav-link {
+  padding: 0.5rem 1.5rem;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #6c757d;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
 
-    .departure-city-tabs .nav-link:hover {
-      background-color: #f8f9fa;
-      border-color: #dee2e6;
-    }
+.departure-city-tabs .nav-link:hover {
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+}
 
-    .departure-city-tabs .nav-link.active {
-      background-color: #ffffff;
-      color: #000000;
-      border-color: #000000;
-    }
+.departure-city-tabs .nav-link.active {
+  background-color: #ffffff;
+  color: #000000;
+  border-color: #000000;
+}
 
-    /* Trip Cards Container */
-    .trip-cards-container {
-      position: relative;
-      overflow-x: auto;
-      /* Enable horizontal scrolling */
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
-      /* Smooth scrolling on iOS */
-      scrollbar-width: none;
-      /* Hide scrollbar on Firefox */
-      -ms-overflow-style: none;
-      /* Hide scrollbar on Edge/IE */
-      touch-action: pan-x;
-      /* Allow horizontal touch scrolling */
-    }
+/* Trip Cards Container */
+.trip-cards-container {
+  position: relative;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-snap-type: x mandatory; /* Enable scroll snapping */
+}
 
-    /* Hide Scrollbar on Webkit Browsers (Chrome, Safari) */
-    .trip-cards-container::-webkit-scrollbar {
-      display: none;
-    }
+/* Hide Scrollbar on Webkit Browsers */
+.trip-cards-container::-webkit-scrollbar {
+  display: none;
+}
 
-    .trip-cards-row {
-      display: flex;
-      flex-wrap: nowrap;
-      gap: 1rem;
-      padding-bottom: 1rem;
-      min-width: max-content;
-      /* Ensure the row doesn't wrap and takes full width of content */
-    }
+.trip-cards-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1rem;
+  padding: 0 1rem; /* Add padding to ensure cards don't touch edges */
+  min-width: max-content;
+}
 
-    /* Trip Card Styling */
-    .trip-card {
-      flex: 0 0 auto;
-      width: 330px;
-      /* Default width for larger screens */
-      height: 369px;
-      border: 1px solid #dee2e6;
-      border-radius: 20px;
-      overflow: hidden;
-      background-color: #fff;
-      transition: transform 0.3s ease;
-    }
+/* Trip Card Styling */
+.trip-card {
+  flex: 0 0 auto;
+  width: 340px;
+  height: 369px;
+  border: 1px solid #dee2e6;
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: #fff;
+  transition: transform 0.3s ease;
+  scroll-snap-align: start; /* Snap cards to start of container */
+}
 
-    .trip-card:hover {
-      border-radius: 20px;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+.trip-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
+/* Ensure Swiper slider doesn't interfere */
+.trip-image-slider {
+  position: relative;
+  height: 250px;
+  touch-action: pan-y;
+}
 
-    /* Ensure Swiper slider doesn't interfere with parent scrolling */
-    .trip-image-slider {
-      position: relative;
-      height: 250px;
-      touch-action: pan-y;
-      /* Allow vertical touch actions within the slider, but not horizontal */
-    }
+.trip-image-slider img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
 
-    .trip-image-slider img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      pointer-events: none;
-      /* Prevent image from capturing touch events */
-    }
+/* Swiper Navigation Buttons for Trip Slider */
+.swiper-button-prev,
+.swiper-button-next {
+  width: 30px;
+  height: 30px;
+  background-color: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #000;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
 
-    /* Swiper Navigation Buttons for Trip Slider */
-    .swiper-button-prev,
-    .swiper-button-next {
-      width: 30px;
-      height: 30px;
-      background-color: #fff;
-      border-radius: 50%;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      color: #000;
-      opacity: 0.8;
-      transition: opacity 0.3s ease;
-    }
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  opacity: 1;
+}
 
-    .swiper-button-prev:hover,
-    .swiper-button-next:hover {
-      opacity: 1;
-    }
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  font-size: 14px;
+  font-weight: bold;
+}
 
-    .swiper-button-prev::after,
-    .swiper-button-next::after {
-      font-size: 14px;
-      font-weight: bold;
-    }
+.swiper-button-prev {
+  left: 10px;
+}
 
-    .swiper-button-prev {
-      left: 10px;
-    }
+.swiper-button-next {
+  right: 10px;
+}
 
-    .swiper-button-next {
-      right: 10px;
-    }
+/* Row Navigation Buttons */
+.row-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: background-color 0.3s ease;
+}
 
-    /* Row Navigation Buttons */
-    .row-nav-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 40px;
-      height: 40px;
-      background-color: #fff;
-      border: 1px solid #dee2e6;
-      color: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-      transition: background-color 0.3s ease;
-    }
+.row-nav-btn:hover {
+  background-color: #f8f9fa;
+}
 
-    .row-nav-btn:hover {
-      background-color: #f8f9fa;
-    }
+.row-nav-prev {
+  left: 0;
+}
 
-    .row-nav-prev {
-      left: -20px;
-    }
+.row-nav-next {
+  right: 0;
+}
 
-    .row-nav-next {
-      right: -20px;
-    }
+.row-nav-btn i {
+  font-size: 16px;
+}
 
-    .row-nav-btn i {
-      font-size: 16px;
-    }
+.row-nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
-    .row-nav-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+/* Visual Cue for Scrollability on Mobile */
+.trip-cards-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20px;
+  height: 100%;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.1), transparent);
+  pointer-events: none;
+  z-index: 5;
+}
 
-    /* Responsive Adjustments */
-    @media (max-width: 767.98px) {
-      .trip-card {
-        width: 280px;
-        /* Slightly larger for better readability on mobile */
-      }
+.trip-cards-container.scrolled-to-start::after {
+  background: none;
+}
 
-      .trip-image-slider {
-        height: 180px;
-        /* Adjusted for mobile */
-      }
-      .trip-cards-container {
-        padding: 0 10px;
-        /* Add padding for better touch area */
-        margin: 0 -10px;
-        /* Compensate for padding to align with container */
-      }
-      .trip-cards-row {
-        padding-left: 5px;
-        /* Small padding to prevent cards from sticking to the edge */
-        padding-right: 5px;
-      }
-    }
+/* Responsive Adjustments */
+@media (max-width: 767.98px) {
+  .trip-card {
+    width: 280px;
+  }
+
+  .trip-image-slider {
+    height: 180px;
+  }
+
+  .trip-cards-container {
+    padding: 0 10px;
+    margin: 0 -10px;
+  }
+
+  .trip-cards-row {
+    padding: 0 5px;
+  }
+
+  .row-nav-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .row-nav-prev {
+    left: 5px;
+  }
+
+  .row-nav-next {
+    right: 5px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .trip-cards-container::after {
+    width: 15px;
+  }
+}
   </style>
 </head>
 
@@ -305,82 +328,84 @@
     </aside>
   </section>
 
-  <!-- Departure city section -->
-  <section class="departure_city_section container-xl py-4 pb-lg-5">
-    <p class="pb-md-3">
-      <small class="text-dejavu-secondary-light">Departing from your nearby location</small><br>
-      <span class="fw-semibold h3">Tour packages available from</span>
-    </p>
+ <!-- Departure city section -->
+<section class="departure_city_section container-xl py-4 pb-lg-5">
+  <p class="pb-md-3">
+    <small class="text-dejavu-secondary-light">Departing from your nearby location</small><br>
+    <span class="fw-semibold h3">Tour packages available from</span>
+  </p>
 
-    <!-- Tabs for Departure Cities -->
-    <ul class="nav nav-tabs departure-city-tabs mb-4" id="departureCityTabs" role="tablist">
-      <% departureCities.forEach((city, index) => { %>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link <%= index === 0 ? 'active' : '' %>" id="tab-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" data-bs-toggle="tab" data-bs-target="#pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" type="button" role="tab" aria-controls="pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" aria-selected="<%= index === 0 ? 'true' : 'false' %>">
-          <%= city.name %>
-        </button>
-      </li>
-      <% }); %>
-    </ul>
+  <!-- Tabs for Departure Cities -->
+  <ul class="nav nav-tabs departure-city-tabs mb-4" id="departureCityTabs" role="tablist">
+    <% departureCities.forEach((city, index) => { %>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= index === 0 ? 'active' : '' %>" id="tab-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" data-bs-toggle="tab" data-bs-target="#pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" type="button" role="tab" aria-controls="pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" aria-selected="<%= index === 0 ? 'true' : 'false' %>">
+        <%= city.name %>
+      </button>
+    </li>
+    <% }); %>
+  </ul>
 
-    <!-- Tab Content -->
-    <div class="tab-content" id="departureCityTabContent">
-      <% departureCities.forEach((city, index) => { %>
-      <div class="tab-pane fade <%= index === 0 ? 'show active' : '' %>" id="pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" role="tabpanel" aria-labelledby="tab-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>">
-        <!-- Trip Cards Container with Navigation -->
-        <div class="position-relative">
-          <div class="trip-cards-container overflow-hidden">
-            <div class="trip-cards-row d-flex flex-nowrap">
-              <% city.trips.forEach((trip, tripIndex) => { %>
-              <div class="trip-card mx-2" onclick="window.location.href='/tripdetail/<%= trip.name %>'">
-                <!-- Swiper Slider for Banner Images -->
-                <div class="trip-image-slider swiper">
-                  <div class="swiper-wrapper">
-                    <% if (trip.bannerimages && trip.bannerimages.length > 0) { %>
-                    <% trip.bannerimages.forEach((img, imgIndex) => { %>
-                    <div class="swiper-slide">
-                      <img src="<%= img %>" alt="Trip Image <%= imgIndex + 1 %>" class="w-100 h-100 object-fit-cover" onerror="this.onerror=null; this.src='/images/placeholder.jpg';" />
-                    </div>
-                    <% }); %>
-                    <% } else { %>
-                    <div class="swiper-slide">
-                      <img src="<%= trip.imageurl %>" alt="Trip Image" class="w-100 h-100 object-fit-cover" onerror="this.onerror=null; this.src='/images/placeholder.jpg';" />
-                    </div>
-                    <% } %>
+  <!-- Tab Content -->
+  <div class="tab-content" id="departureCityTabContent">
+    <% departureCities.forEach((city, index) => { %>
+    <div class="tab-pane fade <%= index === 0 ? 'show active' : '' %>" id="pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" role="tabpanel" aria-labelledby="tab-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>">
+      <!-- Trip Cards Container with Navigation -->
+      <div class="position-relative">
+        <div class="trip-cards-container">
+          <div class="trip-cards-row">
+            <% city.trips.forEach((trip, tripIndex) => { %>
+            <div class="trip-card" data-card-index="<%= tripIndex %>" onclick="window.location.href='/tripdetail/<%= trip.name %>'">
+              <!-- Swiper Slider for Banner Images -->
+              <div class="trip-image-slider swiper">
+                <div class="swiper-wrapper">
+                  <% if (trip.bannerimages && trip.bannerimages.length > 0) { %>
+                  <% trip.bannerimages.forEach((img, imgIndex) => { %>
+                  <div class="swiper-slide">
+                    <img src="<%= img %>" alt="Trip Image <%= imgIndex + 1 %>" class="w-100 h-100 object-fit-cover" onerror="this.onerror=null; this.src='/images/placeholder.jpg';" />
                   </div>
-                  <!-- Navigation Buttons for Slider -->
-                  <div class="swiper-button-prev swiper-button-white-black"></div>
-                  <div class="swiper-button-next swiper-button-white-black"></div>
+                  <% }); %>
+                  <% } else { %>
+                  <div class="swiper-slide">
+                    <img src="<%= trip.imageurl %>" alt="Trip Image" class="w-100 h-100 object-fit-cover" onerror="this.onerror=null; this.src='/images/placeholder.jpg';" />
+                  </div>
+                  <% } %>
                 </div>
-                <!-- Trip Details -->
-                <div class="p-3">
-                  <h6 class="mb-1"><%= trip.name %></h6>
-                  <p class="text-muted small mb-2">
-                    <%= trip.destinations %>
-                  </p>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <span class="fw-bold">₹<%= trip.adultPrice || trip.price %>/person</span>
-                    <span class="text-muted small">
-                      <i class="bi bi-calendar"></i> <%= trip.tripDuration || '2 Days - 3 Nights' %>
-                    </span>
-                  </div>
+                <!-- Navigation Buttons for Slider -->
+                <% if (trip.bannerimages && trip.bannerimages.length > 1) { %>
+                <div class="swiper-button-prev swiper-button-white-black" aria-label="Previous slide"></div>
+                <div class="swiper-button-next swiper-button-white-black" aria-label="Next slide"></div>
+                <% } %>
+              </div>
+              <!-- Trip Details -->
+              <div class="p-3">
+                <h6 class="mb-1"><%= trip.name %></h6>
+                <p class="text-muted small mb-2">
+                  <%= trip.destinations %>
+                </p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="fw-bold">₹<%= trip.adultPrice || trip.price %>/person</span>
+                  <span class="text-muted small">
+                    <i class="bi bi-calendar"></i> <%= trip.tripDuration || '2 Days - 3 Nights' %>
+                  </span>
                 </div>
               </div>
-              <% }); %>
             </div>
+            <% }); %>
           </div>
-          <!-- Navigation Buttons for Row -->
-          <button class="row-nav-btn row-nav-prev btn btn-light rounded-circle shadow-sm d-md-block">
-            <i class="bi bi-chevron-left"></i>
-          </button>
-          <button class="row-nav-btn row-nav-next btn btn-light rounded-circle shadow-sm d-md-block">
-            <i class="bi bi-chevron-right"></i>
-          </button>
         </div>
+        <!-- Navigation Buttons for Row -->
+        <button class="row-nav-btn row-nav-prev btn btn-light rounded-circle shadow-sm" aria-label="Previous cards" disabled>
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        <button class="row-nav-btn row-nav-next btn btn-light rounded-circle shadow-sm" aria-label="Next cards">
+          <i class="bi bi-chevron-right"></i>
+        </button>
       </div>
-      <% }); %>
     </div>
-  </section>
+    <% }); %>
+  </div>
+</section>
 
   <!-- Accomodation section -->
   <section class="accomodation_section my-4 my-lg-5 px-3 px-md-0">
@@ -497,86 +522,106 @@
     // Initialize Swiper sliders for each trip card and row navigation
     document.addEventListener("DOMContentLoaded", function() {
       // Initialize Swiper for each trip card slider
-      document.querySelectorAll(".trip-image-slider").forEach((slider) => {
-        // Check if the slider has only one slide
-        const slides = slider.querySelectorAll(".swiper-slide");
-        if (slides.length === 1) {
-          slider.classList.add("single-slide");
-        }
+  document.querySelectorAll(".trip-image-slider").forEach((slider) => {
+    const slides = slider.querySelectorAll(".swiper-slide");
+    if (slides.length === 1) {
+      slider.classList.add("single-slide");
+      return; // Skip Swiper initialization for single slides
+    }
 
-        new Swiper(slider, {
-          loop: slides.length > 1, // Disable loop if only one slide
-          navigation: {
-            nextEl: slider.querySelector(".swiper-button-next"),
-            prevEl: slider.querySelector(".swiper-button-prev"),
-          },
-          slidesPerView: 1,
-          spaceBetween: 0,
-        });
+    new Swiper(slider, {
+      loop: true,
+      navigation: {
+        nextEl: slider.querySelector(".swiper-button-next"),
+        prevEl: slider.querySelector(".swiper-button-prev"),
+      },
+      slidesPerView: 1,
+      spaceBetween: 0,
+    });
+  });
+
+  // Row Navigation for Trip Cards
+  document.querySelectorAll(".trip-cards-container").forEach((container) => {
+    const row = container.querySelector(".trip-cards-row");
+    const prevBtn = container.parentElement.querySelector(".row-nav-prev");
+    const nextBtn = container.parentElement.querySelector(".row-nav-next");
+
+    // Initialize scroll position
+    container.scrollLeft = 0;
+
+    // Function to update button states
+    function updateNavButtons() {
+      const scrollLeft = container.scrollLeft;
+      const maxScroll = container.scrollWidth - container.clientWidth;
+
+      prevBtn.disabled = scrollLeft <= 0;
+      nextBtn.disabled = scrollLeft >= maxScroll - 1;
+
+      // Update visual cue for scrollability
+      container.classList.toggle("scrolled-to-start", scrollLeft <= 0);
+    }
+
+    // Initial button state
+    updateNavButtons();
+
+    // Update button states on scroll
+    container.addEventListener("scroll", updateNavButtons);
+
+    // Calculate scroll distance dynamically
+    function getScrollDistance() {
+      const card = container.querySelector(".trip-card");
+      if (!card) return 0;
+      const style = window.getComputedStyle(card);
+      const cardWidth = parseFloat(style.width);
+      const gap = parseFloat(window.getComputedStyle(row).gap) || 16; // Default to 1rem (16px)
+      return cardWidth + gap;
+    }
+
+    // Handle previous button click
+    prevBtn.addEventListener("click", () => {
+      const scrollDistance = getScrollDistance();
+      container.scrollBy({
+        left: -scrollDistance,
+        behavior: "smooth",
       });
+    });
 
-      // Row Navigation for Trip Cards
-      document.querySelectorAll(".trip-cards-container").forEach((container) => {
-        const row = container.querySelector(".trip-cards-row");
-        const prevBtn = container.parentElement.querySelector(".row-nav-prev");
-        const nextBtn = container.parentElement.querySelector(".row-nav-next");
+    // Handle next button click
+    nextBtn.addEventListener("click", () => {
+      const scrollDistance = getScrollDistance();
+      const maxScroll = container.scrollWidth - container.clientWidth;
+      const currentScroll = container.scrollLeft;
+      const remainingScroll = maxScroll - currentScroll;
 
-        // Ensure the container starts at the leftmost position
-        container.scrollLeft = 0;
-
-        // Function to update button states
-        function updateNavButtons() {
-          const scrollLeft = container.scrollLeft;
-          const maxScroll = container.scrollWidth - container.clientWidth;
-
-          prevBtn.disabled = scrollLeft <= 0;
-          nextBtn.disabled = scrollLeft >= maxScroll - 1; // Small buffer for rounding
-        }
-
-        // Initial button state
-        updateNavButtons();
-
-        // Update button states on scroll (including touch scrolling)
-        container.addEventListener("scroll", updateNavButtons);
-
-        // Handle touch events to prevent default behavior interference
-        container.addEventListener("touchstart", (e) => {
-          // Allow natural touch scrolling
+      // If remaining scroll is less than a full card, scroll to the end
+      if (remainingScroll <= scrollDistance) {
+        container.scrollTo({
+          left: maxScroll,
+          behavior: "smooth",
         });
-
-        // Handle previous button click
-        prevBtn.addEventListener("click", () => {
-          container.scrollBy({
-            left: -330, // Width of one card (adjusted for default width)
-            behavior: "smooth",
-          });
+      } else {
+        container.scrollBy({
+          left: scrollDistance,
+          behavior: "smooth",
         });
+      }
+    });
 
-        // Handle next button click
-        nextBtn.addEventListener("click", () => {
-          container.scrollBy({
-            left: 330, // Width of one card (adjusted for default width)
-            behavior: "smooth",
-          });
-        });
+    // Ensure keyboard navigation
+    prevBtn.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        prevBtn.click();
+      }
+    });
 
-        // Adjust scroll amount for mobile
-        if (window.innerWidth <= 767.98) {
-          prevBtn.addEventListener("click", () => {
-            container.scrollBy({
-              left: -280, // Adjusted for mobile card width
-              behavior: "smooth",
-            });
-          });
-
-          nextBtn.addEventListener("click", () => {
-            container.scrollBy({
-              left: 280, // Adjusted for mobile card width
-              behavior: "smooth",
-            });
-          });
-        }
-      });
+    nextBtn.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        nextBtn.click();
+      }
+    });
+  });
 
      });
   </script>

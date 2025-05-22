@@ -1584,13 +1584,15 @@ exports.getFiltertourAPIUseOnly = async (req, res, sortByLatestUpdate) => {
 
     // Filter by tour category (tags)
     if (filters["Tour category"] && filters["Tour category"].length > 0) {
-      queryConditions.push({
-        tripCategories: {
-          $in: filters["Tour category"].map(
-            (tag) => new RegExp(`^${tag}$`, "i")
-          ),
-        },
-      });
+      if(!filters["Tour category"]==="All") {
+        queryConditions.push({
+          tripCategories: {
+            $in: filters["Tour category"].map(
+              (tag) => new RegExp(`^${tag}$`, "i")
+            ),
+          },
+        });
+      }
     }
 
     // Filter by tour type
