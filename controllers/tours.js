@@ -103,7 +103,7 @@ exports.getIndexPage = async (req, res, next) => {
       return {
         name: stateName,
         place: stateDoc.count,
-        thumb: `/img/state/${imageFile}`,
+        thumb: `/img/State/${imageFile}`,
       };
     });
 
@@ -291,15 +291,15 @@ exports.getIndexPage = async (req, res, next) => {
     { url: "/img/Banner & other/banner3.jpg", caption: "Feel the Magic of Ladakh!" },
     { url: "/img/Banner & other/banner4.jpg", caption: "Breathe in the Peace of Nature!" },
     { url: "/img/Banner & other/banner5.jpg", caption: "" },
-    { url: "/img/Banner & other/banner6.jpg", caption: " " },
-    { url: "/img/Banner & other/banner7.jpg", caption: " " },
-    { url: "/img/Banner & other/banner8.jpg", caption: " " },
-    { url: "/img/Banner & other/banner9.jpg", caption: " " },
-    { url: "/img/Banner & other/banner10.jpg", caption: " " },
-    { url: "/img/Banner & other/banner11.jpg", caption: " " },
-    { url: "/img/Banner & other/banner12.jpg", caption: " " },
-    { url: "/img/Banner & other/banner13.jpg", caption: " " },
-    { url: "/img/Banner & other/banner14.jpg", caption: " " },
+    { url: "/img/Banner & other/banner6.jpg", caption: "" },
+    { url: "/img/Banner & other/banner7.jpg", caption: "" },
+    { url: "/img/Banner & other/banner8.jpg", caption: "" },
+    { url: "/img/Banner & other/banner9.jpg", caption: "" },
+    { url: "/img/Banner & other/banner10.jpg", caption: "" },
+    { url: "/img/Banner & other/banner11.jpg", caption: "" },
+    { url: "/img/Banner & other/banner12.jpg", caption: "" },
+    { url: "/img/Banner & other/banner13.jpg", caption: "" },
+    { url: "/img/Banner & other/banner14.jpg", caption: "" },
   ];
 
   res.render("pages/index", {
