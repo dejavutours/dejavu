@@ -708,7 +708,7 @@
       "url": "https://www.dejavutours.in",
       "offers": [
         <% 
-        let displayedPackage = profile?.email === process.env.GMAIL_ADMIN 
+        let displayedPackage = profile?.email === (process.env.GMAIL_ADMIN || process.env.GMAIL_ADMIN1 )
           ? tourPackages 
           : tourPackages.filter(tour => tour.isActive);
         displayedPackage.forEach(function(tour, index) { 

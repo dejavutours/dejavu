@@ -283,13 +283,13 @@ exports.getIndexPage = async (req, res, next) => {
   
   const placeItems = await getStateWiseTrips();
   const categoryItems = await getCategoryWiseTrips();
-  const departureCities = await getDepartureCityTrips(); // Fetch departure city-wise trips
+  const departureCities = await getDepartureCityTrips(); 
 
   const bannerImages = [
-    { url: "/img/Banner & other/banner1.jpg", caption: "Experience the Road to Heaven!" },
-    { url: "/img/Banner & other/banner2.jpg", caption: "Experience the mountain range!" },
-    { url: "/img/Banner & other/banner3.jpg", caption: "Feel the Magic of Ladakh!" },
-    { url: "/img/Banner & other/banner4.jpg", caption: "Breathe in the Peace of Nature!" },
+    { url: "/img/Banner & other/banner1.jpg", caption: "" },
+    { url: "/img/Banner & other/banner2.jpg", caption: "" },
+    { url: "/img/Banner & other/banner3.jpg", caption: "" },
+    { url: "/img/Banner & other/banner4.jpg", caption: "" },
     { url: "/img/Banner & other/banner5.jpg", caption: "" },
     { url: "/img/Banner & other/banner6.jpg", caption: "" },
     { url: "/img/Banner & other/banner7.jpg", caption: "" },
@@ -309,7 +309,7 @@ exports.getIndexPage = async (req, res, next) => {
     placeItems,
     bannerImages,
     categoryItems,
-    departureCities, // New data for departure city section
+    departureCities
   });
 };
 
@@ -665,20 +665,6 @@ exports.getUpcomingTrips = async (req, res, next) => {
     test: tests,
   });
 };
-
-// exports.postDeleteUpcomingtrips = async(req, res, next) => {
-
-//   const tripid = req.body.tripid;
-
-//   upcomingtrips.findByIdAndRemove(tripid, (err) => {
-//     if(err){
-//         console.log(err);
-//     } else {
-//       res.redirect("/");
-//     }
-//  });
-
-// };
 
 exports.getAccomodation = async (req, res, next) => {
   const allaccomodations = await Accomodations.find().sort({ updatedAt: -1 });
@@ -1584,7 +1570,7 @@ exports.getFiltertourAPIUseOnly = async (req, res, sortByLatestUpdate) => {
 
     // Filter by tour category (tags)
     if (filters["Tour category"] && filters["Tour category"].length > 0) {
-      if(!filters["Tour category"]==="All") {
+      if(filters["Tour category"]!=="All") {
         queryConditions.push({
           tripCategories: {
             $in: filters["Tour category"].map(
