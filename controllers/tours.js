@@ -238,7 +238,7 @@ exports.getIndexPage = async (req, res, next) => {
       },
       {
         $match: {
-          "deptcities.City": { $exists: true, $nin: ["", null] }, // ✅ Exclude empty and null
+          "deptcities.City": { $exists: true, $nin: ["", null] }, 
         },
       },
       {
@@ -1570,7 +1570,7 @@ exports.getFiltertourAPIUseOnly = async (req, res, sortByLatestUpdate) => {
 
     // Filter by tour category (tags)
     if (filters["Tour category"] && filters["Tour category"].length > 0) {
-      if(filters["Tour category"]!=="All") {
+      if(filters["Tour category"][0].toLowerCase() !== "all") {
         queryConditions.push({
           tripCategories: {
             $in: filters["Tour category"].map(
@@ -1592,7 +1592,7 @@ exports.getFiltertourAPIUseOnly = async (req, res, sortByLatestUpdate) => {
 
     // Filter by States
     if (filters["States"]) {
-      const statesFilter = filters["States"].split(",");
+      const statesFilter = filters["States"];
       queryConditions.push({
         state: {
           $in: statesFilter.map((type) => new RegExp(`^${type}$`, "i")),

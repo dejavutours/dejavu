@@ -8,7 +8,6 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
   <style>
-    /* Existing styles remain unchanged */
     .subtitle {
       color: #f05a5a;
       font-size: 14px;
@@ -29,7 +28,7 @@
       gap: 15px;
     }
 
-    .search-bar {
+    .search-container .search-bar {
       display: flex;
       flex-grow: 1;
       max-width: 800px;
@@ -39,13 +38,13 @@
       background-color: white;
     }
 
-    .select-wrapper {
+    .search-container .select-wrapper {
       position: relative;
       min-width: 55px;
       border-right: 1px solid #e0e0e0;
     }
 
-    .select-wrapper .select {
+    .search-container  .select-wrapper .select {
       display: block;
       width: 100%;
       padding: 10px 30px 10px 15px;
@@ -56,7 +55,7 @@
       color: #333;
     }
 
-    .select-wrapper::after {
+    .search-container  .select-wrapper::after {
       content: "▼";
       font-size: 10px;
       color: #888;
@@ -67,14 +66,14 @@
       pointer-events: none;
     }
 
-    .input-wrapper {
+    .search-container  .input-wrapper {
       position: relative;
       flex-grow: 1;
       display: flex;
       align-items: center;
     }
 
-    .search-icon {
+    .search-container  .search-icon {
       position: absolute;
       left: 15px;
       width: 16px;
@@ -84,7 +83,7 @@
       background-position: center;
     }
 
-    .search-input {
+    .search-container  .search-input {
       width: 100%;
       padding: 10px 15px 10px 40px;
       border: none;
@@ -93,11 +92,11 @@
       color: #333;
     }
 
-    .search-input::placeholder {
+    .search-container  .search-input::placeholder {
       color: #9e9e9e;
     }
 
-    .filters-btn {
+    .search-container  .filters-btn {
       display: flex;
       align-items: center;
       padding: 10px 20px;
@@ -110,7 +109,7 @@
       color: #333;
     }
 
-    .filters-btn .filters-icon {
+    .search-container  .filters-btn .filters-icon {
       display: inline-block;
       width: 16px;
       height: 16px;
