@@ -418,6 +418,9 @@ router.get('/tripdetail/:name', toursController.getTripDetialbyName);
 router.get('/bookingTour/:tripid',noCache, validateLogin, toursController.renderBookingTourPage);
 router.post('/bookingTour', noCache, validateLogin, toursController.submitBookingTourPage);
 
+router.get('/dreamtrip', toursController.getCustomezedTripForm);
+router.post('/customTrip', toursController.customTrip);
+
 router.post("/admin/changeTripStatus", ensureLoggedIn, isAuth, toursController.changeTripStatus);
 router.post("/admin/deleteTripDetail", ensureLoggedIn, isAuth, toursController.deleteTrip);
 

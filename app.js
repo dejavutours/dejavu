@@ -18,17 +18,12 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
-const flash = require('connect-flash');
 const multer = require('multer');
-const helmet = require('helmet');
 const compression = require('compression');
 const fs = require('fs');
-const { uploadFile } = require('./s3');
-const { uploadFileProof } = require('./s3');
 
 const PORT = process.env.PORT || 5000;
 
-const Tours = require('./models/tours');
 const User = require('./models/user');
 const isProduction = process.env.NODE_ENV === 'production';
 

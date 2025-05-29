@@ -1,0 +1,135 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Trip Submission</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+    <tr>
+      <td style="background-color: #0d6efd; padding: 20px; text-align: center; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 24px;">New Trip Submission</h1>
+        <p style="color: #ffffff; margin: 5px 0 0; font-size: 16px;">Déjà-<span style="color: #dc3545;">vu</span> Outdoors</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 20px;">
+        <h2 style="color: #343a40; font-size: 20px; margin-top: 0;">New Customized Trip Request</h2>
+        <p style="color: #6c757d; font-size: 14px; margin-bottom: 20px;">A new trip request has been submitted. Please review the details below:</p>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size: 14px; color: #343a40;">
+          <tr>
+            <td style="padding: 8px 0; font-weight: bold; width: 30%;">Name:</td>
+            <td style="padding: 8px 0;">{{name}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; font-weight: bold;">Mobile:</td>
+            <td style="padding: 8px 0;">{{mobile}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; font-weight: bold;">Email:</td>
+            <td style="padding: 8px 0;">{{email}}</td>
+          </tr>
+          {{#if place}}
+          <tr>
+            <td style="padding: 8px 0; font-weight: bold;">Place of Residence:</td>
+            <td style="padding: 8px 0;">{{place}}</td>
+          </tr>
+          {{/if}}
+          <tr>
+            <td style="padding: 8px 0; font-weight: bold;">Destination:</td>
+            <td style="padding: 8px 0;">{{destination}}</td>
+          </tr>
+          {{#if days}}
+          <tr>
+            <td style="padding: 8px 0; font-weight: bold;">No. of Days:</td>
+            <td style="padding: 8px 0;">{{days}}</td>
+          </tr>
+          {{/if}}
+          {{#if persons}}
+          <tr>
+            <td style="padding: 8px 0; font-weight: bold;">No. of Persons:</td>
+            <td style="padding: 8px 0;">{{persons}}</td>
+          </tr>
+          {{/if}}
+          {{#if transport}}
+          <tr>
+            <td style="padding: 8px 0; font-weight: bold;">Transport Mode:</td>
+            <td style="padding: 8px 0;">{{transport}}</td>
+          </tr>
+          {{/if}}
+          {{#if triptype}}
+          <tr>
+            <td style="padding: 8px 0; font-weight: bold;">Trip Type:</td>
+            <td style="padding: 8px 0;">{{triptype}}</td>
+          </tr>
+          {{/if}}
+          {{#if travelDate}}
+          <tr>
+            <td style="padding: 8px 0; font-weight: bold;">Travel Date/Month:</td>
+            <td style="padding: 8px 0;">{{travelDate}}</td>
+          </tr>
+          {{/if}}
+          {{#if budget}}
+          <tr>
+            <td style="padding: 8px 0; font-weight: bold;">Expected Budget:</td>
+            <td style="padding: 8px 0;">₹{{budget}}</td>
+          </tr>
+          {{/if}}
+          {{#if details}}
+          <tr>
+            <td style="padding: 8px 0; font-weight: bold;">Additional Details:</td>
+            <td style="padding: 8px 0;">{{details}}</td>
+          </tr>
+          {{/if}}
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td style="background-color: #f8f9fa; padding: 15px; text-align: center; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
+        <p style="color: #6c757d; font-size: 12px; margin: 0;">Contact us at <a href="mailto:Dejavuoutdoors@Gmail.Com" style="color: #0d6efd; text-decoration: none;">Dejavuoutdoors@Gmail.Com</a> or +91 85111 77891</p>
+        <p style="color: #6c757d; font-size: 12px; margin: 5px 0 0;">11, Patelkunj, Maninagar East, Ahmedabad, India</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
