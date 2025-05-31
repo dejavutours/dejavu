@@ -2156,9 +2156,10 @@ exports.getTripDetialbyName = async (req, res, next) => {
           $or: departureCities.map(({ City, State }) => ({
             name: { $regex: new RegExp(`^${City}$`, "i") },
             state: { $regex: new RegExp(`^${State}$`, "i") },
+            isDeleted: false
           })),
         },
-        { image: 1, name: 1, state: 1 }
+        { image: 1, name: 1, state: 1 },
       );
     }
 

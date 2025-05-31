@@ -2,18 +2,20 @@ const City = require("../models/citymst");
 const path = require("path");
 const fs = require("fs");
 
-// Get all cities
+// Get all cities, sorted by displayOrder
 exports.getCities = async (req, res) => {
   try {
-    const cities = await City.find({ isDeleted: false });
+    const cities = await City.find({ isDeleted: false }).sort({
+      displayOrder: 1,
+    });
     const stateCities = require("../json/statecities.json");
-    res.render("pages/cities", {
+    res.render("pages/admin/cities", {
       cities,
       stateCities,
       csrfToken: req.csrfToken(),
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error retrieving cities:", error);
     res.status(500).send("Error retrieving cities.");
   }
 };
@@ -21,13 +23,15 @@ exports.getCities = async (req, res) => {
 // API to fetch all active cities (for dropdown)
 exports.getCityList = async (req, res) => {
   try {
-    const cities = await City.find({ isDeleted: false, isActive: true }).select(
-      "name state image cityId"
-    );
+    const cities = await City.find({ isDeleted: false, isActive: true })
+      .select("name state image cityId")
+      .sort({ displayOrder: 1 });
     res.json({ success: true, cities });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Error retrieving cities." });
+    console.error("Error retrieving city list:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Error retrieving cities." });
   }
 };
 
@@ -35,59 +39,95 @@ exports.getCityList = async (req, res) => {
 exports.upsertCity = async (req, res) => {
   try {
     const { id, name, state, oldImage } = req.body;
-    let imagePath = oldImage || "/images/cities/default.jpg";
+    let imagePath = oldImage && oldImage !== "" ? oldImage : null;
 
     // Handle image upload
     if (req.file) {
       imagePath = `/images/cities/${req.file.filename}`;
-
-      // If updating and old image exists, delete the old image
-      if (id && oldImage && oldImage !== "/images/cities/default.jpg") {
+      if (id && oldImage && oldImage !== "") {
         const oldImagePath = path.join(__dirname, "..", "public", oldImage);
         if (fs.existsSync(oldImagePath)) {
           fs.unlinkSync(oldImagePath);
         }
       }
+    } else if (!id && !imagePath) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "An image is required for new cities.",
+        });
     }
 
     if (!name || !state) {
-      return res.status(400).send("Name and state are required.");
+      return res
+        .status(400)
+        .json({ success: false, message: "Name and state are required." });
     }
 
     if (id) {
       // Update existing city
       const city = await City.findById(id);
-      if (!city) return res.status(404).send("City not found.");
+      if (!city)
+        return res
+          .status(404)
+          .json({ success: false, message: "City not found." });
 
-      const duplicate = await City.findOne({ name, state, _id: { $ne: id } });
-      if (duplicate) return res.status(400).send("City already exists in this state.");
+      const duplicate = await City.findOne({ name, state, _id: { $ne: id }, isDeleted: false });
+      if (duplicate)
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: "City already exists in this state.",
+          });
 
       city.name = name;
       city.state = state;
-      city.image = imagePath;
+      if (imagePath) city.image = imagePath; // Only update image if new imagePath is provided
       await city.save();
     } else {
       // Add new city
-      const existingCity = await City.findOne({ name, state });
-      if (existingCity) return res.status(400).send("City already exists in this state.");
+      const existingCity = await City.findOne({ name, state, isDeleted: false});
+      if (existingCity)
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: "City already exists in this state.",
+          });
 
-      const newCity = new City({ name, state, image: imagePath });
+      const maxOrder = await City.find().sort({ displayOrder: -1 }).limit(1);
+      const newOrder = maxOrder.length > 0 ? maxOrder[0].displayOrder + 1 : 0;
+
+      const newCity = new City({
+        name,
+        state,
+        image: imagePath,
+        displayOrder: newOrder,
+      });
       await newCity.save();
     }
 
-    res.redirect("/cities");
+    res.json({
+      success: true,
+      message: id ? "City updated successfully." : "City added successfully.",
+    });
   } catch (error) {
     console.error("Error in upsertCity:", error);
-    res.status(500).send("Error processing city.");
+    res.status(500).json({ success: false, message: "Error processing city." });
   }
 };
 
-// Delete city
+// Delete city (soft delete) with displayOrder update
 exports.deleteCity = async (req, res) => {
   try {
     const { id } = req.params;
     const city = await City.findById(id);
-    if (!city) return res.status(404).send("City not found.");
+    if (!city)
+      return res
+        .status(404)
+        .json({ success: false, message: "City not found." });
 
     // Delete the image file if it exists
     if (city.image && city.image !== "/images/cities/default.jpg") {
@@ -97,31 +137,49 @@ exports.deleteCity = async (req, res) => {
       }
     }
 
+    // Soft delete the city
     await City.findByIdAndUpdate(id, { isDeleted: true });
-    res.redirect("/cities");
+
+    // Reorder remaining cities
+    const remainingCities = await City.find({ isDeleted: false }).sort({
+      displayOrder: 1,
+    });
+    for (let i = 0; i < remainingCities.length; i++) {
+      remainingCities[i].displayOrder = i;
+      await remainingCities[i].save();
+    }
+
+    res.json({ success: true, message: "City deleted successfully." });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Error deleting city.");
+    console.error("Error deleting city:", error);
+    res.status(500).json({ success: false, message: "Error deleting city." });
   }
 };
 
+// Update city display order
+exports.updateCityOrder = async (req, res) => {
+  try {
+    const { order } = req.body; // Array of city IDs in new order
+    if (!Array.isArray(order)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid order data." });
+    }
 
-// async function migrateCityImages() {
-//   const cities = await City.find();
-//   for (const city of cities) {
-//     if (city.image && city.image !== "/images/cities/default.jpg") {
-//       const oldImagePath = path.join(__dirname, "public", city.image);
-//       const filename = path.basename(city.image);
-//       const newImagePath = path.join(__dirname, "public", "images", "cities", filename);
+    // Update displayOrder for each city
+    for (let i = 0; i < order.length; i++) {
+      await City.findByIdAndUpdate(
+        order[i],
+        { displayOrder: i },
+        { new: true }
+      );
+    }
 
-//       if (fs.existsSync(oldImagePath)) {
-//         fs.renameSync(oldImagePath, newImagePath);
-//         city.image = `/images/cities/${filename}`;
-//         await city.save();
-//       }
-//     }
-//   }
-//   console.log("Migration completed.");
-// }
-
-// migrateCityImages();
+    res.json({ success: true, message: "City order updated successfully." });
+  } catch (error) {
+    console.error("Error updating city order:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Error updating city order." });
+  }
+};

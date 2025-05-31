@@ -1,5 +1,8 @@
 <style>
   /* Scoped styles for header search bar */
+  .navbar-brand img{
+    height: 50px !important;
+  }
   .navbar .search-bar {
     margin-left: 0.75rem;
     margin-right: 0.75rem;
@@ -137,7 +140,6 @@
                 <% if(profile?.email===process.env.GMAIL_ADMIN) { %>
                 <li><a class="dropdown-item" href="/admin/login" target="_blank">Admin</a></li>
                 <li><a class="dropdown-item" href="/admin/bookings" target="_blank">Bookings</a></li>
-                <li><a class="dropdown-item" href="/admin/tours" target="_blank">Trips Management (WIP)</a></li>
                 <li><a class="dropdown-item" href="/admin/addtours" target="_blank">Add Tours</a></li>
                 <li><a class="dropdown-item" href="/cities" target="_blank">Add Cities</a></li>
                 <% } %>

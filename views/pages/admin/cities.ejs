@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - City Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Scoped styles for City Management with cm- prefix */
+    .cm-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
+    }
+
+    .cm-tabs {
+      display: flex;
+      border-bottom: 2px solid #d1d5db;
+      margin-bottom: 1rem;
+    }
+
+    .cm-tab {
+      padding: 0.5rem 1rem;
+      color: #4b5563;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .cm-tab:hover {
+      color: #1d4ed8;
+    }
+
+    .cm-tab.active {
+      border-bottom: 3px solid #1d4ed8;
+      color: #1d4ed8;
+    }
+
+    .cm-form-container {
+      background: #ffffff;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .cm-form-container.collapsed {
+      height: 2.5rem;
+    }
+
+    .cm-form-toggle {
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      background: linear-gradient(to right, #1d4ed8, #3b82f6);
+      color: white;
+      font-weight: 600;
+      border-radius: 0.75rem 0.75rem 0 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .cm-form {
+      padding: 1rem;
+    }
+
+    .cm-card {
+      background: #ffffff;
+      border-radius: 0.75rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: move;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+
+    .cm-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .cm-card img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .cm-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      max-height: 65vh;
+      overflow-y: auto;
+      padding: 0.75rem;
+      background: #f3f4f6;
+      border-radius: 0.75rem;
+    }
+
+    .cm-actions {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .cm-card:hover .cm-actions {
+      opacity: 1;
+    }
+
+    .select2-container--default .select2-selection--single {
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      padding: 0.25rem;
+      background: #ffffff;
+      height: 2.25rem;
+    }
+
+    .cm-toast {
+      z-index: 10000 !important;
+    }
+
+    .cm-filter-bar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      align-items: center;
+      flex-wrap: nowrap;
+    }
+
+    .cm-filter-bar .filter-item {
+      flex: 1;
+      min-width: 150px;
+      max-width: 250px;
+    }
+
+    .cm-loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .cm-loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #1d4ed8;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      animation: cm-spin 1s linear infinite;
+    }
+
+    .cm-crop-modal .modal-content {
+      border-radius: 0.75rem;
+      overflow: hidden;
+    }
+
+    .cm-crop-modal select#cmCropRatio {
+      width: 100%;
+      max-width: 200px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .cm-crop-image {
+      max-width: 100%;
+      max-height: 50vh;
+    }
+
+    .cm-order-input.error {
+      border-color: #EF4444;
+      background-color: #FEE2E2;
+    }
+
+    @keyframes cm-spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      .cm-card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cm-form .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cm-tabs {
+        flex-wrap: wrap;
+      }
+
+      .cm-tab {
+        flex: 1 1 auto;
+        text-align: center;
+      }
+
+      .cm-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    /* Animations */
+    @keyframes cm-fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+  <%- include('../../partials/headtag'); %>
+</head>
+
+<body class="bg-gray-100">
+  <%- include('../../partials/header'); %>
+  <div class="cm-container">
+    <!-- Loading Overlay -->
+    <div class="cm-loading" id="cmLoadingOverlay">
+      <div class="cm-loading-spinner"></div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="cm-tabs">
+      <div class="cm-tab active" data-tab="cities">City Management</div>
+      <div class="cm-tab" data-tab="banners">Banner Management</div>
+      <div class="cm-tab" data-tab="trips">Trip Management</div>
+      <div class="cm-tab" data-tab="states">State Management</div>
+    </div>
+
+    <!-- City Management Tab Content -->
+    <div id="cities-tab" class="cm-tab-content">
+      <!-- Add/Update Form -->
+      <div class="cm-form-container collapsed" id="cmCityFormContainer">
+        <div class="cm-form-toggle" id="cmFormToggle">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Show Form
+        </div>
+        <form id="cmCityForm" action="/cities" method="POST" enctype="multipart/form-data" class="cm-form space-y-4">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <input type="hidden" id="cmCityId" name="id" />
+          <input type="hidden" id="cmOldImage" name="oldImage" />
+
+          <div class="space-y-2">
+            <div>
+              <label for="cmState" class="block text-sm font-semibold text-gray-700">State</label>
+              <select class="select2 w-full" id="cmState" name="state" required>
+                <option value="">Select State</option>
+              </select>
+           
+              <label for="cmCityName" class="block text-sm font-semibold text-gray-700">City</label>
+              <select class="select2 w-full" id="cmCityName" name="name" required>
+                <option value="">Select City</option>
+              </select>
+            </div>
+            <div>
+              <label for="cmImage" class="block text-sm font-semibold text-gray-700">City Image</label>
+              <div class="flex items-center space-x-3">
+                <input type="file" class="flex-1 border border-gray-300 rounded-md p-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" id="cmImage" name="image" accept="image/*" />
+                <img id="cmImagePreview" src="" alt="Preview" class="w-16 h-16 object-cover rounded-md border border-gray-200 cursor-pointer" onclick="$('#cmPreviewModalImg').attr('src', this.src); $('#cmPreviewModal').modal('show');" />
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end space-x-2">
+            <button type="button" id="cmCancelBtn" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm font-medium hidden">Cancel</button>
+            <button type="submit" id="cmSubmitBtn" class="px-4 py-1.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 text-sm font-medium">Add City</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Filter and Search Bar -->
+      <div class="cm-filter-bar">
+        <div class="filter-item">
+          <div class="relative">
+            <input type="text" id="cmSearchInput" class="w-full border border-gray-300 rounded-md pl-8 pr-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search cities...">
+            <svg class="absolute left-2.5 top-2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+        <div class="filter-item">
+          <select class="select2 w-full" id="cmStateFilter">
+            <option value="">All States</option>
+          </select>
+        </div>
+        <button id="cmBulkDeleteBtn" class="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium hidden">Delete Selected</button>
+      </div>
+
+      <!-- City Cards -->
+      <div class="cm-card-grid" id="cmCityGrid"></div>
+      <div class="flex justify-end mt-3">
+        <button id="cmSaveOrderBtn" class="px-4 py-1.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-md hover:from-green-700 hover:to-green-800 text-sm font-medium hidden">Save Order</button>
+      </div>
+    </div>
+
+    <!-- Placeholder Tab Contents -->
+    <div id="banners-tab" class="cm-tab-content hidden">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Banner Management</h2>
+      <p class="text-gray-600">Banner management functionality coming soon...</p>
+    </div>
+    <div id="trips-tab" class="cm-tab-content hidden">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Trip Management</h2>
+      <p class="text-gray-600">Trip management functionality coming soon...</p>
+    </div>
+    <div id="states-tab" class="cm-tab-content hidden">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">State Management</h2>
+      <p class="text-gray-600">State management functionality coming soon...</p>
+    </div>
+  </div>
+
+  <!-- Image Preview Modal -->
+  <div class="modal fade" id="cmPreviewModal" tabindex="-1" aria-labelledby="cmPreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-base font-semibold">Image Preview</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <img id="cmPreviewModalImg" src="#" class="max-h-[60vh] w-auto mx-auto transform transition-transform duration-200 hover:scale-105" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="cmDeleteConfirmModal" tabindex="-1" aria-labelledby="cmDeleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-base font-semibold">Confirm Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-sm">
+          Are you sure you want to delete the selected city(ies)?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" id="cmConfirmDeleteBtn" class="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crop Image Modal -->
+  <div class="modal fade cm-crop-modal" id="cmCropModal" tabindex="-1" aria-labelledby="cmCropModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-base font-semibold" id="cmCropModalLabel">Crop Image</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <div class="mt-2 mb-4">
+            <label for="cmCropRatio" class="block text-sm font-semibold text-gray-700">Crop Ratio</label>
+            <select id="cmCropRatio" name="cropMode" class="border border-gray-300 rounded-md p-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="1" selected>1:1 (Square)</option>
+              <option value="1.333">4:3</option>
+              <option value="1.777">16:9</option>
+              <option value="free">Free Crop</option>
+            </select>
+          </div>
+          <img id="cmCropImage" class="cm-crop-image" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" id="cmCropConfirmBtn" class="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm">Crop & Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../../partials/footer'); %>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
+  <script>
+    // Initialize state
+    let cities = <%- JSON.stringify(cities) %>;
+    let filteredCities = [...cities];
+    let selectedCities = [];
+    let cropper = null;
+
+    // Initialize Select2 for dropdowns
+    $(document).ready(function() {
+      $(".select2").select2({
+        placeholder: "Select an option",
+        allowClear: true,
+        width: '100%'
+      });
+
+      // Populate state dropdowns
+      const stateCities = <%- JSON.stringify(stateCities) %>;
+      const stateDropdown = $('#cmState');
+      const stateFilter = $('#cmStateFilter');
+      Object.keys(stateCities).forEach(state => {
+        stateDropdown.append(`<option value="${state}">${state}</option>`);
+        stateFilter.append(`<option value="${state}">${state}</option>`);
+      });
+
+      // Update city dropdown based on state selection
+      $('#cmState').on('change', function() {
+        const selectedState = $(this).val();
+        const cityDropdown = $('#cmCityName');
+        cityDropdown.empty().append('<option value="">Select City</option>');
+        if (selectedState && stateCities[selectedState]) {
+          stateCities[selectedState].forEach(city => {
+            cityDropdown.append(`<option value="${city}">${city}</option>`);
+          });
+        }
+        cityDropdown.select2();
+        updateImagePreview();
+      });
+
+      // Auto-update image preview on city selection
+      $('#cmCityName').on('change', updateImagePreview);
+
+      function updateImagePreview() {
+  const selectedState = $('#cmState').val();
+  const selectedCity = $('#cmCityName').val();
+  if (selectedState && selectedCity) {
+    const city = cities.find(c => c.state === selectedState && c.name === selectedCity);
+    if (city && city.image) {
+      $('#cmImagePreview').attr('src', city.image).show();
+      $('#cmOldImage').val(city.image);
+    } else {
+      $('#cmImagePreview').attr('src', '').hide();
+      $('#cmOldImage').val('');
+    }
+  } else {
+    $('#cmImagePreview').attr('src', '').hide();
+    $('#cmOldImage').val('');
+  }
+}
+
+      $('#cmCityForm').on('submit', function(e) {
+        e.preventDefault();
+
+        // Validate image for new cities
+        const id = $('#cmCityId').val();
+        const hasImage = $('#cmImage')[0].files.length > 0 || $('#cmOldImage').val();
+        if (!id && !$('#cmImage')[0].files.length) {
+          $('#cmLoadingOverlay').hide();
+          Toastify({
+            text: 'An image is required for new cities.',
+            className: 'cm-toast',
+            style: {
+              background: '#F59E0B'
+            },
+            duration: 3000
+          }).showToast();
+          return;
+        }
+
+        $('#cmLoadingOverlay').show();
+        const formData = new FormData(this);
+
+        // Explicitly append the image if a new one was cropped
+        if ($('#cmImage')[0].files.length > 0) {
+          formData.set('image', $('#cmImage')[0].files[0]); // Use set to ensure only one image is sent
+        } else if ($('#cmOldImage').val() && id) {
+          formData.set('oldImage', $('#cmOldImage').val()); // Only include oldImage for updates with no new image
+        }
+
+        $.ajax({
+          url: '/cities',
+          method: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(response) {
+            $('#cmLoadingOverlay').hide();
+            if (response.success) {
+              Toastify({
+                text: response.message,
+                className: 'cm-toast',
+                style: {
+                  background: '#10B981'
+                },
+                duration: 3000
+              }).showToast();
+              setTimeout(() => location.reload(), 1000);
+            } else {
+              Toastify({
+                text: response.message || 'Failed to process city.',
+                className: 'cm-toast',
+                style: {
+                  background: '#EF4444'
+                },
+                duration: 3000
+              }).showToast();
+            }
+          },
+          error: function(xhr) {
+            $('#cmLoadingOverlay').hide();
+            const message = xhr.responseJSON?.message || 'Error processing request.';
+            Toastify({
+              text: message,
+              className: 'cm-toast',
+              style: {
+                background: '#EF4444'
+              },
+              duration: 3000
+            }).showToast();
+          }
+        });
+      });
+      // Delete city with AJAX
+      $(document).on('submit', '.cm-delete-form', function(e) {
+        e.preventDefault();
+        const form = $(this);
+        $('#cmDeleteConfirmModal').modal('show');
+        $('#cmConfirmDeleteBtn').off('click').on('click', function() {
+          $('#cmLoadingOverlay').show();
+          $.ajax({
+            url: form.attr('action'),
+            method: 'POST',
+            data: form.serialize(),
+            success: function(response) {
+              $('#cmLoadingOverlay').hide();
+              $('#cmDeleteConfirmModal').modal('hide');
+              if (response.success) {
+                Toastify({
+                  text: response.message,
+                  className: 'cm-toast',
+                  style: {
+                    background: '#10B981'
+                  },
+                  duration: 3000
+                }).showToast();
+                setTimeout(() => location.reload(), 1000);
+              } else {
+                Toastify({
+                  text: response.message || 'Failed to delete city.',
+                  className: 'cm-toast',
+                  style: {
+                    background: '#EF4444'
+                  },
+                  duration: 3000
+                }).showToast();
+              }
+            },
+            error: function() {
+              $('#cmLoadingOverlay').hide();
+              $('#cmDeleteConfirmModal').modal('hide');
+              Toastify({
+                text: 'Error deleting city.',
+                className: 'cm-toast',
+                style: {
+                  background: '#EF4444'
+                },
+                duration: 3000
+              }).showToast();
+            }
+          });
+        });
+      });
+
+      // Bulk delete
+      $('#cmBulkDeleteBtn').on('click', function() {
+        if (selectedCities.length === 0) {
+          Toastify({
+            text: 'No cities selected.',
+            className: 'cm-toast',
+            style: {
+              background: '#F59E0B'
+            },
+            duration: 3000
+          }).showToast();
+          return;
+        }
+        $('#cmDeleteConfirmModal').modal('show');
+        $('#cmConfirmDeleteBtn').off('click').on('click', function() {
+          $('#cmLoadingOverlay').show();
+          const promises = selectedCities.map(id => {
+            return $.ajax({
+              url: `/cities/delete/${id}`,
+              method: 'POST',
+              data: {
+                _csrf: '<%= csrfToken %>'
+              }
+            });
+          });
+          Promise.all(promises)
+            .then(responses => {
+              $('#cmLoadingOverlay').hide();
+              $('#cmDeleteConfirmModal').modal('hide');
+              if (responses.every(res => res.success)) {
+                Toastify({
+                  text: 'Selected cities deleted successfully.',
+                  className: 'cm-toast',
+                  style: {
+                    background: '#10B981'
+                  },
+                  duration: 3000
+                }).showToast();
+                setTimeout(() => location.reload(), 1000);
+              } else {
+                Toastify({
+                  text: 'Failed to delete some cities.',
+                  className: 'cm-toast',
+                  style: {
+                    background: '#EF4444'
+                  },
+                  duration: 3000
+                }).showToast();
+              }
+            })
+            .catch(() => {
+              $('#cmLoadingOverlay').hide();
+              $('#cmDeleteConfirmModal').modal('hide');
+              Toastify({
+                text: 'Error deleting cities.',
+                className: 'cm-toast',
+                style: {
+                  background: '#EF4444'
+                },
+                duration: 3000
+              }).showToast();
+            });
+        });
+      });
+
+      // Initialize drag-and-drop
+      const cityGrid = document.getElementById('cmCityGrid');
+      let orderChanged = false;
+      Sortable.create(cityGrid, {
+        animation: 150,
+        handle: '.cm-card',
+        touchStartThreshold: 5,
+        onEnd: function(evt) {
+          orderChanged = true;
+          $('#cmSaveOrderBtn').removeClass('hidden');
+          updateOrderInputs();
+        }
+      });
+
+      // Save order with duplicate check
+      $('#cmSaveOrderBtn').on('click', function() {
+        if (checkDuplicateOrders()) {
+          Toastify({
+            text: 'Duplicate display orders detected. Please fix before saving.',
+            className: 'cm-toast',
+            style: {
+              background: '#F59E0B'
+            },
+            duration: 3000
+          }).showToast();
+          return;
+        }
+        const newOrder = Array.from(cityGrid.children).map(card => card.dataset.id);
+        $('#cmLoadingOverlay').show();
+        $.ajax({
+          url: '/cities/update-order',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            _csrf: '<%= csrfToken %>',
+            order: newOrder
+          }),
+          success: function(response) {
+            $('#cmLoadingOverlay').hide();
+            if (response.success) {
+              Toastify({
+                text: response.message,
+                className: 'cm-toast',
+                style: {
+                  background: '#10B981'
+                },
+                duration: 3000
+              }).showToast();
+              orderChanged = false;
+              $('#cmSaveOrderBtn').addClass('hidden');
+              const orderedCities = [];
+              newOrder.forEach(id => {
+                const city = cities.find(c => c._id === id);
+                if (city) orderedCities.push(city);
+              });
+              cities = orderedCities;
+              filteredCities = [...cities];
+              renderCities();
+            } else {
+              Toastify({
+                text: response.message || 'Failed to update city order.',
+                className: 'cm-toast',
+                style: {
+                  background: '#EF4444'
+                },
+                duration: 3000
+              }).showToast();
+            }
+          },
+          error: function(xhr) {
+            $('#cmLoadingOverlay').hide();
+            const message = xhr.responseJSON?.message || 'Error updating city order.';
+            Toastify({
+              text: message,
+              className: 'cm-toast',
+              style: {
+                background: '#EF4444'
+              },
+              duration: 3000
+            }).showToast();
+          }
+        });
+      });
+
+      // Client-side search and filter
+      let searchTimeout;
+
+      function applyFilters() {
+        const searchTerm = $('#cmSearchInput').val().toLowerCase();
+        const selectedState = $('#cmStateFilter').val();
+        filteredCities = cities.filter(city => {
+          const matchesSearch = city.name.toLowerCase().includes(searchTerm) || city.state.toLowerCase().includes(searchTerm);
+          const matchesState = !selectedState || city.state === selectedState;
+          return matchesSearch && matchesState;
+        });
+        renderCities();
+      }
+
+      $('#cmSearchInput').on('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(applyFilters, 300);
+      });
+
+      $('#cmStateFilter').on('change', applyFilters);
+
+      // Render cities
+      function renderCities() {
+        const cityGrid = $('#cmCityGrid');
+        cityGrid.empty();
+        filteredCities.forEach(city => {
+          const card = `
+            <div class="cm-card" data-id="${city._id}">
+              <input type="checkbox" class="cm-checkbox absolute top-2 left-2" data-id="${city._id}" />
+              <img src="${city.image}" alt="${city.name}" class="cm-card-img lazy" data-src="${city.image}" />
+              <h4 class="text-base font-semibold text-gray-800">${city.name}</h4>
+              <p class="text-xs text-gray-600">${city.state}</p>
+              <div class="cm-actions">
+                <input type="number" class="cm-order-input w-12 border border-gray-300 rounded-md p-0.5 text-xs" value="${city.displayOrder || 0}" min="0" data-id="${city._id}" />
+                <button class="px-1.5 py-0.5 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 text-xs" onclick="editCity('${city._id}', '${city.name}', '${city.state}', '${city.image}')">Edit</button>
+                <form action="/cities/delete/${city._id}" method="POST" class="d-inline cm-delete-form">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                  <button type="submit" class="px-1.5 py-0.5 bg-red-500 text-white rounded-md hover:bg-red-600 text-xs">Delete</button>
+                </form>
+              </div>
+            </div>
+          `;
+          cityGrid.append(card);
+        });
+
+        // Lazy load images
+        $('.lazy').each(function() {
+          const img = $(this);
+          if (img[0].getBoundingClientRect().top < window.innerHeight) {
+            img.attr('src', img.data('src')).removeClass('lazy');
+          }
+        });
+
+        $('#cmBulkDeleteBtn').toggle(selectedCities.length > 0);
+        checkDuplicateOrders();
+      }
+
+      // Check for duplicate display orders
+      function checkDuplicateOrders() {
+        const orderInputs = $('.cm-order-input');
+        const orderValues = {};
+        let hasDuplicates = false;
+        orderInputs.each(function() {
+          const value = parseInt($(this).val()) || 0;
+          if (orderValues[value]) {
+            $(this).addClass('error');
+            hasDuplicates = true;
+          } else {
+            $(this).removeClass('error');
+            orderValues[value] = true;
+          }
+        });
+        return hasDuplicates;
+      }
+
+      // Update order inputs after drag
+      function updateOrderInputs() {
+        const cards = Array.from(cityGrid.children);
+        cards.forEach((card, index) => {
+          const id = card.dataset.id;
+          const input = $(card).find('.cm-order-input');
+          input.val(index);
+          const city = cities.find(c => c._id === id);
+          if (city) city.displayOrder = index;
+        });
+        checkDuplicateOrders();
+      }
+
+      // Checkbox selection
+      $(document).on('change', '.cm-checkbox', function() {
+        const id = $(this).data('id');
+        if ($(this).is(':checked')) {
+          selectedCities.push(id);
+        } else {
+          selectedCities = selectedCities.filter(cid => cid !== id);
+        }
+        $('#cmBulkDeleteBtn').toggle(selectedCities.length > 0);
+      });
+
+      // Inline order update
+      $(document).on('change', '.cm-order-input', function() {
+        const id = $(this).data('id');
+        const newOrder = parseInt($(this).val()) || 0;
+        orderChanged = true;
+        $('#cmSaveOrderBtn').removeClass('hidden');
+        const city = cities.find(c => c._id === id);
+        if (city) city.displayOrder = newOrder;
+        renderCities();
+      });
+
+      // Edit city
+      window.editCity = function(id, name, state, image) {
+        $('#cmCityId').val(id);
+        $('#cmState').val(state).trigger('change');
+        $('#cmImagePreview').attr('src', image);
+        $('#cmOldImage').val(image);
+        $('#cmSubmitBtn').text('Update City').removeClass('from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800').addClass('from-green-600 to-green-700 hover:from-green-700 hover:to-green-800');
+        $('#cmCancelBtn').removeClass('hidden');
+        $('#cmCityFormContainer').removeClass('collapsed');
+        $('#cmFormToggle').text('Hide Form');
+        setTimeout(() => {
+          if ($('#cmCityName option[value="' + name + '"]').length > 0) {
+            $('#cmCityName').val(name).trigger('change');
+          } else {
+            Toastify({
+              text: 'City not found in dropdown, please check state selection.',
+              className: 'cm-toast',
+              style: {
+                background: '#F59E0B'
+              },
+              duration: 3000
+            }).showToast();
+          }
+        }, 500);
+      };
+
+      // Cancel edit
+      $('#cmCancelBtn').on('click', function() {
+        $('#cmCityForm')[0].reset();
+        $('#cmState').val('').trigger('change');
+        $('#cmCityName').val('').trigger('change');
+        $('#cmCityId').val('');
+        $('#cmOldImage').val('');
+        $('#cmImagePreview').attr('src');
+        $('#cmSubmitBtn').text('Add City').removeClass('from-green-600 to-green-700 hover:from-green-700 hover:to-green-800').addClass('from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800');
+        $('#cmCancelBtn').addClass('hidden');
+        $('#cmCityFormContainer').addClass('collapsed');
+        $('#cmFormToggle').text('Show Form');
+      });
+
+      // Image crop handling
+      $('#cmImage').on('change', function(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      $('#cmCropImage').attr('src', e.target.result);
+      $('#cmCropModal').modal('show');
+      setTimeout(() => {
+        if (cropper) cropper.destroy();
+        const cropMode = $('#cmCropRatio').val() || '1'; // Default to 1:1
+        const aspectRatio = cropMode === 'free' ? NaN : parseFloat(cropMode);
+        cropper = new Cropper(document.getElementById('cmCropImage'), {
+          aspectRatio: aspectRatio,
+          viewMode: 1,
+          autoCropArea: 0.8,
+          responsive: true
+        });
+      }, 200);
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+      $('#cmCropRatio').on('change', function() {
+        if (cropper) {
+          cropper.destroy();
+          const cropMode = $(this).val();
+          const aspectRatio = cropMode === 'free' ? NaN : parseFloat(cropMode);
+          cropper = new Cropper(document.getElementById('cmCropImage'), {
+            aspectRatio: aspectRatio,
+            viewMode: 1,
+            autoCropArea: 0.8,
+            responsive: true
+          });
+        }
+      });
+
+      $('#cmCropConfirmBtn').on('click', function() {
+  if (cropper) {
+    cropper.getCroppedCanvas({
+      width: 300,
+      height: 300
+    }).toBlob(function(blob) {
+      const url = URL.createObjectURL(blob);
+      $('#cmImagePreview').attr('src', url).show(); // Ensure preview is visible
+      const file = new File([blob], `cropped-image-${Date.now()}.jpg`, {
+        type: 'image/jpeg'
+      });
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      $('#cmImage')[0].files = dataTransfer.files; // Set the cropped image to the input
+      $('#cmOldImage').val(''); // Clear oldImage to ensure new image takes precedence
+      $('#cmCropModal').modal('hide');
+      cropper.destroy();
+      cropper = null;
+    }, 'image/jpeg', 0.8); // Added quality parameter for better compression
+  }
+});
+
+      $('#cmCropModal').on('hidden.bs.modal', function() {
+        if (cropper) {
+          cropper.destroy();
+          cropper = null;
+        }
+        // $('#cmImage').val('');
+      });
+
+      // Form toggle
+      $('#cmFormToggle').on('click', function() {
+        $('#cmCityFormContainer').toggleClass('collapsed');
+        $(this).text($('#cmCityFormContainer').hasClass('collapsed') ? 'Show Form' : 'Hide Form');
+      });
+
+      // Tab switching
+      $('.cm-tab').on('click', function() {
+        $('.cm-tab').removeClass('active');
+        $(this).addClass('active');
+        $('.cm-tab-content').addClass('hidden');
+        $(`#${$(this).data('tab')}-tab`).removeClass('hidden');
+      });
+
+      // Lazy load images on scroll
+      $(window).on('scroll', function() {
+        $('.lazy').each(function() {
+          const img = $(this);
+          if (img[0].getBoundingClientRect().top < window.innerHeight) {
+            img.attr('src', img.data('src')).removeClass('lazy');
+          }
+        });
+      });
+
+      // Initial render
+      renderCities();
+    });
+  </script>
+</body>
+
+</html>

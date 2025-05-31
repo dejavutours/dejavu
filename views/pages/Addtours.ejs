@@ -2073,11 +2073,11 @@
         const contentIsEmpty = !description || description === "<p><br></p>";
 
         if (!header) {
-          validationErrors.push(`Itinerary Day ${day.dataset.day}: Header is required.`);
-          day.querySelector(".itinerary-header").classList.add("is-invalid");
+          // validationErrors.push(`Itinerary Day ${day.dataset.day}: Header is required.`);
+          // day.querySelector(".itinerary-header").classList.add("is-invalid");
         }
         if (contentIsEmpty) {
-          validationErrors.push(`Itinerary Day ${day.dataset.day}: Description is required.`);
+          // validationErrors.push(`Itinerary Day ${day.dataset.day}: Description is required.`);
         }
 
         return {
