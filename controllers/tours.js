@@ -46,9 +46,12 @@ const AWS = require("aws-sdk");
 const jwt = require("jsonwebtoken");
 
 const City = require("../models/citymst");
+const Statemst = require("../models/statemst");
+const bannerImg = require("../models/bannerImg");
+const Category = require("../models/categorymst");
 
-const Joi = require('joi');
-const customTrip = require('../models/customTripSchema');
+const Joi = require("joi");
+const customTrip = require("../models/customTripSchema");
 
 const config = require("../json/statecities.json"); // Load state and city configuration
 
@@ -74,293 +77,394 @@ var transporter = nodemailer.createTransport({
 
 // send all the require detail to main index page of the user
 exports.getIndexPage = async (req, res, next) => {
-  const tests = await NewTours.find().distinct("name");
-  const response = await this.getFiltertourAPIUseOnly(req, res, true);
+  try {
+    const tests = await NewTours.find().distinct("name");
+    const response = await this.getFiltertourAPIUseOnly(req, res, true);
 
-  // Function to get state-wise trips (unchanged)
-  async function getStateWiseTrips() {
-    const validStatesRaw = await NewTours.aggregate([
-      {
-        $match: {
-          isActive: true,
-          state: { $exists: true, $ne: null, $ne: "" },
-        },
-      },
-      {
-        $project: {
-          normalizedState: {
-            $toUpper: { $trim: { input: "$state" } },
+    // Function to get state-wise trips
+    async function getStateWiseTrips() {
+      // Fetch active, non-deleted states from Statemst
+      const states = await Statemst.find({ isActive: true, isDeleted: false })
+        .select("name image displayOrder")
+        .lean(); // Use lean for performance
+
+      // Aggregate trip counts from NewTours
+      const validStatesRaw = await NewTours.aggregate([
+        {
+          $match: {
+            isActive: true,
+            state: { $exists: true, $ne: null, $ne: "" },
           },
         },
-      },
-      {
-        $group: {
-          _id: "$normalizedState",
-          count: { $sum: 1 },
+        {
+          $group: {
+            _id: { $toUpper: { $trim: { input: "$state" } } },
+            count: { $sum: 1 },
+          },
         },
-      },
-    ]);
+      ]);
 
-    const validStates = validStatesRaw.map((stateDoc) => {
-      const stateName = stateDoc._id;
-      const imageFile = stateName.toLowerCase().replace(/\s+/g, "") + ".jpg";
-      return {
-        name: stateName,
-        place: stateDoc.count,
-        thumb: `/img/State/${imageFile}`,
+      // Create a map of master states for quick lookup
+      const stateMap = new Map(states.map((s) => [s.name.toUpperCase(), s]));
+
+      // Include all states from NewTours, merging with master data when available
+      const validStates = validStatesRaw.map((stateDoc) => {
+        const stateName = stateDoc._id;
+        const imageFile = stateName.toLowerCase().replace(/\s+/g, "") + ".jpg";
+        const masterState = stateMap.get(stateName);
+        return {
+          name: stateName,
+          place: stateDoc.count,
+          thumb: masterState?.image || `/img/State/${imageFile}`,
+          displayOrder: masterState?.displayOrder ?? Number.MAX_SAFE_INTEGER, // High value for unmatched states
+        };
+      });
+
+      // Sort by displayOrder, then by trip count for unmatched states
+      validStates.sort((a, b) => {
+        if (a.displayOrder === b.displayOrder) {
+          return b.place - a.place; // Sort by trip count if displayOrder is equal
+        }
+        return a.displayOrder - b.displayOrder;
+      });
+
+      return validStates;
+    }
+
+    // Function to get category-wise trips
+    async function getCategoryWiseTrips() {
+      const categoryImages = {
+        Adventure: "Adventure.jpg",
+        Backpacking: "backpacking.jpg",
+        Beach: "beach.jpg",
+        Camping: "camping.jpg",
+        Couple: "Couple.jpg",
+        Group: "group.jpg",
+        Heritage: "heritage.jpg",
+        Himalaya: "himalaya.jpg",
+        Monsoon: "Monsoon.jpg",
+        "North-East": "north-east.jpg",
+        Offbeat: "offbeat.jpg",
+        Safari: "safari.jpg",
+        Sightseeing: "Sightseeing.jpg",
+        Solo: "Solo.jpg",
+        Spiritual: "spiritual.jpg",
+        Summer: "Summer.jpg",
+        Trekking: "trekking.jpg",
+        Waterfall: "waterfall.jpg",
+        Wildlife: "wildlife.jpg",
+        Winter: "Winter.jpg",
+        Festival: "Winter.jpg",
+        Leisure: "Winter.jpg",
+        All: "Winter.jpg",
       };
-    });
-
-    validStates.sort((a, b) => b.place - a.place);
-    return validStates;
-  }
-
-  async function getCategoryWiseTrips() {
-    const categoryImages = {
-      Adventure: "Adventure.jpg",
-      Backpacking: "backpacking.jpg",
-      Beach: "beach.jpg",
-      Camping: "camping.jpg",
-      Couple: "Couple.jpg",
-      Group: "group.jpg",
-      Heritage: "heritage.jpg",
-      Himalaya: "himalaya.jpg",
-      Monsoon: "Monsoon.jpg",
-      "North-East": "north-east.jpg",
-      Offbeat: "offbeat.jpg",
-      Safari: "safari.jpg",
-      Sightseeing: "Sightseeing.jpg",
-      Solo: "Solo.jpg",
-      Spiritual: "spiritual.jpg",
-      Summer: "Summer.jpg",
-      Trekking: "trekking.jpg",
-      Waterfall: "waterfall.jpg",
-      Wildlife: "wildlife.jpg",
-      Winter: "Winter.jpg",
-      Festival: "Winter.jpg",
-      Leisure: "Winter.jpg",
-      All: "Winter.jpg",
-    };
-  
-    const categoryTripsRaw = await NewTours.aggregate([
-      { $match: { isActive: true } },
-      {
-        $addFields: {
-          tripCategories: {
-            $cond: {
-              if: {
-                $or: [
-                  { $eq: ["$tripCategories", []] },
-                  { $eq: ["$tripCategories", null] },
-                  {
-                    $eq: [
-                      {
-                        $filter: {
-                          input: "$tripCategories",
-                          as: "category",
-                          cond: {
-                            $and: [
-                              { $ne: ["$$category", ""] },
-                              { $ne: ["$$category", null] },
-                              { $ne: [{ $trim: { input: "$$category" } }, ""] },
-                            ],
+      // Fetch active, non-deleted categories from Category schema
+      const categories = await Category.find({
+        isActive: true,
+        isDeleted: false,
+      })
+        .select("name image displayOrder")
+        .lean();
+      // Aggregate trip counts from NewTours
+      const categoryTripsRaw = await NewTours.aggregate([
+        { $match: { isActive: true } },
+        {
+          $addFields: {
+            tripCategories: {
+              $cond: {
+                if: {
+                  $or: [
+                    { $eq: ["$tripCategories", []] },
+                    { $eq: ["$tripCategories", null] },
+                    {
+                      $eq: [
+                        {
+                          $filter: {
+                            input: "$tripCategories",
+                            as: "category",
+                            cond: {
+                              $and: [
+                                { $ne: ["$$category", ""] },
+                                { $ne: ["$$category", null] },
+                                {
+                                  $ne: [{ $trim: { input: "$$category" } }, ""],
+                                }, // fixed
+                              ],
+                            },
                           },
                         },
-                      },
-                      [],
-                    ],
+                        [],
+                      ],
+                    },
+                  ],
+                },
+                then: ["All"], // Default to "All" for empty/null categories
+                else: {
+                  $map: {
+                    input: "$tripCategories",
+                    as: "category",
+                    in: { $trim: { input: "$$category" } },
                   },
-                ],
-              },
-              then: ["All"],
-              else: {
-                $map: {
-                  input: "$tripCategories",
-                  as: "category",
-                  in: { $trim: { input: "$$category" } },
                 },
               },
             },
           },
         },
-      },
-      {
-        $unwind: {
-          path: "$tripCategories",
-          preserveNullAndEmptyArrays: true,
+        {
+          $unwind: {
+            path: "$tripCategories",
+            preserveNullAndEmptyArrays: true,
+          },
         },
-      },
-      {
-        $match: {
-          tripCategories: { $nin: ["", null] },
+        {
+          $match: {
+            tripCategories: { $nin: ["", null] },
+          },
         },
-      },
-      {
-        $group: {
-          _id: "$tripCategories",
-          count: { $sum: 1 },
-          trips: { $push: { name: "$name", imageurl: "$imageurl" } },
+        {
+          $group: {
+            _id: "$tripCategories",
+            count: { $sum: 1 },
+            trips: { $push: { name: "$name", imageurl: "$imageurl" } },
+          },
         },
-      },
-      { $sort: { _id: 1 } },
-    ]);
-  
-    let categoryTrips = categoryTripsRaw
-      .map((categoryDoc) => {
-        const categoryName = categoryDoc._id;
-        if (!categoryName || categoryName === "") return null;
-        const imageFile = categoryImages[categoryName] || "default.jpg";
-        return {
-          name: categoryName,
-          count: categoryDoc.count,
-          trips: categoryDoc.trips,
-          thumb: `/img/Tour category/${imageFile}`,
-        };
-      })
-      .filter((item) => item !== null);
-  
-    categoryTrips.sort((a, b) => {
-      if (a.name === "All") return 1;
-      if (b.name === "All") return -1;
-      return a.name.localeCompare(b.name);
-    });
-  
-    return categoryTrips;
-  }
+      ]);
 
-  // New function to get departure city-wise trips
-  async function getDepartureCityTrips() {
-    const departureCitiesRaw = await NewTours.aggregate([
-      {
-        $match: {
-          isActive: true,
-          deptcities: { $exists: true, $ne: [] },
+      // Create a map of master categories for quick lookup
+      const categoryMap = new Map(
+        categories.map((c) => [c.name.toUpperCase(), c])
+      );
+
+      // Include all categories from NewTours, merging with master data
+      let categoryTrips = categoryTripsRaw
+        .map((categoryDoc) => {
+          const categoryName = categoryDoc._id;
+          if (!categoryName || categoryName === "") return null;
+          const imageFile = categoryImages[categoryName];
+          const masterCategory = categoryMap.get(categoryName.toUpperCase());
+          return {
+            name: categoryName,
+            count: categoryDoc.count,
+            trips: categoryDoc.trips,
+            thumb: masterCategory?.image || `/img/Tour category/${imageFile}`,
+            displayOrder:
+              masterCategory?.displayOrder ?? Number.MAX_SAFE_INTEGER,
+          };
+        })
+        .filter((item) => item !== null);
+
+      // Sort by displayOrder, then alphabetically, with "All" at the end
+      categoryTrips.sort((a, b) => {
+        if (a.name === "All") return 1;
+        if (b.name === "All") return -1;
+        if (a.displayOrder === b.displayOrder) {
+          return a.name.localeCompare(b.name); // Alphabetical for equal displayOrder
+        }
+        return a.displayOrder - b.displayOrder;
+      });
+
+      return categoryTrips;
+    }
+
+    // Function to get departure city-wise trips
+    async function getDepartureCityTrips() {
+      // Fetch active, non-deleted cities from City schema
+      const cities = await City.find({ isActive: true, isDeleted: false })
+        .select("name image displayOrder")
+        .lean();
+
+      // Aggregate trip counts from NewTours
+      const departureCitiesRaw = await NewTours.aggregate([
+        {
+          $match: {
+            isActive: true,
+            deptcities: { $exists: true, $ne: [] },
+          },
         },
-      },
-      {
-        $unwind: "$deptcities",
-      },
-      {
-        $match: {
-          "deptcities.City": { $exists: true, $nin: ["", null] }, 
+        {
+          $unwind: "$deptcities",
         },
-      },
-      {
-        $group: {
-          _id: "$deptcities.City",
-          count: { $sum: 1 },
-          trips: {
-            $push: {
-              name: "$name",
-              bannerimages: "$bannerimages",
-              imageurl: "$imageurl",
-              days: "$days",
-              destinations:"$destinations",
-              price: "$price",
-              state: "$state",
-              deptcity: "$deptcities.City",
-              tripDuration: "$deptcities.tripDuration",
-              dates: "$deptcities.dates",
-              adultPrice: { $arrayElemAt: ["$deptcities.price.adultPrice", 0] },
+        {
+          $match: {
+            "deptcities.City": { $exists: true, $nin: ["", null] },
+          },
+        },
+        {
+          $group: {
+            _id: "$deptcities.City",
+            count: { $sum: 1 },
+            trips: {
+              $push: {
+                name: "$name",
+                bannerimages: "$bannerimages",
+                imageurl: "$imageurl",
+                days: "$days",
+                destinations: "$destinations",
+                price: "$price",
+                state: "$state",
+                deptcity: "$deptcities.City",
+                tripDuration: "$deptcities.tripDuration",
+                dates: "$deptcities.dates",
+                adultPrice: {
+                  $arrayElemAt: ["$deptcities.price.adultPrice", 0],
+                },
+              },
             },
           },
         },
-      },
-      {
-        $sort: { _id: 1 }, // Alphabetically sort city names
-      },
-    ]);
-  
-    const departureCities = departureCitiesRaw.map((cityDoc) => {
-      const cityName = cityDoc._id;
-      const imageFile = cityName.toLowerCase().replace(/\s+/g, "_") + "_city.jpg";
-      return {
-        name: cityName,
-        count: cityDoc.count,
-        thumb: `/img/cities/${imageFile}`, // e.g., /img/cities/ahmedabad_city.jpg
-        trips: cityDoc.trips,
-      };
+      ]);
+
+      // Create a map of master cities for quick lookup
+      const cityMap = new Map(cities.map((c) => [c.name.toUpperCase(), c]));
+
+      // Include all cities from NewTours, merging with master data
+      const departureCities = departureCitiesRaw.map((cityDoc) => {
+        const cityName = cityDoc._id;
+        const masterCity = cityMap.get(cityName.toUpperCase());
+        return {
+          name: cityName,
+          count: cityDoc.count,
+          thumb: masterCity?.image || `/img/cities/default_city.jpg`,
+          trips: cityDoc.trips,
+          displayOrder: masterCity?.displayOrder ?? Number.MAX_SAFE_INTEGER,
+        };
+      });
+
+      // Sort by displayOrder, then alphabetically
+      departureCities.sort((a, b) => {
+        if (a.displayOrder === b.displayOrder) {
+          return a.name.localeCompare(b.name);
+        }
+        return a.displayOrder - b.displayOrder;
+      });
+
+      return departureCities;
+    }
+
+    // Fetch banner images
+    async function getBannerImages() {
+      // Fetch active, non-deleted banners from bannerImg
+      const banners = await bannerImg
+        .find({ isActive: true, isDeleted: false })
+        .select("image displayOrder")
+        .sort({ displayOrder: 1 })
+        .lean();
+
+      if (banners.length === 0) {
+        // Fallback to static banners from old API
+        return [
+          { url: "/img/Banner & other/banner1.jpg", caption: "" },
+          { url: "/img/Banner & other/banner2.jpg", caption: "" },
+          { url: "/img/Banner & other/banner3.jpg", caption: "" },
+          { url: "/img/Banner & other/banner4.jpg", caption: "" },
+          { url: "/img/Banner & other/banner5.jpg", caption: "" },
+          { url: "/img/Banner & other/Banner6.jpg", caption: "" },
+          { url: "/img/Banner & other/banner7.jpg", caption: "" },
+          { url: "/img/Banner & other/banner8.jpg", caption: "" },
+          { url: "/img/Banner & other/banner9.jpg", caption: "" },
+          { url: "/img/Banner & other/banner10.jpg", caption: "" },
+          { url: "/img/Banner & other/banner11.jpg", caption: "" },
+          { url: "/img/Banner & other/banner12.jpg", caption: "" },
+          { url: "/img/Banner & other/banner13.jpg", caption: "" },
+          { url: "/img/Banner & other/banner14.jpg", caption: "" },
+        ];
+      }
+
+      return banners.map((banner) => ({
+        url: banner.image,
+        caption: banner.caption || "",
+      }));
+    }
+
+    // Fetch all required data
+    const placeItems = await getStateWiseTrips();
+    const categoryItems = await getCategoryWiseTrips();
+    const departureCities = await getDepartureCityTrips();
+    const bannerImages = await getBannerImages();
+
+    // Render the index page
+    res.render("pages/index", {
+      tourPackages: response.tours,
+      test: tests,
+      user: req.user,
+      placeItems,
+      bannerImages,
+      categoryItems,
+      departureCities,
     });
-  
-    return departureCities;
+  } catch (error) {
+    console.error("Error in getIndexPage:", error);
+    res.status(500).send("Internal Server Error");
   }
-  
-  const placeItems = await getStateWiseTrips();
-  const categoryItems = await getCategoryWiseTrips();
-  const departureCities = await getDepartureCityTrips(); 
-
-  const bannerImages = [
-    { url: "/img/Banner & other/banner1.jpg", caption: "" },
-    { url: "/img/Banner & other/banner2.jpg", caption: "" },
-    { url: "/img/Banner & other/banner3.jpg", caption: "" },
-    { url: "/img/Banner & other/banner4.jpg", caption: "" },
-    { url: "/img/Banner & other/banner5.jpg", caption: "" },
-    { url: "/img/Banner & other/banner6.jpg", caption: "" },
-    { url: "/img/Banner & other/banner7.jpg", caption: "" },
-    { url: "/img/Banner & other/banner8.jpg", caption: "" },
-    { url: "/img/Banner & other/banner9.jpg", caption: "" },
-    { url: "/img/Banner & other/banner10.jpg", caption: "" },
-    { url: "/img/Banner & other/banner11.jpg", caption: "" },
-    { url: "/img/Banner & other/banner12.jpg", caption: "" },
-    { url: "/img/Banner & other/banner13.jpg", caption: "" },
-    { url: "/img/Banner & other/banner14.jpg", caption: "" },
-  ];
-
-  res.render("pages/index", {
-    tourPackages: response.tours,
-    test: tests,
-    user: req.user,
-    placeItems,
-    bannerImages,
-    categoryItems,
-    departureCities
-  });
 };
 
 exports.getCustomezedTripForm = async (req, res, next) => {
   res.render("pages/customizedTripForm", {
     csrfToken: req.csrfToken(),
   });
-}
+};
 
 // Validation schema using Joi
 const tripValidationSchema = Joi.object({
   name: Joi.string().min(2).max(100).required(),
-  mobile: Joi.string().regex(/^[0-9]{10}$/).required().messages({
-    'string.pattern.base': 'Mobile number must be a 10-digit number'
-  }),
+  mobile: Joi.string()
+    .regex(/^[0-9]{10}$/)
+    .required()
+    .messages({
+      "string.pattern.base": "Mobile number must be a 10-digit number",
+    }),
   email: Joi.string().email().required(),
-  place: Joi.string().allow('').optional(),
+  place: Joi.string().allow("").optional(),
   destination: Joi.string().min(2).required(),
   days: Joi.number().min(0).optional().allow(null),
   persons: Joi.number().min(0).optional().allow(null),
-  transport: Joi.string().allow('').optional(),
-  triptype: Joi.string().allow('').optional(),
-  travelDate: Joi.string().allow('').optional(),
+  transport: Joi.string().allow("").optional(),
+  triptype: Joi.string().allow("").optional(),
+  travelDate: Joi.string().allow("").optional(),
   budget: Joi.number().min(0).optional().allow(null),
-  details: Joi.string().allow('').optional()
+  details: Joi.string().allow("").optional(),
 });
 
 // Function to generate email HTML from template
 const generateEmailHtml = (data) => {
   // Read the email template
-  const templatePath = path.join(__dirname, 'tripEmailTemplate.html');
-  let html = fs.readFileSync(templatePath, 'utf8');
+  const templatePath = path.join(__dirname, "tripEmailTemplate.html");
+  let html = fs.readFileSync(templatePath, "utf8");
 
   // Replace placeholders with data
-  html = html.replace('{{name}}', data.name || 'N/A');
-  html = html.replace('{{mobile}}', data.mobile || 'N/A');
-  html = html.replace('{{email}}', data.email || 'N/A');
-  html = html.replace('{{destination}}', data.destination || 'N/A');
+  html = html.replace("{{name}}", data.name || "N/A");
+  html = html.replace("{{mobile}}", data.mobile || "N/A");
+  html = html.replace("{{email}}", data.email || "N/A");
+  html = html.replace("{{destination}}", data.destination || "N/A");
 
   // Handle optional fields with conditional rendering
-  const optionalFields = ['place', 'days', 'persons', 'transport', 'triptype', 'travelDate', 'budget', 'details'];
-  optionalFields.forEach(field => {
-    const regex = new RegExp(`{{#if ${field}}}[\\s\\S]*?{{${field}}}[\\s\\S]*?{{\\/if}}`, 'g');
+  const optionalFields = [
+    "place",
+    "days",
+    "persons",
+    "transport",
+    "triptype",
+    "travelDate",
+    "budget",
+    "details",
+  ];
+  optionalFields.forEach((field) => {
+    const regex = new RegExp(
+      `{{#if ${field}}}[\\s\\S]*?{{${field}}}[\\s\\S]*?{{\\/if}}`,
+      "g"
+    );
     if (data[field]) {
-      html = html.replace(regex, `<tr><td style="padding: 8px 0; font-weight: bold;">${field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1') }:</td><td style="padding: 8px 0;">${field === 'budget' ? '₹' + data[field] : data[field]}</td></tr>`);
+      html = html.replace(
+        regex,
+        `<tr><td style="padding: 8px 0; font-weight: bold;">${
+          field.charAt(0).toUpperCase() +
+          field.slice(1).replace(/([A-Z])/g, " $1")
+        }:</td><td style="padding: 8px 0;">${
+          field === "budget" ? "₹" + data[field] : data[field]
+        }</td></tr>`
+      );
     } else {
-      html = html.replace(regex, '');
+      html = html.replace(regex, "");
     }
   });
 
@@ -371,23 +475,23 @@ const generateEmailHtml = (data) => {
 const sendEmail = async (tripData) => {
   try {
     const mailOptions = {
-      from: 'dheerendramanjhi910@gmail.com',
-      to: 'dejavuoutdoors@gmail.com', // Admin email (same as sender for now)
-      subject: 'New Customized Trip Submission',
-      html: generateEmailHtml(tripData)
+      from: "dheerendramanjhi910@gmail.com",
+      to: "dejavuoutdoors@gmail.com", // Admin email (same as sender for now)
+      subject: "New Customized Trip Submission",
+      html: generateEmailHtml(tripData),
     };
 
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      service: "gmail",
       auth: {
-        user: 'dheerendramanjhi910@gmail.com',
-        pass: 'vbkx zspn oodm mjkj'
-      }
+        user: "dheerendramanjhi910@gmail.com",
+        pass: "vbkx zspn oodm mjkj",
+      },
     });
     await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully');
+    console.log("Email sent successfully");
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error("Error sending email:", error);
     throw error; // Let the controller handle the error
   }
 };
@@ -400,7 +504,7 @@ exports.customTrip = async (req, res) => {
     if (error) {
       return res.status(400).json({
         success: false,
-        message: error.details[0].message
+        message: error.details[0].message,
       });
     }
 
@@ -417,7 +521,7 @@ exports.customTrip = async (req, res) => {
       triptype: req.body.triptype || null,
       travelDate: req.body.travelDate || null,
       budget: req.body.budget || null,
-      details: req.body.details || null
+      details: req.body.details || null,
     };
 
     const trip = new customTrip(tripData);
@@ -428,14 +532,14 @@ exports.customTrip = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Trip details saved successfully',
-      data: trip
+      message: "Trip details saved successfully",
+      data: trip,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Server error while saving trip details',
-      error: error.message
+      message: "Server error while saving trip details",
+      error: error.message,
     });
   }
 };
@@ -1697,7 +1801,7 @@ exports.getFiltertourAPIUseOnly = async (req, res, sortByLatestUpdate) => {
 
     // Filter by tour category (tags)
     if (filters["Tour category"] && filters["Tour category"].length > 0) {
-      if(filters["Tour category"][0].toLowerCase() !== "all") {
+      if (filters["Tour category"][0].toLowerCase() !== "all") {
         queryConditions.push({
           tripCategories: {
             $in: filters["Tour category"].map(
@@ -1717,9 +1821,14 @@ exports.getFiltertourAPIUseOnly = async (req, res, sortByLatestUpdate) => {
       });
     }
 
-    // Filter by States
     if (filters["States"]) {
-      const statesFilter = filters["States"];
+      let statesFilter = filters["States"];
+
+      // Convert to array if it's not already
+      if (!Array.isArray(statesFilter)) {
+        statesFilter = [statesFilter];
+      }
+
       queryConditions.push({
         state: {
           $in: statesFilter.map((type) => new RegExp(`^${type}$`, "i")),
@@ -1749,8 +1858,8 @@ exports.getFiltertourAPIUseOnly = async (req, res, sortByLatestUpdate) => {
           { guidelines: regex },
           { bookncancel: regex },
           { placestovisit: regex },
-          {travelerType:regex},
-          {tripCategories:regex}
+          { travelerType: regex },
+          { tripCategories: regex },
         ],
       });
     }
@@ -1902,13 +2011,11 @@ exports.postNewAddTours = async (req, res) => {
           )
         );
       }
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Trip name must be unique",
-          exists: true,
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Trip name must be unique",
+        exists: true,
+      });
     }
 
     // Parse JSON fields
@@ -1975,12 +2082,10 @@ exports.postNewAddTours = async (req, res) => {
     }
 
     if (!imageurl && !tripId) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Main image is required for new trips",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Main image is required for new trips",
+      });
     }
 
     // Map deptcities to include new fields
@@ -2025,9 +2130,9 @@ exports.postNewAddTours = async (req, res) => {
       deptcities: formattedDeptCities,
       altitude,
       bestSession: parsedBestSession,
-      tripCategories: parsedTripCategories, 
-      bestMonthToVisit: parsedBestMonthToVisit, 
-      travelerType: parsedTravelerType, 
+      tripCategories: parsedTripCategories,
+      bestMonthToVisit: parsedBestMonthToVisit,
+      travelerType: parsedTravelerType,
       isActive, // Ensure isActive is set
     };
 
@@ -2052,24 +2157,20 @@ exports.postNewAddTours = async (req, res) => {
       const updatedTrip = await NewTours.findByIdAndUpdate(tripId, tourData, {
         new: true,
       });
-      return res
-        .status(200)
-        .json({
-          success: true,
-          message: "Trip updated successfully",
-          trip: updatedTrip,
-        });
+      return res.status(200).json({
+        success: true,
+        message: "Trip updated successfully",
+        trip: updatedTrip,
+      });
     } else {
       // Create new trip
       const newTour = new NewTours(tourData);
       const savedTour = await newTour.save();
-      return res
-        .status(201)
-        .json({
-          success: true,
-          message: "Trip created successfully",
-          trip: savedTour,
-        });
+      return res.status(201).json({
+        success: true,
+        message: "Trip created successfully",
+        trip: savedTour,
+      });
     }
   } catch (error) {
     console.error("Error in postNewAddTours:", error);
@@ -2090,7 +2191,6 @@ exports.postNewAddTours = async (req, res) => {
 
 //Old trip detial by trip id ::DM after complete development remove this api and manage it's logic
 exports.getTourDetails = async (req, res, next) => {
-
   try {
     // Rename the param so it's compatible with the new method
     req.params.name = req.params.token;
@@ -2156,10 +2256,10 @@ exports.getTripDetialbyName = async (req, res, next) => {
           $or: departureCities.map(({ City, State }) => ({
             name: { $regex: new RegExp(`^${City}$`, "i") },
             state: { $regex: new RegExp(`^${State}$`, "i") },
-            isDeleted: false
+            isDeleted: false,
           })),
         },
-        { image: 1, name: 1, state: 1 },
+        { image: 1, name: 1, state: 1 }
       );
     }
 
@@ -2268,12 +2368,10 @@ exports.updateImageUrl = async (req, res) => {
       req.files.forEach((file) =>
         fileHelper.deleteFile(`images/tours/${file.filename}`)
       );
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Only one image allowed for imageurl",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Only one image allowed for imageurl",
+      });
     }
 
     const newImageUrl = `/images/tours/${req.files[0].filename}`; // Updated path
@@ -2386,12 +2484,10 @@ exports.renderBookingTourPage = async (req, res) => {
       !existingTrip.deptcities ||
       existingTrip.deptcities.length === 0
     ) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: "Trip or departure cities not found",
-        });
+      return res.status(404).json({
+        success: false,
+        message: "Trip or departure cities not found",
+      });
     }
 
     // Initialize selected city data
@@ -2562,12 +2658,10 @@ exports.submitBookingTourPage = async (req, res) => {
       newBookingDetail.tripEndDate = tourDate[1].trim();
       const newTripBookingDetail = new TripBookingDetail(newBookingDetail);
       const savednewTripBookingDetail = await newTripBookingDetail.save();
-      return res
-        .status(200)
-        .json({
-          success: true,
-          message: "You have successfully booked your trip.",
-        });
+      return res.status(200).json({
+        success: true,
+        message: "You have successfully booked your trip.",
+      });
     }
   } catch (error) {
     console.error("Error in booking:", error);
