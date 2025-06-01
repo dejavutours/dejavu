@@ -18,6 +18,12 @@ const categorySchema = new Schema(
 categorySchema.plugin(AutoIncrement, { inc_field: 'categoryId' });
 
 // Create a compound unique index on name to avoid duplicates
-categorySchema.index({ name: 1 }, { unique: true });
+categorySchema.index(
+  {  name: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { isDeleted: false }
+  }
+);
 
 module.exports = mongoose.model("Category", categorySchema);

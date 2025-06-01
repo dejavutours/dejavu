@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - Banner Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Scoped styles for Banner Management with bm- prefix */
+    .bm-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+      font-family: "Inter", sans-serif;
+      background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
+    }
+
+    .bm-tabs {
+      display: flex;
+      border-bottom: 2px solid #d1d5db;
+      margin-bottom: 1rem;
+    }
+
+    .bm-tab {
+      padding: 0.5rem 1rem;
+      color: #4b5563;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .bm-tab:hover {
+      color: #1d4ed8;
+    }
+
+    .bm-tab.active {
+      border-bottom: 3px solid #1d4ed8;
+      color: #1d4ed8;
+    }
+
+    .bm-form-container {
+      background: #ffffff;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .bm-form-container.collapsed {
+      height: 2.5rem;
+    }
+
+    .bm-form-toggle {
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      background: linear-gradient(to right, #1d4ed8, #3b82f6);
+      color: white;
+      font-weight: 600;
+      border-radius: 0.75rem 0.75rem 0 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .bm-form {
+      padding: 1rem;
+    }
+
+    .bm-card {
+      background: #ffffff;
+      border-radius: 0.75rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: move;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+
+    .bm-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .bm-card img {
+      width: 100%;
+      max-width: 300px;
+      height: auto;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .bm-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1rem;
+      max-height: 65vh;
+      overflow-y: auto;
+      padding: 0.75rem;
+      background: #f3f4f6;
+      border-radius: 0.75rem;
+    }
+
+    .bm-actions {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .bm-card:hover .bm-actions {
+      opacity: 1;
+    }
+
+    .bm-action-btn {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      border-radius: 0.375rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .bm-action-btn.edit {
+      background: linear-gradient(to right, #f59e0b, #d97706);
+      color: white;
+    }
+
+    .bm-action-btn.edit:hover {
+      background: linear-gradient(to right, #d97706, #b45309);
+    }
+
+    .bm-action-btn.delete {
+      background: linear-gradient(to right, #ef4444, #dc2626);
+      color: white;
+    }
+
+    .bm-action-btn.delete:hover {
+      background: linear-gradient(to right, #dc2626, #b91c1c);
+    }
+
+    .select2-container--default .select2-selection--single {
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      padding: 0.25rem;
+      background: #ffffff;
+      height: 2.25rem;
+    }
+
+    .bm-toast {
+      z-index: 10000 !important;
+    }
+
+    .bm-filter-bar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      align-items: center;
+      flex-wrap: nowrap;
+    }
+
+    .bm-filter-bar .filter-item {
+      flex: 1;
+      min-width: 150px;
+      max-width: 250px;
+    }
+
+    .bm-loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .bm-loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #1d4ed8;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      animation: bm-spin 1s linear infinite;
+    }
+
+    .bm-crop-modal .modal-content {
+      border-radius: 0.75rem;
+      overflow: hidden;
+    }
+
+    .bm-crop-modal select#bmCropRatio {
+      width: 100%;
+      max-width: 200px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .bm-crop-image {
+      max-width: 100%;
+      max-height: 50vh;
+    }
+
+    .bm-order-input.error {
+      border-color: #ef4444;
+      background-color: #fee2e2;
+    }
+
+    .bm-no-records {
+      text-align: center;
+      padding: 2rem;
+      color: #6b7280;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    @keyframes bm-spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      .bm-card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .bm-form .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .bm-tabs {
+        flex-wrap: wrap;
+      }
+
+      .bm-tab {
+        flex: 1 1 auto;
+        text-align: center;
+      }
+
+      .bm-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    /* Animations */
+    @keyframes bm-fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+  <%- include('../../partials/headtag'); %>
+</head>
+
+<body class="bg-gray-100">
+  <%- include('../../partials/header'); %>
+  <div class="bm-container">
+    <!-- Loading Overlay -->
+    <div class="bm-loading" id="bmLoadingOverlay">
+      <div class="bm-loading-spinner"></div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="bm-tabs">
+      <div class="bm-tab" data-tab="cities" data-redirect="/cities">City Master</div>
+      <div class="bm-tab" data-tab="states" data-redirect="/states">State Master</div>
+      <div class="bm-tab" data-tab="category" data-redirect="/categories">Category Master</div>
+      <div class="bm-tab active" data-tab="banners" data-redirect="/banner">Banner Master</div>
+      <div class="bm-tab" data-tab="trips" data-redirect="/trips">Trip Master</div>
+    </div>
+
+    <!-- Banner Management Tab Content -->
+    <div id="banners-tab" class="bm-tab-content">
+      <!-- Add/Update Form -->
+      <div class="bm-form-container collapsed" id="bmBannerFormContainer">
+        <div class="bm-form-toggle" id="bmFormToggle">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Show Form
+        </div>
+        <form id="bmBannerForm" action="/banner" method="POST" enctype="multipart/form-data" class="bm-form space-y-4">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <input type="hidden" id="bmBannerId" name="id" />
+          <input type="hidden" id="bmOldImage" name="oldImage" />
+
+          <div class="space-y-2">
+            <div>
+              <label for="bmBannerCaption" class="block text-sm font-semibold text-gray-700">Banner Caption</label>
+              <input type="text" id="bmBannerCaption" name="caption" class="w-full border border-gray-300 rounded-md p-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+            </div>
+            <div>
+              <label for="bmImage" class="block text-sm font-semibold text-gray-700">Banner Image</label>
+              <div class="flex items-center space-x-3">
+                <input type="file" class="flex-1 border border-gray-300 rounded-md p-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" id="bmImage" name="image" accept="image/*" />
+                <img id="bmImagePreview" src="" alt="Preview" class="w-full max-w-xs h-auto object-cover rounded-md border border-gray-200 cursor-pointer" onclick="$('#bmPreviewModalImg').attr('src', this.src); $('#bmPreviewModal').modal('show');" />
+              </div>
+            </div>
+            <div>
+              <label for="bmIsActive" class="block text-sm font-semibold text-gray-700">Active Status</label>
+              <label class="inline-flex items-center">
+                <input type="checkbox" id="bmIsActive" name="isActive" checked class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+                <span class="ml-2 text-sm text-gray-600">Active</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="flex justify-end space-x-2">
+            <button type="button" id="bmCancelBtn" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm font-medium hidden">
+              Cancel
+            </button>
+            <button type="submit" id="bmSubmitBtn" class="px-4 py-1.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 text-sm font-medium">
+              Add Banner
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Filter and Search Bar -->
+      <div class="bm-filter-bar">
+        <div class="filter-item">
+          <div class="relative">
+            <input type="text" id="bmSearchInput" class="w-full border border-gray-300 rounded-md pl-8 pr-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search banners..." />
+            <svg class="absolute left-2.5 top-2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+        <div class="filter-item">
+          <select class="select2 w-full" id="bmActiveFilter">
+            <option value="">All Statuses</option>
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+          </select>
+        </div>
+        <button id="bmClearFiltersBtn" class="px-3 py-1.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-sm font-medium">
+          Clear Filters
+        </button>
+        <button id="bmBulkDeleteBtn" class="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium hidden">
+          Delete Selected
+        </button>
+      </div>
+
+      <!-- Banner Cards -->
+      <div class="bm-card-grid" id="bmBannerGrid"></div>
+      <div class="flex justify-end mt-3">
+        <button id="bmSaveOrderBtn" class="px-4 py-1.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-md hover:from-green-700 hover:to-green-800 text-sm font-medium hidden">
+          Save Order
+        </button>
+      </div>
+    </div>
+
+    <!-- Placeholder Tab Contents -->
+    <div id="cities-tab" class="bm-tab-content hidden">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">City Management</h2>
+      <p class="text-gray-600">
+        City management functionality coming soon...
+      </p>
+    </div>
+    <div id="states-tab" class="bm-tab-content hidden">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">State Management</h2>
+      <p class="text-gray-600">
+        State management functionality coming soon...
+      </p>
+    </div>
+    <div id="category-tab" class="bm-tab-content hidden">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Category Management</h2>
+      <p class="text-gray-600">
+        Category management functionality coming soon...
+      </p>
+    </div>
+    <div id="trips-tab" class="bm-tab-content hidden">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Trip Management</h2>
+      <p class="text-gray-600">
+        Trip management functionality coming soon...
+      </p>
+    </div>
+  </div>
+
+  <!-- Image Preview Modal -->
+  <div class="modal fade" id="bmPreviewModal" tabindex="-1" aria-labelledby="bmPreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-base font-semibold">Image Preview</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <img id="bmPreviewModalImg" src="#" class="max-w-full h-auto mx-auto transform transition-transform duration-200 hover:scale-105" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="bmDeleteConfirmModal" tabindex="-1" aria-labelledby="bmDeleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-base font-semibold">Confirm Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-sm" id="bmDeleteModalBody">
+          Are you sure you want to delete the selected banner(s)?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button type="button" id="bmConfirmDeleteBtn" class="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crop Image Modal -->
+  <div class="modal fade bm-crop-modal" id="bmCropModal" tabindex="-1" aria-labelledby="bmCropModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-base font-semibold" id="bmCropModalLabel">
+            Crop Image
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <div class="mt-2 mb-4">
+            <label for="bmCropRatio" class="block text-sm font-semibold text-gray-700">Crop Ratio</label>
+            <select id="bmCropRatio" name="cropMode" class="border border-gray-300 rounded-md p-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="1.777" selected>16:9 (Banner)</option>
+              <option value="1.333">4:3</option>
+              <option value="1">1:1 (Square)</option>
+              <option value="free">Free Crop</option>
+            </select>
+          </div>
+          <img id="bmCropImage" class="bm-crop-image" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button type="button" id="bmCropConfirmBtn" class="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm">
+            Crop & Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../../partials/footer'); %>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
+  <script>
+    // Initialize banners
+    let banners = <%- JSON.stringify(banners) %>;
+    let filteredBanners = [...banners];
+    let selectedBanners = [];
+    let cropper = null;
+
+    // Initialize Select2 for dropdowns
+    $(document).ready(function() {
+      $(".select2").select2({
+        placeholder: "Select an option",
+        allowClear: true,
+        width: '100%'
+      });
+
+      // Clear filters
+      $('#bmClearFiltersBtn').on('click', function() {
+        $('#bmSearchInput').val('');
+        $('#bmActiveFilter').val('').trigger('change');
+        filteredBanners = [...banners];
+        renderBanners();
+      });
+
+      // Form submission
+      $('#bmBannerForm').on('submit', function(e) {
+        e.preventDefault();
+        $('#bmLoadingOverlay').show();
+        const formData = new FormData(this);
+
+        if ($('#bmImage').val()) {
+          formData.set('image', $('#bmImage')[0].files[0]);
+        } else if ($('#bmOldImage').val() && $('#bmBannerId').val()) {
+          formData.set('oldImage', $('#bmOldImage').val());
+        }
+
+        // Explicitly set isActive as "true" or "false"
+        formData.set('isActive', $('#bmIsActive').is(':checked') ? 'true' : 'false');
+
+        $.ajax({
+          url: '/banner',
+          method: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(response) {
+            $('#bmLoadingOverlay').hide();
+            if (response.success) {
+              Toastify({
+                text: response.message,
+                className: 'bm-toast',
+                duration: 3000
+              }).showToast();
+              setTimeout(() => location.reload(), 600);
+            } else {
+              Toastify({
+                text: response.error || 'Failed to process banner.',
+                className: 'bm-toast',
+                style: {
+                  background: '#EF4444'
+                },
+                duration: 3000
+              }).showToast();
+            }
+          },
+          error: function(xhr) {
+            $('#bmLoadingOverlay').hide();
+            const message = xhr.responseJSON?.error || 'Error processing request.';
+            Toastify({
+              text: message,
+              className: 'bm-toast',
+              duration: 3000
+            }).showToast();
+          }
+        });
+      });
+
+      // Delete banner with AJAX
+      $(document).on('submit', '.bm-delete-form', function(e) {
+        e.preventDefault();
+        const form = $(this);
+        $('#bmDeleteModalBody').html('Are you sure you want to delete the selected banner?');
+        $('#bmDeleteConfirmModal').modal('show');
+        $('#bmConfirmDeleteBtn').off('click').on('click', function() {
+          $('#bmLoadingOverlay').show();
+          $.ajax({
+            url: form.attr('action'),
+            method: 'POST',
+            data: form.serialize(),
+            success: function(response) {
+              $('#bmLoadingOverlay').hide();
+              $('#bmDeleteConfirmModal').modal('hide');
+              if (response.success) {
+                Toastify({
+                  text: response.message,
+                  className: 'bm-toast',
+                  style: {
+                    background: '#10B981'
+                  },
+                  duration: 3000
+                }).showToast();
+                setTimeout(() => location.reload(), 600);
+              } else {
+                Toastify({
+                  text: response.message || 'Failed to delete banner.',
+                  className: 'bm-toast',
+                  style: {
+                    background: '#EF4444'
+                  },
+                  duration: 3000
+                }).showToast();
+              }
+            },
+            error: function() {
+              $('#bmLoadingOverlay').hide();
+              $('#bmDeleteConfirmModal').modal('hide');
+              Toastify({
+                text: 'Error deleting banner.',
+                className: 'bm-toast',
+                style: {
+                  background: '#EF4444'
+                },
+                duration: 3000
+              }).showToast();
+            }
+          });
+        });
+      });
+
+      // Bulk delete
+      $('#bmBulkDeleteBtn').on('click', function() {
+        if (selectedBanners.length === 0) {
+          Toastify({
+            text: 'No banners selected.',
+            className: 'bm-toast',
+            style: {
+              background: '#F59E0B'
+            },
+            duration: 3000
+          }).showToast();
+          return;
+        }
+        $('#bmDeleteModalBody').html('Are you sure you want to delete the selected banners?');
+        $('#bmDeleteConfirmModal').modal('show');
+        $('#bmConfirmDeleteBtn').off('click').on('click', function() {
+          $('#bmLoadingOverlay').show();
+          const promises = selectedBanners.map(id =>
+            $.ajax({
+              url: `/banner/delete/${id}`,
+              method: 'POST',
+              data: {
+                _csrf: '<%= csrfToken %>'
+              }
+            })
+          );
+          Promise.all(promises)
+            .then(responses => {
+              $('#bmLoadingOverlay').hide();
+              $('#bmDeleteConfirmModal').modal('hide');
+              if (responses.every(res => res.success)) {
+                Toastify({
+                  text: 'Selected banners deleted successfully.',
+                  className: 'bm-toast',
+                  style: {
+                    background: '#10B981'
+                  },
+                  duration: 3000
+                }).showToast();
+                setTimeout(() => location.reload(), 600);
+              } else {
+                Toastify({
+                  text: 'Failed to delete some banners.',
+                  className: 'bm-toast',
+                  style: {
+                    background: '#EF4444'
+                  },
+                  duration: 3000
+                }).showToast();
+              }
+            })
+            .catch(() => {
+              $('#bmLoadingOverlay').hide();
+              $('#bmDeleteConfirmModal').modal('hide');
+              Toastify({
+                text: 'Error deleting banners.',
+                className: 'bm-toast',
+                style: {
+                  background: '#EF4444'
+                },
+                duration: 3000
+              }).showToast();
+            });
+        });
+      });
+
+      // Initialize drag-and-drop
+      const bannerGrid = document.getElementById('bmBannerGrid');
+      let orderChanged = false;
+      Sortable.create(bannerGrid, {
+        animation: 150,
+        handle: '.bm-card',
+        touchStartThreshold: 5,
+        onEnd: function(evt) {
+          orderChanged = true;
+          $('#bmSaveOrderBtn').removeClass('hidden');
+          updateOrderInputs();
+        }
+      });
+
+      // Save order with duplicate check
+      $('#bmSaveOrderBtn').on('click', function() {
+        if (checkDuplicateOrders()) {
+          Toastify({
+            text: 'Duplicate display orders detected. Please fix before saving.',
+            className: 'bm-toast',
+            style: {
+              background: '#F59E0B'
+            },
+            duration: 3000
+          }).showToast();
+          return;
+        }
+        const newOrder = Array.from(bannerGrid.children).map(card => card.dataset.id);
+        $('#bmLoadingOverlay').show();
+        $.ajax({
+          url: '/banner/update-order',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            _csrf: '<%= csrfToken %>',
+            order: newOrder
+          }),
+          success: function(response) {
+            $('#bmLoadingOverlay').hide();
+            if (response.success) {
+              Toastify({
+                text: response.message,
+                className: 'bm-toast',
+                style: {
+                  background: '#10B981'
+                },
+                duration: 3000
+              }).showToast();
+              orderChanged = false;
+              $('#bmSaveOrderBtn').addClass('hidden');
+              const orderedBanners = [];
+              newOrder.forEach(id => {
+                const banner = banners.find(c => c._id === id);
+                if (banner) orderedBanners.push(banner);
+              });
+              banners = orderedBanners;
+              filteredBanners = [...banners];
+              renderBanners();
+            } else {
+              Toastify({
+                text: response.message || 'Failed to update banner order.',
+                className: 'bm-toast',
+                style: {
+                  background: '#EF4444'
+                },
+                duration: 3000
+              }).showToast();
+            }
+          },
+          error: function(xhr) {
+            $('#bmLoadingOverlay').hide();
+            const message = xhr.responseJSON?.error || 'Error updating banner order.';
+            Toastify({
+              text: message,
+              className: 'bm-toast',
+              style: {
+                background: '#EF4444'
+              },
+              duration: 3000
+            }).showToast();
+          }
+        });
+      });
+
+      // Client-side search and filter
+      let searchTimeout;
+
+      function applyFilters() {
+        const searchTerm = $('#bmSearchInput').val().toLowerCase().trim();
+        const selectedStatus = $('#bmActiveFilter').val();
+        filteredBanners = banners.filter(banner => {
+          const matchesSearch = banner.caption.toLowerCase().includes(searchTerm);
+          const matchesStatus = !selectedStatus || banner.isActive.toString() === selectedStatus;
+          return matchesSearch && matchesStatus;
+        });
+        renderBanners();
+      }
+
+      $('#bmSearchInput').on('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(applyFilters, 300);
+      });
+
+      $('#bmActiveFilter').on('change', applyFilters);
+
+      // Render banners
+      function renderBanners() {
+        const bannerGrid = $('#bmBannerGrid');
+        bannerGrid.empty();
+        if (filteredBanners.length === 0) {
+          bannerGrid.append('<p class="bm-no-records">No records found.</p>');
+        } else {
+          filteredBanners.forEach(banner => {
+            const card = `
+              <div class="bm-card" data-id="${banner._id}">
+                <input type="checkbox" class="bm-checkbox absolute top-2 left-2" data-id="${banner._id}" />
+                <img src="${banner.image}" alt="${banner.caption}" class="bm-card-img" data-src="${banner.image}" />
+                <h4 class="text-base font-semibold text-gray-800">${banner.caption}</h4>
+                <p class="text-xs text-gray-600">${banner.isActive ? 'Active' : 'Inactive'}</p>
+                <div class="bm-actions">
+                  <input type="number" class="bm-order-input w-12 border border-gray-300 rounded-md p-0.5 text-xs" value="${banner.displayOrder || 0}" min="0" data-id="${banner._id}" />
+                  <button class="bm-action-btn edit" onclick="editBanner('${banner._id}')">Edit</button>
+                  <form action="/banner/delete/${banner._id}" method="POST" class="d-inline bm-delete-form">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                    <input type="hidden" name="bannerCaption" value="${banner.caption}" />
+                    <button type="submit" class="bm-action-btn delete">Delete</button>
+                  </form>
+                </div>
+              </div>
+            `;
+            bannerGrid.append(card);
+          });
+        }
+
+        $('.lazy-img').each(function() {
+          const img = $(this);
+          if (img[0].getBoundingClientRect().top < window.innerHeight) {
+            img.attr('src', img.data('src')).removeClass('lazy-img');
+          }
+        });
+
+        $('#bmBulkDeleteBtn').toggle(selectedBanners.length > 0);
+        checkDuplicateOrders();
+      }
+
+      // Check for duplicate display orders
+      function checkDuplicateOrders() {
+        const orderInputs = Array.from($('.bm-order-input'));
+        const orderValues = {};
+        let hasDuplicates = false;
+        orderInputs.forEach(input => {
+          const value = parseInt(input.value) || 0;
+          if (orderValues[value]) {
+            input.classList.add('error');
+            hasDuplicates = true;
+          } else {
+            input.classList.remove('error');
+            orderValues[value] = true;
+          }
+        });
+        return hasDuplicates;
+      }
+
+      // Update order inputs after drag
+      function updateOrderInputs() {
+        const cards = Array.from(bannerGrid.children);
+        cards.forEach((card, index) => {
+          const id = card.dataset.id;
+          const input = $(card).find('.bm-order-input');
+          input.val(index);
+          const banner = banners.find(c => c._id === id);
+          if (banner) banner.displayOrder = index;
+        });
+        checkDuplicateOrders();
+      }
+
+      // Checkbox selection
+      $(document).on('change', '.bm-checkbox', function() {
+        const id = $(this).data('id');
+        if ($(this).is(':checked')) {
+          selectedBanners.push(id);
+        } else {
+          selectedBanners = selectedBanners.filter(cid => cid !== id);
+        }
+        $('#bmBulkDeleteBtn').toggle(selectedBanners.length > 0);
+      });
+
+      // Inline order update
+      $(document).on('change', '.bm-order-input', function() {
+        const id = $(this).data('id');
+        const newOrder = parseInt($(this).val()) || 0;
+        orderChanged = true;
+        $('#bmSaveOrderBtn').removeClass('hidden');
+        const banner = banners.find(c => c._id === id);
+        if (banner) banner.displayOrder = newOrder;
+        renderBanners();
+      });
+
+      // Edit banner
+      window.editBanner = function(id) {
+        const banner = banners.find(c => c._id === id);
+        if (!banner) {
+          Toastify({
+            text: 'Banner data not found.',
+            className: 'bm-toast',
+            style: {
+              background: '#EF4444'
+            },
+            duration: 3000
+          }).showToast();
+          return;
+        }
+
+        $('#bmBannerId').val(id);
+        $('#bmBannerCaption').val(banner.caption);
+        $('#bmImagePreview').attr('src', banner.image);
+        $('#bmOldImage').val(banner.image);
+        $('#bmIsActive').prop('checked', banner.isActive === true || banner.isActive === 'true' || banner.isActive === 'on');
+        $('#bmSubmitBtn').text('Update Banner').removeClass('from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800').addClass('from-green-600 to-green-700 hover:from-green-700 hover:to-green-800');
+        $('#bmCancelBtn').removeClass('hidden');
+        $('#bmBannerFormContainer').removeClass('collapsed');
+        $('#bmFormToggle').text('Hide Form');
+      };
+
+      // Cancel edit
+      $('#bmCancelBtn').on('click', function() {
+        $('#bmBannerForm')[0].reset();
+        $('#bmBannerId').val('');
+        $('#bmOldImage').val('');
+        $('#bmImagePreview').attr('src', '');
+        $('#bmIsActive').prop('checked', true);
+        $('#bmSubmitBtn').text('Add Banner').removeClass('from-green-600 to-green-700 hover:from-green-700 hover:to-green-800').addClass('from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800');
+        $('#bmCancelBtn').addClass('hidden');
+        $('#bmBannerFormContainer').addClass('collapsed');
+        $('#bmFormToggle').text('Show Form');
+      });
+
+      // Image crop handling
+      $('#bmImage').on('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            $('#bmCropImage').attr('src', e.target.result);
+            $('#bmCropModal').modal('show');
+            setTimeout(function() {
+              if (cropper) cropper.destroy();
+              const cropMode = $('#bmCropRatio').val() || '1.777';
+              const aspectRatio = cropMode === 'free' ? NaN : parseFloat(cropMode);
+              cropper = new Cropper(document.getElementById('bmCropImage'), {
+                aspectRatio: aspectRatio,
+                viewMode: 1,
+                autoCropArea: 0.8,
+                responsive: true
+              });
+            }, 200);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      $('#bmCropRatio').on('change', function() {
+        if (cropper) {
+          cropper.destroy();
+          const cropMode = $(this).val();
+          const aspectRatio = cropMode === 'free' ? NaN : parseFloat(cropMode);
+          cropper = new Cropper(document.getElementById('bmCropImage'), {
+            aspectRatio: aspectRatio,
+            viewMode: 1,
+            autoCropArea: 0.8,
+            responsive: true
+          });
+        }
+      });
+
+      $('#bmCropConfirmBtn').on('click', function() {
+        if (cropper) {
+          cropper.getCroppedCanvas({
+            width: 1200,
+            height: 675
+          }).toBlob(function(blob) {
+            const url = URL.createObjectURL(blob);
+            $('#bmImagePreview').attr('src', url).show();
+            const file = new File([blob], `cropped-banner-${Date.now()}.jpg`, {
+              type: 'image/jpeg'
+            });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            $('#bmImage')[0].files = dataTransfer.files;
+            $('#bmOldImage').val('');
+            $('#bmCropModal').modal('hide');
+            cropper.destroy();
+            cropper = null;
+          }, 'image/jpeg', 0.9);
+        }
+      });
+
+      $('#bmCropModal').on('hidden.bs.modal', function() {
+        if (cropper) {
+          cropper.destroy();
+          cropper = null;
+        }
+      });
+
+      // Form toggle
+      $('#bmFormToggle').on('click', function() {
+        $('#bmBannerFormContainer').toggleClass('collapsed');
+        $(this).text($('#bmBannerFormContainer').hasClass('collapsed') ? 'Show Form' : 'Hide Form');
+      });
+
+      // Tab switching
+      $('.bm-tab').on('click', function() {
+        const redirectUrl = $(this).data('redirect');
+        if (redirectUrl) {
+          window.location.href = redirectUrl;
+        } else {
+          $('.bm-tab').removeClass('active');
+          $(this).addClass('active');
+          $('.bm-tab-content').addClass('hidden');
+          $(`#${$(this).data('tab')}-tab`).removeClass('hidden');
+        }
+      });
+
+      // Lazy load images
+      $(window).on('scroll', function() {
+        $('.lazy-img').each(function() {
+          const img = $(this);
+          if (img[0].getBoundingClientRect().top < window.innerHeight) {
+            img.attr('src', img.data('src')).removeClass('lazy-img');
+          }
+        });
+      });
+
+      // Initial render
+      renderBanners();
+    });
+  </script>
+</body>
+
+</html>

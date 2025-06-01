@@ -4,12 +4,13 @@ const Schema = mongoose.Schema;
 
 const stateSchema = new Schema(
   {
-    stateId: { type: Number, unique: true }, // Auto-incremented field
-    name: { type: String, required: true, trim: true }, // State display name
-    image: { type: String, required: true }, // Path or URL to state image
+    stateId: { type: Number, unique: true },
+    name: { type: String, required: true, trim: true },
+    image: { type: String, required: true },
+    countryCode: { type: String, required: true }, // ✅ Added countryCode field
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
-    displayOrder: { type: Number, default: 0 } // Added for homepage ordering
+    displayOrder: { type: Number, default: 0 }
   },
   { timestamps: true }
 );
@@ -17,7 +18,13 @@ const stateSchema = new Schema(
 // Auto-increment plugin
 stateSchema.plugin(AutoIncrement, { inc_field: 'stateId' });
 
-// Create a compound unique index on name to avoid duplicates
-stateSchema.index({ name: 1 }, { unique: true });
+// ✅ Compound unique index on countryCode + name, only for non-deleted records
+stateSchema.index(
+  { countryCode: 1, name: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { isDeleted: false }
+  }
+);
 
-module.exports = mongoose.model("State", stateSchema);
+module.exports = mongoose.model("Statemst", stateSchema);

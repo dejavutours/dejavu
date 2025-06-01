@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - State Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Scoped styles for State Management with sm- prefix */
+    .sm-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+      font-family: "Inter", sans-serif;
+      background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
+    }
+
+    .sm-tabs {
+      display: flex;
+      border-bottom: 2px solid #d1d5db;
+      margin-bottom: 1rem;
+    }
+
+    .sm-tab {
+      padding: 0.5rem 1rem;
+      color: #4b5563;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .sm-tab:hover {
+      color: #1d4ed8;
+    }
+
+    .sm-tab.active {
+      border-bottom: 3px solid #1d4ed8;
+      color: #1d4ed8;
+    }
+
+    .sm-form-container {
+      background: #ffffff;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .sm-form-container.collapsed {
+      height: 2.5rem;
+    }
+
+    .sm-form-toggle {
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      background: linear-gradient(to right, #1d4ed8, #3b82f6);
+      color: white;
+      font-weight: 600;
+      border-radius: 0.75rem 0.75rem 0 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .sm-form {
+      padding: 1rem;
+    }
+
+    .sm-card {
+      background: #ffffff;
+      border-radius: 0.75rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: move;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+
+    .sm-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .sm-card img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .sm-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      max-height: 65vh;
+      overflow-y: auto;
+      padding: 0.75rem;
+      background: #f3f4f6;
+      border-radius: 0.75rem;
+    }
+
+    .sm-actions {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .sm-card:hover .sm-actions {
+      opacity: 1;
+    }
+
+    .sm-action-btn {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      border-radius: 0.375rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .sm-action-btn.edit {
+      background: linear-gradient(to right, #f59e0b, #d97706);
+      color: white;
+    }
+
+    .sm-action-btn.edit:hover {
+      background: linear-gradient(to right, #d97706, #b45309);
+    }
+
+    .sm-action-btn.delete {
+      background: linear-gradient(to right, #ef4444, #dc2626);
+      color: white;
+    }
+
+    .sm-action-btn.delete:hover {
+      background: linear-gradient(to right, #dc2626, #b91c1c);
+    }
+
+    .select2-container--default .select2-selection--single {
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      padding: 0.25rem;
+      background: #ffffff;
+      height: 2.25rem;
+    }
+
+    .sm-toast {
+      z-index: 10000 !important;
+    }
+
+    .sm-filter-bar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      align-items: center;
+      flex-wrap: nowrap;
+    }
+
+    .sm-filter-bar .filter-item {
+      flex: 1;
+      min-width: 150px;
+      max-width: 250px;
+    }
+
+    .sm-loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .sm-loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #1d4ed8;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      animation: sm-spin 1s linear infinite;
+    }
+
+    .sm-crop-modal .modal-content {
+      border-radius: 0.75rem;
+      overflow: hidden;
+    }
+
+    .sm-crop-modal select#smCropRatio {
+      width: 100%;
+      max-width: 200px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .sm-crop-image {
+      max-width: 100%;
+      max-height: 50vh;
+    }
+
+    .sm-order-input.error {
+      border-color: #ef4444;
+      background-color: #fee2e2;
+    }
+
+    .sm-no-records {
+      text-align: center;
+      padding: 2rem;
+      color: #6b7280;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    @keyframes sm-spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      .sm-card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sm-form .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sm-tabs {
+        flex-wrap: wrap;
+      }
+
+      .sm-tab {
+        flex: 1 1 auto;
+        text-align: center;
+      }
+
+      .sm-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    /* Animations */
+    @keyframes sm-fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+  <%- include('../../partials/headtag'); %>
+</head>
+
+<body class="bg-gray-100">
+  <%- include('../../partials/header'); %>
+  <div class="sm-container">
+    <!-- Loading Overlay -->
+    <div class="sm-loading" id="smLoadingOverlay">
+      <div class="sm-loading-spinner"></div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="sm-tabs">
+      <div class="sm-tab" data-tab="cities" data-redirect="/cities">City Master</div>
+      <div class="sm-tab active" data-tab="states" data-redirect="/states">State Master</div>
+      <div class="sm-tab" data-tab="category" data-redirect="/categories">Category Master</div>
+      <div class="sm-tab" data-tab="banners" data-redirect="/banner">Banner Master</div>
+      <div class="sm-tab" data-tab="trips" data-redirect="/trips">Trip Master</div>
+
+    </div>
+
+    <!-- State Management Tab Content -->
+    <div id="states-tab" class="sm-tab-content">
+      <!-- Add/Update Form -->
+      <div class="sm-form-container collapsed" id="smStateFormContainer">
+        <div class="sm-form-toggle" id="smFormToggle">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Show Form
+        </div>
+        <form id="smStateForm" action="/states" method="POST" enctype="multipart/form-data" class="sm-form space-y-4">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <input type="hidden" id="smStateId" name="id" />
+          <input type="hidden" id="smOldImage" name="oldImage" />
+
+          <div class="space-y-2">
+            <div>
+              <label for="smCountry" class="block text-sm font-semibold text-gray-700">Country</label>
+              <select class="select2 w-full" id="smCountry" name="countryCode" required>
+                <option value="">Select Country</option>
+              </select>
+            </div>
+            <div>
+              <label for="smStateName" class="block text-sm font-semibold text-gray-700">State</label>
+              <select class="select2 w-full" id="smStateName" name="name" required>
+                <option value="">Select State</option>
+              </select>
+            </div>
+            <div>
+              <label for="smImage" class="block text-sm font-semibold text-gray-700">State Image</label>
+              <div class="flex items-center space-x-3">
+                <input type="file" class="flex-1 border border-gray-300 rounded-md p-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" id="smImage" name="image" accept="image/*" />
+                <img id="smImagePreview" src="" alt="Preview" class="w-16 h-16 object-cover rounded-md border border-gray-200 cursor-pointer" onclick="$('#smPreviewModalImg').attr('src', this.src); $('#smPreviewModal').modal('show');" />
+              </div>
+            </div>
+            <div>
+              <label for="smIsActive" class="block text-sm font-semibold text-gray-700">Active Status</label>
+              <label class="inline-flex items-center">
+                <input type="checkbox" id="smIsActive" name="isActive" checked class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+                <span class="ml-2 text-sm text-gray-600">Active</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="flex justify-end space-x-2">
+            <button type="button" id="smCancelBtn" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm font-medium hidden">
+              Cancel
+            </button>
+            <button type="submit" id="smSubmitBtn" class="px-4 py-1.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 text-sm font-medium">
+              Add State
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Filter and Search Bar -->
+      <div class="sm-filter-bar">
+        <div class="filter-item">
+          <div class="relative">
+            <input type="text" id="smSearchInput" class="w-full border border-gray-300 rounded-md pl-8 pr-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search states..." />
+            <svg class="absolute left-2.5 top-2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+        <div class="filter-item">
+          <select class="select2 w-full" id="smCountryFilter">
+            <option value="">All Countries</option>
+          </select>
+        </div>
+        <button id="smClearFiltersBtn" class="px-3 py-1.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-sm font-medium">
+          Clear Filters
+        </button>
+        <button id="smBulkDeleteBtn" class="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium hidden">
+          Delete Selected
+        </button>
+      </div>
+
+      <!-- State Cards -->
+      <div class="sm-card-grid" id="smStateGrid"></div>
+      <div class="flex justify-end mt-3">
+        <button id="smSaveOrderBtn" class="px-4 py-1.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-md hover:from-green-700 hover:to-green-800 text-sm font-medium hidden">
+          Save Order
+        </button>
+      </div>
+    </div>
+
+    <!-- Placeholder Tab Contents -->
+    <div id="cities-tab" class="sm-tab-content hidden">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">City Management</h2>
+      <p class="text-gray-600">
+        City management functionality coming soon...
+      </p>
+    </div>
+    <div id="category-tab" class="sm-tab-content hidden">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">
+        Category Management
+      </h2>
+      <p class="text-gray-600">
+        Category management functionality coming soon...
+      </p>
+    </div>
+    <div id="banners-tab" class="sm-tab-content hidden">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Banner Management</h2>
+      <p class="text-gray-600">
+        Banner management functionality coming soon...
+      </p>
+    </div>
+    <div id="trips-tab" class="sm-tab-content hidden">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Trip Management</h2>
+      <p class="text-gray-600">
+        Trip management functionality coming soon...
+      </p>
+    </div>
+  </div>
+
+  <!-- Image Preview Modal -->
+  <div class="modal fade" id="smPreviewModal" tabindex="-1" aria-labelledby="smPreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-base font-semibold">Image Preview</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <img id="smPreviewModalImg" src="#" class="max-h-[60vh] w-auto mx-auto transform transition-transform duration-200 hover:scale-105" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="smDeleteConfirmModal" tabindex="-1" aria-labelledby="smDeleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-base font-semibold">Confirm Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-sm" id="smDeleteModalBody">
+          Are you sure you want to delete the selected state(s)?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button type="button" id="smConfirmDeleteBtn" class="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crop Image Modal -->
+  <div class="modal fade sm-crop-modal" id="smCropModal" tabindex="-1" aria-labelledby="smCropModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-base font-semibold" id="smCropModalLabel">
+            Crop Image
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <div class="mt-2 mb-4">
+            <label for="smCropRatio" class="block text-sm font-semibold text-gray-700">Crop Ratio</label>
+            <select id="smCropRatio" name="cropMode" class="border border-gray-300 rounded-md p-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="1" selected>1:1 (Square)</option>
+              <option value="1.333">4:3</option>
+              <option value="1.777">16:9</option>
+              <option value="free">Free Crop</option>
+            </select>
+          </div>
+          <img id="smCropImage" class="sm-crop-image" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button type="button" id="smCropConfirmBtn" class="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm">
+            Crop & Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../../partials/footer'); %>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
+  <script>
+    // Initialize state
+    let states = <%- JSON.stringify(states) %>;
+    let filteredStates = [...states];
+    let selectedStates = [];
+    let cropper = null;
+
+    // Initialize Select2 for dropdowns
+    $(document).ready(function() {
+      $(".select2").select2({
+        placeholder: "Select an option",
+        allowClear: true,
+        width: '100%'
+      });
+
+      // Fetch countries from REST Countries API
+      function loadCountries() {
+        $.ajax({
+          url: 'https://restcountries.com/v3.1/all',
+          method: 'GET',
+          success: function(data) {
+            const countryDropdown = $('#smCountry');
+            const countryFilter = $('#smCountryFilter');
+            countryDropdown.empty().append('<option value="">Select Country</option>');
+            countryFilter.empty().append('<option value="">All Countries</option>');
+            data.sort((a, b) => a.name.common.localeCompare(b.name.common)).forEach(country => {
+              const countryCode = country.cca2;
+              const countryName = country.name.common;
+              countryDropdown.append(`<option value="${countryCode}">${countryName}</option>`);
+              countryFilter.append(`<option value="${countryCode}">${countryName}</option>`);
+            });
+            countryDropdown.select2();
+            countryFilter.select2();
+            // Set India as default
+            $('#smCountry').val('IN').trigger('change');
+          },
+          error: function() {
+            Toastify({
+              text: 'Failed to load countries. Please try again.',
+              className: 'sm-toast',
+              style: {
+                background: '#EF4444'
+              },
+              duration: 3000
+            }).showToast();
+            // Fallback to local data
+            const fallbackCountries = {
+              'US': 'United States',
+              'IN': 'India',
+              'CA': 'Canada'
+            };
+            const countryDropdown = $('#smCountry');
+            const countryFilter = $('#smCountryFilter');
+            countryDropdown.empty().append('<option value="">Select Country</option>');
+            countryFilter.empty().append('<option value="">All Countries</option>');
+            Object.entries(fallbackCountries).forEach(([code, name]) => {
+              countryDropdown.append(`<option value="${code}">${name}</option>`);
+              countryFilter.append(`<option value="${code}">${name}</option>`);
+            });
+            countryDropdown.select2();
+            countryFilter.select2();
+            // Set India as default
+            $('#smCountry').val('IN').trigger('change');
+          }
+        });
+      }
+      loadCountries();
+
+      // Update state dropdown based on country selection
+      $('#smCountry').on('change', function() {
+        const selectedCountry = $(this).val();
+        const stateDropdown = $('#smStateName');
+        stateDropdown.empty().append('<option value="">Select State</option>');
+        if (selectedCountry) {
+          $.ajax({
+            url: `https://countriesnow.space/api/v0.1/countries/states`,
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+              iso2: selectedCountry
+            }),
+            success: function(response) {
+              if (response.error) {
+                Toastify({
+                  text: 'No states found for this country.',
+                  className: 'sm-toast',
+                  style: {
+                    background: '#F59E0B'
+                  },
+                  duration: 3000
+                }).showToast();
+                return;
+              }
+              response.data.states.forEach(state => {
+                stateDropdown.append(`<option value="${state.name}">${state.name}</option>`);
+              });
+              stateDropdown.select2();
+              updateImagePreview();
+            },
+            error: function() {
+              Toastify({
+                text: 'Failed to load states. Please try again.',
+                className: 'sm-toast',
+                style: {
+                  background: '#EF4444'
+                },
+                duration: 3000
+              }).showToast();
+            }
+          });
+        } else {
+          stateDropdown.select2();
+          updateImagePreview();
+        }
+      });
+
+      // Auto-update image preview on state selection
+      $('#smStateName').on('change', updateImagePreview);
+
+      function updateImagePreview() {
+        const selectedCountry = $('#smCountry').val();
+        const selectedState = $('#smStateName').val();
+        if (selectedCountry && selectedState) {
+          const state = states.find(s => s.countryCode === selectedCountry && s.name === selectedState);
+          if (state && state.image) {
+            $('#smImagePreview').attr('src', state.image).show();
+            $('#smOldImage').val(state.image);
+            $('#smIsActive').prop('checked', state.isActive === true || state.isActive === 'true' || state.isActive === 'on');
+          } else {
+            $('#smImagePreview').attr('src', '').hide();
+            $('#smOldImage').val('');
+            $('#smIsActive').prop('checked', true); // Default to checked for new states
+          }
+        } else {
+          $('#smImagePreview').attr('src', '').hide();
+          $('#smOldImage').val('');
+          $('#smIsActive').prop('checked', true); // Default to checked for new states
+        }
+      }
+
+      // Clear filters
+      $('#smClearFiltersBtn').on('click', function() {
+        $('#smSearchInput').val('');
+        $('#smCountryFilter').val('').trigger('change');
+        filteredStates = [...states];
+        renderStates();
+      });
+
+      // Form submission
+      $('#smStateForm').on('submit', function(e) {
+        e.preventDefault();
+        $('#smLoadingOverlay').show();
+        const formData = new FormData(this);
+
+        if ($('#smImage').val()) {
+          formData.set('image', $('#smImage')[0].files[0]);
+        } else if ($('#smOldImage').val() && $('#smStateId').val()) {
+          formData.set('oldImage', $('#smOldImage').val());
+        }
+
+        // Explicitly set isActive as "true" or "false"
+        formData.set('isActive', $('#smIsActive').is(':checked') ? 'true' : 'false');
+
+        $.ajax({
+          url: '/states',
+          method: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(response) {
+            $('#smLoadingOverlay').hide();
+            if (response.success) {
+              Toastify({
+                text: response.message,
+                className: 'sm-toast',
+                duration: 3000
+              }).showToast();
+              setTimeout(() => location.reload(), 600);
+            } else {
+              Toastify({
+                text: response.error || 'Failed to process state.',
+                className: 'sm-toast',
+                style: {
+                  background: '#EF4444'
+                },
+                duration: 3000
+              }).showToast();
+            }
+          },
+          error: function(xhr) {
+            $('#smLoadingOverlay').hide();
+            const message = xhr.responseJSON?.error || 'Error processing request.';
+            Toastify({
+              text: message,
+              className: 'sm-toast',
+              duration: 3000
+            }).showToast();
+          }
+        });
+      });
+
+      // Check for active trips before delete
+      async function checkActiveTrips(stateName) {
+        try {
+          const response = await $.ajax({
+            url: '/states/check-trips',
+            method: 'POST',
+            data:JSON.stringify({ stateName, _csrf: '<%= csrfToken %>' }),
+            contentType: 'application/json'
+          });
+          return response;
+        } catch (error) {
+          Toastify({
+            text: 'Error checking active trips.',
+            className: 'sm-toast',
+            style: {
+              background: '#EF4444'
+            },
+            duration: 3000
+          }).showToast();
+          return {
+            success: false
+          };
+        }
+      }
+
+      // Delete state with AJAX
+      $(document).on('submit', '.sm-delete-form', async function(e) {
+        e.preventDefault();
+        const form = $(this);
+        const stateName = form.find('input[name="stateName"]').val();
+
+        const tripCheck = await checkActiveTrips(stateName);
+        if (!tripCheck.success) {
+          $('#smDeleteModalBody').html(`Cannot delete state due to active trips:<br>${tripCheck.trips.map(trip => `<strong>${trip.name}</strong>`).join('<br>')}`);
+          $('#smDeleteConfirmModal').modal('show');
+          $('#smConfirmDeleteBtn').addClass('hidden');
+          return;
+        }
+
+        $('#smDeleteModalBody').html('Are you sure you want to delete the selected state?');
+        $('#smConfirmDeleteBtn').removeClass('hidden');
+        $('#smDeleteConfirmModal').modal('show');
+        $('#smConfirmDeleteBtn').off('click').on('click', function() {
+          $('#smLoadingOverlay').show();
+          $.ajax({
+            url: form.attr('action'),
+            method: 'POST',
+            data: form.serialize(),
+            success: function(response) {
+              $('#smLoadingOverlay').hide();
+              $('#smDeleteConfirmModal').modal('hide');
+              if (response.success) {
+                Toastify({
+                  text: response.message,
+                  className: 'sm-toast',
+                  style: {
+                    background: '#10B981'
+                  },
+                  duration: 3000
+                }).showToast();
+                setTimeout(() => location.reload(), 600);
+              } else {
+                Toastify({
+                  text: response.message || 'Failed to delete state.',
+                  className: 'sm-toast',
+                  style: {
+                    background: '#EF4444'
+                  },
+                  duration: 3000
+                }).showToast();
+              }
+            },
+            error: function() {
+              $('#smLoadingOverlay').hide();
+              $('#smDeleteConfirmModal').modal('hide');
+              Toastify({
+                text: 'Error deleting state.',
+                className: 'sm-toast',
+                style: {
+                  background: '#EF4444'
+                },
+                duration: 3000
+              }).showToast();
+            }
+          });
+        });
+      });
+
+      // Bulk delete
+      $('#smBulkDeleteBtn').on('click', async function() {
+        if (selectedStates.length === 0) {
+          Toastify({
+            text: 'No states selected.',
+            className: 'sm-toast',
+            style: {
+              background: '#F59E0B'
+            },
+            duration: 3000
+          }).showToast();
+          return;
+        }
+        const stateNames = states.filter(s => selectedStates.includes(s._id)).map(s => s.name);
+        for (const stateName of stateNames) {
+          const tripCheck = await checkActiveTrips(stateName);
+          if (!tripCheck.success) {
+            $('#smDeleteModalBody').html(`Cannot delete states due to active trips in ${stateName}:<br>${tripCheck.trips.map(trip => `<strong>${trip.name}</strong>`).join('<br>')}`);
+            $('#smDeleteConfirmModal').modal('show');
+            $('#smConfirmDeleteBtn').addClass('hidden');
+            return;
+          }
+        }
+        $('#smDeleteModalBody').html('Are you sure you want to delete the selected states?');
+        $('#smConfirmDeleteBtn').removeClass('hidden');
+        $('#smDeleteConfirmModal').modal('show');
+        $('#smConfirmDeleteBtn').off('click').on('click', function() {
+          $('#smLoadingOverlay').show();
+          const promises = selectedStates.map(id =>
+            $.ajax({
+              url: `/states/delete/${id}`,
+              method: 'POST',
+              data: {
+                _csrf: '<%= csrfToken %>'
+              }
+            })
+          );
+          Promise.all(promises)
+            .then(responses => {
+              $('#smLoadingOverlay').hide();
+              $('#smDeleteConfirmModal').modal('hide');
+              if (responses.every(res => res.success)) {
+                Toastify({
+                  text: 'Selected states deleted successfully.',
+                  className: 'sm-toast',
+                  style: {
+                    background: '#10B981'
+                  },
+                  duration: 3000
+                }).showToast();
+                setTimeout(() => location.reload(), 600);
+              } else {
+                Toastify({
+                  text: 'Failed to delete some states.',
+                  className: 'sm-toast',
+                  style: {
+                    background: '#EF4444'
+                  },
+                  duration: 3000
+                }).showToast();
+              }
+            })
+            .catch(() => {
+              $('#smLoadingOverlay').hide();
+              $('#smDeleteConfirmModal').modal('hide');
+              Toastify({
+                text: 'Error deleting states.',
+                className: 'sm-toast',
+                style: {
+                  background: '#EF4444'
+                },
+                duration: 3000
+              }).showToast();
+            });
+        });
+      });
+
+      // Initialize drag-and-drop
+      const stateGrid = document.getElementById('smStateGrid');
+      let orderChanged = false;
+      Sortable.create(stateGrid, {
+        animation: 150,
+        handle: '.sm-card',
+        touchStartThreshold: 5,
+        onEnd: function(evt) {
+          orderChanged = true;
+          $('#smSaveOrderBtn').removeClass('hidden');
+          updateOrderInputs();
+        }
+      });
+
+      // Save order with duplicate check
+      $('#smSaveOrderBtn').on('click', function() {
+        if (checkDuplicateOrders()) {
+          Toastify({
+            text: 'Duplicate display orders detected. Please fix before saving.',
+            className: 'sm-toast',
+            style: {
+              background: '#F59E0B'
+            },
+            duration: 3000
+          }).showToast();
+          return;
+        }
+        const newOrder = Array.from(stateGrid.children).map(card => card.dataset.id);
+        $('#smLoadingOverlay').show();
+        $.ajax({
+          url: '/states/update-order',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            _csrf: '<%= csrfToken %>',
+            order: newOrder
+          }),
+          success: function(response) {
+            $('#smLoadingOverlay').hide();
+            if (response.success) {
+              Toastify({
+                text: response.message,
+                className: 'sm-toast',
+                style: {
+                  background: '#10B981'
+                },
+                duration: 3000
+              }).showToast();
+              orderChanged = false;
+              $('#smSaveOrderBtn').addClass('hidden');
+              const orderedStates = [];
+              newOrder.forEach(id => {
+                const state = states.find(s => s._id === id);
+                if (state) orderedStates.push(state);
+              });
+              states = orderedStates;
+              filteredStates = [...states];
+              renderStates();
+            } else {
+              Toastify({
+                text: response.message || 'Failed to update state order.',
+                className: 'sm-toast',
+                style: {
+                  background: '#EF4444'
+                },
+                duration: 3000
+              }).showToast();
+            }
+          },
+          error: function(xhr) {
+            $('#smLoadingOverlay').hide();
+            const message = xhr.responseJSON?.error || 'Error updating state order.';
+            Toastify({
+              text: message,
+              className: 'sm-toast',
+              style: {
+                background: '#EF4444'
+              },
+              duration: 3000
+            }).showToast();
+          }
+        });
+      });
+
+      // Client-side search and filter
+      let searchTimeout;
+
+      function applyFilters() {
+        const searchTerm = $('#smSearchInput').val().toLowerCase().trim();
+        const selectedCountry = $('#smCountryFilter').val();
+        filteredStates = states.filter(state => {
+          const matchesSearch = state.name.toLowerCase().includes(searchTerm) ||
+            state.countryCode.toLowerCase().includes(searchTerm);
+          const matchesCountry = !selectedCountry || state.countryCode === selectedCountry;
+          return matchesSearch && matchesCountry;
+        });
+        renderStates();
+      }
+
+      $('#smSearchInput').on('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(applyFilters, 300);
+      });
+
+      $('#smCountryFilter').on('change', applyFilters);
+
+      // Render states
+      function renderStates() {
+        const stateGrid = $('#smStateGrid');
+        stateGrid.empty();
+        if (filteredStates.length === 0) {
+          stateGrid.append('<p class="sm-no-records">No records found.</p>');
+        } else {
+          filteredStates.forEach(state => {
+            const card = `
+              <div class="sm-card" data-id="${state._id}">
+                <input type="checkbox" class="sm-checkbox absolute top-2 left-2" data-id="${state._id}" />
+                <img src="${state.image}" alt="${state.name}" class="sm-card-img" data-src="${state.image}" />
+                <h4 class="text-base font-semibold text-gray-800">${state.name}</h4>
+                <p class="text-xs text-gray-600">${state.countryCode}</p>
+                <p class="text-xs text-gray-600">${state.isActive ? 'Active' : 'Inactive'}</p>
+                <div class="sm-actions">
+                  <input type="number" class="sm-order-input w-12 border border-gray-300 rounded-md p-0.5 text-xs" value="${state.displayOrder || 0}" min="0" data-id="${state._id}" />
+                  <button class="sm-action-btn edit" onclick="editState('${state._id}')">Edit</button>
+                  <form action="/states/delete/${state._id}" method="POST" class="d-inline sm-delete-form">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                    <input type="hidden" name="stateName" value="${state.name}" />
+                    <button type="submit" class="sm-action-btn delete">Delete</button>
+                  </form>
+                </div>
+              </div>
+            `;
+            stateGrid.append(card);
+          });
+        }
+
+        $('.lazy-img').each(function() {
+          const img = $(this);
+          if (img[0].getBoundingClientRect().top < window.innerHeight) {
+            img.attr('src', img.data('src')).removeClass('lazy-img');
+          }
+        });
+
+        $('#smBulkDeleteBtn').toggle(selectedStates.length > 0);
+        checkDuplicateOrders();
+      }
+
+      // Check for duplicate display orders
+      function checkDuplicateOrders() {
+        const orderInputs = Array.from($('.sm-order-input'));
+        const orderValues = {};
+        let hasDuplicates = false;
+        orderInputs.forEach(input => {
+          const value = parseInt(input.value) || 0;
+          if (orderValues[value]) {
+            input.classList.add('error');
+            hasDuplicates = true;
+          } else {
+            input.classList.remove('error');
+            orderValues[value] = true;
+          }
+        });
+        return hasDuplicates;
+      }
+
+      // Update order inputs after drag
+      function updateOrderInputs() {
+        const cards = Array.from(stateGrid.children);
+        cards.forEach((card, index) => {
+          const id = card.dataset.id;
+          const input = $(card).find('.sm-order-input');
+          input.val(index);
+          const state = states.find(s => s._id === id);
+          if (state) state.displayOrder = index;
+        });
+        checkDuplicateOrders();
+      }
+
+      // Checkbox selection
+      $(document).on('change', '.sm-checkbox', function() {
+        const id = $(this).data('id');
+        if ($(this).is(':checked')) {
+          selectedStates.push(id);
+        } else {
+          selectedStates = selectedStates.filter(sid => sid !== id);
+        }
+        $('#smBulkDeleteBtn').toggle(selectedStates.length > 0);
+      });
+
+      // Inline order update
+      $(document).on('change', '.sm-order-input', function() {
+        const id = $(this).data('id');
+        const newOrder = parseInt($(this).val()) || 0;
+        orderChanged = true;
+        $('#smSaveOrderBtn').removeClass('hidden');
+        const state = states.find(s => s._id === id);
+        if (state) state.displayOrder = newOrder;
+        renderStates();
+      });
+
+      // Edit state with retry mechanism
+      window.editState = async function(id, retryCount = 0) {
+        const state = states.find(s => s._id === id);
+        if (!state) {
+          Toastify({
+            text: 'State data not found.',
+            className: 'sm-toast',
+            style: {
+              background: '#EF4444'
+            },
+            duration: 3000
+          }).showToast();
+          return;
+        }
+
+        $('#smStateId').val(id);
+        $('#smCountry').val(state.countryCode).trigger('change');
+        $('#smImagePreview').attr('src', state.image);
+        $('#smOldImage').val(state.image);
+        // Normalize isActive to boolean
+        $('#smIsActive').prop('checked', state.isActive === true || state.isActive === 'true' || state.isActive === 'on');
+        $('#smSubmitBtn').text('Update State').removeClass('from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800').addClass('from-green-600 to-green-700 hover:from-green-700 hover:to-green-800');
+        $('#smCancelBtn').removeClass('hidden');
+        $('#smStateFormContainer').removeClass('collapsed');
+        $('#smFormToggle').text('Hide Form');
+
+        const maxRetries = 3;
+        const retryDelay = 1000;
+
+        async function trySetStateName() {
+          if ($('#smStateName option[value="' + state.name + '"]').length > 0) {
+            $('#smStateName').val(state.name).trigger('change');
+          } else if (retryCount < maxRetries) {
+            await new Promise(resolve => setTimeout(resolve, retryDelay));
+            await trySetStateName(retryCount + 1);
+          } else {
+            Toastify({
+              text: 'State not found in dropdown, please check country selection.',
+              className: 'sm-toast',
+              style: {
+                background: '#F59E0B'
+              },
+              duration: 3000
+            }).showToast();
+          }
+        }
+
+        setTimeout(trySetStateName, 500);
+      };
+
+      // Cancel edit
+      $('#smCancelBtn').on('click', function() {
+        $('#smStateForm')[0].reset();
+        $('#smCountry').val('IN').trigger('change');
+        $('#smStateName').val('').trigger('change');
+        $('#smStateId').val('');
+        $('#smOldImage').val('');
+        $('#smImagePreview').attr('src', '');
+        $('#smIsActive').prop('checked', true);
+        $('#smSubmitBtn').text('Add State').removeClass('from-green-600 to-green-700 hover:from-green-700 hover:to-green-800').addClass('from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800');
+        $('#smCancelBtn').addClass('hidden');
+        $('#smStateFormContainer').addClass('collapsed');
+        $('#smFormToggle').text('Show Form');
+      });
+
+      // Image crop handling
+      $('#smImage').on('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            $('#smCropImage').attr('src', e.target.result);
+            $('#smCropModal').modal('show');
+            setTimeout(function() {
+              if (cropper) cropper.destroy();
+              const cropMode = $('#smCropRatio').val() || '1';
+              const aspectRatio = cropMode === 'free' ? NaN : parseFloat(cropMode);
+              cropper = new Cropper(document.getElementById('smCropImage'), {
+                aspectRatio: aspectRatio,
+                viewMode: 1,
+                autoCropArea: 0.8,
+                responsive: true
+              });
+            }, 200);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      $('#smCropRatio').on('change', function() {
+        if (cropper) {
+          cropper.destroy();
+          const cropMode = $(this).val();
+          const aspectRatio = cropMode === 'free' ? NaN : parseFloat(cropMode);
+          cropper = new Cropper(document.getElementById('smCropImage'), {
+            aspectRatio: aspectRatio,
+            viewMode: 1,
+            autoCropArea: 0.8,
+            responsive: true
+          });
+        }
+      });
+
+      $('#smCropConfirmBtn').on('click', function() {
+        if (cropper) {
+          cropper.getCroppedCanvas({
+            width: 300,
+            height: 300
+          }).toBlob(function(blob) {
+            const url = URL.createObjectURL(blob);
+            $('#smImagePreview').attr('src', url).show();
+            const file = new File([blob], `cropped-image-${Date.now()}.jpg`, {
+              type: 'image/jpeg'
+            });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            $('#smImage')[0].files = dataTransfer.files;
+            $('#smOldImage').val('');
+            $('#smCropModal').modal('hide');
+            cropper.destroy();
+            cropper = null;
+          }, 'image/jpeg', 0.9);
+        }
+      });
+
+      $('#smCropModal').on('hidden.bs.modal', function() {
+        if (cropper) {
+          cropper.destroy();
+          cropper = null;
+        }
+      });
+
+      // Form toggle
+      $('#smFormToggle').on('click', function() {
+        $('#smStateFormContainer').toggleClass('collapsed');
+        $(this).text($('#smStateFormContainer').hasClass('collapsed') ? 'Show Form' : 'Hide Form');
+      });
+
+      // Tab switching
+      $('.sm-tab').on('click', function() {
+        const redirectUrl = $(this).data('redirect');
+        if (redirectUrl) {
+          window.location.href = redirectUrl; // Redirect to the URL specified in data-redirect
+        } else {
+          // Fallback to show tab content if no redirect is specified
+          $('.sm-tab').removeClass('active');
+          $(this).addClass('active');
+          $('.sm-tab-content').addClass('hidden');
+          $(`#${$(this).data('tab')}-tab`).removeClass('hidden');
+        }
+      });
+
+      // Lazy load images
+      $(window).on('scroll', function() {
+        $('.lazy-img').each(function() {
+          const img = $(this);
+          if (img[0].getBoundingClientRect().top < window.innerHeight) {
+            img.attr('src', img.data('src')).removeClass('lazy-img');
+          }
+        });
+      });
+
+      // Initial render
+      renderStates();
+    });
+  </script>
+</body>
+
+</html>

@@ -122,6 +122,8 @@ const newToursSchema = new Schema(
     metaDescription: { type: String, default: "" },
     // Display order for sorting tours
     displayOrder: { type: Number, default: 0 },
+    // isDeleted soft delete
+    isDeleted:  { type: Boolean, default: false }
   },
   { timestamps: true }
 );
