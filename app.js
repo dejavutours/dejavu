@@ -117,6 +117,8 @@ const stateRoutes= require('./routes/stateRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const bannerRoutes = require('./routes/bannerRoutes');
 const customTripRoutes = require('./routes/customTripRoutes');
+const tripRoutes = require('./routes/tripRoutes');
+
 
 
 app.use(compression());
@@ -186,6 +188,7 @@ app.use(stateRoutes);
 app.use(categoryRoutes);
 app.use(bannerRoutes);
 app.use(customTripRoutes);
+app.use(tripRoutes);
 
 mongoose
     .connect(MONGODB_URI, {

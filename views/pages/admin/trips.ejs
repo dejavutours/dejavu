@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - Trip Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Scoped styles for Trip Management with sm- prefix */
+    .sm-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+      font-family: "Inter", sans-serif;
+      background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
+    }
+
+    .sm-tabs {
+      display: flex;
+      border-bottom: 2px solid #d1d5db;
+      margin-bottom: 1rem;
+    }
+
+    .sm-tab {
+      padding: 0.5rem 1rem;
+      color: #4b5563;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .sm-tab:hover {
+      color: #1d4ed8;
+    }
+
+    .sm-tab.active {
+      border-bottom: 3px solid #1d4ed8;
+      color: #1d4ed8;
+    }
+
+    .sm-card {
+      background: #ffffff;
+      border-radius: 0.75rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: move;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+
+    .sm-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .sm-card img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .sm-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      max-height: 65vh;
+      overflow-y: auto;
+      padding: 0.75rem;
+      background: #f3f4f6;
+      border-radius: 0.75rem;
+    }
+
+    .sm-actions {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .sm-card:hover .sm-actions {
+      opacity: 1;
+    }
+
+    .sm-action-btn {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      border-radius: 0.375rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .sm-action-btn.view {
+      background: linear-gradient(to right, #3b82f6, #1d4ed8);
+      color: white;
+    }
+
+    .sm-action-btn.view:hover {
+      background: linear-gradient(to right, #1d4ed8, #1e40af);
+    }
+
+    .select2-container--default .select2-selection--single {
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      padding: 0.25rem;
+      background: #ffffff;
+      height: 2.25rem;
+    }
+
+    .sm-toast {
+      z-index: 10000 !important;
+    }
+
+    .sm-filter-bar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      align-items: center;
+      flex-wrap: nowrap;
+    }
+
+    .sm-filter-bar .filter-item {
+      flex: 1;
+      min-width: 150px;
+      max-width: 250px;
+    }
+
+    .sm-loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .sm-loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #1d4ed8;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      animation: sm-spin 1s linear infinite;
+    }
+
+    .sm-order-input.error {
+      border-color: #ef4444;
+      background-color: #fee2e2;
+    }
+
+    .sm-no-records {
+      text-align: center;
+      padding: 2rem;
+      color: #6b7280;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    @keyframes sm-spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 640px) {
+      .sm-card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sm-tabs {
+        flex-wrap: wrap;
+      }
+
+      .sm-tab {
+        flex: 1 1 auto;
+        text-align: center;
+      }
+
+      .sm-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    @keyframes sm-fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+  <%- include('../../partials/headtag'); %>
+</head>
+<body class="bg-gray-100">
+  <%- include('../../partials/header'); %>
+  <div class="sm-container">
+    <!-- Loading Overlay -->
+    <div class="sm-loading" id="smLoadingOverlay">
+      <div class="sm-loading-spinner"></div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="sm-tabs">
+      <div class="sm-tab" data-tab="cities" data-redirect="/cities">City Master</div>
+      <div class="sm-tab" data-tab="states" data-redirect="/states">State Master</div>
+      <div class="sm-tab" data-tab="category" data-redirect="/categories">Category Master</div>
+      <div class="sm-tab" data-tab="banners" data-redirect="/banner">Banner Master</div>
+      <div class="sm-tab active" data-tab="trips" data-redirect="/trips">Trip Master</div>
+      <div class="sm-tab" data-tab="customTrip" data-redirect="/customTrip">Custom Trip</div>
+    </div>
+
+    <!-- Trip Management Tab Content -->
+    <div id="trips-tab" class="sm-tab-content">
+      <!-- Filter and Search Bar -->
+      <div class="sm-filter-bar">
+        <div class="filter-item">
+          <div class="relative">
+            <input type="text" id="smSearchInput" class="w-full border border-gray-300 rounded-md pl-8 pr-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search trips..." />
+            <svg class="absolute left-2.5 top-2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+        <div class="filter-item">
+          <select class="select2 w-full" id="smStateFilter">
+            <option value="">All States</option>
+            <% states.forEach(state => { %>
+              <option value="<%= state %>"><%= state %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="filter-item">
+          <select class="select2 w-full" id="smStatusFilter">
+            <option value="">All Statuses</option>
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+          </select>
+        </div>
+        <button id="smClearFiltersBtn" class="px-3 py-1.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-sm font-medium">
+          Clear Filters
+        </button>
+      </div>
+
+      <!-- Trip Cards -->
+      <div class="sm-card-grid" id="smTripGrid"></div>
+      <div class="flex justify-end mt-3">
+        <button id="smSaveOrderBtn" class="px-4 py-1.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-md hover:from-green-700 hover:to-green-800 text-sm font-medium hidden">
+          Save Order
+        </button>
+      </div>
+    </div>
+
+    <!-- Trip Details Modal -->
+    <div class="modal fade" id="smTripDetailsModal" tabindex="-1" aria-labelledby="smTripDetailsModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-base font-semibold">Trip Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-sm">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p><strong>Name:</strong> <span id="detailName"></span></p>
+                <p><strong>State:</strong> <span id="detailState"></span></p>
+                <p><strong>Destinations:</strong> <span id="detailDestinations"></span></p>
+                <p><strong>Route:</strong> <span id="detailRoute"></span></p>
+                <p><strong>Days:</strong> <span id="detailDays"></span></p>
+                <p><strong>Price:</strong> <span id="detailPrice"></span></p>
+                <p><strong>Active:</strong> <span id="detailIsActive"></span></p>
+                <p><strong>Display Order:</strong> <span id="detailDisplayOrder"></span></p>
+                <p><strong>Trip Type:</strong> <span id="detailTripType"></span></p>
+                <p><strong>Altitude:</strong> <span id="detailAltitude"></span></p>
+              </div>
+              <div>
+                <p><strong>Best Seasons:</strong> <span id="detailBestSession"></span></p>
+                <p><strong>Trip Categories:</strong> <span id="detailTripCategories"></span></p>
+                <p><strong>Best Months:</strong> <span id="detailBestMonthToVisit"></span></p>
+                <p><strong>Traveler Types:</strong> <span id="detailTravelerType"></span></p>
+                <p><strong>Activities:</strong> <span id="detailActivities"></span></p>
+                <p><strong>About:</strong> <span id="detailAbout"></span></p>
+              </div>
+            </div>
+            <div class="mt-4">
+              <p><strong>Main Image:</strong></p>
+              <img id="detailImage" class="w-48 h-48 object-cover rounded-md border border-gray-200" alt="Trip Image" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm" data-bs-dismiss="modal">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <%- include('../../partials/footer'); %>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Initialize trips
+    let trips = <%- JSON.stringify(trips) %>;
+    let filteredTrips = [...trips];
+    let orderChanged = false;
+
+    $(document).ready(function() {
+      // Initialize Select2 for dropdowns
+      $('.select2').select2({
+        placeholder: 'Select an option',
+        allowClear: true,
+        width: '100%'
+      });
+
+      // Clear filters
+      $('#smClearFiltersBtn').on('click', function() {
+        $('#smSearchInput').val('');
+        $('#smStateFilter').val('').trigger('change');
+        $('#smStatusFilter').val('').trigger('change');
+        filteredTrips = [...trips];
+        renderTrips();
+      });
+
+      // Client-side search and filter
+      let searchTimeout;
+
+      function applyFilters() {
+        const searchTerm = $('#smSearchInput').val().toLowerCase().trim();
+        const selectedState = $('#smStateFilter').val();
+        const selectedStatus = $('#smStatusFilter').val();
+
+        filteredTrips = trips.filter(trip => {
+          const matchesSearch = trip.name.toLowerCase().includes(searchTerm) ||
+            trip.state.toLowerCase().includes(searchTerm);
+          const matchesState = !selectedState || trip.state === selectedState;
+          const matchesStatus = selectedStatus === '' || trip.isActive.toString() === selectedStatus;
+          return matchesSearch && matchesState && matchesStatus;
+        });
+        renderTrips();
+      }
+
+      $('#smSearchInput').on('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(applyFilters, 300);
+      });
+
+      $('#smStateFilter').on('change', applyFilters);
+      $('#smStatusFilter').on('change', applyFilters);
+
+      // Initialize drag-and-drop
+      const tripGrid = document.getElementById('smTripGrid');
+      Sortable.create(tripGrid, {
+        animation: 150,
+        handle: '.sm-card',
+        touchStartThreshold: 5,
+        onEnd: function(evt) {
+          orderChanged = true;
+          $('#smSaveOrderBtn').removeClass('hidden');
+          updateOrderInputs();
+        }
+      });
+
+      // Save order with duplicate check
+      $('#smSaveOrderBtn').on('click', function() {
+        if (checkDuplicateOrders()) {
+          Toastify({
+            text: 'Duplicate display orders detected. Please fix before saving.',
+            className: 'sm-toast',
+            style: { background: '#F59E0B' },
+            duration: 3000
+          }).showToast();
+          return;
+        }
+        const newOrder = Array.from(tripGrid.children).map(card => card.dataset.id);
+        $('#smLoadingOverlay').show();
+        $.ajax({
+          url: '/trips/update-order',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            _csrf: '<%= csrfToken %>',
+            order: newOrder
+          }),
+          success: function(response) {
+            $('#smLoadingOverlay').hide();
+            if (response.success) {
+              Toastify({
+                text: response.message,
+                className: 'sm-toast',
+                style: { background: '#10B981' },
+                duration: 3000
+              }).showToast();
+              orderChanged = false;
+              $('#smSaveOrderBtn').addClass('hidden');
+              const orderedTrips = [];
+              newOrder.forEach(id => {
+                const trip = trips.find(t => t._id === id);
+                if (trip) orderedTrips.push(trip);
+              });
+              trips = orderedTrips;
+              filteredTrips = [...trips];
+              renderTrips();
+            } else {
+              Toastify({
+                text: response.message || 'Failed to update trip order.',
+                className: 'sm-toast',
+                style: { background: '#EF4444' },
+                duration: 3000
+              }).showToast();
+            }
+          },
+          error: function(xhr) {
+            $('#smLoadingOverlay').hide();
+            const message = xhr.responseJSON?.error || 'Error updating trip order.';
+            Toastify({
+              text: message,
+              className: 'sm-toast',
+              style: { background: '#EF4444' },
+              duration: 3000
+            }).showToast();
+          }
+        });
+      });
+
+      // Render trips
+      function renderTrips() {
+        const tripGrid = $('#smTripGrid');
+        tripGrid.empty();
+        if (filteredTrips.length === 0) {
+          tripGrid.append('<p class="sm-no-records">No records found.</p>');
+        } else {
+          filteredTrips.forEach(trip => {
+            const card = `
+              <div class="sm-card" data-id="${trip._id}">
+                <img src="${trip.imageurl || '/images/placeholder.jpg'}" alt="${trip.name}" class="sm-card-img" data-src="${trip.imageurl || '/images/placeholder.jpg'}" />
+                <h4 class="text-base font-semibold text-gray-800">${trip.name}</h4>
+                <p class="text-xs text-gray-600">${trip.state}</p>
+                <p class="text-xs text-gray-600">${trip.isActive ? 'Active' : 'Inactive'}</p>
+                <div class="sm-actions">
+                  <input type="number" class="sm-order-input w-12 border border-gray-300 rounded-md p-0.5 text-xs" value="${trip.displayOrder || 0}" min="0" data-id="${trip._id}" />
+                  <button class="sm-action-btn view" onclick="viewTrip('${trip._id}')">View</button>
+                </div>
+              </div>
+            `;
+            tripGrid.append(card);
+          });
+        }
+
+        $('.lazy-img').each(function() {
+          const img = $(this);
+          if (img[0].getBoundingClientRect().top < window.innerHeight) {
+            img.attr('src', img.data('src')).removeClass('lazy-img');
+          }
+        });
+
+        checkDuplicateOrders();
+      }
+
+      // Check for duplicate display orders
+      function checkDuplicateOrders() {
+        const orderInputs = Array.from($('.sm-order-input'));
+        const orderValues = {};
+        let hasDuplicates = false;
+        orderInputs.forEach(input => {
+          const value = parseInt(input.value) || 0;
+          if (orderValues[value]) {
+            input.classList.add('error');
+            hasDuplicates = true;
+          } else {
+            input.classList.remove('error');
+            orderValues[value] = true;
+          }
+        });
+        return hasDuplicates;
+      }
+
+      // Update order inputs after drag
+      function updateOrderInputs() {
+        const cards = Array.from(tripGrid.children);
+        cards.forEach((card, index) => {
+          const id = card.dataset.id;
+          const input = $(card).find('.sm-order-input');
+          input.val(index);
+          const trip = trips.find(t => t._id === id);
+          if (trip) trip.displayOrder = index;
+        });
+        checkDuplicateOrders();
+      }
+
+      // Inline order update
+      $(document).on('change', '.sm-order-input', function() {
+        const id = $(this).data('id');
+        const newOrder = parseInt($(this).val()) || 0;
+        orderChanged = true;
+        $('#smSaveOrderBtn').removeClass('hidden');
+        const trip = trips.find(t => t._id === id);
+        if (trip) trip.displayOrder = newOrder;
+        renderTrips();
+      });
+
+      // View trip details
+      window.viewTrip = function(id) {
+        const trip = trips.find(t => t._id === id);
+        if (!trip) {
+          Toastify({
+            text: 'Trip data not found.',
+            className: 'sm-toast',
+            style: { background: '#EF4444' },
+            duration: 3000
+          }).showToast();
+          return;
+        }
+
+        $('#detailName').text(trip.name || '-');
+        $('#detailState').text(trip.state || '-');
+        $('#detailDestinations').text(trip.destinations || '-');
+        $('#detailRoute').text(trip.route || '-');
+        $('#detailDays').text(trip.days || '-');
+        $('#detailPrice').text(trip.price ? `$${trip.price.toLocaleString()}` : '-');
+        $('#detailIsActive').text(trip.isActive ? 'Active' : 'Inactive');
+        $('#detailDisplayOrder').text(trip.displayOrder || 0);
+        $('#detailTripType').text(trip.tripType || '-');
+        $('#detailAltitude').text(trip.altitude || '-');
+        $('#detailBestSession').text(trip.bestSession.join(', ') || '-');
+        $('#detailTripCategories').text(trip.tripCategories.join(', ') || '-');
+        $('#detailBestMonthToVisit').text(trip.bestMonthToVisit.join(', ') || '-');
+        $('#detailTravelerType').text(trip.travelerType.join(', ') || '-');
+        $('#detailActivities').text(trip.activities || '-');
+        $('#detailAbout').text(trip.about || '-');
+        $('#detailImage').attr('src', trip.imageurl || '/images/placeholder.jpg');
+
+        $('#smTripDetailsModal').modal('show');
+      };
+
+      // Tab switching
+      $('.sm-tab').on('click', function() {
+        const redirectUrl = $(this).data('redirect');
+        const currentPath = window.location.pathname;
+        if (redirectUrl && currentPath !== redirectUrl) {
+          window.location.href = redirectUrl;
+        }
+      });
+
+      // Lazy load images
+      $(window).on('scroll', function() {
+        $('.sm-card-img').each(function() {
+          const img = $(this);
+          if (img[0].getBoundingClientRect().top < window.innerHeight) {
+            img.attr('src', img.data('src')).removeClass('lazy-img');
+          }
+        });
+      });
+
+      // Initial render
+      renderTrips();
+    });
+  </script>
+</body>
+</html>
