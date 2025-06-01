@@ -1,0 +1,11 @@
+const express = require('express');
+const router = express.Router();
+const ensureLogIn = require('connect-ensure-login').ensureLoggedIn;
+const isAuth = require('../middleware/is-auth');
+const customTripController = require('../controllers/customTripController');
+const ensureLoggedIn = ensureLogIn();
+router.get('/customTrip',  ensureLoggedIn, isAuth, customTripController.getCustomTrips);
+router.post('/delete/:id',  ensureLoggedIn, isAuth, customTripController.deleteCustomTrip);
+router.post('/bulk-delete',  ensureLoggedIn, isAuth, customTripController.bulkDeleteCustomTrips);
+
+module.exports = router;

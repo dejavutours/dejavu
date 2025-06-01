@@ -1732,9 +1732,9 @@ exports.verifyotp = async (req, res, next) => {
 // - If a trip ID is provided, fetch and return trip details for editing
 exports.getAddTours = async (req, res, next) => {
   try {
-    // Extract states from configuration file
-    const states_arr = Object.keys(config);
-
+    // Fetch active, non-deleted states from Statemst model
+    const states = await Statemst.find({ isActive: true, isDeleted: false }).select('name countryCode').lean();
+    
     // Check if request body contains a trip ID (for editing an existing tour)
     const tripid = req.query.tripid;
     if (tripid) {
@@ -1745,9 +1745,7 @@ exports.getAddTours = async (req, res, next) => {
 
       try {
         // Fetch trip details from the database
-        const tripdetails = await NewTours.findOne({ _id: tripid }).populate(
-          "CityId"
-        );
+        const tripdetails = await NewTours.findOne({ _id: tripid }).populate("CityId");
 
         if (!tripdetails) {
           return res.status(404).json({ error: "Trip not found" });
@@ -1757,7 +1755,7 @@ exports.getAddTours = async (req, res, next) => {
         return res.render("pages/Addtours", {
           message: null,
           trips: tripdetails,
-          states_arr,
+          states, // Pass states instead of states_arr
           csrfToken: req.csrfToken(),
         });
       } catch (err) {
@@ -1770,7 +1768,7 @@ exports.getAddTours = async (req, res, next) => {
     return res.render("pages/Addtours", {
       message: null,
       trips: [],
-      states_arr,
+      states, // Pass states instead of states_arr
       csrfToken: req.csrfToken(),
     });
   } catch (err) {
@@ -1997,7 +1995,7 @@ exports.postNewAddTours = async (req, res) => {
     } = req.body;
 
     // Check if the tour name already exists
-    const existingTour = await NewTours.findOne({ name });
+    const existingTour = await NewTours.findOne({ name,isActive:true, isDeleted:false });
     if (
       existingTour &&
       (!tripId || existingTour._id.toString() !== tripId.toString())
@@ -2071,12 +2069,7 @@ exports.postNewAddTours = async (req, res) => {
           documentUrl = `/documents/tours/${file.filename}`;
         } else {
           // Handle images
-          const imagePath = `/images/tours/${file.filename}`;
-          if (!imageurl) {
-            imageurl = imagePath; // First image is main image
-          } else {
-            bannerimages.push(imagePath); // Additional images are banner images
-          }
+          imageurl = `/images/tours/${file.filename}`;
         }
       });
     }

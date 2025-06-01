@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - Custom Trip Queries</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    .sm-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+      font-family: "Inter", sans-serif;
+      background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
+    }
+
+    .sm-tabs {
+      display: flex;
+      border-bottom: 2px solid #d1d5db;
+      margin-bottom: 1rem;
+    }
+
+    .sm-tab {
+      padding: 0.5rem 1rem;
+      color: #4b5563;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .sm-tab:hover {
+      color: #1d4ed8;
+    }
+
+    .sm-tab.active {
+      border-bottom: 3px solid #1d4ed8;
+      color: #1d4ed8;
+    }
+
+    .sm-card {
+      background: #ffffff;
+      border-radius: 0.75rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+
+    .sm-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .sm-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+      max-height: 75vh;
+      overflow-y: auto;
+      padding: 0.75rem;
+      background: #f3f4f6;
+      border-radius: 0.75rem;
+    }
+
+    .sm-actions {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .sm-card:hover .sm-actions {
+      opacity: 1;
+    }
+
+    .sm-action-btn {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      border-radius: 0.375rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .sm-action-btn.view {
+      background: linear-gradient(to right, #3b82f6, #1d4ed8);
+      color: white;
+    }
+
+    .sm-action-btn.view:hover {
+      background: linear-gradient(to right, #1d4ed8, #1e40af);
+    }
+
+    .sm-action-btn.delete {
+      background: linear-gradient(to right, #ef4444, #dc2626);
+      color: white;
+    }
+
+    .sm-action-btn.delete:hover {
+      background: linear-gradient(to right, #dc2626, #b91c1c);
+    }
+
+    .sm-filter-bar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .sm-filter-bar .filter-item {
+      flex: 1;
+      min-width: 200px;
+      max-width: 300px;
+    }
+
+    .sm-loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .sm-loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #1d4ed8;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      animation: sm-spin 1s linear infinite;
+    }
+
+    .sm-no-records {
+      text-align: center;
+      padding: 2rem;
+      color: #6b7280;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    .sm-contact-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      border-radius: 0.375rem;
+      transition: all 0.2s ease;
+    }
+
+    .sm-contact-btn.phone {
+      background: linear-gradient(to right, #10b981, #059669);
+      color: white;
+    }
+
+    .sm-contact-btn.phone:hover {
+      background: linear-gradient(to right, #059669, #047857);
+    }
+
+    .sm-contact-btn.whatsapp {
+      background: linear-gradient(to right, #25d366, #128c7e);
+      color: white;
+    }
+
+    .sm-contact-btn.whatsapp:hover {
+      background: linear-gradient(to right, #128c7e, #0a6d5e);
+    }
+
+    @keyframes sm-spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 640px) {
+      .sm-card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sm-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .sm-tabs {
+        flex-wrap: wrap;
+      }
+
+      .sm-tab {
+        flex: 1 1 auto;
+        text-align: center;
+      }
+    }
+
+    @keyframes sm-fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+  <%- include('../../partials/headtag'); %>
+</head>
+<body class="bg-gray-100">
+  <%- include('../../partials/header'); %>
+  <div class="sm-container">
+    <!-- Loading Overlay -->
+    <div class="sm-loading" id="smLoadingOverlay">
+      <div class="sm-loading-spinner"></div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="sm-tabs">
+      <div class="sm-tab" data-tab="cities" data-redirect="/cities">City Master</div>
+      <div class="sm-tab" data-tab="states" data-redirect="/states">State Master</div>
+      <div class="sm-tab" data-tab="category" data-redirect="/categories">Category Master</div>
+      <div class="sm-tab" data-tab="banners" data-redirect="/banner">Banner Master</div>
+      <div class="sm-tab" data-tab="trips" data-redirect="/trips">Trip Master</div>
+      <div class="sm-tab active" data-tab="customTrip" data-redirect="/customTrip">Custom Trip</div>
+    </div>
+
+    <!-- Custom Trip Queries Tab Content -->
+    <div id="customTrip-tab" class="sm-tab-content">
+      <!-- Filter and Search Bar -->
+      <div class="sm-filter-bar">
+        <div class="filter-item">
+          <div class="relative">
+            <input type="text" id="smSearchInput" class="w-full border border-gray-300 rounded-md pl-8 pr-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search by name, email, or destination..." />
+            <svg class="absolute left-2.5 top-2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+        <button id="smClearFiltersBtn" class="px-3 py-1.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-sm font-medium">
+          Clear Filters
+        </button>
+        <button id="smBulkDeleteBtn" class="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium hidden">
+          Delete Selected
+        </button>
+      </div>
+
+      <!-- Custom Trip Cards -->
+      <div class="sm-card-grid" id="smCustomTripGrid"></div>
+    </div>
+
+    <!-- Details Modal -->
+    <div class="modal fade" id="smDetailsModal" tabindex="-1" aria-labelledby="smDetailsModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-base font-semibold" id="smDetailsModalLabel">Trip Query Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-sm" id="smDetailsModalBody">
+            <!-- Details will be populated via JavaScript -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm" data-bs-dismiss="modal">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="smDeleteConfirmModal" tabindex="-1" aria-labelledby="smDeleteConfirmModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-base font-semibold">Confirm Delete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-sm">
+            Are you sure you want to delete the selected trip query(s)?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button type="button" id="smConfirmDeleteBtn" class="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../../partials/footer'); %>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Initialize state
+    let customTrips = <%- JSON.stringify(customTrips) %>;
+    let filteredTrips = [...customTrips];
+    let selectedTrips = [];
+
+    $(document).ready(function() {
+      // Initialize Select2 for any dropdowns (none currently, but kept for consistency)
+      $(".select2").select2({
+        placeholder: "Select an option",
+        allowClear: true,
+        width: '100%'
+      });
+
+      // Clear filters
+      $('#smClearFiltersBtn').on('click', function() {
+        $('#smSearchInput').val('');
+        filteredTrips = [...customTrips];
+        renderTrips();
+      });
+
+      // Client-side search
+      let searchTimeout;
+      $('#smSearchInput').on('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          const searchTerm = $('#smSearchInput').val().toLowerCase().trim();
+          filteredTrips = customTrips.filter(trip => {
+            return trip.name.toLowerCase().includes(searchTerm) ||
+                   trip.email.toLowerCase().includes(searchTerm) ||
+                   trip.destination.toLowerCase().includes(searchTerm);
+          });
+          renderTrips();
+        }, 300);
+      });
+
+      // Render custom trips
+      function renderTrips() {
+        const tripGrid = $('#smCustomTripGrid');
+        tripGrid.empty();
+        if (filteredTrips.length === 0) {
+          tripGrid.append('<p class="sm-no-records">No records found.</p>');
+        } else {
+          filteredTrips.forEach(trip => {
+            const card = `
+              <div class="sm-card" data-id="${trip._id}">
+                <input type="checkbox" class="sm-checkbox absolute top-2 left-2" data-id="${trip._id}" />
+                <h4 class="text-base font-semibold text-gray-800">${trip.name}</h4>
+                <p class="text-xs text-gray-600">Destination: ${trip.destination}</p>
+                <p class="text-xs text-gray-600">Email: ${trip.email}</p>
+                <p class="text-xs text-gray-600">Submitted: ${new Date(trip.createdAt).toLocaleDateString()}</p>
+                <div class="sm-actions">
+                  <button class="sm-action-btn view" onclick="viewDetails('${trip._id}')">View Details</button>
+                  <form action="/customTrip/delete/${trip._id}" method="POST" class="d-inline sm-delete-form">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                    <button type="submit" class="sm-action-btn delete">Delete</button>
+                  </form>
+                </div>
+              </div>
+            `;
+            tripGrid.append(card);
+          });
+        }
+        $('#smBulkDeleteBtn').toggle(selectedTrips.length > 0);
+      }
+
+      // View details
+      window.viewDetails = function(id) {
+        const trip = customTrips.find(t => t._id === id);
+        if (!trip) {
+          Toastify({
+            text: 'Trip data not found.',
+            className: 'sm-toast',
+            style: { background: '#EF4444' },
+            duration: 3000
+          }).showToast();
+          return;
+        }
+        const detailsHtml = `
+          <div class="space-y-2">
+            <p><strong>Name:</strong> ${trip.name}</p>
+            <p><strong>Email:</strong> ${trip.email}</p>
+            <p><strong>Mobile:</strong> ${trip.mobile}</p>
+            <div class="flex space-x-2">
+              <a href="tel:${trip.mobile}" class="sm-contact-btn phone">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+                Call
+              </a>
+              <a href="https://wa.me/${trip.mobile}" target="_blank" class="sm-contact-btn whatsapp">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.198-.347.223-.644.075-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.074-.149-.669-.669-.916-.983-.247-.314-.372-.686-.297-.835.074-.149.668-.986 1.475-1.356.806-.369 1.584-.276 2.108-.276.525 0 .976.297 1.225.693.247.397.446.974.446 1.622 0 .648-.099 1.097-.297 1.595-.198.497-.471.993-.892 1.49z"/>
+                </svg>
+                WhatsApp
+              </a>
+            </div>
+            <p><strong>Destination:</strong> ${trip.destination}</p>
+            <p><strong>Place:</strong> ${trip.place || 'N/A'}</p>
+            <p><strong>Days:</strong> ${trip.days || 'N/A'}</p>
+            <p><strong>Persons:</strong> ${trip.persons || 'N/A'}</p>
+            <p><strong>Transport:</strong> ${trip.transport || 'N/A'}</p>
+            <p><strong>Trip Type:</strong> ${trip.triptype || 'N/A'}</p>
+            <p><strong>Travel Date:</strong> ${trip.travelDate || 'N/A'}</p>
+            <p><strong>Budget:</strong> ${trip.budget ? '₹' + trip.budget : 'N/A'}</p>
+            <p><strong>Details:</strong> ${trip.details || 'N/A'}</p>
+            <p><strong>Submitted:</strong> ${new Date(trip.createdAt).toLocaleString()}</p>
+          </div>
+        `;
+        $('#smDetailsModalBody').html(detailsHtml);
+        $('#smDetailsModal').modal('show');
+      };
+
+      // Delete custom trip
+      $(document).on('submit', '.sm-delete-form', function(e) {
+        e.preventDefault();
+        const form = $(this);
+        $('#smDeleteConfirmModal').modal('show');
+        $('#smConfirmDeleteBtn').off('click').on('click', function() {
+          $('#smLoadingOverlay').show();
+          $.ajax({
+            url: form.attr('action'),
+            method: 'POST',
+            data: form.serialize(),
+            success: function(response) {
+              $('#smLoadingOverlay').hide();
+              $('#smDeleteConfirmModal').modal('hide');
+              if (response.success) {
+                Toastify({
+                  text: response.message,
+                  className: 'sm-toast',
+                  style: { background: '#10B981' },
+                  duration: 3000
+                }).showToast();
+                setTimeout(() => location.reload(), 600);
+              } else {
+                Toastify({
+                  text: response.message || 'Failed to delete trip.',
+                  className: 'sm-toast',
+                  style: { background: '#EF4444' },
+                  duration: 3000
+                }).showToast();
+              }
+            },
+            error: function() {
+              $('#smLoadingOverlay').hide();
+              $('#smDeleteConfirmModal').modal('hide');
+              Toastify({
+                text: 'Error deleting trip.',
+                className: 'sm-toast',
+                style: { background: '#EF4444' },
+                duration: 3000
+              }).showToast();
+            }
+          });
+        });
+      });
+
+      // Bulk delete
+      $('#smBulkDeleteBtn').on('click', function() {
+        if (selectedTrips.length === 0) {
+          Toastify({
+            text: 'No trips selected.',
+            className: 'sm-toast',
+            style: { background: '#F59E0B' },
+            duration: 3000
+          }).showToast();
+          return;
+        }
+        $('#smDeleteConfirmModal').modal('show');
+        $('#smConfirmDeleteBtn').off('click').on('click', function() {
+          $('#smLoadingOverlay').show();
+          $.ajax({
+            url: '/customTrip/bulk-delete',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+              _csrf: '<%= csrfToken %>',
+              ids: selectedTrips
+            }),
+            success: function(response) {
+              $('#smLoadingOverlay').hide();
+              $('#smDeleteConfirmModal').modal('hide');
+              if (response.success) {
+                Toastify({
+                  text: response.message,
+                  className: 'sm-toast',
+                  style: { background: '#10B981' },
+                  duration: 3000
+                }).showToast();
+                setTimeout(() => location.reload(), 600);
+              } else {
+                Toastify({
+                  text: response.message || 'Failed to delete trips.',
+                  className: 'sm-toast',
+                  style: { background: '#EF4444' },
+                  duration: 3000
+                }).showToast();
+              }
+            },
+            error: function() {
+              $('#smLoadingOverlay').hide();
+              $('#smDeleteConfirmModal').modal('hide');
+              Toastify({
+                text: 'Error deleting trips.',
+                className: 'sm-toast',
+                style: { background: '#EF4444' },
+                duration: 3000
+              }).showToast();
+            }
+          });
+        });
+      });
+
+      // Checkbox selection
+      $(document).on('change', '.sm-checkbox', function() {
+        const id = $(this).data('id');
+        if ($(this).is(':checked')) {
+          selectedTrips.push(id);
+        } else {
+          selectedTrips = selectedTrips.filter(sid => sid !== id);
+        }
+        $('#smBulkDeleteBtn').toggle(selectedTrips.length > 0);
+      });
+
+      // Tab switching
+      $('.sm-tab').on('click', function() {
+        const redirectUrl = $(this).data('redirect');
+        if (redirectUrl) {
+          window.location.href = redirectUrl;
+        }
+      });
+
+      // Initial render
+      renderTrips();
+    });
+  </script>
+</body>
+</html>

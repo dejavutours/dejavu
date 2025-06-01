@@ -5,52 +5,326 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <%- include('../partials/headtag'); %>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous" />
-  <!-- Bootstrap Icons CDN -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <!-- Font Awesome for Premium Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <!-- FilePond CSS -->
-  <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet" />
+  <link href="https://unpkg.com/filepond@4.30.6/dist/filepond.css" rel="stylesheet" />
+  <!-- FilePond Image Preview -->
+  <link href="https://unpkg.com/filepond-plugin-image-preview@4.6.12/dist/filepond-plugin-image-preview.css" rel="stylesheet" />
   <!-- Flatpickr CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <!-- FilePond Plugins -->
-  <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
   <!-- Quill CSS -->
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <!-- Google Fonts: Inter and Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <title>Dejavu Add Tours Details</title>
   <style>
-    .form-container {
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      margin: auto;
+    :root {
+      --primary: #1a3c6e;
+      --primary-hover: #0f2952;
+      --secondary: #f4a261;
+      --secondary-hover: #e76f51;
+      --accent: #2a9d8f;
+      --bg-light: #f8f9fa;
+      --bg-dark: #ffffff;
+      --text-dark: #212529;
+      --text-muted: #6c757d;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --border-radius: 8px;
+      --transition: all 0.3s ease;
     }
 
-    .form-label b {
-      font-size: 0.9rem;
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
+      color: var(--text-dark);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .form-container {
+      background: var(--bg-dark);
+      padding: 2.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      margin: 2rem auto;
+      max-width: 1200px;
+      transition: var(--transition);
+    }
+
+    .form-container h1 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 2rem;
+    }
+
+    .form-label {
+      font-weight: 500;
+      color: var(--text-dark);
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+
+    .form-control,
+    .form-select {
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 0.2rem rgba(26, 60, 110, 0.25);
+    }
+
+    .input-group .btn {
+      border-radius: 6px;
+      transition: var(--transition);
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: var(--transition);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(90deg, var(--primary-hover), var(--accent));
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: var(--secondary);
+      border: none;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: var(--transition);
+    }
+
+    .btn-secondary:hover {
+      background: var(--secondary-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background: #dc3545;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      transition: var(--transition);
+    }
+
+    .btn-danger:hover {
+      background: #c82333;
+      transform: translateY(-2px);
+    }
+
+    .accordion-item {
+      border: none;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .accordion-button {
+      background: var(--bg-light);
+      color: var(--text-dark);
+      font-weight: 500;
+      padding: 1rem 1.5rem;
+      border-radius: 6px;
+      transition: var(--transition);
+    }
+
+    .accordion-button:not(.collapsed) {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .accordion-body {
+      padding: 1.5rem;
+      background: #fff;
+    }
+
+    .modal-content {
+      border: none;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      animation: modalFadeIn 0.3s ease-out;
+    }
+
+    .modal-header {
+      background: var(--primary);
+      color: #fff;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      padding: 1rem 1.5rem;
+    }
+
+    .modal-title {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+    }
+
+    .modal-body {
+      padding: 2rem;
+      background: #fff;
+    }
+
+    .modal-footer {
+      border-top: none;
+      padding: 1rem 1.5rem;
+      background: #f8f9fa;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .preview-container {
-      margin-top: 10px;
+      margin-top: 1rem;
+      position: relative;
+      max-width: 200px;
+      max-height: 200px;
+      /* Added to constrain container height */
+      overflow: hidden;
+      /* Ensures content stays within bounds */
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .preview-container img {
-      max-width: 100%;
+      width: 100%;
       height: auto;
+      max-height: 200px;
+      /* Limits image height */
+      object-fit: cover;
+      /* Ensures image fills space without distortion */
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      transition: var(--transition);
       cursor: pointer;
+    }
+
+    .preview-container img:hover {
+      transform: scale(1.02);
+      /* Reduced scale for subtle effect */
+      box-shadow: var(--shadow);
+      z-index: 1;
+      /* Ensures it stays above other elements */
+    }
+
+    .pdf-preview-container {
+      margin-top: 1rem;
+      position: relative;
+      max-width: 200px;
+    }
+
+    .preview-container img,
+    .pdf-preview-container embed {
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .preview-container img:hover,
+    .pdf-preview-container embed:hover {
+      transform: scale(1.05);
+      box-shadow: var(--shadow);
     }
 
     .multiple-preview img {
       width: 100px;
       height: 100px;
-      margin-right: 10px;
-      cursor: pointer;
       object-fit: cover;
+      margin-right: 0.5rem;
+      border-radius: 6px;
+      transition: var(--transition);
     }
 
-    .modal img {
-      width: 100%;
+    .multiple-preview img:hover {
+      transform: scale(1.05);
+    }
+
+    .remove-image,
+    .remove-pdf {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 0.25rem;
+      border-radius: 50%;
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      transition: var(--transition);
+    }
+
+    .remove-image:hover,
+    .remove-pdf:hover {
+      background: #c82333;
+    }
+
+    .trip-categories-group .select2-container--default .select2-selection--multiple,
+    .region-group .select2-container--default .select2-selection--single {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .trip-categories-group .input-group-text,
+    .region-group .input-group-text {
+      height: 100%;
+      padding: 0 0.75rem;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 0 6px 6px 0;
+      transition: var(--transition);
+    }
+
+    .trip-categories-group .input-group-text:hover,
+    .region-group .input-group-text:hover {
+      background: var(--primary-hover);
+    }
+
+    .city-entry {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+    }
+
+    .pricingRow {
+      position: relative;
+      padding-right: 45px;
+      margin-bottom: 1rem;
     }
 
     .removeRow {
@@ -58,62 +332,73 @@
       top: 50%;
       right: -40px;
       transform: translateY(-50%);
+      border-radius: 50%;
+      padding: 0.25rem;
     }
 
-    .pricingRow {
-      position: relative;
-      padding-right: 45px;
+    .datePicking {
+      border-radius: 6px;
+    }
+
+    .table-responsive table {
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .table-light {
+      background: var(--bg-light);
+    }
+
+    .editor-container {
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .ql-toolbar {
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+    }
+
+    .ql-container {
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
     }
 
     @media (max-width: 768px) {
+      .form-container {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+
       .removeRow {
         position: static;
-        margin-top: 10px;
+        margin-top: 0.5rem;
       }
 
       .pricingRow {
         padding-right: 0;
       }
-    }
 
-    /* Add to existing <style> */
-    .pdf-preview-container {
-      margin-top: 10px;
-      position: relative;
-      max-width: 200px;
-    }
-
-    .pdf-preview-container embed,
-    .pdf-preview-container iframe {
-      width: 100%;
-      height: 200px;
-      border: 1px solid #ddd;
-      cursor: pointer;
-    }
-
-    .pdf-preview-container .remove-pdf {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      padding: 5px;
+      .modal-dialog {
+        margin: 0.5rem;
+      }
     }
   </style>
 </head>
 
-<body class="bg-light text-dark">
-  <%- include('../partials/header', {title: "Deja-vu tours treks and travel"}); %>
-  <h1 class="text-primary">
-    <center>Dejavu Tours&Treks : <%= trips._id ? 'Edit Trip' : 'Add Trip' %></center>
-  </h1>
-  <form action="/admin/postNewAddTours" method="POST" id="addUpdateTripDetial" enctype="multipart/form-data">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-    <div class="container-fluid">
-      <div class="container form-container">
+<body>
+  <%- include('../partials/header', {title: "Deja-vu Tours Treks and Travel"}); %>
+  <div class="container-fluid">
+    <div class="form-container">
+      <h1><i class="fas fa-map-marked-alt me-2"></i> <%= trips._id ? 'Edit Trip' : 'Add Trip' %></h1>
+      <form action="/admin/postNewAddTours" method="POST" id="addUpdateTripDetial" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <!-- Trip Name -->
-        <div class="row">
-          <div class="col-12 col-lg-12 col-sm-12">
+        <div class="row mb-4">
+          <div class="col-12">
             <div class="mb-3">
-              <h5 class="mt-3">Trip Name <b class="text-success">* Trip name must be unique</b></h5>
+              <label for="name" class="form-label">Trip Name <span class="text-success fw-bold">* Must be unique</span></label>
               <input type="text" class="form-control" name="name" id="name" value="<%= trips.name || '' %>" placeholder="Enter Trip Name" required />
               <input type="hidden" name="tripId" id="tripId" value="<%= trips._id || '' %>" />
               <small id="nameError" class="text-danger d-none">Trip name already exists!</small>
@@ -121,587 +406,548 @@
           </div>
         </div>
         <!-- Is Active -->
-        <div class="row">
-          <div class="col-12 col-lg-12 col-sm-12">
-            <div class="mb-3">
-              <div class="form-check">
-                <input type="checkbox" class="form-check-input" name="isActive" id="isActive" <%= trips.isActive ? 'checked' : '' %> />
-                <label for="isActive" class="form-check-label">Active (Publish Trip)</label>
-                <small class="form-text text-muted">Check to make the trip visible to users. Unchecked trips are saved as drafts.</small>
-              </div>
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="form-check mb-3">
+              <input type="checkbox" class="form-check-input" name="isActive" id="isActive" <%= trips.isActive ? 'checked' : '' %> />
+              <label for="isActive" class="form-check-label">Publish Trip</label>
+              <small class="form-text text-muted">Check to make the trip visible. Unchecked trips are saved as drafts.</small>
             </div>
           </div>
         </div>
-        <!-- State and Destinations -->
-        <div class="row">
+        <!-- Region and Destinations -->
+        <div class="row mb-4">
           <div class="col-12 col-md-4">
             <div class="mb-3">
-              <label for="state" class="form-label">State</label>
-              <select class="form-control select2" name="state" id="state" data-placeholder="Select a State" style="width: 100%" required>
-                <option value="<%= trips.state || '' %>" selected hidden><%= trips.state || 'Select a State' %></option>
-                <% for (var i = 0; i < states_arr.length; i++) { %>
-                <option value="<%= states_arr[i] %>"><%= states_arr[i] %></option>
-                <% } %>
-              </select>
+              <label for="state" class="form-label">Region</label>
+              <div class="input-group region-group">
+                <select class="form-control select2" name="state" id="state" data-placeholder="Select a Region" style="width: 100%" required>
+                  <option value="" disabled selected hidden>Select a Region</option>
+                </select>
+                <button type="button" class="btn input-group-text" id="refreshRegions" title="Refresh Regions">
+                  <i class="fas fa-sync-alt"></i>
+                </button>
+              </div>
             </div>
           </div>
           <div class="col-12 col-md-4">
             <div class="mb-3">
               <label for="destinations" class="form-label">Destinations</label>
-              <input type="text" class="form-control" name="destinations" id="destinations" value="<%= trips.destinations || '' %>" />
+              <input type="text" class="form-control" name="destinations" id="destinations" value="<%= trips.destinations || '' %>" placeholder="Enter Destinations" />
             </div>
           </div>
           <div class="col-12 col-md-4">
             <div class="mb-3">
               <label for="route" class="form-label">Route</label>
-              <input type="text" class="form-control" name="route" id="route" value="<%= trips.route || '' %>" />
+              <input type="text" class="form-control" name="route" id="route" value="<%= trips.route || '' %>" placeholder="Enter Route" />
             </div>
           </div>
         </div>
         <!-- Image Upload -->
-        <div class="row">
+        <div class="row mb-4">
           <div class="col-12 col-md-4">
             <div class="mb-3">
               <label for="file" class="form-label">Upload Image</label>
               <input type="file" accept="image/*" name="image" id="file" class="form-control">
               <input type="hidden" name="existingImage" value="<%= trips.imageurl || '' %>">
-              <div class="preview-container position-relative" id="mainImagePreviewContainer" style="display: <%= trips.imageurl ? 'block' : 'none' %>; max-width: 200px;">
-                <img id="mainImagePreview" src="<%= trips.imageurl || '' %>" data-bs-toggle="modal" data-bs-target="#imageModal" alt="Preview" onerror="this.onerror=null; this.src='/<%= trips.imageurl%>';">
-                <button type="button" class="btn btn-danger remove-image" id="removeMainImage" style="position: absolute; top: 5px; right: 5px; padding: 5px; display: <%= trips.imageurl ? 'block' : 'none' %>;">
-                  <i class="bi bi-x-circle-fill"></i>
+              <div class="preview-container" id="mainImagePreviewContainer" style="display: <%= trips.imageurl ? 'block' : 'none' %>;">
+                <img id="mainImagePreview" src="<%= trips.imageurl || '' %>" alt="Preview" data-bs-toggle="modal" data-bs-target="#imageModal">
+                <button type="button" class="btn remove-image" id="removeMainImage" style="display: <%= trips.imageurl ? 'block' : 'none' %>;">
+                  <i class="fas fa-times"></i>
                 </button>
               </div>
             </div>
           </div>
-          <div class="col-12 col-md-4">
-            <div class="mb-3">
-              <label for="bannerImages" class="form-label">Upload Banner Images (Multiple) Disabled</label>
-              <input type="file" accept="image/*" id="bannerImages" class="form-control" multiple>
-              <div class="multiple-preview d-flex mt-2" id="bannerPreviewContainer"></div>
-            </div>
+        <div class="col-12 col-md-4">
+          <div class="mb-3">
+            <label for="bannerImages" class="form-label">Upload Banner Images (Multiple) <span class="text-muted">Disabled</span></label>
+            <input type="file" accept="image/*" id="bannerImages" class="form-control" multiple disabled>
+            <div class="multiple-preview d-flex mt-2" id="bannerPreviewContainer"></div>
           </div>
-          <!-- Document Upload -->
-          <div class="col-12 col-md-4">
-            <div class="mb-3">
-              <label for="document" class="form-label">Upload PDF Document (Max 5MB)</label>
-              <input type="file" accept="application/pdf" name="image" id="document" class="form-control">
-              <input type="hidden" name="existingDocument" value="<%= trips.documentUrl || '' %>">
-              <small class="text-danger d-none" id="documentError">Invalid file type or size exceeded (Max 5MB).</small>
-              <div class="pdf-preview-container position-relative" id="pdfPreviewContainer" style="display: <%= trips.documentUrl ? 'block' : 'none' %>;">
-                <embed id="pdfPreview" src="<%= trips.documentUrl || '' %>" type="application/pdf" data-bs-toggle="modal" data-bs-target="#pdfModal">
-                <button type="button" class="btn btn-danger remove-pdf" id="removePdf" style="display: <%= trips.documentUrl ? 'block' : 'none' %>;">
-                  <i class="bi bi-x-circle-fill"></i>
-                </button>
-              </div>
+        </div>
+        <div class="col-12 col-md-4">
+          <div class="mb-3">
+            <label for="document" class="form-label">Upload PDF Document (Max 5MB)</label>
+            <input type="file" accept="application/pdf" name="image" id="document" class="form-control">
+            <input type="hidden" name="existingDocument" value="<%= trips.documentUrl || '' %>">
+            <small class="text-danger d-none" id="documentError">Invalid file type or size exceeded (Max 5MB).</small>
+            <div class="pdf-preview-container" id="pdfPreviewContainer" style="display: <%= trips.documentUrl ? 'block' : 'none' %>;">
+              <embed id="pdfPreview" src="<%= trips.documentUrl || '' %>" type="application/pdf" data-bs-toggle="modal" data-bs-target="#pdfModal">
+              <button type="button" class="btn remove-pdf" id="removePdf" style="display: <%= trips.documentUrl ? 'block' : 'none' %>;">
+                <i class="fas fa-times"></i>
+              </button>
             </div>
           </div>
         </div>
-        <!-- Route and Days -->
-        <div class="row">
-          <div class="col-12 col-md-6">
-            <div class="mb-3">
-              <label for="altitude" class="form-label">Altitude (feet)</label>
-              <input type="text" class="form-control" name="altitude" id="altitude" value="<%= trips.altitude || '' %>" />
-            </div>
-          </div>
-          <div class="col-12 col-md-6">
-            <div class="mb-3">
-              <label for="days" class="form-label">Trip Duration</label>
-              <input type="text" class="form-control" name="days" id="days" value="<%= trips.days || '' %>" />
-            </div>
+    </div>
+    <!-- Route and Days -->
+    <div class="row mb-4">
+      <div class="col-12 col-md-3">
+        <div class="mb-3">
+          <label for="altitude" class="form-label">Altitude (feet)</label>
+          <input type="text" class="form-control" name="altitude" id="altitude" value="<%= trips.altitude || '' %>" placeholder="Enter Altitude" />
+        </div>
+      </div>
+      <div class="col-12 col-md-3">
+        <div class="mb-3">
+          <label for="days" class="form-label">Trip Duration</label>
+          <input type="text" class="form-control" name="days" id="days" value="<%= trips.days || '' %>" placeholder="Enter Duration" />
+        </div>
+      </div>
+      <div class="col-12 col-md-3">
+        <div class="mb-3">
+          <label for="tripType" class="form-label">Difficulty</label>
+          <input type="text" class="form-control" name="tripType" id="tripType" value="<%= trips.tripType || '' %>" placeholder="Enter Difficulty" />
+        </div>
+      </div>
+      <div class="col-12 col-md-3">
+        <div class="mb-3">
+          <label for="price" class="form-label">Base Price (₹)</label>
+          <input type="text" class="form-control" name="price" id="price" value="<%= trips.price || '' %>" placeholder="Enter Price" />
+        </div>
+      </div>
+    </div>
+    <!-- Best Season -->
+    <div class="row mb-4">
+      <div class="col-12 col-md-6">
+        <div class="mb-3">
+          <label for="bestSession" class="form-label">Best Season</label>
+          <select class="form-control select2" name="bestSession[]" id="bestSession" multiple data-placeholder="Select Best Seasons" style="width: 100%">
+            <option value="Summer" <%= trips.bestSession && trips.bestSession.includes('Summer') ? 'selected' : '' %>>Summer</option>
+            <option value="Winter" <%= trips.bestSession && trips.bestSession.includes('Winter') ? 'selected' : '' %>>Winter</option>
+            <option value="Monsoon" <%= trips.bestSession && trips.bestSession.includes('Monsoon') ? 'selected' : '' %>>Monsoon</option>
+            <option value="Spring" <%= trips.bestSession && trips.bestSession.includes('Spring') ? 'selected' : '' %>>Spring</option>
+            <option value="Autumn" <%= trips.bestSession && trips.bestSession.includes('Autumn') ? 'selected' : '' %>>Autumn</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="mb-3">
+          <label for="bestMonthToVisit" class="form-label">Best Month to Visit</label>
+          <select class="form-control select2" name="bestMonthToVisit[]" id="bestMonthToVisit" multiple data-placeholder="Select Best Months" style="width: 100%">
+            <option value="January" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('January') ? 'selected' : '' %>>January</option>
+            <option value="February" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('February') ? 'selected' : '' %>>February</option>
+            <option value="March" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('March') ? 'selected' : '' %>>March</option>
+            <option value="April" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('April') ? 'selected' : '' %>>April</option>
+            <option value="May" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('May') ? 'selected' : '' %>>May</option>
+            <option value="June" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('June') ? 'selected' : '' %>>June</option>
+            <option value="July" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('July') ? 'selected' : '' %>>July</option>
+            <option value="August" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('August') ? 'selected' : '' %>>August</option>
+            <option value="September" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('September') ? 'selected' : '' %>>September</option>
+            <option value="October" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('October') ? 'selected' : '' %>>October</option>
+            <option value="November" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('November') ? 'selected' : '' %>>November</option>
+            <option value="December" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('December') ? 'selected' : '' %>>December</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <!-- Trip Categories -->
+    <div class="row mb-4">
+      <div class="col-12 col-md-5">
+        <div class="mb-3">
+          <label for="tripCategories" class="form-label">Trip Categories</label>
+          <div class="input-group trip-categories-group">
+            <select class="form-control select2" name="tripCategories[]" id="tripCategories" multiple data-placeholder="Select Trip Categories" style="width: 100%">
+            </select>
+            <button type="button" class="btn input-group-text" id="refreshCategories" title="Refresh Categories">
+              <i class="fas fa-sync-alt"></i>
+            </button>
           </div>
         </div>
-        <!-- Difficulty and Price -->
-        <div class="row">
-          <div class="col-12 col-md-6">
-            <div class="mb-3">
-              <label for="tripType" class="form-label">Difficulty</label>
-              <input type="text" class="form-control" name="tripType" id="tripType" value="<%= trips.tripType || '' %>" />
-            </div>
-          </div>
-          <div class="col-12 col-md-6">
-            <div class="mb-3">
-              <label for="price" class="form-label">Base Price (Total trip cost)</label>
-              <input type="text" class="form-control" name="price" id="price" value="<%= trips.price || '' %>" />
-            </div>
-          </div>
-        </div>
-        <!-- Best Season -->
-        <div class="row">
-          <div class="col-12 col-md-6">
-            <div class="mb-3">
-              <label for="bestSession" class="form-label">Best Season</label>
-              <select class="form-control select2" name="bestSession[]" id="bestSession" multiple data-placeholder="Select Best Seasons" style="width: 100%">
-                <option value="Summer" <%= trips.bestSession && trips.bestSession.includes('Summer') ? 'selected' : '' %>>Summer</option>
-                <option value="Winter" <%= trips.bestSession && trips.bestSession.includes('Winter') ? 'selected' : '' %>>Winter</option>
-                <option value="Monsoon" <%= trips.bestSession && trips.bestSession.includes('Monsoon') ? 'selected' : '' %>>Monsoon</option>
-                <option value="Spring" <%= trips.bestSession && trips.bestSession.includes('Spring') ? 'selected' : '' %>>Spring</option>
-                <option value="Autumn" <%= trips.bestSession && trips.bestSession.includes('Autumn') ? 'selected' : '' %>>Autumn</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-12 col-md-6">
-            <div class="mb-3">
-              <label for="bestMonthToVisit" class="form-label">Best Month to Visit</label>
-              <select class="form-control select2" name="bestMonthToVisit[]" id="bestMonthToVisit" multiple data-placeholder="Select Best Months" style="width: 100%">
-                <option value="January" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('January') ? 'selected' : '' %>>January</option>
-                <option value="February" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('February') ? 'selected' : '' %>>February</option>
-                <option value="March" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('March') ? 'selected' : '' %>>March</option>
-                <option value="April" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('April') ? 'selected' : '' %>>April</option>
-                <option value="May" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('May') ? 'selected' : '' %>>May</option>
-                <option value="June" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('June') ? 'selected' : '' %>>June</option>
-                <option value="July" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('July') ? 'selected' : '' %>>July</option>
-                <option value="August" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('August') ? 'selected' : '' %>>August</option>
-                <option value="September" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('September') ? 'selected' : '' %>>September</option>
-                <option value="October" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('October') ? 'selected' : '' %>>October</option>
-                <option value="November" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('November') ? 'selected' : '' %>>November</option>
-                <option value="December" <%= trips.bestMonthToVisit && trips.bestMonthToVisit.includes('December') ? 'selected' : '' %>>December</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <!-- Trip Categories -->
-        <div class="row">
-          <div class="col-12 col-md-6">
-            <div class="mb-3">
-              <label for="tripCategories" class="form-label">Trip Categories</label>
-              <select class="form-control select2" name="tripCategories[]" id="tripCategories" multiple data-placeholder="Select Trip Categories" style="width: 100%">
-                <option value="Adventure" <%= trips.tripCategories && trips.tripCategories.includes('Adventure') ? 'selected' : '' %>>Adventure</option>
-                <option value="Heritage" <%= trips.tripCategories && trips.tripCategories.includes('Heritage') ? 'selected' : '' %>>Heritage</option>
-                <option value="Wildlife" <%= trips.tripCategories && trips.tripCategories.includes('Wildlife') ? 'selected' : '' %>>Wildlife</option>
-                <option value="Safari" <%= trips.tripCategories && trips.tripCategories.includes('Safari') ? 'selected' : '' %>>Safari</option>
-                <option value="Trekking" <%= trips.tripCategories && trips.tripCategories.includes('Trekking') ? 'selected' : '' %>>Trekking</option>
-                <option value="Camping" <%= trips.tripCategories && trips.tripCategories.includes('Camping') ? 'selected' : '' %>>Camping</option>
-                <option value="Sightseeing" <%= trips.tripCategories && trips.tripCategories.includes('Sightseeing') ? 'selected' : '' %>>Sightseeing</option>
-                <option value="Offbeat" <%= trips.tripCategories && trips.tripCategories.includes('Offbeat') ? 'selected' : '' %>>Offbeat</option>
-                <option value="Backpacking" <%= trips.tripCategories && trips.tripCategories.includes('Backpacking') ? 'selected' : '' %>>Backpacking</option>
-                <option value="Spiritual" <%= trips.tripCategories && trips.tripCategories.includes('Spiritual') ? 'selected' : '' %>>Spiritual</option>
-                <option value="Summer" <%= trips.tripCategories && trips.tripCategories.includes('Summer') ? 'selected' : '' %>>Summer</option>
-                <option value="Leisure" <%= trips.tripCategories && trips.tripCategories.includes('Leisure') ? 'selected' : '' %>>Leisure</option>
-                <option value="Himalaya" <%= trips.tripCategories && trips.tripCategories.includes('Himalaya') ? 'selected' : '' %>>Himalaya</option>
-                <option value="Festival" <%= trips.tripCategories && trips.tripCategories.includes('Festival') ? 'selected' : '' %>>Festival</option>
-                <option value="Winter" <%= trips.tripCategories && trips.tripCategories.includes('Winter') ? 'selected' : '' %>>Winter</option>
-                <option value="Monsoon" <%= trips.tripCategories && trips.tripCategories.includes('Monsoon') ? 'selected' : '' %>>Monsoon</option>
-              </select>
-            </div>
-          </div>
-          <!-- Traveler Type -->
-          <div class="col-12 col-md-6">
-            <div class="mb-3">
-              <label for="travelerType" class="form-label">Traveler Type</label>
-              <select class="form-control select2" name="travelerType[]" id="travelerType" multiple data-placeholder="Select Traveler Types" style="width: 100%">
-                <option value="Family" <%= trips.travelerType && trips.travelerType.includes('Family') ? 'selected' : '' %>>Family</option>
-                <option value="Solo" <%= trips.travelerType && trips.travelerType.includes('Solo') ? 'selected' : '' %>>Solo</option>
-                <option value="Couple friendly" <%= trips.travelerType && trips.travelerType.includes('Couple friendly') ? 'selected' : '' %>>Couple friendly</option>
-                <option value="Bachelors" <%= trips.travelerType && trips.travelerType.includes('Bachelors') ? 'selected' : '' %>>Bachelors</option>
-                <option value="Students" <%= trips.travelerType && trips.travelerType.includes('Students') ? 'selected' : '' %>>Students</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <!-- Departure City -->
-        <div class="row">
-          <div class="col-12 border rounded mt-2">
-            <h5 class="mt-3">Departure City <b class="text-success">* Departure City must be unique</b></h5>
-            <div id="cityContainer">
-              <div class="city-entry">
-                <div class="row">
-                  <div class="col-12 text-end">
-                    <button type="button" class="btn btn-danger btn-sm remove-city"><i class="bi bi-x-circle"></i> Remove City</button>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-12 col-md-4">
-                    <div class="mb-3">
-                      <h6>Add City</h6>
-                      <select class="form-select city-select" name="city[]">
-                        <option value="">Select City</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-2">
-                    <div class="mb-3">
-                      <label>State</label>
-                      <input type="text" class="form-control state-field" name="stateField[]" placeholder="State" readonly>
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-2">
-                    <div class="mb-3">
-                      <label>City Image</label>
-                      <img src="" class="img-fluid city-image" style="display: none; max-width: 100px;">
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-4">
-                    <div class="mb-3">
-                      <label class="form-label">Trip Duration from city</label></br>
-                      <small class="form-text text-muted d-block mb-1">
-                        e.g. 7D-8N, 7D/8N, 7 Day - 8 Nights, or 7 Days 8 Nights
-                      </small>
-                      <input type="text" class="form-control tripDuration" name="tripDuration[]" placeholder="2 Day -1 Night ">
-                      <div class="invalid-feedback">Trip Duration is required</div>
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-4">
-                    <div class="mb-3">
-                      <label class="form-label">Available Slots</label>
-                      <input type="number" class="form-control availableSlots" name="availableSlots[]" placeholder="Enter available slots (e.g., 20)" min="0">
-                      <div class="invalid-feedback">Available slots must be a non-negative number.</div>
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-4">
-                    <div class="mb-3">
-                      <label class="form-label">Partial Payment (₹)</label>
-                      <input type="number" class="form-control partialPayment" name="partialPayment[]" placeholder="Enter partial payment (e.g., 5000)" min="0">
-                      <div class="invalid-feedback">Partial payment must be a non-negative number.</div>
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-4">
-                    <div class="mb-3">
-                      <label class="form-label">Booking Cutoff Days</label>
-                      <input type="number" class="form-control bookingCutoffDays" name="bookingCutoffDays[]" placeholder="Enter cutoff days (e.g., 2)" min="0">
-                      <div class="invalid-feedback">Booking cutoff days must be a non-negative number.</div>
-                    </div>
-                  </div>
-
-
-                </div>
-                <div class="row">
-                  <div class="container mt-4">
-                    <h5 class="mt-3 d-flex justify-content-between align-items-center">
-                      Pricing Details
-                      <button type="button" class="btn btn-primary btn-sm" id="addRow" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Button is enabled only when all required fields have values."><i class="bi bi-plus-circle"></i> Add Pricing</button>
-                    </h5>
-                    <div id="pricingContainer">
-                      <div class="row pricingRow">
-                        <div class="col-12 col-md-4">
-                          <div class="mb-3">
-                            <label class="form-label">Transport Type</label>
-                            <input type="text" class="form-control transferType" name="transferType[]" placeholder="Transport Type">
-                            <div class="invalid-feedback">Transport Type is required and must be unique.</div>
-                          </div>
-                        </div>
-                        <div class="col-12 col-md-4">
-                          <div class="mb-3">
-                            <label class="form-label">Child Price</label>
-                            <input type="number" class="form-control childPrice" name="childPrice[]" placeholder="Enter price per child">
-                            <div class="invalid-feedback">Child Price is required.</div>
-                          </div>
-                        </div>
-                        <div class="col-12 col-md-4">
-                          <div class="mb-3 position-relative">
-                            <label class="form-label">Adult Price</label>
-                            <div class="d-flex align-items-center">
-                              <input type="number" class="form-control adultPrice" name="adultPrice[]" placeholder="Enter price per adult">
-                              <div class="invalid-feedback">Adult Price is required.</div>
-                              <button type="button" class="btn btn-danger btn-sm removeRow mt-3"><i class="bi bi-x-circle"></i></button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="row mt-3">
-                  <div class="col-12 col-md-4">
-                    <div class="mb-3">
-                      <h5>Available Dates</h5>
-                      <div class="input-group">
-                        <input type="text" class="form-control datePicking" name="datePicker[]" placeholder="Select multiple dates">
-                        <button class="btn btn-danger clearDates">Clear</button>
-                      </div>
-                      <small class="text-danger d-none error-msg">Please select at least one date.</small>
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-8">
-                    <div class="mb-3">
-                      <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
-                        <table class="table table-bordered table-hover align-middle">
-                          <thead class="table-light sticky-top">
-                            <tr>
-                              <th class="text-center" style="width: 10%;">S.No.</th>
-                              <th class="text-center" style="width: 60%;">Selected Date</th>
-                              <th class="text-center" style="width: 30%;">Action</th>
-                            </tr>
-                          </thead>
-                          <tbody class="datePreview"></tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <hr />
+      </div>
+    </div>
+    <!-- Departure City -->
+    <div class="row mb-4">
+      <div class="col-12 border rounded p-3 bg-light">
+        <h5 class="mb-3">Departure City <span class="text-success fw-bold">* Must be unique</span></h5>
+        <div id="cityContainer">
+          <div class="city-entry">
+            <div class="row">
+              <div class="col-12 text-end">
+                <button type="button" class="btn btn-danger btn-sm remove-city"><i class="fas fa-trash"></i> Remove City</button>
               </div>
             </div>
             <div class="row">
-              <div class="col-12 d-flex mb-3">
-                <button type="button" class="btn btn-primary btn-sm addCity" id="addCity"><i class="bi bi-plus-circle"></i> Add City</button>
+              <div class="col-12 col-md-4">
+                <div class="mb-3">
+                  <h6>Add City</h6>
+                  <select class="form-select city-select" name="city[]">
+                    <option value="">Select City</option>
+                  </select>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-        <!-- Accordions with Unique IDs -->
-        <div class="row mt-4">
-          <div class="col-12 col-md-12">
-            <div class="accordion mb-3" id="aboutAccordion">
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="aboutHeading">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#aboutCollapse" aria-expanded="false" aria-controls="aboutCollapse">
-                    About Information
-                  </button>
-                </h2>
-                <div id="aboutCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
-                  <div class="accordion-body">
-                    <div class="editor-container mb-3" id="about-editor"><%- trips.about || '' %></div>
-                    <small class="text-danger d-none" id="aboutError">About field is required (Max: 500 characters).</small>
-                  </div>
+              <div class="col-12 col-md-2">
+                <div class="mb-3">
+                  <label>State</label>
+                  <input type="text" class="form-control state-field" name="stateField[]" placeholder="State" readonly>
+                </div>
+              </div>
+              <div class="col-12 col-md-2">
+                <div class="mb-3">
+                  <label>City Image</label>
+                  <img src="" class="img-fluid city-image" style="display: none; max-width: 100px; border-radius: 6px;">
+                </div>
+              </div>
+              <div class="col-12 col-md-4">
+                <div class="mb-3">
+                  <label class="form-label">Trip Duration from City</label>
+                  <small class="form-text text-muted d-block mb-1">e.g. 7D-8N, 7 Days - 8 Nights</small>
+                  <input type="text" class="form-control tripDuration" name="tripDuration[]" placeholder="2 Day - 1 Night">
+                  <div class="invalid-feedback">Trip Duration is required</div>
+                </div>
+              </div>
+              <div class="col-12 col-md-4">
+                <div class="mb-3">
+                  <label class="form-label">Available Slots</label>
+                  <input type="number" class="form-control availableSlots" name="availableSlots[]" placeholder="Enter slots (e.g., 20)" min="0">
+                  <div class="invalid-feedback">Must be non-negative</div>
+                </div>
+              </div>
+              <div class="col-12 col-md-4">
+                <div class="mb-3">
+                  <label class="form-label">Partial Payment (₹)</label>
+                  <input type="number" class="form-control partialPayment" name="partialPayment[]" placeholder="Enter payment (e.g., 5000)" min="0">
+                  <div class="invalid-feedback">Must be non-negative</div>
+                </div>
+              </div>
+              <div class="col-12 col-md-4">
+                <div class="mb-3">
+                  <label class="form-label">Booking Cutoff Days</label>
+                  <input type="number" class="form-control bookingCutoffDays" name="bookingCutoffDays[]" placeholder="Enter days (e.g., 2)" min="0">
+                  <div class="invalid-feedback">Must be non-negative</div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12 col-md-12">
-            <div class="accordion mb-3" id="activitiesAccordion">
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="activitiesHeading">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#activitiesCollapse" aria-expanded="false" aria-controls="activitiesCollapse">
-                    Activities & Attraction
-                  </button>
-                </h2>
-                <div id="activitiesCollapse" class="accordion-collapse collapse" aria-labelledby="activitiesHeading" data-bs-parent="#activitiesAccordion">
-                  <div class="accordion-body">
-                    <div class="editor-container mb-3" id="activities-editor"><%- trips.activities || '' %></div>
-                    <small class="text-danger d-none" id="activitiesError">Activities field is required (Max: 500 characters).</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12 border rounded mt-2 mb-2 p-3">
-            <div class="mb-3">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="mt-2">Itinerary</h5>
-                <div>
-                  <button id="add-day" class="btn btn-primary me-2" disabled><i class="bi bi-plus-circle"></i> Add Day</button>
-                  <!-- <button id="remove-day" class="btn btn-danger d-none"><i class="bi bi-trash"></i> Remove Day</button> -->
-                </div>
-              </div>
-              <div id="itinerary-container" class="accordion">
-                <% if (trips && trips.itinerary && trips.itinerary.length > 0) { %>
-                <% trips.itinerary.forEach(function(dayItem, index) { %>
-                <div class="accordion-item itinerary-day" data-day="<%= index + 1 %>">
-                  <h2 class="accordion-header" id="heading-<%= index + 1 %>">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-<%= index + 1 %>" aria-expanded="true" aria-controls="collapse-<%= index + 1 %>">
-                      <%= dayItem.day || 'Day ' + (index + 1) %>
-                    </button>
-                  </h2>
-                  <div id="collapse-<%= index + 1 %>" class="accordion-collapse collapse show" aria-labelledby="heading-<%= index + 1 %>" data-bs-parent="#itinerary-container">
-                    <div class="accordion-body">
+            <div class="row">
+              <div class="container mt-3">
+                <h5 class="d-flex justify-content-between align-items-center">
+                  Pricing Details
+                  <button type="button" class="btn btn-primary btn-sm" id="addRow"><i class="fas fa-plus"></i> Add Pricing</button>
+                </h5>
+                <div id="pricingContainer">
+                  <div class="row pricingRow">
+                    <div class="col-12 col-md-4">
                       <div class="mb-3">
-                        <label class="form-label">Header</label>
-                        <input type="text" class="form-control itinerary-header" name="itinerary-header[]" value="<%= dayItem.header || '' %>" placeholder="Enter Header" />
-                        <div class="invalid-feedback">Header is required.</div>
+                        <label class="form-label">Transport Type</label>
+                        <input type="text" class="form-control transferType" name="transferType[]" placeholder="Transport Type">
+                        <div class="invalid-feedback">Transport Type is required</div>
                       </div>
-                      <div class="editor-container mb-3" id="editor-<%= index + 1 %>"></div>
-                      <input type="hidden" name="content[]" class="quill-content" value="<%= dayItem.description ? dayItem.description.replace(/"/g, '&quot;').replace(/>/g, '&gt;').replace(/</g, '&lt;') : '' %>">
-                      <button type="button" class="btn btn-danger btn-sm remove-day-btn mt-2" <%= trips.itinerary.length === 1 ? 'disabled' : '' %>><i class="bi bi-trash"></i> Remove This Day</button>
+                    </div>
+                    <div class="col-12 col-md-4">
+                      <div class="mb-3">
+                        <label class="form-label">Child Price</label>
+                        <input type="number" class="form-control childPrice" name="childPrice[]" placeholder="Price per child">
+                        <div class="invalid-feedback">Child Price is required</div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                      <div class="mb-3 position-relative">
+                        <label class="form-label">Adult Price</label>
+                        <div class="d-flex align-items-center">
+                          <input type="number" class="form-control adultPrice" name="adultPrice[]" placeholder="Price per adult">
+                          <div class="invalid-feedback">Adult Price is required</div>
+                          <button type="button" class="btn btn-danger btn-sm removeRow mt-3"><i class="fas fa-times"></i></button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <% }); %>
-                <% } else { %>
-                <div class="accordion-item itinerary-day" data-day="1">
-                  <h2 class="accordion-header" id="heading-1">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1" aria-expanded="true" aria-controls="collapse-1">
-                      Day 1
-                    </button>
-                  </h2>
-                  <div id="collapse-1" class="accordion-collapse collapse show" aria-labelledby="heading-1" data-bs-parent="#itinerary-container">
-                    <div class="accordion-body">
-                      <div class="mb-3">
-                        <label class="form-label">Header</label>
-                        <input type="text" class="form-control itinerary-header" name="itinerary-header[]" placeholder="Enter Header" />
-                        <div class="invalid-feedback">Header is required.</div>
-                      </div>
-                      <div class="editor-container mb-3" id="editor-1"></div>
-                      <input type="hidden" name="content[]" class="quill-content" value="">
-                      <button type="button" class="btn btn-danger btn-sm remove-day-btn mt-2" disabled><i class="bi bi-trash"></i> Remove This Day</button>
-                    </div>
-                  </div>
-                </div>
-                <% } %>
               </div>
             </div>
-          </div>
-        </div>
-        <!-- More Accordions -->
-        <div class="row">
-          <div class="col-12 col-md-12">
-            <div class="accordion mb-3" id="thingsToCarryAccordion">
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="thingsToCarryHeading">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#thingsToCarryCollapse" aria-expanded="false" aria-controls="thingsToCarryCollapse">
-                    Things to Carry
-                  </button>
-                </h2>
-                <div id="thingsToCarryCollapse" class="accordion-collapse collapse" aria-labelledby="thingsToCarryHeading" data-bs-parent="#thingsToCarryAccordion">
-                  <div class="accordion-body">
-                    <div class="editor-container mb-3" id="things_to_carry-editor"><%- trips.things_to_carry || '' %></div>
-                    <small class="text-danger d-none" id="thingsToCarryError">Things to carry field is required (Max: 500 characters).</small>
+            <div class="row mt-3">
+              <div class="col-12 col-md-4">
+                <div class="mb-3">
+                  <h5>Available Dates</h5>
+                  <div class="input-group">
+                    <input type="text" class="form-control datePicking" name="datePicker[]" placeholder="Select dates">
+                    <button class="btn btn-danger clearDates"><i class="fas fa-trash"></i> Clear</button>
+                  </div>
+                  <small class="text-danger d-none error-msg">Please select at least one date</small>
+                </div>
+              </div>
+              <div class="col-12 col-md-8">
+                <div class="mb-3">
+                  <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                      <thead class="table-light">
+                        <tr>
+                          <th class="text-center" style="width: 10%;">S.No.</th>
+                          <th class="text-center" style="width: 60%;">Selected Date</th>
+                          <th class="text-center" style="width: 30%;">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody class="datePreview"></tbody>
+                    </table>
                   </div>
                 </div>
               </div>
             </div>
+            <hr />
           </div>
         </div>
         <div class="row">
-          <div class="col-12 col-md-12">
-            <div class="accordion mb-3" id="includeExcludeAccordion">
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="includeExcludeHeading">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#includeExcludeCollapse" aria-expanded="false" aria-controls="includeExcludeCollapse">
-                    Include & Exclude
-                  </button>
-                </h2>
-                <div id="includeExcludeCollapse" class="accordion-collapse collapse" aria-labelledby="includeExcludeHeading" data-bs-parent="#includeExcludeAccordion">
-                  <div class="accordion-body">
-                    <div class="editor-container mb-3" id="includenexclude-editor"><%- trips.includenexclude || '' %></div>
-                    <small class="text-danger d-none" id="includeExcludeError">Include/Exclude field is required (Max: 500 characters).</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12 col-md-12">
-            <div class="accordion mb-3" id="packageCostAccordion">
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="packageCostHeading">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#packageCostCollapse" aria-expanded="false" aria-controls="packageCostCollapse">
-                    Package Cost
-                  </button>
-                </h2>
-                <div id="packageCostCollapse" class="accordion-collapse collapse" aria-labelledby="packageCostHeading" data-bs-parent="#packageCostAccordion">
-                  <div class="accordion-body">
-                    <div class="editor-container mb-3" id="package_cost-editor"><%- trips.package_cost || '' %></div>
-                    <small class="text-danger d-none" id="packageCostError">Package cost field is required (Max: 500 characters).</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12 col-md-12">
-            <div class="accordion mb-3" id="infoFaqAccordion">
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="infoFaqHeading">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#infoFaqCollapse" aria-expanded="false" aria-controls="infoFaqCollapse">
-                    Info & FAQs
-                  </button>
-                </h2>
-                <div id="infoFaqCollapse" class="accordion-collapse collapse" aria-labelledby="infoFaqHeading" data-bs-parent="#infoFaqAccordion">
-                  <div class="accordion-body">
-                    <div class="editor-container mb-3" id="infonfaq-editor"><%- trips.infonfaq || '' %></div>
-                    <small class="text-danger d-none" id="infoFaqError">Info & FAQs field is required (Max: 500 characters).</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12 col-md-12">
-            <div class="accordion mb-3" id="bookCancelAccordion">
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="bookCancelHeading">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bookCancelCollapse" aria-expanded="false" aria-controls="bookCancelCollapse">
-                    Booking & Cancellation
-                  </button>
-                </h2>
-                <div id="bookCancelCollapse" class="accordion-collapse collapse" aria-labelledby="bookCancelHeading" data-bs-parent="#bookCancelAccordion">
-                  <div class="accordion-body">
-                    <div class="editor-container mb-3" id="bookncancel-editor"><%- trips.bookncancel || '' %></div>
-                    <small class="text-danger d-none" id="bookCancelError">Booking & Cancellation field is required (Max: 500 characters).</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12 col-md-12">
-            <div class="accordion mb-3" id="guidelinesAccordion">
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="guidelinesHeading">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#guidelinesCollapse" aria-expanded="false" aria-controls="guidelinesCollapse">
-                    Travel Guidelines
-                  </button>
-                </h2>
-                <div id="guidelinesCollapse" class="accordion-collapse collapse" aria-labelledby="guidelinesHeading" data-bs-parent="#guidelinesAccordion">
-                  <div class="accordion-body">
-                    <div class="editor-container mb-3" id="guidelines-editor"><%- trips.guidelines || '' %></div>
-                    <small class="text-danger d-none" id="guidelinesError">Guidelines field is required (Max: 500 characters).</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Submit Button -->
-        <div class="row">
-          <div class="col-12 col-md-12">
-            <button type="submit" id="submitBtn" class="btn btn-primary">Submit</button>
-            <button type="button" id="saveDraftBtn" class="btn btn-secondary ms-2">Save as Draft</button>
+          <div class="col-12 mb-3">
+            <button type="button" class="btn btn-primary btn-sm addCity" id="addCity"><i class="fas fa-plus"></i> Add City</button>
           </div>
         </div>
       </div>
     </div>
-  </form>
-  <!-- Modal for Full-Size Preview -->
+    <!-- Accordions -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="accordion" id="aboutAccordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="aboutHeading">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#aboutCollapse" aria-expanded="false" aria-controls="aboutCollapse">
+                <i class="fas fa-info-circle me-2"></i> About Information
+              </button>
+            </h2>
+            <div id="aboutCollapse" class="accordion-collapse collapse" aria-labelledby="aboutHeading" data-bs-parent="#aboutAccordion">
+              <div class="accordion-body">
+                <div class="editor-container" id="about-editor"><%- trips.about || '' %></div>
+                <small class="text-danger d-none" id="aboutError">About field is required (Max: 500 characters)</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="accordion" id="activitiesAccordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="activitiesHeading">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#activitiesCollapse" aria-expanded="false" aria-controls="activitiesCollapse">
+                <i class="fas fa-info-circle me-2"></i> Activities & Attraction
+              </button>
+            </h2>
+            <div id="activitiesCollapse" class="accordion-collapse collapse" aria-labelledby="activitiesHeading" data-bs-parent="#activitiesAccordion">
+              <div class="accordion-body">
+                <div class="editor-container" id="activities-editor"><%- trips.activities || '' %></div>
+                <small class="text-danger d-none" id="activitiesError">Activities field is required (Max: 500 characters).</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Itinerary -->
+    <div class="row mb-4">
+      <div class="col-12 border rounded p-3 bg-light">
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5><i class="fas fa-route me-2"></i> Itinerary</h5>
+            <button id="add-day" class="btn btn-primary" disabled><i class="fas fa-plus"></i> Add Day</button>
+          </div>
+          <div id="itinerary-container" class="accordion">
+            <% if (trips && trips.itinerary && trips.itinerary.length > 0) { %>
+            <% trips.itinerary.forEach(function(dayItem, index) { %>
+            <div class="accordion-item itinerary-day" data-day="<%= index + 1 %>">
+              <h2 class="accordion-header" id="heading-<%= index + 1 %>">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-<%= index + 1 %>" aria-expanded="true" aria-controls="collapse-<%= index + 1 %>">
+                  <%= dayItem.day || 'Day ' + (index + 1) %>
+                </button>
+              </h2>
+              <div id="collapse-<%= index + 1 %>" class="accordion-collapse collapse show" aria-labelledby="heading-<%= index + 1 %>" data-bs-parent="#itinerary-container">
+                <div class="accordion-body">
+                  <div class="mb-3">
+                    <label class="form-label">Header</label>
+                    <input type="text" class="form-control itinerary-header" name="itinerary-header[]" value="<%= dayItem.header || '' %>" placeholder="Enter Header" />
+                    <div class="invalid-feedback">Header is required</div>
+                  </div>
+                  <div class="editor-container" id="editor-<%= index + 1 %>"></div>
+                  <input type="hidden" name="content[]" class="quill-content" value="<%= dayItem.description ? dayItem.description.replace(/"/g, '"').replace(/>/g, '>').replace(/</g, '<') : '' %>">
+                  <button type="button" class="btn btn-danger btn-sm remove-day-btn mt-2" <%= trips.itinerary.length === 1 ? 'disabled' : '' %>><i class="fas fa-trash"></i> Remove Day</button>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+            <% } else { %>
+            <div class="accordion-item itinerary-day" data-day="1">
+              <h2 class="accordion-header" id="heading-1">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1" aria-expanded="true" aria-controls="collapse-1">
+                  Day 1
+                </button>
+              </h2>
+              <div id="collapse-1" class="accordion-collapse collapse show" aria-labelledby="heading-1" data-bs-parent="#itinerary-container">
+                <div class="accordion-body">
+                  <div class="mb-3">
+                    <label class="form-label">Header</label>
+                    <input type="text" class="form-control itinerary-header" name="itinerary-header[]" placeholder="Enter Header" />
+                    <div class="invalid-feedback">Header is required</div>
+                  </div>
+                  <div class="editor-container" id="editor-1"></div>
+                  <input type="hidden" name="content[]" class="quill-content" value="">
+                  <button type="button" class="btn btn-danger btn-sm remove-day-btn mt-2" disabled><i class="fas fa-trash"></i> Remove Day</button>
+                </div>
+              </div>
+            </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="accordion" id="thingsToCarryAccordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="thingsToCarryHeading">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#thingsToCarryCollapse" aria-expanded="false" aria-controls="thingsToCarryCollapse">
+                Things to Carry
+              </button>
+            </h2>
+            <div id="thingsToCarryCollapse" class="accordion-collapse collapse" aria-labelledby="thingsToCarryHeading" data-bs-parent="#thingsToCarryAccordion">
+              <div class="accordion-body">
+                <div class="editor-container" id="things_to_carry-editor"><%- trips.things_to_carry || '' %></div>
+                <small class="text-danger d-none" id="thingsToCarryError">Things to carry field is required (Max: 500 characters).</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="accordion" id="includeExcludeAccordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="includeExcludeHeading">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#includeExcludeCollapse" aria-expanded="false" aria-controls="includeExcludeCollapse">
+                Include & Exclude
+              </button>
+            </h2>
+            <div id="includeExcludeCollapse" class="accordion-collapse collapse" aria-labelledby="includeExcludeHeading" data-bs-parent="#includeExcludeAccordion">
+              <div class="accordion-body">
+                <div class="editor-container" id="includenexclude-editor"><%- trips.includenexclude || '' %></div>
+                <small class="text-danger d-none" id="includeExcludeError">Include/Exclude field is required (Max: 500 characters).</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="accordion" id="packageCostAccordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="packageCostHeading">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#packageCostCollapse" aria-expanded="false" aria-controls="packageCostCollapse">
+                Package Cost
+              </button>
+            </h2>
+            <div id="packageCostCollapse" class="accordion-collapse collapse" aria-labelledby="packageCostHeading" data-bs-parent="#packageCostAccordion">
+              <div class="accordion-body">
+                <div class="editor-container" id="package_cost-editor"><%- trips.package_cost || '' %></div>
+                <small class="text-danger d-none" id="packageCostError">Package cost field is required (Max: 500 characters).</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="accordion" id="infoFaqAccordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="infoFaqHeading">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#infoFaqCollapse" aria-expanded="false" aria-controls="infoFaqCollapse">
+                Info & FAQs
+              </button>
+            </h2>
+            <div id="infoFaqCollapse" class="accordion-collapse collapse" aria-labelledby="infoFaqHeading" data-bs-parent="#infoFaqAccordion">
+              <div class="accordion-body">
+                <div class="editor-container" id="infonfaq-editor"><%- trips.infonfaq || '' %></div>
+                <small class="text-danger d-none" id="infoFaqError">Info & FAQs field is required (Max: 500 characters).</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="accordion" id="bookCancelAccordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="bookCancelHeading">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bookCancelCollapse" aria-expanded="false" aria-controls="bookCancelCollapse">
+                Booking & Cancellation
+              </button>
+            </h2>
+            <div id="bookCancelCollapse" class="accordion-collapse collapse" aria-labelledby="bookCancelHeading" data-bs-parent="#bookCancelAccordion">
+              <div class="accordion-body">
+                <div class="editor-container" id="bookncancel-editor"><%- trips.bookncancel || '' %></div>
+                <small class="text-danger d-none" id="bookCancelError">Booking & Cancellation field is required (Max: 500 characters).</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="accordion" id="guidelinesAccordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="guidelinesHeading">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#guidelinesCollapse" aria-expanded="false" aria-controls="guidelinesCollapse">
+                Travel Guidelines
+              </button>
+            </h2>
+            <div id="guidelinesCollapse" class="accordion-collapse collapse" aria-labelledby="guidelinesHeading" data-bs-parent="#guidelinesAccordion">
+              <div class="accordion-body">
+                <div class="editor-container" id="guidelines-editor"><%- trips.guidelines || '' %></div>
+                <small class="text-danger d-none" id="guidelinesError">Guidelines field is required (Max: 500 characters).</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Submit Buttons -->
+    <div class="row">
+      <div class="col-12">
+        <button type="submit" id="submitBtn" class="btn btn-primary"><i class="fas fa-save me-2"></i> Submit</button>
+        <button type="button" id="saveDraftBtn" class="btn btn-secondary ms-2"><i class="fas fa-file-alt me-2"></i> Save as Draft</button>
+      </div>
+    </div>
+    </form>
+  </div>
+  </div>
+  <!-- Image Modal -->
   <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Image Preview</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <h5 class="modal-title"><i class="fas fa-image me-2"></i> Image Preview</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body text-center">
-          <img id="fullSizeImage" alt="Full Preview">
+          <img id="fullSizeImage" class="img-fluid rounded" alt="Full Preview">
         </div>
       </div>
     </div>
   </div>
-  <!-- Modal for PDF Full-Size Preview -->
+  <!-- PDF Modal -->
   <div class="modal fade" id="pdfModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">PDF Preview</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <h5 class="modal-title"><i class="fas fa-file-pdf me-2"></i> PDF Preview</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body text-center">
-          <embed id="fullSizePdf" src="" type="application/pdf" style="width: 100%; height: 500px;">
+        <div class="modal-body">
+          <embed id="fullSizePdf" src="" type="application/pdf" style="width: 100%; height: 600px; border-radius: 6px;">
         </div>
       </div>
     </div>
   </div>
-
   <!-- Message Modal -->
   <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="messageModalLabel">Notification</h5>
+          <h5 class="modal-title" id="messageModalLabel"><i class="fas fa-bell me-2"></i> Notification</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body" id="messageModalBody">
-          <!-- Message will be injected here -->
-        </div>
+        <div class="modal-body" id="messageModalBody"></div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="messageModalClose">Close</button>
           <button type="button" class="btn btn-primary d-none" id="messageModalAction">OK</button>
@@ -710,26 +956,15 @@
     </div>
   </div>
 
-
-  <!-- Load jQuery (only one version) -->
+  <!-- Scripts (Unchanged) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-  <!-- jQuery-dependent libraries -->
   <script src="/vendor/select2/select2.min.js"></script>
-  <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
-  <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
-
-  <!-- Bootstrap Bundle (after jQuery) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- Flatpickr -->
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
-  <!-- Quill JS -->
+  <script src="https://unpkg.com/filepond@4.30.6/dist/filepond.js"></script>
+  <script src="https://unpkg.com/filepond-plugin-image-preview@4.6.12/dist/filepond-plugin-image-preview.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13"></script>
   <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-  <!-- Image Resize Module (Correct Version) -->
   <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
-
   <script>
     $(document).ready(function() {
       $(".select2").select2(); // Initializes state, bestSession, tripCategories, bestMonthToVisit
@@ -823,6 +1058,188 @@
         }))
       );
     }
+    // Fetch and populate trip categories
+    async function fetchCategories() {
+      try {
+        const response = await fetch('/getCategoryList', {
+          method: 'GET',
+          headers: {
+            'X-CSRF-Token': csrfToken
+          }
+        });
+        const data = await response.json();
+        if (data.success) {
+          populateCategoryDropdown(data.categories);
+          checkNonExistentCategories(data.categories);
+        } else {
+          console.error('Error fetching categories:', data.message);
+          showCategoryWarning('Failed to load categories. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        showCategoryWarning('Error loading categories. Please try again.');
+      }
+    }
+
+    // Populate the category dropdown
+    function populateCategoryDropdown(categories) {
+      const select = document.getElementById('tripCategories');
+      const existingSelections = Array.from(select.selectedOptions).map(opt => opt.value);
+      select.innerHTML = ''; // Clear existing options
+      categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.name;
+        option.textContent = category.name;
+        if (existingSelections.includes(category.name)) {
+          option.selected = true;
+        }
+        select.appendChild(option);
+      });
+      $(select).select2(); // Reinitialize Select2
+    }
+
+    // Check for categories in trips.tripCategories that don't exist in master data
+    function checkNonExistentCategories(masterCategories) {
+      const tripCategories = <%- JSON.stringify(trips.tripCategories || []) %>;
+      const masterCategoryNames = masterCategories.map(cat => cat.name);
+      const nonExistent = tripCategories.filter(cat => !masterCategoryNames.includes(cat));
+
+      if (nonExistent.length > 0) {
+        const modal = new bootstrap.Modal(document.getElementById('messageModal'));
+        const modalBody = document.getElementById('messageModalBody');
+        const modalAction = document.getElementById('messageModalAction');
+        const modalClose = document.getElementById('messageModalClose');
+
+        modalBody.innerHTML = `
+      <p class="text-warning">
+        The following categories are not in the master list: <strong>${nonExistent.join(', ')}</strong>.<br>
+        <a href="/categories" target="_blank">Update or add categories</a> to include them, or click OK to continue without these categories.
+      </p>
+    `;
+        modalAction.classList.remove('d-none');
+        modalAction.textContent = 'OK';
+        modalAction.onclick = () => modal.hide();
+        modalClose.style.display = 'block';
+        modal.show();
+      }
+    }
+
+    // Show generic warning message in modal
+    function showCategoryWarning(message) {
+      const modal = new bootstrap.Modal(document.getElementById('messageModal'));
+      const modalBody = document.getElementById('messageModalBody');
+      const modalAction = document.getElementById('messageModalAction');
+      const modalClose = document.getElementById('messageModalClose');
+
+      modalBody.innerHTML = `<p class="text-danger">${message}</p>`;
+      modalAction.classList.add('d-none');
+      modalClose.style.display = 'block';
+      modal.show();
+    }
+
+    // Initialize categories on page load
+    fetchCategories();
+
+    // Refresh categories on button click
+    document.getElementById('refreshCategories').addEventListener('click', () => {
+      fetchCategories();
+    });
+
+    // Add after fetchCategories functions, before Quill Editors initialization
+
+    // Fetch and populate regions (states)
+    async function fetchRegions() {
+      try {
+        const response = await fetch('/getStateList', {
+          method: 'GET',
+          headers: {
+            'X-CSRF-Token': csrfToken
+          }
+        });
+        const data = await response.json();
+        if (data.success) {
+          populateRegionDropdown(data.states);
+          checkNonExistentRegions(data.states);
+        } else {
+          console.error('Error fetching regions:', data.message);
+          showRegionWarning('Failed to load regions. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error fetching regions:', error);
+        showRegionWarning('Error loading regions. Please try again.');
+      }
+    }
+
+    // Populate the region dropdown
+    function populateRegionDropdown(states) {
+      const select = document.getElementById('state');
+      const savedState = '<%- trips.state || "" %>'; // Get saved state from trips
+      select.innerHTML = '<option value="" disabled selected hidden>Select a Region</option>'; // Reset with placeholder
+
+      states.forEach(state => {
+        const option = document.createElement('option');
+        option.value = state.name; // Save only name
+        option.textContent = `${state.name} (${state.countryCode})`; // Display name and countryCode
+        option.dataset.countryCode = state.countryCode; // Store for reference
+        if (state.name === savedState) {
+          option.selected = true; // Pre-select saved state
+        }
+        select.appendChild(option);
+      });
+
+      $(select).select2(); // Reinitialize Select2
+    }
+
+    // Check for state in trips.state that doesn't exist in master data
+    function checkNonExistentRegions(masterStates) {
+      const tripState = '<%- trips.state || "" %>';
+      const masterStateNames = masterStates.map(state => state.name);
+      if (tripState && !masterStateNames.includes(tripState)) {
+        const modal = new bootstrap.Modal(document.getElementById('messageModal'));
+        const modalBody = document.getElementById('messageModalBody');
+        const modalAction = document.getElementById('messageModalAction');
+        const modalClose = document.getElementById('messageModalClose');
+
+        modalBody.innerHTML = `
+            <p class="text-warning">
+              The selected region <strong>${tripState}</strong> is not in the master list.<br>
+              <a href="/state" target="_blank">Update or add regions</a> to include it, or click OK to continue without this region.
+            </p>
+          `;
+        modalAction.classList.remove('d-none');
+        modalAction.textContent = 'OK';
+        modalAction.onclick = () => {
+          document.getElementById('state').value = ''; // Clear invalid state
+          $(document.getElementById('state')).select2(); // Update Select2
+          modal.hide();
+        };
+        modalClose.style.display = 'block';
+        modal.show();
+      }
+    }
+
+    // Show region-related warning in modal
+    function showRegionWarning(message) {
+      const modal = new bootstrap.Modal(document.getElementById('messageModal'));
+      const modalBody = document.getElementById('messageModalBody');
+      const modalAction = document.getElementById('messageModalAction');
+      const modalClose = document.getElementById('messageModalClose');
+
+      modalBody.innerHTML = `<p class="text-danger">${message}</p>`;
+      modalAction.classList.add('d-none');
+      modalClose.style.display = 'block';
+      modal.show();
+    }
+
+    // Initialize regions on page load
+    fetchRegions();
+
+    // Refresh regions on button click
+    document.getElementById('refreshRegions').addEventListener('click', () => {
+      fetchRegions();
+    });
+
+
     // Quill Editors for static sections
     const staticEditors = {};
     const editorIds = [
