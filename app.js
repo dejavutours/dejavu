@@ -65,7 +65,19 @@ if (file.mimetype === "application/pdf") {
     const uploadPath = path.join("images", "cities");
     fs.mkdirSync(uploadPath, { recursive: true });
         cb(null, uploadPath);
-    } else {
+} else if (req.url === "/states") {
+    const uploadPath = path.join("images", "states");
+    fs.mkdirSync(uploadPath, { recursive: true });
+        cb(null, uploadPath);
+} else if (req.url === "/categories") {
+    const uploadPath = path.join("images", "categories");
+    fs.mkdirSync(uploadPath, { recursive: true });
+        cb(null, uploadPath);
+}  else if (req.url === "/banner") {
+    const uploadPath = path.join("images", "banners");
+    fs.mkdirSync(uploadPath, { recursive: true });
+        cb(null, uploadPath);
+}  else { 
      cb(null, "images");
     }
 },
@@ -101,6 +113,9 @@ const authRoutes = require('./routes/auth');
 const paymentRoutes = require('./routes/payments');
 const cityRoutes = require('./routes/cityRoutes');
 const adminRoutes = require('./routes/admin');
+const stateRoutes= require('./routes/stateRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
+const bannerRoutes = require('./routes/bannerRoutes');
 
 
 app.use(compression());
@@ -109,6 +124,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, 'public')));
+
 app.use('/images', express.static(path.join(__dirname, 'images'))); // Serves images/cities as well
 // Serve documents statically
 app.use("/documents", express.static(path.join(__dirname, "documents")));
@@ -165,6 +181,9 @@ app.use(authRoutes);
 app.use('/payment', paymentRoutes);
 app.use(cityRoutes);
 app.use('/admin', adminRoutes);
+app.use(stateRoutes);
+app.use(categoryRoutes);
+app.use(bannerRoutes);
 
 mongoose
     .connect(MONGODB_URI, {
