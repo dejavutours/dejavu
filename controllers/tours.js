@@ -79,7 +79,7 @@ var transporter = nodemailer.createTransport({
 exports.getIndexPage = async (req, res, next) => {
   try {
     const tests = await NewTours.find().distinct("name");
-    const response = await this.getFiltertourAPIUseOnly(req, res, true);
+    const response = await this.getFiltertourAPIUseOnly(req, res, false);
 
     // Function to get state-wise trips
     async function getStateWiseTrips() {
@@ -1888,6 +1888,8 @@ exports.getFiltertourAPIUseOnly = async (req, res, sortByLatestUpdate) => {
     // Sort by recently updated records only if flag is passed
     if (sortByLatestUpdate) {
       tourQuery = tourQuery.sort({ updatedAt: -1 });
+    }else{
+      tourQuery = tourQuery.sort({ displayOrder: 1 })
     }
     const tourList = await tourQuery;
     return {
