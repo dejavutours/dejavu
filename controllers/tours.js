@@ -2150,6 +2150,7 @@ exports.getTripDetialbyName = async (req, res, next) => {
         deptcities: deptCitiesWithImages,
         documentUrl,
         loggedGmailUser,
+        csrfToken: req.csrfToken() // Pass the CSRF token to the EJS template
       },
     });
   } catch (error) {
