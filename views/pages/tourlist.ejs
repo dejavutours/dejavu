@@ -381,13 +381,19 @@
     <div class="packages-grid">
       <% 
       // Filter packages based on user role
-    let displayedPackages = profile?.email === process.env.GMAIL_ADMIN 
-      ? tourPackages 
-      : tourPackages.filter(tour => tour.isActive);
+      let displayedPackages = (profile?.email === process.env.GMAIL_ADMIN || profile?.email === process.env.GMAIL_ADMIN_TWO)
+      ? tourPackages : tourPackages.filter(tour => tour.isActive);
+     displayedPackages.forEach(function(tour, index) { 
+      %>
+      <% 
+      const isAdmin = profile?.email === process.env.GMAIL_ADMIN || profile?.email === process.env.GMAIL_ADMIN_TWO; 
+    %>
+    <div class="package-card p-2 border rounded-4 <%= !tour.isActive ? 'inactive' : '' %>" 
+         onclick="window.location.href='/tripdetail/<%= tour.name %>'" 
+         <% if (!tour.isActive && isAdmin) { %> 
+             data-bs-toggle="tooltip" data-placement="top" title="This trip is inactive" 
+         <% } %>>
     
-    displayedPackages.forEach(function(tour, index) { 
-  %>
-      <div class="package-card p-2 border rounded-4 <%= !tour.isActive ? 'inactive' : '' %>" onclick="window.location.href='/tripdetail/<%= tour.name %>'" <% if (!tour.isActive && profile?.email === process.env.GMAIL_ADMIN) { %> data-bs-toggle="tooltip" data-placement="top" title="This trip is inactive" <% } %>>
         <div class="card-image-container">
           <img src="<%= tour.imageurl %>" alt="Tour package - <%= tour.name %> in <%= tour.state %>, India" class="card-image card-img-top img-fluid rounded-4" loading="lazy" onerror="this.onerror=null; this.src='/images/placeholder.jpg';">
         </div>
@@ -402,7 +408,7 @@
             <span class="details"><i class="bi bi-calendar-event"></i> <%- tour.days %></span>
             <span class="price">From ₹<%- tour.price %><small>/person</small></span>
           </div>
-          <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
+          <% if (profile?.email === process.env.GMAIL_ADMIN || profile?.email === process.env.GMAIL_ADMIN_TWO) { %>
           <div class="mt-2 mb-2 d-flex align-items-center gap-2">
             <!-- Option 1: Keep as <a> with stopPropagation -->
             <a href="/admin/addtours?tripid=<%= tour._id %>" class="btn btn-primary btn-sm edit-tour" data-id="<%= tour._id %>">Edit</a>

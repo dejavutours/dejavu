@@ -45,10 +45,6 @@ const generateEmailHtml = (data) => {
     "place",
     "days",
     "persons",
-    "transport",
-    "triptype",
-    "travelDate",
-    "budget",
     "details",
   ];
   optionalFields.forEach((field) => {
@@ -79,7 +75,7 @@ const sendEmail = async (tripData) => {
   try {
     const mailOptions = {
       from: "dheerendramanjhi910@gmail.com",
-      to: "dkmtime440@gmail.com",//"dejavuoutdoors@gmail.com", // Admin email (same as sender for now)
+      to: "dejavuoutdoors@gmail.com", // Admin email (same as sender for now)
       subject: "New Customized Trip Submission",
       html: generateEmailHtml(tripData),
     };

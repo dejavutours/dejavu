@@ -1,5 +1,6 @@
 module.exports = (req, res, next) => {
-    if (res.locals.profile.email !== (process.env.GMAIL_ADMIN || process.env.GMAIL_ADMIN1 )) {
+    const email = res.locals.profile?.email;
+    if (email !== process.env.GMAIL_ADMIN && email !== process.env.GMAIL_ADMIN_TWO) {
         return res.redirect('/');
     }
     next();
