@@ -7,5 +7,7 @@ const ensureLoggedIn = ensureLogIn();
 router.get('/customTrip',  ensureLoggedIn, isAuth, customTripController.getCustomTrips);
 router.post('/delete/:id',  ensureLoggedIn, isAuth, customTripController.deleteCustomTrip);
 router.post('/bulk-delete',  ensureLoggedIn, isAuth, customTripController.bulkDeleteCustomTrips);
+router.get('/dreamtrip', customTripController.getCustomezedTripForm);
+router.post('/customTrip', customTripController.customTrip);
 
 module.exports = router;

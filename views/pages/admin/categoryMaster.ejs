@@ -954,7 +954,7 @@
             const card = `
               <div class="cm-card" data-id="${category._id}">
                 <input type="checkbox" class="cm-checkbox absolute top-2 left-2" data-id="${category._id}" />
-                <img src="${category.image}" alt="${category.name}" class="cm-card-img" data-src="${category.image}" onerror="this.src='/images/default.png'; this.classList.add('error');" />
+                <img src="${category.image}" alt="${category.name}" class="cm-card-img" data-src="${category.image}" />
                 <h4 class="text-base font-semibold text-gray-800">${category.name}</h4>
                 <p class="text-sm text-gray-600">${category.isActive ? 'Active' : 'Inactive'}</p>
                 <div class="cm-actions">
@@ -1064,14 +1064,8 @@
         $('#cmFormToggle').text('Hide Form');
 
         imgPreview.on('error', function() {
-          $(this).addClass('error').attr('src', '/images/default-image.jpg');
-          $('#cmPreviewModalImg').attr('src', '/images/default-image.jpg');
-          Toastify({
-            text: 'Failed to load category image.',
-            className: 'cm-toast',
-            style: { background: '#F59E0B' },
-            duration: 3000
-          }).showToast();
+          $(this).addClass('error').attr('src', '');
+          $('#cmPreviewModalImg').attr('src', '');
         });
       };
 

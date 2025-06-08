@@ -50,19 +50,12 @@ const Statemst = require("../models/statemst");
 const bannerImg = require("../models/bannerImg");
 const Category = require("../models/categorymst");
 
-const Joi = require("joi");
-const customTrip = require("../models/customTripSchema");
-
-const config = require("../json/statecities.json"); // Load state and city configuration
-
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_SMS,
   secretAccessKey: process.env.AWS_SECERET_ACCESS_KEY_SMS,
   region: process.env.AWS_REGION,
 });
 
-const { DeleteFileGallery, DeleteFileProofs, getFileStream } = require("../s3");
-const { AsyncLocalStorage } = require("async_hooks");
 
 var transporter = nodemailer.createTransport({
   service: "gmail",
@@ -395,152 +388,6 @@ exports.getIndexPage = async (req, res, next) => {
   } catch (error) {
     console.error("Error in getIndexPage:", error);
     res.status(500).send("Internal Server Error");
-  }
-};
-
-exports.getCustomezedTripForm = async (req, res, next) => {
-  res.render("pages/customizedTripForm", {
-    csrfToken: req.csrfToken(),
-  });
-};
-
-// Validation schema using Joi
-const tripValidationSchema = Joi.object({
-  name: Joi.string().min(2).max(100).required(),
-  mobile: Joi.string()
-    .regex(/^[0-9]{10}$/)
-    .required()
-    .messages({
-      "string.pattern.base": "Mobile number must be a 10-digit number",
-    }),
-  email: Joi.string().email().required(),
-  place: Joi.string().allow("").optional(),
-  destination: Joi.string().min(2).required(),
-  days: Joi.number().min(0).optional().allow(null),
-  persons: Joi.number().min(0).optional().allow(null),
-  transport: Joi.string().allow("").optional(),
-  triptype: Joi.string().allow("").optional(),
-  travelDate: Joi.string().allow("").optional(),
-  budget: Joi.number().min(0).optional().allow(null),
-  details: Joi.string().allow("").optional(),
-});
-
-// Function to generate email HTML from template
-const generateEmailHtml = (data) => {
-  // Read the email template
-  const templatePath = path.join(__dirname, "tripEmailTemplate.html");
-  let html = fs.readFileSync(templatePath, "utf8");
-
-  // Replace placeholders with data
-  html = html.replace("{{name}}", data.name || "N/A");
-  html = html.replace("{{mobile}}", data.mobile || "N/A");
-  html = html.replace("{{email}}", data.email || "N/A");
-  html = html.replace("{{destination}}", data.destination || "N/A");
-
-  // Handle optional fields with conditional rendering
-  const optionalFields = [
-    "place",
-    "days",
-    "persons",
-    "transport",
-    "triptype",
-    "travelDate",
-    "budget",
-    "details",
-  ];
-  optionalFields.forEach((field) => {
-    const regex = new RegExp(
-      `{{#if ${field}}}[\\s\\S]*?{{${field}}}[\\s\\S]*?{{\\/if}}`,
-      "g"
-    );
-    if (data[field]) {
-      html = html.replace(
-        regex,
-        `<tr><td style="padding: 8px 0; font-weight: bold;">${
-          field.charAt(0).toUpperCase() +
-          field.slice(1).replace(/([A-Z])/g, " $1")
-        }:</td><td style="padding: 8px 0;">${
-          field === "budget" ? "₹" + data[field] : data[field]
-        }</td></tr>`
-      );
-    } else {
-      html = html.replace(regex, "");
-    }
-  });
-
-  return html;
-};
-
-// Function to send email
-const sendEmail = async (tripData) => {
-  try {
-    const mailOptions = {
-      from: "dheerendramanjhi910@gmail.com",
-      to: "dejavuoutdoors@gmail.com", // Admin email (same as sender for now)
-      subject: "New Customized Trip Submission",
-      html: generateEmailHtml(tripData),
-    };
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: "dheerendramanjhi910@gmail.com",
-        pass: "vbkx zspn oodm mjkj",
-      },
-    });
-    await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully");
-  } catch (error) {
-    console.error("Error sending email:", error);
-    throw error; // Let the controller handle the error
-  }
-};
-
-// Controller to handle form submission
-exports.customTrip = async (req, res) => {
-  try {
-    // Validate request body
-    const { error } = tripValidationSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.details[0].message,
-      });
-    }
-
-    // Create new trip document
-    const tripData = {
-      name: req.body.name,
-      mobile: req.body.mobile,
-      email: req.body.email,
-      place: req.body.place || null,
-      destination: req.body.destination,
-      days: req.body.days || null,
-      persons: req.body.persons || null,
-      transport: req.body.transport || null,
-      triptype: req.body.triptype || null,
-      travelDate: req.body.travelDate || null,
-      budget: req.body.budget || null,
-      details: req.body.details || null,
-    };
-
-    const trip = new customTrip(tripData);
-    await trip.save();
-
-    // Send email to admin
-    await sendEmail(tripData);
-
-    res.status(201).json({
-      success: true,
-      message: "Trip details saved successfully",
-      data: trip,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Server error while saving trip details",
-      error: error.message,
-    });
   }
 };
 
