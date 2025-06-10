@@ -116,10 +116,6 @@ const newToursSchema = new Schema(
     youtubeUrl: { type: String, default: "" },
     // PDF document URL
     documentUrl: { type: String, default: "" },
-    // SEO meta keywords (e.g., ["Goa", "beach tour"])
-    metaKeywords: [{ type: String, default: "" }],
-    // SEO meta description (ideal: 50–160 characters)
-    metaDescription: { type: String, default: "" },
     // Display order for sorting tours
     displayOrder: { type: Number, default: 0 },
     // isDeleted soft delete
