@@ -659,6 +659,294 @@
         font-size: 1rem;
       }
     }
+
+    /* Quick Call Modal Styling */
+    .quick-call-modal-content {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      border: none;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .quick-call-modal-header {
+      background: var(--primary-blue);
+      background-image: url('/images/quick-call-bg.jpg');
+      /* Replace with the actual background image URL */
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      border-bottom: none;
+      padding: 30px 20px;
+      min-height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .quick-call-modal-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(26, 75, 142, 0.7);
+      /* Slightly lighter overlay for better text readability */
+    }
+
+    .quick-call-modal-header .btn-close-white {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 1;
+      filter: brightness(0) invert(1);
+    }
+
+    .modal-body-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .quick-call-modal-header .modal-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .quick-call-modal-header p {
+      font-size: 0.9rem;
+      margin-bottom: 0;
+      line-height: 1.4;
+    }
+
+    .quick-call-modal-body {
+      padding: 20px 24px;
+      background: #fff;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+    }
+
+    .quick-call-modal-body .form-label {
+      font-size: 0.85rem;
+      color: var(--dark-gray);
+      text-align: left;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .quick-call-modal-body .form-control,
+    .quick-call-modal-body .form-select {
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      box-shadow: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .quick-call-modal-body .form-select {
+      max-width: 90px;
+      padding-right: 30px;
+      background-size: 10px;
+    }
+
+    .quick-call-modal-body .form-control:focus,
+    .quick-call-modal-body .form-select:focus {
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 2px rgba(26, 75, 142, 0.2);
+      outline: none;
+    }
+
+    .quick-call-modal-body .form-control.is-invalid,
+    .quick-call-modal-body .form-select.is-invalid {
+      border-color: var(--error-red);
+    }
+
+    .quick-call-modal-body .error-message {
+      color: var(--error-red);
+      font-size: 0.75rem;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .quick-call-modal-body .notes {
+      margin-top: 16px;
+    }
+
+    .quick-call-modal-body .notes .note-icon {
+      color: var(--primary-blue);
+      margin-right: 8px;
+      font-size: 1rem;
+    }
+
+    .quick-call-modal-body .notes span {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    .quick-call-modal-footer {
+      padding: 16px 24px;
+      border-top: none;
+      display: flex;
+      justify-content: center;
+      background: #fff;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+    }
+
+    .quick-call-modal-btn {
+      background: var(--premium-gold);
+      color: var(--dark-gray);
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background var(--transition), transform var(--transition);
+      display: flex;
+      align-items: center;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .quick-call-modal-btn:hover {
+      background: #e6c200;
+      transform: translateY(-2px);
+    }
+
+    .quick-call-modal-btn:disabled {
+      background: #d1d5db;
+      color: #6b7280;
+      cursor: not-allowed;
+    }
+
+    .quick-call-modal-btn i {
+      font-size: 1rem;
+    }
+
+    /* Responsiveness for Small Screens */
+    @media (max-width: 576px) {
+      .quick-call-modal-content {
+        max-width: 100%;
+        margin: 10px;
+      }
+
+      .quick-call-modal-header {
+        min-height: 120px;
+        padding: 20px 16px;
+      }
+
+      .quick-call-modal-header .modal-title {
+        font-size: 1.1rem;
+      }
+
+      .quick-call-modal-header p {
+        font-size: 0.85rem;
+      }
+
+      .quick-call-modal-header .btn-close-white {
+        top: 10px;
+        right: 10px;
+      }
+
+      .quick-call-modal-body {
+        padding: 16px 20px;
+      }
+
+      .quick-call-modal-body .form-label {
+        font-size: 0.8rem;
+      }
+
+      .quick-call-modal-body .form-control,
+      .quick-call-modal-body .form-select {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+      }
+
+      .quick-call-modal-body .form-select {
+        max-width: 80px;
+      }
+
+      .quick-call-modal-body .error-message {
+        font-size: 0.7rem;
+      }
+
+      .quick-call-modal-body .notes .note-icon {
+        font-size: 0.9rem;
+        margin-right: 6px;
+      }
+
+      .quick-call-modal-body .notes span {
+        font-size: 0.75rem;
+      }
+
+      .quick-call-modal-footer {
+        padding: 12px 20px;
+      }
+
+      .quick-call-modal-btn {
+        font-size: 0.85rem;
+        padding: 8px 20px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .quick-call-modal-header {
+        min-height: 110px;
+        padding: 16px 12px;
+      }
+
+      .quick-call-modal-header .modal-title {
+        font-size: 1rem;
+      }
+
+      .quick-call-modal-header p {
+        font-size: 0.8rem;
+      }
+
+      .quick-call-modal-body {
+        padding: 12px 16px;
+      }
+
+      .quick-call-modal-body .form-label {
+        font-size: 0.75rem;
+      }
+
+      .quick-call-modal-body .form-control,
+      .quick-call-modal-body .form-select {
+        font-size: 0.8rem;
+        padding: 6px 8px;
+      }
+
+      .quick-call-modal-body .form-select {
+        max-width: 70px;
+      }
+
+      .quick-call-modal-body .error-message {
+        font-size: 0.65rem;
+      }
+
+      .quick-call-modal-body .notes .note-icon {
+        font-size: 0.85rem;
+        margin-right: 5px;
+      }
+
+      .quick-call-modal-body .notes span {
+        font-size: 0.7rem;
+      }
+
+      .quick-call-modal-footer {
+        padding: 10px 16px;
+      }
+
+      .quick-call-modal-btn {
+        font-size: 0.8rem;
+        padding: 8px 16px;
+      }
+    }
   </style>
 </head>
 
@@ -771,6 +1059,13 @@
           </div>
           <% } %>
         </div>
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="quick-call-container">
+                <button class="btn btn-inquiry rounded-5 mt-3" data-bs-toggle="modal" data-bs-target="#quickCallModal">Request Call Back</button>
+              </div>
+            </div>
+          </div>
       </aside>
     </section>
   </div>
@@ -959,6 +1254,76 @@
     </div>
   </div>
 
+  <!-- Quick Call Modal -->
+  <div class="modal fade" id="quickCallModal" tabindex="-1" aria-labelledby="quickCallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content quick-call-modal-content">
+        <div class="modal-header quick-call-modal-header position-relative">
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          <div class="modal-body-content">
+            <h5 class="modal-title text-white" id="quickCallModalLabel">Scrolling is fun, but travelling is better.</h5>
+            <p class="text-white">Leave your number, and let's get you packing!</p>
+          </div>
+        </div>
+        <div class="modal-body quick-call-modal-body">
+          <form id="quickCallForm">
+            <div class="mb-3">
+              <label for="guestName" class="form-label">Guest Name *</label>
+              <input type="text" class="form-control quick-call-input" id="guestName" name="guestName" placeholder="Enter guest name" required>
+              <div class="error-message" id="guestNameError">Please enter guest name</div>
+            </div>
+            <div class="mb-3">
+              <label for="mobileNo" class="form-label">Mobile No *</label>
+              <div class="input-group">
+                <select class="form-select quick-call-select" id="countryCode" name="countryCode">
+                  <option value="+91" data-flag="🇮🇳">🇮🇳 +91</option>
+                  <option value="+1" data-flag="🇺🇸">🇺🇸 +1</option>
+                  <option value="+44" data-flag="🇬🇧">🇬🇧 +44</option>
+                  <!-- Add more country codes as needed -->
+                </select>
+                <input type="tel" class="form-control quick-call-input" id="mobileNo" name="mobileNo" placeholder="Enter mobile number" required>
+              </div>
+              <div class="error-message" id="mobileNoError">Please enter a valid mobile number</div>
+            </div>
+            <div class="notes d-flex flex-column gap-2">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-shield-lock-fill note-icon"></i>
+                <span>We assure the privacy of your contact data.</span>
+              </div>
+              <div class="d-flex align-items-center">
+                <i class="bi bi-telephone-x-fill note-icon"></i>
+                <span>No annoying spam calls.</span>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer quick-call-modal-footer">
+          <button type="button" class="btn quick-call-modal-btn" id="submitQuickCall" disabled>
+            <i class="bi bi-telephone-fill me-2"></i> Request Call Back
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Popup -->
+  <div class="modal fade" id="quickCallSuccessModal" tabindex="-1" aria-labelledby="quickCallSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="quickCallSuccessModalLabel">Request Submitted</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Your call back request has been submitted successfully. We'll get in touch with you soon!</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Okay</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="container-xl pt-4">
     <% if (trips && trips.itinerary && trips.itinerary.length > 0) { %>
       <h3>Itinerary</h3>
@@ -1048,8 +1413,8 @@
   <%- include('../partials/scripttag'); %>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
-    const isLoggedIn = sessionStorage.length || !! <%- JSON.stringify(trips.loggedGmailUser) %>;
-
+    const isLoggedIn = sessionStorage.length || !!<%- JSON.stringify(trips.loggedGmailUser) %>;
+    const csrfToken = "<%= csrfToken %>";
     function openInquiryModal() {
       const modalElement = document.getElementById("inquiryModal");
       const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
@@ -1412,7 +1777,10 @@
       const datesByYear = {};
       dateOptions.forEach((option) => {
         const year = option.startDate.getUTCFullYear().toString();
-        const month = option.startDate.toLocaleString("en-US", { month: "long", timeZone: "UTC" });
+        const month = option.startDate.toLocaleString("en-US", {
+          month: "long",
+          timeZone: "UTC"
+        });
         if (!datesByYear[year]) datesByYear[year] = {};
         if (!datesByYear[year][month]) datesByYear[year][month] = [];
         datesByYear[year][month].push(option);
@@ -1426,7 +1794,10 @@
         else validateMainForm();
         return;
       }
-      dateOptions.forEach(({ value, text }, index) => {
+      dateOptions.forEach(({
+        value,
+        text
+      }, index) => {
         const option = document.createElement("option");
         option.value = value;
         option.text = text;
@@ -1460,7 +1831,10 @@
       if (!isNaN(initialStartDate.getTime())) {
         const initialYear = initialStartDate.getUTCFullYear().toString();
         showYear(initialYear, fromModal);
-        const initialMonth = initialStartDate.toLocaleString("en-US", { month: "long", timeZone: "UTC" });
+        const initialMonth = initialStartDate.toLocaleString("en-US", {
+          month: "long",
+          timeZone: "UTC"
+        });
         showMonth(initialYear, initialMonth, fromModal);
       } else {
         showYear(years[0], fromModal);
@@ -1520,7 +1894,10 @@
       const dateSelect = fromModal ? document.getElementById("modalSelectedDate") : document.getElementById("selectedDate");
       const selectedDate = dateSelect.value ? new Date(dateSelect.value) : null;
       const selectedMonth = selectedDate && selectedDate.getFullYear().toString() === year ?
-        selectedDate.toLocaleString("en-US", { month: "long", timeZone: "UTC" }) : months[0];
+        selectedDate.toLocaleString("en-US", {
+          month: "long",
+          timeZone: "UTC"
+        }) : months[0];
       showMonth(year, selectedMonth, fromModal);
     }
 
@@ -1548,7 +1925,10 @@
       const dateOptions = generateDateRanges(cityData.dates, cityData.tripDuration);
       const monthOptions = dateOptions.filter((option) => {
         const optionYear = option.startDate.getUTCFullYear().toString();
-        const optionMonth = option.startDate.toLocaleString("en-US", { month: "long", timeZone: "UTC" });
+        const optionMonth = option.startDate.toLocaleString("en-US", {
+          month: "long",
+          timeZone: "UTC"
+        });
         return optionYear === year && optionMonth === month;
       });
       if (monthOptions.length === 0) {
@@ -1559,9 +1939,16 @@
       }
       const selectedDate = dateSelect.value ? new Date(dateSelect.value) : null;
       const selectedDay = selectedDate ? selectedDate.getUTCDate() : null;
-      const selectedMonthStr = selectedDate ? selectedDate.toLocaleString("en-US", { month: "long", timeZone: "UTC" }) : null;
+      const selectedMonthStr = selectedDate ? selectedDate.toLocaleString("en-US", {
+        month: "long",
+        timeZone: "UTC"
+      }) : null;
       const selectedYear = selectedDate ? selectedDate.getUTCFullYear().toString() : null;
-      monthOptions.forEach(({ startDate, value, text }) => {
+      monthOptions.forEach(({
+        startDate,
+        value,
+        text
+      }) => {
         const date = startDate.getUTCDate();
         const div = document.createElement("div");
         const isActive = selectedDay === date && selectedMonthStr === month && selectedYear === year;
@@ -1591,7 +1978,10 @@
       if (!document.querySelector(fromModal ? ".booking-modal-date-item.active" : ".trip-details-date-item.active") && monthOptions.length > 0) {
         console.log(`No active date, setting default for ${month} ${year}`);
         isUpdating = true;
-        const { value, text } = monthOptions[0];
+        const {
+          value,
+          text
+        } = monthOptions[0];
         dateSelect.value = value;
         if (fromModal && document.getElementById("selectedDate")) {
           document.getElementById("selectedDate").value = value;
@@ -1620,7 +2010,10 @@
           return;
         }
         const year = startDate.getUTCFullYear().toString();
-        const month = startDate.toLocaleString("en-US", { month: "long", timeZone: "UTC" });
+        const month = startDate.toLocaleString("en-US", {
+          month: "long",
+          timeZone: "UTC"
+        });
         const day = startDate.getUTCDate();
         const modalDateSelect = document.getElementById("modalSelectedDate");
         if (modalDateSelect) modalDateSelect.value = startISO;
@@ -1654,7 +2047,10 @@
           const mainDateSelect = document.getElementById("selectedDate");
           if (mainDateSelect) mainDateSelect.value = startISO;
           const year = startDate.getUTCFullYear().toString();
-          const month = startDate.toLocaleString("en-US", { month: "long", timeZone: "UTC" });
+          const month = startDate.toLocaleString("en-US", {
+            month: "long",
+            timeZone: "UTC"
+          });
           const day = startDate.getUTCDate();
           document.querySelectorAll(".booking-modal-year-tab").forEach((tab) => tab.classList.remove("active"));
           const yearTab = Array.from(document.querySelectorAll(".booking-modal-year-tab")).find((tab) => tab.innerText === year);
@@ -1719,7 +2115,7 @@
         showContactModal("Failed to verify login status. Please try again.");
       }
     }
-  
+
     function updateModalCitySummary() {
       const citySelect = document.getElementById("modalSelectedCity");
       const summaryCard = document.querySelector(".booking-modal-city-summary");
@@ -1752,7 +2148,7 @@
       }
       validateModalForm();
     }
-  
+
     async function proceedWithBooking() {
       console.log("Proceeding with booking...");
       try {
@@ -1778,7 +2174,7 @@
         showContactModal("Failed to verify login status. Please try again.");
       }
     }
-  
+
     async function submitModalBooking() {
       const city = document.getElementById("modalSelectedCity").value;
       const date = document.getElementById("modalSelectedDate").value;
@@ -1793,18 +2189,106 @@
         showContactModal();
       }
     }
-  
+
     function showTab(tabId) {
       document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
       document.querySelectorAll(".tab-content").forEach(content => content.classList.remove("active"));
       document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add("active");
       document.getElementById(tabId).classList.add("active");
     }
-  
+
     document.getElementById("bookingModal").addEventListener("click", function(e) {
       if (e.target.classList.contains("booking-modal-month-tab")) {
         e.stopPropagation();
       }
+    });
+
+    // Queck call request section
+    // Quick Call Form Validation and Submission
+    document.addEventListener("DOMContentLoaded", function() {
+      const quickCallForm = document.getElementById("quickCallForm");
+      const guestNameInput = document.getElementById("guestName");
+      const mobileNoInput = document.getElementById("mobileNo");
+      const countryCodeSelect = document.getElementById("countryCode");
+      const submitBtn = document.getElementById("submitQuickCall");
+      const guestNameError = document.getElementById("guestNameError");
+      const mobileNoError = document.getElementById("mobileNoError");
+
+      function validateQuickCallForm() {
+        let isValid = true;
+
+        // Validate Guest Name
+        if (!guestNameInput.value.trim()) {
+          guestNameInput.classList.add("is-invalid");
+          guestNameError.style.display = "block";
+          isValid = false;
+        } else {
+          guestNameInput.classList.remove("is-invalid");
+          guestNameError.style.display = "none";
+        }
+
+        // Validate Mobile Number (basic validation: at least 8 digits)
+        const mobileNo = mobileNoInput.value.trim();
+        const mobileNoRegex = /^\d{8,15}$/;
+        if (!mobileNoRegex.test(mobileNo)) {
+          mobileNoInput.classList.add("is-invalid");
+          mobileNoError.style.display = "block";
+          isValid = false;
+        } else {
+          mobileNoInput.classList.remove("is-invalid");
+          mobileNoError.style.display = "none";
+        }
+
+        submitBtn.disabled = !isValid;
+        return isValid;
+      }
+
+      guestNameInput.addEventListener("input", validateQuickCallForm);
+      mobileNoInput.addEventListener("input", validateQuickCallForm);
+
+      submitBtn.addEventListener("click", async function(e) {
+        e.preventDefault();
+        if (!validateQuickCallForm()) return;
+
+        const formData = {
+          guestName: guestNameInput.value.trim(),
+          mobileNo: `${countryCodeSelect.value}${mobileNoInput.value.trim()}`,
+          tripId: "<%= trips._id %>",
+          responded: false,
+          markAsSpam: false,
+          requestedDate: new Date().toISOString()
+        };
+
+        try {
+          const response = await fetch("/quick-call/request", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRF-Token": csrfToken
+            },
+            body: JSON.stringify(formData)
+          });
+
+          if (response.ok) {
+            // Close the quick call modal
+            const quickCallModal = bootstrap.Modal.getInstance(document.getElementById("quickCallModal"));
+            quickCallModal.hide();
+
+            // Show success modal
+            const successModal = new bootstrap.Modal(document.getElementById("quickCallSuccessModal"));
+            successModal.show();
+
+            // Reset form
+            quickCallForm.reset();
+            validateQuickCallForm();
+          } else {
+            alert("Failed to submit your request. Please try again.");
+          }
+        } catch (error) {
+          console.error("Error submitting quick call request:", error);
+          alert("An error occurred. Please try again later.");
+        }
+      });
     });
     </script>
 

@@ -42,26 +42,6 @@ const customTripSchema = new mongoose.Schema({
     min: 0,
     default: null
   },
-  transport: {
-    type: String,
-    trim: true,
-    default: null
-  },
-  triptype: {
-    type: String,
-    trim: true,
-    default: null
-  },
-  travelDate: {
-    type: String,
-    trim: true,
-    default: null
-  },
-  budget: {
-    type: Number,
-    min: 0,
-    default: null
-  },
   details: {
     type: String,
     trim: true,

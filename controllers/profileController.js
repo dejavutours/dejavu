@@ -88,7 +88,8 @@ exports.getBookingHistoryItem = async (req, res, next) => {
       tripStartDate: isUpcomingTrips
         ? { $gte: new Date() }
         : { $lt: new Date() },
-      userId: userInfo._id
+      userId: userInfo._id,
+      bookingStatus: "Confirmed", // <-- Add this line to filter only confirmed bookings
     };
 
     const items = await TripBookingDetail.find(filter)
@@ -151,7 +152,7 @@ exports.getMyTrips = async (req, res, next) => {
     );
 
     const details = {
-      ...(profileFormData.details || {}),
+      ...(profileFormData?.details || {}),
       birthDate: formattedBirthDate,
     };
 
