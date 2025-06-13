@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dream Trip Form</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/img/deja-vu icon.png">
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
@@ -17,7 +18,7 @@
       rel="stylesheet"
       crossorigin="anonymous"
     />
-
+    <link rel="stylesheet" href="../css/style.css"/>
     <style>
       .dream-trip-page {
         font-family: "Arial", sans-serif;
@@ -133,167 +134,85 @@
         </p>
       </div>
 
-      <div class="container">
-        <div class="row">
+      <div class="container-xl">
+        <div class="row g-3">
           <!-- Form -->
-          <div class="col-12 col-md-10">
+          <div class="col-12 col-md-8">
             <div class="form-container">
-              <form id="customTripDetailForm">
+              <form id="customTripDetailForm" class="row gy-3">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
 
                 <!-- Name -->
-                <div class="mb-3">
+                <div class="col-12">
                   <label for="name" class="form-label">Name</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="name"
-                    placeholder="Type Your Name Here"
-                  />
+                  <input type="text" class="form-control" id="name" placeholder="Type Your Name Here"/>
                 </div>
 
                 <!-- Mobile + Place -->
-                <div class="row mb-3">
-                  <div class="col-12 col-md-6">
-                    <label for="mobile" class="form-label">Mobile</label>
-                    <div class="input-group">
-                      <span class="input-group-text">+91</span>
-                      <input
-                        type="tel"
-                        class="form-control"
-                        id="mobile"
-                        placeholder="00000 00000"
-                      />
-                    </div>
+                <div class="col-12 col-sm-6">
+                  <label for="mobile" class="form-label">Mobile</label>
+                  <div class="input-group">
+                    <span class="input-group-text">+91</span>
+                    <input type="tel" class="form-control" id="mobile" placeholder="00000 00000"/>
                   </div>
-                  <div class="col-12 col-md-6">
-                    <label for="place" class="form-label"
-                      >Place of Resident</label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="place"
-                      placeholder="Type city and state of your resident"
-                    />
-                  </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <label for="place" class="form-label">Place of Resident</label>
+                  <input type="text" class="form-control" id="place" placeholder="Type city and state of your resident"/>
                 </div>
 
                 <!-- Email -->
-                <div class="mb-3">
+                <div class="col-12">
                   <label for="email" class="form-label">Email ID</label>
                   <div class="input-group">
                     <span class="input-group-text">@</span>
-                    <input
-                      type="email"
-                      class="form-control"
-                      id="email"
-                      placeholder="mail"
-                    />
+                    <input type="email" class="form-control" id="email" placeholder="mail"/>
                   </div>
                 </div>
 
                 <!-- Destination -->
-                <div class="mb-3">
-                  <label for="destination" class="form-label"
-                    >Travel Destination</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="destination"
-                    placeholder="Let Us Know Where Do You Want To Travel.."
-                  />
+                <div class="col-12">
+                  <label for="destination" class="form-label">Travel Destination</label>
+                  <input type="text" class="form-control" id="destination" placeholder="Let Us Know Where Do You Want To Travel.."/>
                 </div>
 
                 <!-- Days + Persons -->
-                <div class="row mb-3">
-                  <div class="col-12 col-md-6">
-                    <label for="days" class="form-label">No. of Days</label>
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="days"
-                      placeholder="00"
-                      min="0"
-                    />
-                  </div>
-                  <div class="col-12 col-md-6">
-                    <label for="persons" class="form-label"
-                      >No. of Person</label
-                    >
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="persons"
-                      placeholder="00"
-                      min="0"
-                    />
-                  </div>
+                <div class="col-12 col-sm-6">
+                  <label for="days" class="form-label">No. of Days</label>
+                  <input type="number" class="form-control" id="days" placeholder="00" min="0"/>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <label for="persons" class="form-label">No. of Person</label>
+                  <input type="number" class="form-control" id="persons" placeholder="00" min="0"/>
                 </div>
 
                 <!-- Transport + Trip Type -->
-                <div class="row mb-3">
-                  <div class="col-12 col-md-6 col-lg-4">
-                    <label for="transport" class="form-label"
-                      >Transport Mode</label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="transport"
-                      placeholder="Flight"
-                    />
-                  </div>
-                  <div class="col-12 col-md-6 col-lg-4">
-                    <label for="triptype" class="form-label">Trip Type</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="triptype"
-                      placeholder="Sole"
-                    />
-                  </div>
+                <div class="col-12 col-sm-6">
+                  <label for="transport" class="form-label">Transport Mode</label>
+                  <input type="text" class="form-control" id="transport" placeholder="Flight"/>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <label for="triptype" class="form-label">Trip Type</label>
+                  <input type="text" class="form-control" id="triptype" placeholder="Sole"/>
                 </div>
 
                 <!-- Travel Date + Budget -->
-                <div class="row mb-3">
-                  <div class="col-12 col-md-6">
-                    <label for="travel-date" class="form-label"
-                      >Travel Date or Month</label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="travel-date"
-                      placeholder="Type Here"
-                    />
-                  </div>
-                  <div class="col-12 col-md-6">
-                    <label for="budget" class="form-label"
-                      >Expected Budget</label
-                    >
-                    <div class="input-group">
-                      <span class="input-group-text">₹</span>
-                      <input
-                        type="number"
-                        class="form-control"
-                        id="budget"
-                        placeholder="Type Amount"
-                      />
-                    </div>
+                <div class="col-12 col-sm-6">
+                  <label for="travel-date" class="form-label">Travel Date or Month</label>
+                  <input type="text" class="form-control" id="travel-date" placeholder="Type Here"/>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <label for="budget" class="form-label">Expected Budget</label>
+                  <div class="input-group">
+                    <span class="input-group-text">₹</span>
+                    <input type="number" class="form-control" id="budget" placeholder="Type Amount" />
                   </div>
                 </div>
 
                 <!-- More Details -->
-                <div class="mb-3">
+                <div class="col-12">
                   <label for="details" class="form-label">More Detail</label>
-                  <textarea
-                    class="form-control"
-                    id="details"
-                    rows="3"
-                    placeholder="Let Us know anything in your mind about your plan other than mentioned above.."
-                  ></textarea>
+                  <textarea class="form-control" id="details" rows="3" placeholder="Let Us know anything in your mind about your plan other than mentioned above.."></textarea>
                 </div>
 
                 <!-- Submit -->
@@ -305,9 +224,7 @@
           </div>
 
           <!-- Contact Info -->
-          <div
-            class="col-12 col-md-2 d-none d-sm-block contact-info mt-4 mt-md-0"
-          >
+          <div class="col-12 col-md-4 col-lg-3 d-none d-md-block contact-info">
             <a class="navbar-brand me-auto" href="/">
               <img
                 src="/img/logo_2x.png"
@@ -320,7 +237,7 @@
             </a>
             <p class="mt-2">+91 85111 77891</p>
             <p>Dejavuoutdoors@Gmail.Com</p>
-            <p>11, Patelkunj, Maninagar East,<br />Ahmedabad, India.</p>
+            <address>11, Patelkunj, Maninagar East,<br />Ahmedabad, India.</address>
           </div>
         </div>
       </div>
