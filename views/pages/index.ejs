@@ -11,32 +11,17 @@
     .departure_city_section {
       padding-bottom: 3rem;
     }
-
-    /* Tabs Styling */
-    .departure-city-tabs {
-      border-bottom: 1px solid #dee2e6;
-      gap: 0.5rem;
-    }
-    /* .nav.departure-city-tabs { --bs-nav-link-padding-x: 0.5rem;} */
+    .nav.departure-city-tabs { 
+      /* -webkit-mask-image: linear-gradient(to left, transparent, rgb(0 0 0 / 50%) 20%, rgb(0 0 0 / 100%) 80%, transparent); mask-image: linear-gradient(to left, transparent, rgb(0 0 0 / 50%) 20%, rgb(0 0 0 / 100%) 80%, transparent); mask-size: 100% 100%; mask-repeat: no-repeat; padding-inline: 1rem;  */
+      white-space: nowrap; scrollbar-width: none; /* Hide scrollbar for Firefox */ -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */ --bs-nav-tabs-link-hover-bg: #dee2e6;--bs-nav-tabs-link-hover-border-color: #dee2e6; --bs-nav-tabs-link-active-border-color: #000000; --bs-nav-tabs-border-color: transparent;}
     .departure-city-tabs .nav-link {
-      border: 1px solid transparent;
       border-radius: 10px;
       color: #6c757d;
       font-weight: 500;
       transition: all 0.3s ease;
     }
 
-    .departure-city-tabs .nav-link:hover {
-      background-color: #f8f9fa;
-      border-color: #dee2e6;
-    }
-
-    .departure-city-tabs .nav-link.active {
-      background-color: #ffffff;
-      color: #000000;
-      border-color: #000000;
-    }
-
+    .departure-city-tabs .nav-link:hover { background-color: #f8f9fa; }
     /* Trip Cards Container */
     .trip-cards-container {
       position: relative;
@@ -172,10 +157,6 @@
 
     /* Responsive Adjustments */
     @media (max-width: 767.98px) {
-      .trip-card {
-        width: 280px;
-      }
-
       .trip-image-slider {
         height: 180px;
       }
@@ -198,8 +179,6 @@
         right: 5px;
       }
       .nav.departure-city-tabs {--bs-nav-link-padding-x: 0.5rem; --bs-nav-link-padding-y: 0.25rem;}
-      
-      .trip-card {height: 369px;}
     }
 
     @media (max-width: 575.98px) {
@@ -424,12 +403,12 @@
     </p>
 
     <!-- Tabs for Departure Cities -->
-    <ul class="nav nav-tabs departure-city-tabs mb-4" id="departureCityTabs" role="tablist">
+    <ul class="nav nav-tabs departure-city-tabs mb-4 flex-nowrap overflow-x-auto pb-1 gap-2" id="departureCityTabs" role="tablist">
       <% departureCities.forEach((city, index) => { %>
       <li class="nav-item" role="presentation">
-        <button class="nav-link <%= index === 0 ? 'active' : '' %>" id="tab-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" data-bs-toggle="tab" data-bs-target="#pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" type="button" role="tab" aria-controls="pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" aria-selected="<%= index === 0 ? 'true' : 'false' %>">
+        <a href="#" class="nav-link text-nowrap <%= index === 0 ? 'active' : '' %>" id="tab-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" data-bs-toggle="tab" data-bs-target="#pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" type="button" role="tab" aria-controls="pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" aria-selected="<%= index === 0 ? 'true' : 'false' %>">
           <%= city.name %>
-        </button>
+        </a>
       </li>
       <% }); %>
     </ul>

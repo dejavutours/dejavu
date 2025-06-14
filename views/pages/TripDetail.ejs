@@ -344,22 +344,7 @@
     /* Proceed button */
     .trip-details-proceed-btn-book,
     .booking-modal-btn-proceed {
-      background-color: var(--primary-blue);
-      color: white;
-      transition: background var(--transition);
-    }
-
-    .trip-details-proceed-btn-book:hover,
-    .booking-modal-btn-proceed:hover {
-      background-color: #143c73;
-      color: white;
-    }
-
-    .trip-details-proceed-btn-book:disabled,
-    .booking-modal-btn-proceed:disabled {
-      background-color: #6c757d;
-      cursor: not-allowed;
-      color: white;
+      --bs-btn-bg: var(--primary-blue); --bs-btn-hover-bg: #143c73; --bs-btn-active-bg: var(--primary-blue); --bs-btn-color: white; --bs-btn-hover-color: #fff; --bs-btn-active-color: #fff; transition: background var(--transition); --bs-btn-disabled-bg: #6c757d;
     }
 
     /* Inquiry button in form */

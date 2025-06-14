@@ -245,7 +245,7 @@
 .trending_state_section .item_card small{font-size: 0.75rem;}
 
 .cat_section .item_card {--bg-image: linear-gradient(to right, #434343 0%, black 100%); width: 200px;min-width: 200px; height: 230px; margin-block-end: 70px; display: inline-flex; box-shadow: none; aspect-ratio: unset; vertical-align: middle;}
-.cat_section .item_card .content { box-shadow: 0px 25px 50px -12px #00000040; position: absolute; bottom: 0; transform: translateY(40px); overflow: hidden; max-height: 60px; }
+.cat_section .item_card .content { box-shadow: 0px 25px 50px -12px #00000040; position: absolute; max-width: 180px; bottom: -30px; overflow: hidden; max-height: 60px; }
 
 /* Departure city section styles */
 .departure_city_section a { text-decoration: none; color: inherit; --bg-image: linear-gradient(to right, #243949 0%, #517fa4 100%);}
