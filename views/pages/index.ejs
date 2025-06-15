@@ -2,7 +2,7 @@
 <html class="no-js" lang="zxx">
 
 <head>
-  <%- include('../partials/headtag'); %>
+  <%- include('../partials/headtag', {title: "Deja-vu tours treks and travel"}); %>
   
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <link rel="stylesheet" href="css/dashboard.css">
@@ -28,16 +28,14 @@
       overflow-x: auto;
       scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
       scroll-snap-type: x mandatory;
       /* Enable scroll snapping */
     }
 
     /* Hide Scrollbar on Webkit Browsers */
-    .trip-cards-container::-webkit-scrollbar {
+    /* .trip-cards-container::-webkit-scrollbar {
       display: none;
-    }
+    } */
 
     .trip-cards-row {
       display: flex;
@@ -190,7 +188,7 @@
 </head>
 
 <body>
-  <%- include('../partials/header', {title: "Deja-vu tours treks and travel"}); %>
+  <%- include('../partials/header', {isSearch: true}); %>
 
   <section class="banner_section pb-4 position-relative">
     <div class="container-fluid">

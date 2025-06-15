@@ -124,7 +124,7 @@
 
 <body>
 
-  <%- include('../partials/header'); %>
+  <%- include('../partials/header', {isSearch: false}); %>
 
     <% if(trips?.bannerimage==null){ %>
       <div class="destination_banner_wrap overlay" style="background-image: url('/images/<%= trips?.imageurl %>');">
