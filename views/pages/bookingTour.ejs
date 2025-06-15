@@ -140,8 +140,9 @@
             </span>
           </p>
           <p class="d-flex justify-content-between align-items-center gap-3 pt-3">
-            <strong>Total costs</strong> 
+            <strong>Total costs (including 5% GST)<span title="Includes 5% GST">ℹ️</span></strong> 
             <strong>₹ <span id="totalCost">0</span></strong>
+            
           </p>
           <p class="text-end mb-0">
             <a href="#" id="openCostModalBtn" data-bs-toggle="modal" data-bs-target="#costBreakdownModal">View Cost Breakdown</a>
@@ -153,7 +154,7 @@
           </div>
           <label for="payingAmount" class="form-label">Amount to pay now</label>
           <input id="payingAmount" name="payingAmount" aria-describedby="totalAmountHint" class="form-control" type="text" readonly />
-          <p class="form-text" id="totalAmountHint">5% GST include</p>
+          <!-- <p class="form-text" id="totalAmountHint">5% GST include</p> -->
           <button id="submit" class="btn btn-app-primary w-100 btn-lg payment-btn enable-disable">Pay ₹<span id="payingAmountDisplay"></span> now</button>
         </div>
       </aside>
@@ -686,7 +687,7 @@
   
       const NoofAdutts = parseInt(document.getElementById('adults').value.trim()) || 0;
       const NoofChild = parseInt(document.getElementById('children').value.trim()) || 0;
-      const dobList = document.querySelectorAll('[id="dateofbirth"]');
+      const dobList = document.querySelectorAll('.dateofbirthInput');
       let adultCount = 0;
       let childCount = 0;
       let isValid = true;
