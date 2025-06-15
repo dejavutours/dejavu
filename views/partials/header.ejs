@@ -306,8 +306,9 @@
                 <% if(profile?.email === process.env.GMAIL_ADMIN || profile?.email === process.env.GMAIL_ADMIN_TWO) { %>
                 <!-- <li><a class="dropdown-item" href="/admin/login" target="_blank">Admin</a></li> -->
                 <li><a class="dropdown-item" href="/admin/bookings" target="_blank">Bookings</a></li>
+                <li><a class="dropdown-item" href="/admin/users" target="_blank">User</a></li>
                 <li><a class="dropdown-item" href="/admin/addtours" target="_blank">Add Tours</a></li>
-                <li><a class="dropdown-item" href="/cities" target="_blank">Master setting</a></li>
+                <li><a class="dropdown-item" href="/cities" target="_blank">Master setting</a></li>               
                 <% } %>
                 <li>
                   <form id="my_form" action="/logout" method="post">
