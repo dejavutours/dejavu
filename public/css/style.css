@@ -93,11 +93,22 @@ h6 a {
 }
 
 /* line 69, ../../Arafath/CL/December/231. Travel-02/HTML/scss/theme-default.scss */
-label {
-  color: #181818;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 400;
+label { color: #181818; font-weight: 500; color: #4B5563; }
+.btn-app-primary{
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #002d66;
+  --bs-btn-border-color: #002d66;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #001b3e;
+  --bs-btn-hover-border-color: #001b3e;
+  --bs-btn-focus-shadow-rgb: 49, 132, 253;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #001b3e;
+  --bs-btn-active-border-color: #001b3e;
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: #002d66;
+  --bs-btn-disabled-border-color: #002d66;
 }
 
 /* line 75, ../../Arafath/CL/December/231. Travel-02/HTML/scss/theme-default.scss */
