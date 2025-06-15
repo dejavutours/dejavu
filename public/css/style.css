@@ -1,6 +1,14 @@
 /* @import url("https://fonts.googleapis.com/css?family=Nothing+You+Could+Do|Rubik:300,300i,400,400i,500,500i,700,700i,900,900i&display=swap"); */
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");
 
+:root{
+--dejavue-color: #1A3C6C;
+--dejavue-color-dark: #16345e;
+--dejavue-color-light: #1A3C6C;
+--dejavue-color-lightest: #1A3C6C;
+--dejavue-seondary-highlight: #EF4F5F;
+}
+
 *{scroll-behavior: smooth; margin: 0; padding: 0;}
 
 body {
@@ -4063,9 +4071,9 @@ h4 {
 }
 
 /* line 109, ../../Arafath/CL/December/231. Travel-02/HTML/scss/_elements.scss */
-h5 {
+/* h5 {
   font-size: 16px;
-}
+} */
 
 /* line 113, ../../Arafath/CL/December/231. Travel-02/HTML/scss/_elements.scss */
 h6 {
@@ -7004,13 +7012,6 @@ h6 {
   background-color : #28a74530;
 }
 
-:root{
---dejavue-color: #1A3C6C;
---dejavue-color-dark: #16345e;
---dejavue-color-light: #1A3C6C;
---dejavue-color-lightest: #1A3C6C;
---dejavue-seondary-highlight: #EF4F5F;}
-
 
 /* .nunito-<uniquifier> {
   font-family: "Nunito", sans-serif;
@@ -7025,3 +7026,9 @@ h6 {
 .scroll-hide{scrollbar-width: none; scrollbar-height: none;}
 .h-scroll { -webkit-overflow-scrolling: touch; -ms-overflow-style: none; scroll-snap-type: x mandatory; }
 .v-scroll { -webkit-overflow-scrolling: touch; -ms-overflow-style: none; scroll-snap-type: y mandatory; }
+
+.contactLink{--bs-navbar-nav-link-padding-x: 1rem; animation: fadeIn 1s linear alternate infinite; text-decoration: none; color: var(--dejavue-color); align-self: center; transition: background-color 0.3s ease-in-out;} .contactLink:hover, .contactLink:focus, .contactLink:focus-visible {color: var(--dejavue-color-dark); animation: unset; background-color: var(--dejavue-color-dark); color: #fff; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+@keyframes fadeIn {
+  from { opacity: 0.5; background-color: transparent;}
+  to { opacity: 1; background-color: #1a3c6c1c; }
+}
