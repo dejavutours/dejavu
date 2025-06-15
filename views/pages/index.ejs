@@ -158,6 +158,7 @@
       .trip-image-slider {
         height: 180px;
       }
+      #modalApplyBtn{width: 180px;}
 
       /* .trip-cards-row {
         padding: 0 5px;
@@ -280,7 +281,7 @@
 
   <!-- Filter Modal for Small Screens -->
   <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable modal-dialog-centered">
       <div class="modal-content rounded-4">
         <div class="modal-header border-0 pb-0">
           <h5 class="modal-title" id="filterModalLabel">Search & Filters</h5>
@@ -877,10 +878,26 @@
             syncInputs(key);
           }
         });
+
+        // Call redirectWithFilters when user hits Enter in modal search input
+        searchInput?.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            redirectWithFilters();
+          }
+        });
       });
 
       input2?.addEventListener('input', (e) => {
         filterState['search'] = e.target.value;
+      });
+      
+      // Call redirectWithFilters when user hits Enter in modal search input
+      input2?.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          redirectWithFilters();
+        }
       });
 
       function syncInputs(key) {
