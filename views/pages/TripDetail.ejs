@@ -138,6 +138,8 @@
       color: var(--dark-gray);
       transform: translateY(-2px);
     }
+    .abouts:not(.expanded){ max-height: 150px; overflow: hidden; text-overflow: ellipsis; -o-text-overflow: ellipsis; -ms-text-overflow: ellipsis;}
+    .about-mask{height: 40px; pointer-events: none; background-image: linear-gradient(to bottom, rgba(255,255,255,0) 0%, #fff 90%); z-index: 1;} .about-read-more-btn{text-underline-offset: 2px;}
 
     /* City card styling */
     .city-card {
@@ -921,13 +923,15 @@
     <section class="row gy-3 my-3">
       <article class="col-lg-7">
         <h3>About</h3>
-        <%- trips.about %>
+        <div class="abouts position-relative">
+          <%- trips.about %>
+        </div>
         <% if (trips.documentUrl) { %>
         <button class="btn btn-light border rounded-pill px-4 py-2" onclick="downloadItinerary()">
           <i class="bi bi-download"></i> Download Itinerary
         </button>
         <% } else { %>
-        <p class="text-muted">Itinerary PDF not available.</p>
+        <p class="text-muted pt-1">Itinerary PDF not available.</p>
         <% } %>
       </article>
       <aside class="col-lg-5">
@@ -1413,6 +1417,56 @@
 
       checkSlideButtons();
       selectFirstCity();
+
+      // about section of the trip detail
+      const aboutSec = document.querySelector('.abouts');
+      if (aboutSec) {
+        function addReadMoreIfNeeded() {
+          // Remove previous mask/read-more if any
+          const prevMask = aboutSec.querySelector('.about-mask');
+          if (prevMask) prevMask.remove();
+          const prevBtn = aboutSec.parentElement.querySelector('.about-read-more-btn');
+          if (prevBtn) prevBtn.remove();
+
+          // Reset style
+          aboutSec.style.maxHeight = '';
+          aboutSec.style.overflow = '';
+          aboutSec.classList.remove('expanded');
+
+          // Check height
+          if (aboutSec.scrollHeight > 150) {
+            // Add mask image (gradient overlay)
+            const mask = document.createElement('div');
+            mask.className = 'about-mask position-absolute bottom-0 end-0 w-100';
+            aboutSec.appendChild(mask);
+
+            // Add read more button
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'about-read-more-btn btn btn-link p-0 mt-2';
+            btn.textContent = 'Read more';
+            btn.onclick = function () {
+              const expanded = aboutSec.classList.toggle('expanded');
+              btn.textContent = expanded ? 'Read less' : 'Read more';
+              if(expanded){
+                mask.classList.add('d-none');
+              } else {
+                mask.classList.remove('d-none');
+              }
+            };
+            aboutSec.parentElement.appendChild(btn);
+          }
+        }
+        // Wrap aboutSec in a relative container if not already
+        if (!aboutSec.parentElement.classList.contains('about-wrapper')) {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'about-wrapper position-relative';
+          aboutSec.parentNode.insertBefore(wrapper, aboutSec);
+          wrapper.appendChild(aboutSec);
+        }
+        addReadMoreIfNeeded();
+        window.addEventListener('resize', addReadMoreIfNeeded);
+      }
 
       document.querySelectorAll(".city-card").forEach((card) => {
         card.addEventListener("click", () => {
