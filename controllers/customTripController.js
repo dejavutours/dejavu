@@ -74,8 +74,8 @@ const generateEmailHtml = (data) => {
 const sendEmail = async (tripData) => {
   try {
     const mailOptions = {
-      from: "dheerendramanjhi910@gmail.com",
-      to: "dejavuoutdoors@gmail.com", // Admin email (same as sender for now)
+      from: "travel@dejavutours.in",
+      to:   "dejavuoutdoors@gmail.com", // Admin email (same as sender for now)
       subject: "New Customized Trip Submission",
       html: generateEmailHtml(tripData),
     };
@@ -83,8 +83,8 @@ const sendEmail = async (tripData) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "dheerendramanjhi910@gmail.com",
-        pass: "vbkx zspn oodm mjkj",
+        user: "travel@dejavutours.in",
+        pass:  "pxii eznn bdxg ryas" // "vbkx zspn oodm mjkj",
       },
     });
     await transporter.sendMail(mailOptions);

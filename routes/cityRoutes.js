@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express');
 const ensureLogIn = require('connect-ensure-login').ensureLoggedIn;
 const isAuth = require('../middleware/is-auth');
 const cityController = require('../controllers/cityController');
@@ -14,9 +14,4 @@ router.post('/cities/delete/:id', ensureLoggedIn, isAuth, cityController.deleteC
 router.post('/cities/update-order', ensureLoggedIn, isAuth, cityController.updateCityOrder); // New route for order update
 
 
-// State routes
-router.get('/getStateList', ensureLoggedIn, isAuth, stateController.getStateList);
-router.post('/states', ensureLoggedIn, isAuth, stateController.upsertState);
-router.post('/states/delete/:id', ensureLoggedIn, isAuth, stateController.deleteState);
-router.post('/states/update-order', ensureLoggedIn, isAuth, stateController.updateStateOrder);
 module.exports = router;
