@@ -294,7 +294,7 @@
                 <span class="fw-medium">From ₹<%- tour.price %><small>/person</small></span>
               </p>
               <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
-              <div class="mt-2 mb-2 d-flex align-items-center gap-2">
+              <div class="my-2 d-flex align-items-center gap-2 flex-wrap">
                 <!-- Option 1: Keep as <a> with stopPropagation -->
                 <button data-id="<%= tour._id %>" class="btn btn-primary btn-sm edit-tour" data-id="<%= tour._id %>">Edit</button>
                 <!-- Option 2: Convert to <button> (uncomment if preferred) -->
@@ -318,26 +318,6 @@
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
           return new bootstrap.Tooltip(tooltipTriggerEl);
         });
-        // Function to remove a chip
-        window.removeChip = function(chip, index) {
-          const chipElement = document.querySelector(`.chip:nth-child(${index + 1})`);
-          if (chipElement) {
-            chipElement.remove();
-            updatefilterValueforApiCall();
-            getTourListAPICall();
-          }
-        };
-
-        // Function to remove a search chip
-        window.removeSearchChip = function(searchValue) {
-          const searchChip = document.querySelector('.chip .text-truncate');
-          if (searchChip && searchChip.textContent === searchValue) {
-            searchChip.parentElement.remove();
-            document.getElementById('searchValue').value = '';
-            updatefilterValueforApiCall();
-            getTourListAPICall();
-          }
-        };
 
         var listCards = document.querySelectorAll('.package-card');
         listCards.forEach(card => {
@@ -377,7 +357,7 @@
             </div> -->
           <!-- </div> -->
           <div class="filter-section mb-4">
-            <p class="h6">Tour category</p>
+            <p class="filter-section-title h6">Tour category</p>
             <div class="row gy-2">
               <div class="col-6 col-md-3">
                 <div class="form-check">
@@ -481,7 +461,7 @@
             </div>
           </div>
           <div class="filter-section mb-4">
-            <p class="h6">Tour type</p>
+            <p class="filter-section-title h6">Tour type</p>
             <div class="row gy-2">
               <div class="col-6 col-md-3">
                 <div class="form-check">
@@ -518,7 +498,7 @@
             </div>
           </div>
           <div class="filter-section mb-4">
-            <p class="h6">Departure city</p>
+            <p class="filter-section-title h6">Departure city</p>
             <div class="row gy-2">
               <div class="col-6 col-md-3">
                 <div class="form-check">

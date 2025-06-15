@@ -158,6 +158,7 @@
       .trip-image-slider {
         height: 180px;
       }
+      #modalApplyBtn{width: 180px;}
 
       /* .trip-cards-row {
         padding: 0 5px;
@@ -190,7 +191,7 @@
 <body>
   <%- include('../partials/header', {isSearch: true}); %>
 
-  <section class="banner_section pb-4 position-relative">
+  <section class="banner_section position-relative">
     <div class="container-fluid">
       <div class="image-slider swiper">
         <div class="swiper-wrapper">
@@ -222,7 +223,7 @@
     </div>
     <div class="hero_section position-absolute top-0 left-0 h-100 w-100 text-center d-flex align-items-center">
       <div class="container position-relative z-1">
-        <div class="form rounded-5 bg-white p-md-2 mt-md-4 position-relative">
+        <div class="form rounded-5 bg-white p-md-2 position-relative">
           <div class="filter_row rounded-5 d-none d-md-flex gap-2 position-relative z-1">
             <div class="dropdown">
               <button class="btn btn-light d-flex gap-2 align-items-center rounded-pill dropdownBtn" type="button" data-bs-toggle="dropdown" aria-expanded="false">All <i class="bi bi-chevron-down ms-auto"></i></button>
@@ -280,7 +281,7 @@
 
   <!-- Filter Modal for Small Screens -->
   <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable modal-dialog-centered">
       <div class="modal-content rounded-4">
         <div class="modal-header border-0 pb-0">
           <h5 class="modal-title" id="filterModalLabel">Search & Filters</h5>
@@ -877,10 +878,26 @@
             syncInputs(key);
           }
         });
+
+        // Call redirectWithFilters when user hits Enter in modal search input
+        searchInput?.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            redirectWithFilters();
+          }
+        });
       });
 
       input2?.addEventListener('input', (e) => {
         filterState['search'] = e.target.value;
+      });
+      
+      // Call redirectWithFilters when user hits Enter in modal search input
+      input2?.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          redirectWithFilters();
+        }
       });
 
       function syncInputs(key) {

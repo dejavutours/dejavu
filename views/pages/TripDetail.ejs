@@ -348,21 +348,8 @@
     }
 
     /* Inquiry button in form */
-    .btn-inquiry-form {
-      background: var(--premium-gold);
-      color: var(--dark-gray);
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-size: 0.95rem;
-      transition: background var(--transition), transform var(--transition);
-      font-weight: 500;
-    }
-
-    .btn-inquiry-form:hover {
-      background: #e6c200;
-      color: var(--dark-gray);
-      transform: translateY(-2px);
-    }
+    .btn-inquiry-form { --bs-btn-bg: var(--premium-gold); --bs-btn-hover-bg: #e6c200; --bs-btn-active-bg: var(--premium-gold); --bs-btn-color: var(--dark-gray); --bs-btn-hover-color: var(--dark-gray); --bs-btn-active-color: var(--dark-gray); transition: background var(--transition), transform var(--transition);}
+    .btn-inquiry-form:hover, .trip-details-proceed-btn-book:hover {transform: translateY(-2px);}
 
     /* Inquiry modal styling */
     .inquiry-modal-content {
@@ -635,8 +622,7 @@
       }
 
       .booking-modal-btn-cancel,
-      .booking-modal-btn-proceed,
-      .btn-inquiry-form {
+      .booking-modal-btn-proceed {
         font-size: 0.9rem;
       }
 
@@ -800,7 +786,7 @@
     .quick-call-modal-btn i {
       font-size: 1rem;
     }
-
+    img{max-width: 100%;} .accordion-body img {max-height: 300px;}
     /* Responsiveness for Small Screens */
     @media (max-width: 576px) {
       .quick-call-modal-content {
@@ -1303,11 +1289,12 @@
       <h3>Itinerary</h3>
       <section class="accordion" id="accordionPanelsStayOpenExample">
         <% trips.itinerary.forEach((item, index) => { %>
+          <% if (!item.day || !item.header || !item.description) return; %>
           <div class="accordion-item">
             <h3 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itinerary-<%= index %>" aria-expanded="false" aria-controls="itinerary-<%= index %>"><%= item.day %>: <%= item.header %></button>
+              <button class="accordion-button <%= index === 0 ? '' : 'collapsed' %>" type="button" data-bs-toggle="collapse" data-bs-target="#itinerary-<%= index %>" aria-expanded="<%= index === 0 ? 'true' : 'false' %>" aria-controls="itinerary-<%= index %>"><%= item.day %>: <%= item.header %></button>
             </h3>
-            <div id="itinerary-<%= index %>" class="accordion-collapse collapse">
+            <div id="itinerary-<%= index %>" class="accordion-collapse collapse<%= index === 0 ? ' show' : '' %>">
               <div class="accordion-body"><%- item.description %></div>
             </div>
           </div>
