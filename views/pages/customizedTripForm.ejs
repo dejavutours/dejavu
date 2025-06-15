@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <%- include('../partials/headtag'); %>
+  <%- include('../partials/headtag', {isNiceSelect: true}); %>
   <title>Dream Trip Form</title>
   <style>
     .dream-trip-page {
@@ -209,7 +209,7 @@
     </div>
 
     <%- include('../partials/footer'); %>
-    <%- include('../partials/scripttag'); %>
+    <%- include('../partials/scripttag', {isNiceSelect: true}); %>
     <script>
       document
         .querySelector("#customTripDetailForm")

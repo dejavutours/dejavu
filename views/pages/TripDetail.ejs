@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <%- include('../partials/headtag'); %>
+  <%- include('../partials/headtag', {isNiceSelect: true}); %>
   <title><%= trips.name %> - Trip Details | Deja-vu Tours</title>
   <!-- Dynamic meta description for SEO -->
   <meta name="description" content="<%= trips.about ? trips.about.replace(/<[^>]+>/g, '').substring(0, 160) : 'Explore ' + trips.name + ' with Deja-vu Tours. Book your adventure from ' + (trips.deptcities ? trips.deptcities.map(c => c.City).join(', ') : 'various cities') + '.' %>" />
@@ -1344,7 +1344,7 @@
   </div>
 
   <%- include('../partials/footer'); %>
-  <%- include('../partials/scripttag'); %>
+  <%- include('../partials/scripttag', {isNiceSelect: true}); %>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
     const isLoggedIn = sessionStorage.length || !!<%- JSON.stringify(trips.loggedGmailUser) %>;

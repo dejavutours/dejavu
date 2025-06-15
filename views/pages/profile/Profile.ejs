@@ -98,7 +98,7 @@
       }
     }
   </style>
-  <%- include('../../partials/headtag'); %>
+  <%- include('../../partials/headtag', {isNiceSelect: true}); %>
 </head>
 
 <body>
@@ -222,7 +222,7 @@
   </main>
 
   <%- include('../../partials/footer'); %>
-  <%- include('../../partials/scripttag'); %>
+  <%- include('../../partials/scripttag', {isNiceSelect: true}); %>
   <script>
     let crrLoadedTabIdx = "1";
 

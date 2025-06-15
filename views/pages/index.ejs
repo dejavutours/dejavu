@@ -2,7 +2,7 @@
 <html class="no-js" lang="zxx">
 
 <head>
-  <%- include('../partials/headtag', {title: "Deja-vu tours treks and travel"}); %>
+  <%- include('../partials/headtag', {title: "Deja-vu tours treks and travel", isNiceSelect: false}); %>
   
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <link rel="stylesheet" href="css/dashboard.css">
@@ -283,33 +283,33 @@
   <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable modal-dialog-centered">
       <div class="modal-content rounded-4">
-        <div class="modal-header border-0 pb-0">
+        <div class="modal-header border-0">
           <h5 class="modal-title" id="filterModalLabel">Search & Filters</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body pt-2">
+        <div class="modal-body">
           <div class="mb-3">
-            <input type="text" class="form-control rounded-pill" placeholder="Search destination" id="modalSearchInput">
+            <input type="text" class="form-control" aria-label="Search text" placeholder="Search destination" id="modalSearchInput">
           </div>
           <div class="mb-3">
-            <label class="form-label fw-semibold">Category</label>
-            <select class="form-select rounded-pill" id="modalCategorySelect">
+            <label class="form-label fw-semibold" for="modalCategorySelect">Category</label>
+            <select class="form-select" id="modalCategorySelect">
               <% categoryItems.forEach(category => { %>
               <option value="<%= category.name %>"><%= category.name %></option>
               <% }) %>
             </select>
           </div>
           <div class="mb-3">
-            <label class="form-label fw-semibold">Destination</label>
-            <select class="form-select rounded-pill" id="modalDestinationSelect">
+            <label class="form-label fw-semibold" for="modalDestinationSelect">Destination</label>
+            <select class="form-select" id="modalDestinationSelect">
               <% placeItems.forEach(place => { %>
               <option value="<%= place.name %>"><%= place.name %></option>
               <% }) %>
             </select>
           </div>
           <div class="mb-3">
-            <label class="form-label fw-semibold">Tour Type</label>
-            <select class="form-select rounded-pill" id="modalTourTypeSelect">
+            <label class="form-label fw-semibold" for="modalTourTypeSelect">Tour Type</label>
+            <select class="form-select" id="modalTourTypeSelect">
               <option value="">All</option>
               <option value="Family">Family</option>
               <option value="Solo">Solo</option>
@@ -544,7 +544,7 @@
   </section>
 
   <%- include('../partials/footer'); %>
-  <%- include('../partials/scripttag'); %>
+  <%- include('../partials/scripttag', {isNiceSelect: false}); %>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function() {

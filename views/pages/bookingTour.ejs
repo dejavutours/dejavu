@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <%- include('../partials/headtag'); %>
+  <%- include('../partials/headtag', {isNiceSelect: true}); %>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   <!-- Razorpay SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -296,7 +296,7 @@
   </div>
 
   <%- include('../partials/footer'); %>
-  <%- include('../partials/scripttag'); %>
+  <%- include('../partials/scripttag', {isNiceSelect: true}); %>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
   <script>
     const tourDetails = <%- JSON.stringify(tourDetails) %>;
