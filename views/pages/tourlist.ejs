@@ -294,7 +294,7 @@
                 <span class="fw-medium">From ₹<%- tour.price %><small>/person</small></span>
               </p>
               <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
-              <div class="mt-2 mb-2 d-flex align-items-center gap-2">
+              <div class="my-2 d-flex align-items-center gap-2 flex-wrap">
                 <!-- Option 1: Keep as <a> with stopPropagation -->
                 <button data-id="<%= tour._id %>" class="btn btn-primary btn-sm edit-tour" data-id="<%= tour._id %>">Edit</button>
                 <!-- Option 2: Convert to <button> (uncomment if preferred) -->
