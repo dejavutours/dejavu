@@ -268,7 +268,7 @@
     <!-- the package card section -->
     <% 
       // Filter packages based on user role
-      const isAdmin = (profile?.email === process.env.GMAIL_ADMIN) || (profile?.email === process.env.GMAIL_ADMIN2);
+      const isAdmin = (profile?.email === process.env.GMAIL_ADMIN) || (profile?.email === process.env.GMAIL_ADMIN_TWO);
       let displayedPackages = isAdmin 
         ? tourPackages 
         : tourPackages.filter(tour => tour.isActive);
@@ -276,12 +276,7 @@
       <div class="row g-3">
         <% displayedPackages.forEach(function(tour, index) { %>
         <article class="col-sm-6 col-lg-4">
-          <a href="/tripdetail/<%= tour.name %>" class="card package-card h-100 rounded-4 overflow-hidden <%= !tour.isActive ? 'inactive' : '' %>"
-            aria-label="View details for <%= tour.name %> in <%= tour.state %>, India"
-            <% if(!tour.isActive && isAdmin) { %>
-              data-bs-toggle="tooltip" 
-              title="This trip is inactive"
-            <% } %>
+          <a href="/tripdetail/<%= tour.name %>" class="card package-card h-100 rounded-4 overflow-hidden <%= !tour.isActive ? 'inactive' : '' %>" aria-label="View details for <%= tour.name %> in <%= tour.state %>, India" data-bs-toggle="<%= (!tour.isActive && isAdmin) ? 'tooltip' : '' %>" title="<%= (!tour.isActive && isAdmin) ? 'This trip is inactive' : '' %>"
           >
             <figure class="card-image-container rounded-3 overflow-hidden">
               <img src="<%= tour.imageurl %>" alt="Tour package - <%= tour.name %> in <%= tour.state %>, India" class="card-image card-img-top h-100" loading="lazy" onerror="this.onerror=null; this.src='/images/placeholder.jpg';">
@@ -301,7 +296,7 @@
               <% if (profile?.email === process.env.GMAIL_ADMIN) { %>
               <div class="mt-2 mb-2 d-flex align-items-center gap-2">
                 <!-- Option 1: Keep as <a> with stopPropagation -->
-                <a href="/admin/addtours?tripid=<%= tour._id %>" class="btn btn-primary btn-sm edit-tour" data-id="<%= tour._id %>">Edit</a>
+                <button data-id="<%= tour._id %>" class="btn btn-primary btn-sm edit-tour" data-id="<%= tour._id %>">Edit</button>
                 <!-- Option 2: Convert to <button> (uncomment if preferred) -->
                 <!-- <button class="btn btn-primary btn-sm edit-tour" data-id="<%= tour._id %>">Edit</button> -->
                 <button class="btn btn-primary btn-sm manage-images" data-id="<%= tour._id %>">Manage Images</button>
@@ -316,6 +311,48 @@
         </article>
        <% }); %>
      </div>
+     <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Bootstrap tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        // Function to remove a chip
+        window.removeChip = function(chip, index) {
+          const chipElement = document.querySelector(`.chip:nth-child(${index + 1})`);
+          if (chipElement) {
+            chipElement.remove();
+            updatefilterValueforApiCall();
+            getTourListAPICall();
+          }
+        };
+
+        // Function to remove a search chip
+        window.removeSearchChip = function(searchValue) {
+          const searchChip = document.querySelector('.chip .text-truncate');
+          if (searchChip && searchChip.textContent === searchValue) {
+            searchChip.parentElement.remove();
+            document.getElementById('searchValue').value = '';
+            updatefilterValueforApiCall();
+            getTourListAPICall();
+          }
+        };
+
+        var listCards = document.querySelectorAll('.package-card');
+        listCards.forEach(card => {
+          card.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function (e) {
+              e.preventDefault();
+              const tripId = this.getAttribute('data-id');
+              if(button.classList.contains('edit-tour')){
+                window.location.href = `/admin/addtours?tripid=${tripId}`;
+              }
+            });
+          });
+        });
+      });
+     </script>
   </div>
 
   <!-- Filters Modal -->
