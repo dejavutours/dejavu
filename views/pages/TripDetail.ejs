@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <%- include('../partials/headtag', {isNiceSelect: true}); %>
+  <%- include('../partials/headtag', {isNiceSelect: false}); %>
   <title><%= trips.name %> - Trip Details | Deja-vu Tours</title>
   <!-- Dynamic meta description for SEO -->
   <meta name="description" content="<%= trips.about ? trips.about.replace(/<[^>]+>/g, '').substring(0, 160) : 'Explore ' + trips.name + ' with Deja-vu Tours. Book your adventure from ' + (trips.deptcities ? trips.deptcities.map(c => c.City).join(', ') : 'various cities') + '.' %>" />
@@ -354,76 +354,15 @@
     .btn-inquiry-form:hover, .trip-details-proceed-btn-book:hover {transform: translateY(-2px);}
 
     /* Inquiry modal styling */
-    .inquiry-modal-content {
-      border-radius: 12px;
-      overflow: hidden;
-      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    }
+    .inquiry-modal-content {background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);}
+    .inquiry-modal-body p {color: var(--dark-gray);}
+    .inquiry-modal-footer { border-top: 1px solid #dee2e6;}
 
-    .inquiry-modal-header {
-      background: var(--primary-blue);
-      color: white;
-      padding: 15px 20px;
-      border-bottom: 2px solid var(--premium-gold);
-    }
-
-    .inquiry-modal-body {
-      padding: 20px;
-      text-align: center;
-    }
-
-    .inquiry-modal-body p {
-      font-size: 1.2rem;
-      font-weight: 500;
-      color: var(--dark-gray);
-      margin-bottom: 20px;
-    }
-
-    .inquiry-modal-footer {
-      padding: 15px 20px;
-      border-top: 1px solid #dee2e6;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .inquiry-modal-btn {
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      transition: background var(--transition), transform var(--transition);
-    }
-
-    .inquiry-modal-btn-whatsapp {
-      background: #25D366;
-      color: white;
-    }
-
-    .inquiry-modal-btn-whatsapp:hover {
-      background: #20b358;
-      transform: translateY(-2px);
-    }
-
-    .inquiry-modal-btn-customize {
-      background: var(--premium-gold);
-      color: var(--dark-gray);
-    }
-
-    .inquiry-modal-btn-customize:hover {
-      background: #e6c200;
-      transform: translateY(-2px);
-    }
-
-    .inquiry-modal-btn-ok {
-      background: var(--primary-blue);
-      color: white;
-    }
-
-    .inquiry-modal-btn-ok:hover {
-      background: #143c73;
-      transform: translateY(-2px);
-    }
+    .inquiry-modal-btn {transition: background var(--transition), transform var(--transition);}
+    .inquiry-modal-btn-whatsapp {--bs-btn-bg: #25D366; --bs-btn-hover-bg: #20b358;--bs-btn-hover-color: #fff; --bs-btn-color: #fff;}
+    .inquiry-modal-btn-customize {--bs-btn-bg: var(--premium-gold); --bs-btn-hover-bg: #e6c200;--bs-btn-hover-color: var(--dark-gray); --bs-btn-color: var(--dark-gray);}
+    .inquiry-modal-btn-ok {--bs-btn-bg: var(--primary-blue); --bs-btn-hover-bg: #143c73;--bs-btn-hover-color: #fff; --bs-btn-color: #fff;}
+    .inquiry-modal-btn-ok:hover, .inquiry-modal-btn-customize:hover, .inquiry-modal-btn-whatsapp:hover {transform: translateY(-2px);}
 
     .error-message {
       color: var(--error-red);
@@ -450,20 +389,10 @@
     .tab-content.active {display: block;}
     .tab-content li {list-style: unset;}
 
-    #contactModal .modal-content,
-    #inquiryModal .modal-content {
-      border-radius: 10px;
-    }
+    #contactModal .modal-content{border-radius: 10px; }
 
-    #contactModal .modal-header,
-    #inquiryModal .modal-header {
-      background: var(--primary-blue);
-      color: white;
-    }
-
-    a {
-      text-decoration: none;
-    }
+    #contactModal .modal-header{ background: var(--primary-blue); color: white; }
+    a {text-decoration: none;}
 
     .booking-modal-section {
       background: var(--light-gray);
@@ -532,15 +461,6 @@
         height: 40px;
         font-size: 0.85rem;
       }
-
-      .inquiry-modal-footer {
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      .inquiry-modal-btn {
-        width: 100%;
-      }
     }
 
     @media (max-width: 576px) {
@@ -579,10 +499,6 @@
         font-size: 0.8rem;
       }
 
-      .inquiry-modal-content {margin: 10px;}
-
-      .inquiry-modal-body {padding: 15px;}
-
       .booking-modal-section {
         padding: 10px;
       }
@@ -595,10 +511,6 @@
       .booking-modal-btn-cancel,
       .booking-modal-btn-proceed {
         font-size: 0.9rem;
-      }
-
-      .inquiry-modal-body p {
-        font-size: 1rem;
       }
     }
 
@@ -1039,7 +951,7 @@
 
         <form class="col-lg-4 col-md-6 col-12" id="proceedToBook" action="/bookingTour/<%- trips._id %>" method="GET">
           <div class="card p-3 shadow-sm">
-            <h6>Joining from</h6>
+            <label for="selectedCity" class="form-label">Joining from</label>
             <select class="trip-details-form-select mb-3" id="selectedCity" name="city" onchange="updateCityFromDropdown()">
               <% if (trips.deptcities && trips.deptcities.length > 0) { %>
               <% trips.deptcities.forEach((city) => { %>
@@ -1048,7 +960,7 @@
               <% } %>
             </select>
             <div class="error-message" id="cityError">Please select a city.</div>
-            <h6>Tour Date</h6>
+            <label for="selectedDate" class="form-label">Tour Date</label>
             <select class="trip-details-form-select mb-3" id="selectedDate" name="date" disabled>
               <option value="">Select a date</option>
             </select>
@@ -1095,12 +1007,12 @@
       <div class="modal-content inquiry-modal-content">
         <div class="modal-header inquiry-modal-header">
           <h5 class="modal-title" id="inquiryModalLabel">Inquire About This Trip</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body inquiry-modal-body">
-          <p>Group Batch is not available.<br>Inquire now to customise this trip.</p>
+          <p class="fw-medium">Group Batch is not available.<br>Inquire now to customise this trip.</p>
         </div>
-        <div class="modal-footer inquiry-modal-footer">
+        <div class="modal-footer inquiry-modal-footer justify-content-center">
           <a href="https://wa.me/+918511117891" class="btn inquiry-modal-btn inquiry-modal-btn-whatsapp" target="_blank">WhatsApp Us</a>
           <a href="/dreamtrip" class="btn inquiry-modal-btn inquiry-modal-btn-customize" target="_blank">Customize Trip</a>
           <button type="button" class="btn inquiry-modal-btn inquiry-modal-btn-ok" data-bs-dismiss="modal">Okay</button>
@@ -1344,7 +1256,7 @@
   </div>
 
   <%- include('../partials/footer'); %>
-  <%- include('../partials/scripttag', {isNiceSelect: true}); %>
+  <%- include('../partials/scripttag', {isNiceSelect: false}); %>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
     const isLoggedIn = sessionStorage.length || !!<%- JSON.stringify(trips.loggedGmailUser) %>;
@@ -1487,7 +1399,6 @@
           select.style.display = "block";
           const niceSelect = select.nextElementSibling;
           if (niceSelect && niceSelect.classList.contains("nice-select")) {
-            console.log(`Removing nice-select for #${id}`);
             niceSelect.remove();
           }
         }
@@ -2082,7 +1993,6 @@
               select.style.display = id === "modalSelectedDate" ? "none" : "block";
               const niceSelect = select.nextElementSibling;
               if (niceSelect && niceSelect.classList.contains("nice-select")) {
-                console.log(`Removing nice-select for #${id}`);
                 niceSelect.remove();
               }
             }
