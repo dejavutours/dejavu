@@ -23,64 +23,76 @@ const TripBookingDetailSchema = new Schema(
 
     // Total number of persons in the booking
     totalPerson: {
-      adult: { type: Number, required: true },
-      child: { type: Number, required: true },
+      adult: { type: Number, required: true, min: 1 },
+      child: { type: Number, required: true, min: 0 },
     },
 
     // Details of each person in the booking
     personDetails: [
       {
-        firstName: { type: String, required: true },
-        surname: { type: String, required: true },
-        gender: { type: String, required: true, enum: ['Male', 'Female', 'Other'] },
-        birthdate: { type: Date, required: true },
-        phone: { type: String, required: true },
-        altphone: { type: String },
-        isAdult: { type: Boolean },
+        firstName: {
+          type: String,
+          required: true,
+          match: [/^[A-Za-z\s]+$/, 'First name must contain only letters and spaces'],
+        },
+        surname: {
+          type: String,
+          required: true,
+          match: [/^[A-Za-z\s]+$/, 'Surname must contain only letters and spaces'],
+        },
+        gender: {
+          type: String,
+          required: true,
+          enum: ['Male', 'Female', 'Other'],
+        },
+        birthdate: {
+          type: Date,
+          required: true,
+          validate: {
+            validator: function (v) {
+              return v <= new Date();
+            },
+            message: 'Birthdate must be in the past',
+          },
+        },
+        phone: {
+          type: String,
+          required: true,
+          match: [/^\+?\d{10,15}$/, 'Phone number must be 10-15 digits'],
+        },
+        altphone: {
+          type: String,
+          match: [/^\+?\d{10,15}$/, 'Alternate phone number must be 10-15 digits'],
+        },
+        isAdult: { type: Boolean, required: true },
       },
     ],
-
     // City from where the user will join the trip
     joiningFrom: { type: String, required: true },
 
     // Selected travel date range (start and end dates)
     tripStartDate: { type: Date, required: true },
     tripEndDate: { type: Date, required: true },
-
+    totalTripCost: { type: Number, required: true, min: 0 }, // Total cost (excluding GST)
     // Total cost of the trip for all travelers
-    totalTripCost: { type: Number, required: true },
-
-    // Booking status: 'Pending' (awaiting payment), 'Confirmed' (payment complete), 'Cancelled'
-    // Booking status: Reserved (partial payment) or Confirmed (full payment)
+    totalTripCostWithGST: { type: Number, required: true, min: 0 }, // Total cost including GST
+    paidAmount: { type: Number, default: 0, min: 0 }, // Sum of all successful payments
+    duePayment: { type: Number, default: 0, min: 0 }, // Remaining amount (including GST)
     bookingStatus: {
       type: String,
       enum: ['Pending', 'Confirmed', 'Cancelled'],
       default: 'Pending',
     },
-
-    // Amount paid by the user
-    paidAmount: { type: Number, default: 0 },
-
-    // Payment transaction references
-    paidAmountRef: [
-      {
-        isThroughPymtGateway: { type: Boolean, default: true },
-        orderId: { type: String },
-        paymentId: { type: String },
-        paymentDate: { type: Date },
-        amount: { type: Number },
-      },
-    ],
-
-    // Remaining amount to be paid
-    duePayment: { type: Number, default: 0 },
-
-    // Payment status: 'Pending', 'Partial', 'Paid', 'Failed'
     paymentStatus: {
       type: String,
       enum: ['Pending', 'Partial', 'Paid', 'Failed'],
       default: 'Pending',
     },
+    email: {
+      type: String,
+      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please enter a valid email address'],
+    },
+    invoicePath: { type: String }, // Path to the latest invoice PDF
   },
   {
     collection: 'trip_booking_detail',
@@ -89,7 +101,7 @@ const TripBookingDetailSchema = new Schema(
   }
 );
 
-// Pre-validate hook to auto-generate bookingNumber
+// Pre-validate hook to auto-generate bookingNumber (unchanged)
 TripBookingDetailSchema.pre('validate', async function (next) {
   if (this.bookingNumber) return next();
 
@@ -118,5 +130,6 @@ TripBookingDetailSchema.pre('validate', async function (next) {
   }
 });
 
-// Export the model, reusing existing model if already compiled
+TripBookingDetailSchema.index({ bookingNumber: 1 });
+
 module.exports = mongoose.models.TripBookingDetail || mongoose.model('TripBookingDetail', TripBookingDetailSchema);

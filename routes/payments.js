@@ -1,26 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const Razorpay = require('razorpay');
-const crypto = require('crypto');
 const TripBookingDetail = require('../models/TripBookingDetail');
 const NewTours = require('../models/newTours');
-const { nanoid } = require('nanoid');
+const PaymentService = require('../services/paymentService');
 
-// Initialize Razorpay instance
-const razorpayInstance = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
-
-// Helper function to parse tripDuration (e.g., "6N/7D" → 7)
 const parseTripDuration = (tripDuration) => {
   if (!tripDuration || typeof tripDuration !== 'string') return null;
-  // Match formats like "6N/7D", "7D/6N", "7 Days", "7D"
-  const match = tripDuration.match(/(\d+)\s*(?:D|Day|Days|d|\/|$)/i)
+  const match = tripDuration.match(/(\d+)\s*(?:D|Day|Days|d|\/|$)/i);
   return match ? parseInt(match[1], 10) : null;
 };
 
-// Create Razorpay order and save booking
 router.post('/order', async (req, res) => {
   try {
     const {
@@ -39,11 +28,16 @@ router.post('/order', async (req, res) => {
       name,
       email,
       contact,
+      paymentType,
     } = req.body;
 
     // Step 1: Validate required inputs
-    if (!tourId || !transportType || !joiningFrom || !travelDate || !adults || !personDetails || !payingAmount) {
+    if (!tourId || !transportType || !joiningFrom || !travelDate || !adults || !personDetails || !payingAmount || !paymentType) {
       return res.status(400).json({ success: false, message: 'Missing required fields' });
+    }
+
+    if (!['full', 'partial'].includes(paymentType)) {
+      return res.status(400).json({ success: false, message: 'Invalid payment type' });
     }
 
     // Step 2: Validate tour exists
@@ -171,12 +165,37 @@ router.post('/order', async (req, res) => {
     // Step 10: Calculate total cost
     const subtotal = (adultCount * transport.adultPrice) + (childCount * transport.childPrice);
     const gst = subtotal * 0.05;
-    const totalTripCost = subtotal + gst;
-    if (Math.abs(parseFloat(payingAmount) - totalTripCost) > 0.01) {
-      return res.status(400).json({ success: false, message: `Invalid payment amount: expected ${totalTripCost}, received ${payingAmount}` });
+    const totalTripCostWithGST = subtotal + gst;
+
+    // Step 11: Validate payment amount
+    const partialPayment = parseFloat(city.partialPayment) || 0;
+    const submittedPayingAmount = parseFloat(payingAmount);
+    let isPartial = false;
+
+    if (paymentType === 'partial') {
+      if (partialPayment <= 0) {
+        return res.status(400).json({ success: false, message: `Partial payment not allowed for city ${joiningFrom}` });
+      }
+      if (Math.abs(submittedPayingAmount - partialPayment) > 0.01) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid partial payment amount: expected ${partialPayment.toFixed(2)}, received ${submittedPayingAmount}`,
+        });
+      }
+      if (partialPayment >= totalTripCostWithGST) {
+        return res.status(400).json({ success: false, message: 'Partial payment cannot be greater than or equal to total cost' });
+      }
+      isPartial = true;
+    } else if (paymentType === 'full') {
+      if (Math.abs(submittedPayingAmount - totalTripCostWithGST) > 0.01) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid full payment amount: expected ${totalTripCostWithGST.toFixed(2)}, received ${submittedPayingAmount}`,
+        });
+      }
     }
 
-    // Step 11: Create booking
+    // Step 12: Create booking
     const booking = new TripBookingDetail({
       userId: userId || null,
       toursSystemId: tourId,
@@ -200,31 +219,19 @@ router.post('/order', async (req, res) => {
       joiningFrom,
       tripStartDate,
       tripEndDate,
-      totalTripCost,
+      totalTripCost: subtotal,
+      totalTripCostWithGST,
       paidAmount: 0,
-      duePayment: totalTripCost,
+      duePayment: totalTripCostWithGST,
       bookingStatus: 'Pending',
       paymentStatus: 'Pending',
+      email: email || null,
     });
 
     await booking.save();
 
-    // Step 12: Create Razorpay order
-    const order = await razorpayInstance.orders.create({
-      amount: Math.round(totalTripCost * 100), // In paise
-      currency: 'INR',
-      receipt: nanoid(),
-      payment_capture: '1',
-    });
-
-    // Step 13: Store order details
-    booking.paidAmountRef.push({
-      isThroughPymtGateway: true,
-      orderId: order.id,
-      paymentDate: new Date(),
-      amount: totalTripCost,
-    });
-    await booking.save();
+    // Step 13: Create payment order using PaymentService
+    const { order, paymentLogId } = await PaymentService.createPaymentOrder(booking._id, submittedPayingAmount);
 
     // Step 14: Return order details
     res.json({
@@ -235,10 +242,12 @@ router.post('/order', async (req, res) => {
         currency: order.currency,
       },
       bookingId: booking._id,
+      paymentLogId,
       razorpayKeyId: process.env.RAZORPAY_KEY_ID,
       name: name || 'Guest',
       email: email || '',
       contact: contact || '',
+      isPartial,
     });
   } catch (err) {
     console.error(`Error creating order: tourId=${req.body.tourId}, travelDate=${req.body.travelDate}`, err);
@@ -246,47 +255,31 @@ router.post('/order', async (req, res) => {
   }
 });
 
-// Verify payment and update booking
 router.post('/verify', async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, bookingId } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, paymentLogId } = req.body;
 
-    // Verify signature
-    const body = razorpay_order_id + '|' + razorpay_payment_id;
-    const expectedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-      .update(body.toString())
-      .digest('hex');
-
-    if (expectedSignature === razorpay_signature) {
-      // Payment verified
-      const booking = await TripBookingDetail.findById(bookingId);
-      if (!booking) {
-        return res.status(404).json({ success: false, message: 'Booking not found' });
-      }
-
-      booking.paidAmount = booking.totalTripCost;
-      booking.duePayment = 0;
-      booking.paymentStatus = 'Paid';
-      booking.bookingStatus = 'Confirmed';
-      booking.paidAmountRef[booking.paidAmountRef.length - 1].paymentId = razorpay_payment_id;
-
-      await booking.save();
-
-      res.json({ success: true, message: 'Payment successful', booking });
-    } else {
-      // Signature mismatch
-      const booking = await TripBookingDetail.findById(bookingId);
-      if (booking) {
-        booking.paymentStatus = 'Failed';
-        booking.bookingStatus = 'Cancelled';
-        await booking.save();
-      }
-
-      res.json({ success: false, message: 'Payment verification failed' });
-    }
+    const result = await PaymentService.verifyPayment(razorpay_order_id, razorpay_payment_id, razorpay_signature, paymentLogId);
+    res.json(result);
   } catch (err) {
     console.error('Error verifying payment:', err);
+    res.status(500).json({ success: false, message: 'Server error', error: err.message });
+  }
+});
+
+// New endpoint for admin to record manual payments
+router.post('/manual-payment', async (req, res) => {
+  try {
+    const { bookingId, amount, paymentMethod, referenceId, notes } = req.body;
+
+    if (!bookingId || !amount || !paymentMethod) {
+      return res.status(400).json({ success: false, message: 'Missing required fields' });
+    }
+
+    const paymentLog = await PaymentService.recordManualPayment(bookingId, amount, paymentMethod, referenceId, notes);
+    res.json({ success: true, paymentLog });
+  } catch (err) {
+    console.error('Error recording manual payment:', err);
     res.status(500).json({ success: false, message: 'Server error', error: err.message });
   }
 });
