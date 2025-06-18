@@ -7,8 +7,6 @@
     <!-- JS here -->
     <script src="/js/vendor/modernizr-3.5.0.min.js"></script>
     <script src="/js/vendor/jquery-1.12.4.min.js"></script>
-    <!-- <script src="/js/popper.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script> -->
     <script src="/js/owl.carousel.min.js"></script>
     <script src="/js/isotope.pkgd.min.js"></script>
     <script src="/js/ajax-form.js"></script>
@@ -18,9 +16,6 @@
     <script src="/js/scrollIt.js"></script>
     <script src="/js/jquery.scrollUp.min.js"></script>
     <script src="/js/wow.min.js"></script>
-    <% if (isNiceSelect) { %>
-        <script src="/js/nice-select.min.js"></script>
-    <% } %>
     <script src="/js/jquery.slicknav.min.js"></script>
     <script src="/js/jquery.magnific-popup.min.js"></script>
     <script src="/js/plugins.js"></script>
@@ -64,3 +59,16 @@
         var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x);
     })();
 </script>
+<% if (isNiceSelect) { %>
+    <script src="/js/nice-select.min.js"></script>
+    <script>
+        (function ($) {
+            if (document.getElementById('default-select')) {
+                $('select')?.niceSelect();
+            }
+            $(document).ready(function() {
+                $('select')?.niceSelect();
+            });
+        })(jQuery);
+    </script>
+<% } %>

@@ -223,6 +223,7 @@
       box-shadow: var(--shadow);
       transition: border-color var(--transition), box-shadow var(--transition);
     }
+    .form-select{box-shadow: var(--shadow); transition: border-color var(--transition), box-shadow var(--transition);}
 
     .trip-details-form-select:focus {
       border-color: var(--primary-blue);
@@ -952,7 +953,7 @@
         <form class="col-lg-4 col-md-6 col-12" id="proceedToBook" action="/bookingTour/<%- trips._id %>" method="GET">
           <div class="card p-3 shadow-sm">
             <label for="selectedCity" class="form-label">Joining from</label>
-            <select class="trip-details-form-select mb-3" id="selectedCity" name="city" onchange="updateCityFromDropdown()">
+            <select class="form-select mb-3" id="selectedCity" name="city" onchange="updateCityFromDropdown()">
               <% if (trips.deptcities && trips.deptcities.length > 0) { %>
               <% trips.deptcities.forEach((city) => { %>
               <option value="<%= city.City %>"><%= city.City %>, <%= city.State %></option>
@@ -961,7 +962,7 @@
             </select>
             <div class="error-message" id="cityError">Please select a city.</div>
             <label for="selectedDate" class="form-label">Tour Date</label>
-            <select class="trip-details-form-select mb-3" id="selectedDate" name="date" disabled>
+            <select class="form-select mb-3" id="selectedDate" name="date" disabled>
               <option value="">Select a date</option>
             </select>
             <div class="error-message" id="dateError">Please select a date.</div>
@@ -1248,6 +1249,8 @@
       </div>
       <% } %>
     </section>
+
+    <a class="btn btn-primary shadow-sm" href="/assets/travel doc/Booking_Policy.pdf" target="_blank" title="Cancellation policy">Booking and Cancellation</a>
   </div>
 
   <div class="floatingSec gap-2 align-items-center justify-content-center">
@@ -1507,7 +1510,6 @@
     }
 
     function selectFirstCity() {
-      console.log("Selecting first city...");
       const firstCityCard = document.querySelector(".city-card");
       if (firstCityCard) {
         firstCityCard.dataset.userInitiated = "false";
@@ -1516,13 +1518,11 @@
         const price = firstCityCard.getAttribute("data-price") || 0;
         selectCity(firstCityCard, city, state, price);
       } else {
-        console.warn("No city cards found.");
         showContactModal();
       }
     }
 
     function selectCity(element, city, state, price) {
-      console.log(`Selecting city: ${city}`);
       document.querySelectorAll(".city-card").forEach((el) => el.classList.remove("active"));
       element.classList.add("active");
       const selectedCityDropdown = document.getElementById("selectedCity");
@@ -2195,7 +2195,6 @@
           const rect = joiningForm.getBoundingClientRect();
           // If the form is completely above OR below viewport
           const isOutOfView = (rect.bottom < 0) || (rect.top > window.innerHeight);
-          console.log(isOutOfView);
           if (isOutOfView) {
             floatingSec.classList.add('d-flex');
             floatingSec.classList.remove('d-none');

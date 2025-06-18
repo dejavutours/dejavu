@@ -276,7 +276,7 @@
       <div class="row g-3">
         <% displayedPackages.forEach(function(tour, index) { %>
         <article class="col-sm-6 col-lg-4">
-          <a href="/tripdetail/<%= tour.name %>" class="card package-card h-100 rounded-4 overflow-hidden <%= !tour.isActive ? 'inactive' : '' %>" aria-label="View details for <%= tour.name %> in <%= tour.state %>, India" data-bs-toggle="<%= (!tour.isActive && isAdmin) ? 'tooltip' : '' %>" title="<%= (!tour.isActive && isAdmin) ? 'This trip is inactive' : '' %>"
+          <a href="/tripdetail/<%= tour.name %>" class="card package-card h-100 rounded-4 overflow-hidden position-relative <%= !tour.isActive ? 'inactive' : '' %>" aria-label="View details for <%= tour.name %> in <%= tour.state %>, India" data-bs-toggle="<%= (!tour.isActive && isAdmin) ? 'tooltip' : '' %>" title="<%= (!tour.isActive && isAdmin) ? 'This trip is inactive' : '' %>"
           >
             <figure class="card-image-container rounded-3 overflow-hidden">
               <img src="<%= tour.imageurl %>" alt="Tour package - <%= tour.name %> in <%= tour.state %>, India" class="card-image card-img-top h-100" loading="lazy" onerror="this.onerror=null; this.src='/images/placeholder.jpg';">
@@ -305,7 +305,21 @@
                 </button>
                 <button class="btn btn-danger btn-sm delete-tour" data-id="<%= tour._id %>">Delete</button>
               </div>
+              <% } else { %>
+                <button href="tel:+91xxxxx89" class="btn btn-sm btn-warning">
+                  <a href="tel:+">Call Us</a>
+                </button>
               <% } %>
+              <span class=" position-absolute top-0 end-0 m-2">
+                <button class="btn btn-light rounded-pill" data-bs-toggle="dropdown" aria-hidden="true">
+                  <i class="bi bi-share"></i>
+                  <span class="visually-hidden">Share</span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><button class="dropdown-item">Whatsapp</button></li>
+                  <li><button class="dropdown-item">Facebook</button></li>
+                </ul>
+              </span>
             </div>
           </a>
         </article>
