@@ -301,7 +301,7 @@
                 <span class="visually-hidden">My Profile</span>
               </a>
               <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-              <ul class="dropdown-menu dropdown-menu-lg-end">
+              <ul class="dropdown-menu dropdown-menu-lg-end navbaruserdropdown">
                 <li><a class="dropdown-item" href="/profile">My Profile</a></li>
                 <% if(profile?.email === process.env.GMAIL_ADMIN || profile?.email === process.env.GMAIL_ADMIN_TWO) { %>
                 <!-- <li><a class="dropdown-item" href="/admin/login" target="_blank">Admin</a></li> -->

@@ -86,11 +86,7 @@ a:hover,
 }
 
 /* line 35, ../../Arafath/CL/December/231. Travel-02/HTML/scss/theme-default.scss */
-a,
-button {
-  color: #1F1F1F;
-  outline: medium none;
-}
+a,button {outline: medium none;}
 
 h1, h2, h3, h4, h5 { color: #001D38;}
 
@@ -7037,4 +7033,8 @@ h6 {
 @keyframes fadeIn {
   from { opacity: 0.5; background-color: transparent;}
   to { opacity: 1; background-color: #1a3c6c1c; }
+}
+
+@media (min-width: 992px) {
+  .navbaruserdropdown{--bs-dropdown-border-color: transparent; --bs-dropdown-link-active-bg: transparent; --bs-dropdown-link-active-color: var(--dejavue-color); --bs-dropdown-link-hover-color: var(--dejavue-color); box-shadow: var(--bs-box-shadow);}
 }
