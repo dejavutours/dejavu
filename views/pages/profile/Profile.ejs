@@ -2,14 +2,12 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+  <%- include('../../partials/headtag', {isNiceSelect: false}); %>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
   <style>
+    body{background-color: #f3f4f6 !important;}
     .member_profile-container .profile-left-bar p.active {
       background-color: #f3f4f6;
       border-left: 4px solid #1a3c6c;
@@ -22,22 +20,22 @@
       border-left: 4px solid transparent;
     }
 
-    .member_profile-container .right_block .form-group label {
+    .member_profile-container .form-group label {
       display: block;
       margin-bottom: 5px;
       font-size: 14px;
       line-height: 20px;
     }
 
-    .member_profile-container .right_block .form-group input,
-    .member_profile-container .right_block .form-group select {
+    .member_profile-container .form-group input,
+    .member_profile-container .form-group select {
       width: 100%;
       padding: 10px;
       border: 1px solid #868fa029;
       border-radius: 6px;
     }
 
-    .member_profile-container .right_block .form-group input[type="date"] {
+    .member_profile-container .form-group input[type="date"] {
       padding: 8px;
     }
 
@@ -52,8 +50,8 @@
       font-size: 14px;
     }
 
-    .member_profile-container .right_block .form-group input,
-    .member_profile-container .right_block .form-group select {
+    .member_profile-container .form-group input,
+    .member_profile-container .form-group select {
       width: 100%;
       padding: 10px;
       border: 1px solid #868fa029;
@@ -61,8 +59,8 @@
       background-color: #ffffff;
     }
 
-    .member_profile-container .right_block .nice-select,
-    .member_profile-container .right_block .nice-select .list {
+    .member_profile-container .nice-select,
+    .member_profile-container .nice-select .list {
       width: 100%;
     }
 
@@ -177,116 +175,96 @@
         padding-bottom: 60px;
       }
     }
+    @media screen and (max-width: 767px) {
+      .card-title{font-size: 1.5rem;}
+    }
   </style>
-  <%- include('../../partials/headtag', {isNiceSelect: true}); %>
 </head>
 
 <body>
   <%- include('../../partials/header', {isSearch: false}); %>
-  <main>
-    <div class="container my-5">
-      <div class="row g-4 member_profile-container">
-        <!-- Left Sidebar -->
-        <div class="col-md-3">
-          <div class="profile-left-bar p-2 bg-white rounded shadow-sm" onclick="handleProfileTabDivClick(event)">
-            <p class="active mb-2" data-tab-index="1">Profile</p>
-            <p class="mb-2" data-tab-index="2">Upcoming trips</p>
-            <p mb-0" data-tab-index="3">Booking history</p>
-          </div>
+  <div class="container-xl pt-3">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <div class="row g-4 member_profile-container">
+      <!-- Left Sidebar -->
+      <div class="col-sm-4 col-md-3">
+        <div class="profile-left-bar p-2 bg-white rounded shadow-sm" onclick="handleProfileTabDivClick(event)">
+          <p class="active mb-2" data-tab-index="1">Profile</p>
+          <p class="mb-2" data-tab-index="2">Upcoming trips</p>
+          <p data-tab-index="3">Booking history</p>
         </div>
+      </div>
 
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-
-        <!-- Right Content Area -->
-        <div class="col-md-9 mt-3 mt-md-0">
-          <div class="right_block bg-white">
-            <!-- Profile Section -->
-            <div class="profile_block p-3 rounded shadow-sm" data-block-index="1">
-              <div class="form-container">
-                <h2 class="text-left mb-4">Personal details</h2>
-                <form id="profileUpdateForm" action="/profile/update" method="POST">
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="FirstName">First Name*</label>
-                        <input type="text" id="FirstName" name="firstName" class="form-control" placeholder="First name" value="<%= profileFormData.firstName %>" required>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="LastName">Last Name*</label>
-                        <input type="text" id="LastName" name="lastName" class="form-control" placeholder="Last name" value="<%= profileFormData.lastName %>" required>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="BirthDate">Birth date*</label>
-                        <input type="date" id="BirthDate" name="birthDate" class="form-control" value="<%= profileFormData.birthDate %>" required>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="gender">Gender*</label>
-                        <select id="gender" name="gender" class="form-select" required>
-                          <option value="male" <%=profileFormData.gender=='male' ? 'selected' : '' %>>Male</option>
-                          <option value="female" <%=profileFormData.gender=='female' ? 'selected' : '' %>>Female</option>
-                          <option value="other" <%=profileFormData.gender=='other' ? 'selected' : '' %>>Other</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="MobileNumber">Mobile number*</label>
-                        <input type="tel" id="MobileNumber" name="mobileNumber" class="form-control" placeholder="Enter 10-digit mobile number" value="<%= profileFormData.mobileNumber %>" required pattern="^\d{10}$" maxlength="10" inputmode="numeric" aria-required="true" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="AlternateNumber">Alternative number</label>
-                        <input type="tel" id="AlternateNumber" name="alternateNumber" class="form-control" placeholder="Enter 10-digit alternative number" value="<%= profileFormData.alternateNumber %>" pattern="^\d{10}$" maxlength="10" inputmode="numeric" aria-required="false" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="form-group">
-                    <label for="email">Email id</label>
-                    <input type="email" id="email" name="email" class="form-control" placeholder="example@gmail.com" value="<%= profileFormData.email %>" required>
-                  </div>
-
-                  <div class="form-group mt-4">
-                    <button type="submit" class="btn btn-primary w-100">Submit</button>
-                  </div>
-                </form>
-
-                <div id="successAlert" class="alert alert-success d-none mt-3" role="alert">
-                  Profile updated successfully!
+      <!-- Right Content Area -->
+      <div class="col-sm-8 col-md-9">
+        <div class="right_block">
+          <!-- Profile Section -->
+          <div class="profile_block card border-light shadow-sm" data-block-index="1">
+            <div class="card-body">
+              <h2 class="card-title mb-4">Personal details</h2>
+              <form class="row g-3" id="profileUpdateForm" action="/profile/update" method="POST">
+                <div class="col-md-6">
+                  <label for="FirstName">First Name*</label>
+                  <input type="text" id="FirstName" name="firstName" class="form-control" placeholder="First name" value="<%= profileFormData.firstName %>" required>
                 </div>
-              </div>
-            </div>
+                <div class="col-md-6">
+                  <label for="LastName">Last Name*</label>
+                  <input type="text" id="LastName" name="lastName" class="form-control" placeholder="Last name" value="<%= profileFormData.lastName %>" required>
+                </div>
 
-            <!-- Upcoming Trips Section -->
-            <div class="upcoming_trips d-none trip-section" data-block-index="2" onclick="handleTipCardExpand(event)">
-              <!-- Content loaded dynamically -->
-            </div>
+                <div class="col-md-6">
+                  <label for="BirthDate">Birth date*</label>
+                  <input type="date" id="BirthDate" name="birthDate" class="form-control" value="<%= profileFormData.birthDate %>" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="gender">Gender*</label>
+                  <select id="gender" name="gender" class="form-select" required>
+                    <option value="male" <%=profileFormData.gender=='male' ? 'selected' : '' %>>Male</option>
+                    <option value="female" <%=profileFormData.gender=='female' ? 'selected' : '' %>>Female</option>
+                    <option value="other" <%=profileFormData.gender=='other' ? 'selected' : '' %>>Other</option>
+                  </select>
+                </div>
 
-            <!-- Booking History Section -->
-            <div class="booking_history d-none trip-section" data-block-index="3" onclick="handleTipCardExpand(event)">
-              <!-- Content loaded dynamically -->
-            </div>
+                <div class="col-md-6">
+                  <label for="MobileNumber">Mobile number*</label>
+                  <input type="tel" id="MobileNumber" name="mobileNumber" class="form-control" placeholder="Enter 10-digit mobile number" value="<%= profileFormData.mobileNumber %>" required pattern="^\d{10}$" maxlength="10" inputmode="numeric" aria-required="true" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+                <div class="col-md-6">
+                  <label for="AlternateNumber">Alternative number</label>
+                  <input type="tel" id="AlternateNumber" name="alternateNumber" class="form-control" placeholder="Enter 10-digit alternative number" value="<%= profileFormData.alternateNumber %>" pattern="^\d{10}$" maxlength="10" inputmode="numeric" aria-required="false" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
 
-            <!-- Pagination -->
-            <div class="pagination mt-3 d-flex justify-content-center" id="pagination-container"></div>
+                <div class="col-md-6">
+                  <label for="email">Email id</label>
+                  <input type="email" id="email" name="email" class="form-control" placeholder="example@gmail.com" value="<%= profileFormData.email %>" required>
+                </div>
+
+                <div>
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+              </form>
+
+              <p id="successAlert" class="alert alert-success d-none mt-3" role="alert">Profile updated successfully!</p>
+            </div>
           </div>
+
+          <!-- Upcoming Trips Section -->
+          <div class="upcoming_trips d-none trip-section" data-block-index="2" onclick="handleTipCardExpand(event)">
+            <!-- Content loaded dynamically -->
+          </div>
+
+          <!-- Booking History Section -->
+          <div class="booking_history d-none trip-section" data-block-index="3" onclick="handleTipCardExpand(event)">
+            <!-- Content loaded dynamically -->
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination mt-3 d-flex justify-content-center" id="pagination-container"></div>
         </div>
       </div>
     </div>
-  </main>
+  </div>
 
   <!-- Modal for Payment Success -->
   <div class="modal fade" id="paymentSuccessModal" tabindex="-1" aria-labelledby="paymentSuccessModalLabel" aria-hidden="true">
@@ -307,7 +285,7 @@
   </div>
 
   <%- include('../../partials/footer'); %>
-  <%- include('../../partials/scripttag', {isNiceSelect: true}); %>
+  <%- include('../../partials/scripttag', {isNiceSelect: false}); %>
   <script>
     let crrLoadedTabIdx = "1";
 
@@ -541,7 +519,8 @@
       expandedElement?.classList.toggle("trip-card-expanded");
 
       const clickedCardElement = event.target.closest('.single-trip-card');
-      const crrElement = clickedCardElement.querySelector(".trip-card-expand");
+      const crrElement = clickedCardElement?.querySelector(".trip-card-expand");
+      if(!crrElement || !clickedCardElement) return;
       if (expandedElement !== crrElement) {
         crrElement?.classList.toggle("d-none");
         crrElement?.classList.toggle("trip-card-expanded");
@@ -658,7 +637,6 @@
   </script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </body>
 
