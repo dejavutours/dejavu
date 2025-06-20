@@ -110,31 +110,33 @@ const generateReceiptPDF = (booking, tour, paymentLog, outputPath) => {
       const tableTop = 425;
       const tableLeft = 50;
       const tableWidth = 495;
-      const cellPadding = 5;
+      const cellPadding = 10; // Increased padding for better spacing
+      const descWidth = tableWidth * 0.8; // 80% for Description
+      const amountWidth = tableWidth * 0.2; // 20% for Amount
 
       doc.rect(tableLeft, tableTop, tableWidth, 20).fill('#1a4b8e');
       doc.font('Helvetica-Bold').fontSize(10).fillColor('#ffffff');
-      doc.text('Description', tableLeft + cellPadding, tableTop + 6);
-      doc.text('Amount', tableLeft + 400 + cellPadding, tableTop + 6, { align: 'right' });
+      doc.text('Description', tableLeft + cellPadding, tableTop + 6, { width: descWidth - cellPadding * 2 });
+      doc.text('Amount', tableLeft + descWidth + cellPadding, tableTop + 6, { width: amountWidth - cellPadding * 2, align: 'right' });
 
       let currentY = tableTop + 20;
       // Amount Paid
       doc.rect(tableLeft, currentY, tableWidth, 20).stroke();
       doc.font('Helvetica').fontSize(10).fillColor('#333333');
-      doc.text('Amount Paid (incl. 5% GST)', tableLeft + cellPadding, currentY + cellPadding);
-      doc.text(`₹${paymentLog.amount.toFixed(2)}`, tableLeft + 400 + cellPadding, currentY + cellPadding, { align: 'right' });
+      doc.text('Amount Paid (incl. 5% GST)', tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2 });
+      doc.text(`₹${Number(paymentLog.amount).toFixed(2)}`, tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
       currentY += 20;
 
       // Total Trip Cost
       doc.rect(tableLeft, currentY, tableWidth, 20).stroke();
-      doc.text('Total Trip Cost (incl. 5% GST)', tableLeft + cellPadding, currentY + cellPadding);
-      doc.text(`₹${booking.totalTripCostWithGST.toFixed(2)}`, tableLeft + 400 + cellPadding, currentY + cellPadding, { align: 'right' });
+      doc.text('Total Trip Cost (incl. 5% GST)', tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2 });
+      doc.text(`₹${Number(booking.totalTripCostWithGST).toFixed(2)}`, tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
       currentY += 20;
 
       // Due Amount
       doc.rect(tableLeft, currentY, tableWidth, 20).stroke();
-      doc.text('Remaining Balance', tableLeft + cellPadding, currentY + cellPadding);
-      doc.text(`₹${booking.duePayment.toFixed(2)}`, tableLeft + 400 + cellPadding, currentY + cellPadding, { align: 'right' });
+      doc.text('Remaining Balance', tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2 });
+      doc.text(`₹${Number(booking.duePayment).toFixed(2)}`, tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
 
       // Thank You Message
       doc.font('Helvetica').fontSize(10).fillColor('#333333')
