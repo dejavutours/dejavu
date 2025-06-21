@@ -276,33 +276,8 @@
       max-width: 100%;
     }
 
-    .trip-details-date-item,
-    .booking-modal-date-item {
-      width: 44px;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid #dee2e6;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: background var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition);
-    }
-
-    .trip-details-date-item:hover,
-    .booking-modal-date-item:hover {
-      background: var(--light-gray);
-      border-color: var(--primary-blue);
-    }
-
-    .trip-details-date-item.active,
-    .booking-modal-date-item.active {
-      background: var(--primary-blue);
-      color: white;
-      border-color: var(--primary-blue);
-      box-shadow: var(--shadow);
-    }
+    .trip-details-date-item,.booking-modal-date-item {min-width: 44px;--bs-btn-hover-bg: var(--light-gray);--bs-btn-hover-border-color: var(--primary-blue);--bs-btn-border-color: #dee2e6;--bs-btn-active-bg: var(--primary-blue);--bs-btn-active-color: white;--bs-btn-active-border-color: var(--primary-blue);transition: background var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition);}
+    .trip-details-date-item.active,.booking-modal-date-item.active {box-shadow: var(--shadow);}
 
     /* Proceed button */
     .trip-details-proceed-btn-book,
@@ -1421,6 +1396,39 @@
       const duration = element.getAttribute('data-duration') || 'N/A';
       document.querySelectorAll(".booking-summary-city").forEach(e => e.textContent = `${cityName}, ${statueName}`);
       document.querySelectorAll(".booking-summary-duration").forEach(e => e.textContent = `${duration}`);
+      
+      const dateTab = document.querySelector('.trip-details-date-item.active');
+      selectDate(dateTab);
+      // document.querySelectorAll(".booking-summary-date").forEach(e => e.textContent = `${duration}`);
+    }
+
+    function selectDate(element){
+      const yearTab = document.querySelector('.trip-details-year-tab.active');
+      const monthTab = document.querySelector('.trip-details-month-tab.active');
+      const activeCityCard = document.querySelector('.city-card.active');
+      const bookingBtn = document.querySelector('.trip-details-proceed-btn-book');
+      if(!element || !monthTab || !yearTab || !activeCityCard || !trip?.deptcities || !Array.isArray(trip.deptcities)){
+        bookingBtn.disabled = true;
+      } else {
+        const activeYear = yearTab.textContent.trim().padStart(4, '0');
+        const activeMonth = monthTab.textContent.trim();
+        const activeDate = element.textContent.trim().padStart(2, '0');
+        const duration = `${activeYear} ${activeMonth} ${activeDate}`;
+        const cityVal = activeCityCard.getAttribute('data-city') || "";
+        const stateVal = activeCityCard.getAttribute('data-state') || "";
+        const activeCityIndex = [...trip?.deptcities].findIndex(item => item.City === cityVal);
+        let bookingCutoff = 0;
+        if(activeCityIndex > -1){
+          bookingCutoff = Number(trip?.deptcities[activeCityIndex].bookingCutoffDays) || 0;
+        }
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const diffInMs = new Date(duration) - today;
+        const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+        const shouldDisable = new Date(selectedDate) > today && diffInDays <= bookingCutoff;
+        // console.log("Selected duration:", duration, shouldDisable, diffInDays, new Date(selectedDate) > today, );
+        bookingBtn.disabled = shouldDisable
+      }
     }
 
     function updateCityFromDropdown() {
@@ -1780,14 +1788,14 @@
         text
       }) => {
         const date = startDate.getUTCDate();
-        const div = document.createElement("div");
+        const newButtonEl = document.createElement("button");
         const isActive = selectedDay === date && selectedMonthStr === month && selectedYear === year;
-        div.className = `${fromModal ? 'booking-modal-date-item' : 'trip-details-date-item'} ${isActive ? "active" : ""}`;
-        div.innerText = date;
-        div.onclick = () => {
+        newButtonEl.className = `btn ${fromModal ? 'booking-modal-date-item' : 'trip-details-date-item'} ${isActive ? "active" : ""}`;
+        newButtonEl.innerText = date;
+        newButtonEl.onclick = () => {
           isUpdating = true;
           document.querySelectorAll(fromModal ? ".booking-modal-date-item" : ".trip-details-date-item").forEach((d) => d.classList.remove("active"));
-          div.classList.add("active");
+          newButtonEl.classList.add("active");
           dateSelect.value = value;
           if (fromModal && document.getElementById("selectedDate")) {
             document.getElementById("selectedDate").value = value;
@@ -1802,8 +1810,9 @@
           isUpdating = false;
           if (fromModal) validateModalForm();
           else validateMainForm();
+          selectDate(newButtonEl);
         };
-        dateSelector.appendChild(div);
+        dateSelector.appendChild(newButtonEl);
       });
       if (!document.querySelector(fromModal ? ".booking-modal-date-item.active" : ".trip-details-date-item.active") && monthOptions.length > 0) {
         console.log(`No active date, setting default for ${month} ${year}`);
@@ -1821,7 +1830,10 @@
         summaryDate.forEach(e => e.textContent = text);
         dateSelect.dispatchEvent(new Event("change"));
         const firstDateItem = document.querySelector(fromModal ? ".booking-modal-date-item" : ".trip-details-date-item");
-        if (firstDateItem) firstDateItem.classList.add("active");
+        if (firstDateItem) {
+          firstDateItem.classList.add("active");
+          selectDate(firstDateItem);
+        }
         isUpdating = false;
       }
       if (fromModal) validateModalForm();
