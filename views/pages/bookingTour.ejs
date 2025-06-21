@@ -12,6 +12,7 @@
     body {background-color: #F9FAFB;}a.backBtn {text-decoration: none;color: #002d66;}.card {--bs-card-border-radius: 12px;}.summary_section_booking{position: sticky;top: 80px;}.cm_margin_booking + p {color: #4B5563;}label {font-weight: 500;color: #4B5563;}.countRow .btn {--bs-btn-font-weight: bold;--bs-btn-padding-y: 0.3rem;--bs-btn-padding-x: 0.8rem;}.countRow .form-control{width: 100%;}.payment-options{background-color: #E5E7EB;}.payment-options .btn {--bs-btn-color: #111827;}.payment-options .fullPayBtn {--bs-btn-bg: transparent;--bs-btn-color: #4B5563;--bs-btn-active-bg: #fff;--bs-btn-active-color: #4B5563;--bs-btn-hover-bg: #e0e0e0;--bs-btn-hover-color: #fff;--bs-btn-border-color: transparent;--bs-btn-disabled-border-color: transparent}.payment-btn {--bs-btn-font-weight: bold;}.cursor_not_allowed_booking {cursor: not-allowed;}
     #messageModal .modal-content, #paymentModal .modal-content, #travelerInfoModal .modal-content {border-radius: 10px;}#messageModal .modal-header, #paymentModal .modal-header, #travelerInfoModal .modal-header {background: #1a4b8e;color: white;}.traveler-info-modal-label {display: block;margin-bottom: 0.3rem;font-weight: 600;}.traveler-info-modal-field {width: 100%;padding: 0.5rem;border: 1px solid #ccc;border-radius: 6px;margin-bottom: 0.4rem;}.error-message {display: none;color: red;font-size: 0.8rem;}
     .payment-options .btn.active { background-color: #fff; color: #002d66; font-weight: bold; border: 1px solid #002d66; }
+    #costBreakdownModal {--bs-modal-width: 800px;}
   </style>
 </head>
 
@@ -164,8 +165,8 @@
   </div>
   <!-- Cost Breakdown Modal -->
   <div class="modal fade" id="costBreakdownModal" tabindex="-1" aria-labelledby="costBreakdownModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-      <div class="modal-content shadow-lg rounded-4">
+    <div class="modal-dialog modal-fullscreen-md-down modal-dialog-scrollable">
+      <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="costBreakdownModalLabel">Cost Breakdown</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -178,32 +179,34 @@
             <div class="col-md-6"><strong>Travel date:</strong> <span id="ModeltravelDate"></span></div>
           </div>
           <h4 class="fw-bold mb-3">Total cost</h4>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Price</th>
-                <th>Final Amount</th>
-              </tr>
-            </thead>
-
-            <tbody id="costTableBody"></tbody>
-          </table>
-          <div class="d-flex justify-content-between pt-2">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Price</th>
+                  <th>Final Amount</th>
+                </tr>
+              </thead>
+  
+              <tbody id="costTableBody"></tbody>
+            </table>
+          </div>
+          <p class="d-flex justify-content-between pt-2 mb-2">
             <strong>Subtotal</strong>
             <span id="MSubtotal">₹0</span>
-          </div>
-          <div class="d-flex justify-content-between border-top pt-2">
+          </p>
+          <p class="d-flex justify-content-between border-top pt-2 mb-2">
             <strong>GST(5%)</strong>
             <span id="MGst">₹0</span>
-          </div>
-          <div class="d-flex justify-content-between border-top pt-2 fs-5">
+          </p>
+          <p class="d-flex justify-content-between border-top pt-2 fs-5">
             <strong>Total</strong>
             <strong id="MTotal">₹0</strong>
-          </div>
-          <div class="alert alert-warning mt-4 mb-0">
+          </p>
+          <p class="alert alert-warning mt-4 mb-0">
             3AC train ticket and flight ticket charges will be applied after the actual ticket booking.
-          </div>
+          </p>
         </div>
       </div>
     </div>
