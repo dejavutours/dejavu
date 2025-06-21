@@ -169,9 +169,6 @@ label { color: #181818; font-weight: 500; color: #4B5563; }
 }
 
 /* line 111, ../../Arafath/CL/December/231. Travel-02/HTML/scss/theme-default.scss */
-h3 {
-  font-size: 24px;
-}
 
 /* line 115, ../../Arafath/CL/December/231. Travel-02/HTML/scss/theme-default.scss */
 .mb-65 {
@@ -4048,46 +4045,6 @@ sub,
 u,
 del {
   color: #ff5e13;
-}
-
-/* line 93, ../../Arafath/CL/December/231. Travel-02/HTML/scss/_elements.scss */
-h1 {
-  font-size: 36px;
-}
-
-/* line 97, ../../Arafath/CL/December/231. Travel-02/HTML/scss/_elements.scss */
-h2 {
-  font-size: 30px;
-}
-
-/* line 101, ../../Arafath/CL/December/231. Travel-02/HTML/scss/_elements.scss */
-h3 {
-  font-size: 24px;
-}
-
-/* line 105, ../../Arafath/CL/December/231. Travel-02/HTML/scss/_elements.scss */
-h4 {
-  font-size: 18px;
-}
-
-/* line 109, ../../Arafath/CL/December/231. Travel-02/HTML/scss/_elements.scss */
-/* h5 {
-  font-size: 16px;
-} */
-
-/* line 113, ../../Arafath/CL/December/231. Travel-02/HTML/scss/_elements.scss */
-h6 {
-  font-size: 14px;
-}
-
-/* line 117, ../../Arafath/CL/December/231. Travel-02/HTML/scss/_elements.scss */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  line-height: 1.2em;
 }
 
 /* line 127, ../../Arafath/CL/December/231. Travel-02/HTML/scss/_elements.scss */

@@ -559,11 +559,13 @@
       font-size: 1rem;
     }
     .custom-card{background-color: #fff; border-radius: 0.75rem;}.custom-card + .custom-card{margin-top: 3rem;}
-    .stickySec{position: sticky; bottom: -140px; z-index: 1;}
+    .transport-option{border: 1px solid grey;display: inline-flex;border-radius: var(--bs-border-radius);padding: 0.2rem 0.75rem;justify-content: center;color: grey;cursor: pointer;}
+    .transport-option.active{background-color: var(--primary-blue);border-color: var(--primary-blue); color: #fff;}
+    .stickySec{position: sticky; bottom: -170px; z-index: 1;}
     img{max-width: 100%;} .accordion-body img {max-height: 300px;}.stickySec .card{border-radius: 2rem 2rem 0 0;--bs-card-cap-padding-y: 1rem;}
-    .price strong{font-size: 1.5rem;}
+    .price strong{font-size: 1.5rem;}.summaryPara>:not(span){color: #525252;}
     @media screen and (min-width: 992px) {
-      body{background-color: #f8f9fa;}
+      body{background-color: #f3f3f6;}
       .image-slider img {height: 500px;}.custom-card + .custom-card{margin-top: 1rem;}
       .stickySec{position: sticky; top: 80px; bottom: unset;}.stickySec .card, .custom-card, .actionCard {box-shadow: var(--bs-box-shadow-sm);border-radius: 0.75rem;}
       .price strong{font-size: calc(1.5rem+0.3vw);}.btnSec{width: 100%; text-align: end;}
@@ -590,7 +592,6 @@
       .image-slider img {height: 200px;}
       .city-card img {height: 80px;}
 
-      .stickySec{bottom: -170px;}
       .trip-details-month-tab,.booking-modal-month-tab {padding: 6px 12px;font-size: 0.8rem;}
       .trip-details-date-item,.booking-modal-date-item {width: 36px;height: 36px;font-size: 0.8rem;}
       .booking-modal-section {padding: 10px;}
@@ -786,18 +787,18 @@
           <div class="position-relative">
             <div class="d-flex gap-3 overflow-auto py-2" id="carouselTrack">
               <% if (trips.deptcities && trips.deptcities.length > 0) { %>
-              <% trips.deptcities.forEach((city, index) => { %>
-              <div class="city-card bg-light <%= index === 0 ? 'active' : '' %>" data-city="<%= city.City %>" data-state="<%= city.State %>" data-price="<%= city.price && city.price[0] ? city.price[0].adultPrice : 0 %>" data-duration="<%= city.tripDuration %>">
-                <img src="<%= city.image %>" alt="<%= city.City %>" onerror="this.onerror=null; this.src='/images/placeholder.jpg';" />
-                <h6 class="mt-2 mb-1"><%= city.City %></h6>
-                <small><i class="bi bi-calendar"></i> <%= city.tripDuration %></small><br />
-                <small class="fw-semibold text-dark">
-                  ₹<%= city.price && city.price[0] ? city.price[0].adultPrice : 'N/A' %>/person
-                </small>
-              </div>
-              <% }); %>
+                <% trips.deptcities.forEach((city, index) => { %>
+                <div class="city-card bg-light <%= index === 0 ? 'active' : '' %>" data-city="<%= city.City %>" data-state="<%= city.State %>" data-price="<%= city.price && city.price[0] ? city.price[0].adultPrice : 0 %>" data-duration="<%= city.tripDuration %>">
+                  <img src="<%= city.image %>" alt="<%= city.City %>" onerror="this.onerror=null; this.src='/images/placeholder.jpg';" />
+                  <h6 class="mt-2 mb-1"><%= city.City %></h6>
+                  <small><i class="bi bi-calendar"></i> <%= city.tripDuration %></small><br />
+                  <small class="fw-semibold text-dark">
+                    ₹<%= city.price && city.price[0] ? city.price[0].adultPrice : 'N/A' %>/person
+                  </small>
+                </div>
+                <% }); %>
               <% } else { %>
-              <p class="text-muted">No departure cities available.</p>
+                <p class="text-muted">No departure cities available.</p>
               <% } %>
             </div>
             <button id="prevBtn" class="carousel-control-prev d-none" type="button" onclick="slideLeft()">
@@ -809,6 +810,8 @@
               <span class="visually-hidden">Next</span>
             </button>
           </div>
+          <h5 class="pt-3">Travelling options</h5>
+          <div class="transport-options d-flex flex-wrap gap-2" id="transportOptions" role="radiogroup" aria-label="Transport Types"></div>
 
           <div class="mt-4">
             <h5>Available Dates</h5>
@@ -819,19 +822,21 @@
         </article>
 
         <% if (trips && trips.itinerary && trips.itinerary.length > 0) { %>
-          <h3 class="pt-3 mt-3 mt-lg-0">Itinerary</h3>
-          <article class="accordion" id="accordionPanelsStayOpenExample">
-            <% trips.itinerary.forEach((item, index) => { %>
-              <% if (!item.day || !item.header || !item.description) return; %>
-              <div class="accordion-item">
-                <h3 class="accordion-header">
-                  <button class="accordion-button <%= index === 0 ? '' : 'collapsed' %>" type="button" data-bs-toggle="collapse" data-bs-target="#itinerary-<%= index %>" aria-expanded="<%= index === 0 ? 'true' : 'false' %>" aria-controls="itinerary-<%= index %>"><%= item.day %>: <%= item.header %></button>
-                </h3>
-                <div id="itinerary-<%= index %>" class="accordion-collapse collapse<%= index === 0 ? ' show' : '' %>">
-                  <div class="accordion-body"><%- item.description %></div>
+          <article class="custom-card p-lg-3">
+            <h3>Itinerary</h3>
+            <div class="accordion" id="accordionPanelsStayOpenExample">
+              <% trips.itinerary.forEach((item, index) => { %>
+                <% if (!item.day || !item.header || !item.description) return; %>
+                <div class="accordion-item">
+                  <h3 class="accordion-header">
+                    <button class="accordion-button <%= index === 0 ? '' : 'collapsed' %>" type="button" data-bs-toggle="collapse" data-bs-target="#itinerary-<%= index %>" aria-expanded="<%= index === 0 ? 'true' : 'false' %>" aria-controls="itinerary-<%= index %>"><%= item.day %>: <%= item.header %></button>
+                  </h3>
+                  <div id="itinerary-<%= index %>" class="accordion-collapse collapse<%= index === 0 ? ' show' : '' %>">
+                    <div class="accordion-body"><%- item.description %></div>
+                  </div>
                 </div>
-              </div>
-            <% }); %>
+              <% }); %>
+            </div>
           </article>
         <% } %>
 
@@ -901,10 +906,9 @@
       <aside class="col-lg-5 col-xl-4 align-self-start stickySec">
         <form class="card border-0 overflow-hidden" id="proceedToBook" action="/bookingTour/<%- trips._id %>" method="GET">
           <p class="card-header mb-0 bg-primary bg-opacity-10 fw-bold fs-5 border-primary-subtle">Book Now</p>
-          <div class="card-body d-flex flex-lg-wrap align-items-center gap-2">
-            <span class="d-none d-lg-inline mb-auto">Starting From</span>
+          <div class="card-body d-flex gap-2 d-lg-block">
             <% if (trips.price && trips.price?.trim?.() !== '' && trips.price !== '0') { %>
-              <p class="text-secondary price flex-grow-1 text-md-end"><strong class="text-primary-emphasis">₹<%= trips.price %></strong><br>Per Person</p>
+              <span id="dynamicPrice" class="text-secondary price flex-grow-1"><strong class="text-primary-emphasis">₹<%= trips.price %></strong>/ Person</span>
             <% } %>
             <label for="selectedCity" class="form-label visually-hidden">Joining from</label>
             <select class="form-select mb-3 visually-hidden" id="selectedCity" name="city" onchange="updateCityFromDropdown()">
@@ -920,6 +924,10 @@
               <option value="">Select a date</option>
             </select>
             <p class="error-message visually-hidden" id="dateError">Please select a date.</p>
+            <p class="summaryPara pt-3 d-none d-lg-block">Joining from <span class="fw-medium booking-summary-city">Departure City</span> &middot; 
+              <span class="fw-medium booking-summary-duration">Not selected</span>
+            </p>
+            <p class="summaryPara d-none d-lg-block">Departure date <span class="fw-medium booking-summary-date">Tour Date</span></p>
             <p class="btnSec ms-auto mb-auto">
               <button class="btn trip-details-proceed-btn-book" type="button" onclick="proceedWithBooking()" disabled>Proceed to Book</button>
             </p>
@@ -1032,11 +1040,11 @@
               <h6 class="fw-bold mb-3">Booking Summary</h6>
               <div class="d-flex justify-content-between mb-2">
                 <span>Departure City</span>
-                <span class="fw-semibold booking-modal-summary-city">Not selected</span>
+                <span class="fw-semibold booking-summary-city">Not selected</span>
               </div>
               <div class="d-flex justify-content-between mb-2">
                 <span>Trip Duration</span>
-                <span class="fw-semibold booking-modal-summary-duration">Not selected</span>
+                <span class="fw-semibold booking-summary-duration">Not selected</span>
               </div>
               <div class="d-flex justify-content-between mb-2">
                 <span>Adult Price</span>
@@ -1044,7 +1052,7 @@
               </div>
               <div class="d-flex justify-content-between">
                 <span>Tour Date</span>
-                <span class="fw-semibold booking-modal-summary-date">Not selected</span>
+                <span class="fw-semibold booking-summary-date">Not selected</span>
               </div>
             </div>
           </form>
@@ -1311,6 +1319,7 @@
     const deptCities = <%- JSON.stringify(trips.deptcities) %>;
     const trip = <%- JSON.stringify(trips) %>;
     let isUpdating = false;
+    var transportTypes = [];
 
     function filterFutureDates(dates) {
       const now = new Date();
@@ -1407,6 +1416,11 @@
       }
       updateDatesAndTabs();
       validateMainForm();
+      const cityName = element.getAttribute('data-city') || 'N/A';
+      const statueName = element.getAttribute('data-city') || 'N/A';
+      const duration = element.getAttribute('data-duration') || 'N/A';
+      document.querySelectorAll(".booking-summary-city").forEach(e => e.textContent = `${cityName}, ${statueName}`);
+      document.querySelectorAll(".booking-summary-duration").forEach(e => e.textContent = `${duration}`);
     }
 
     function updateCityFromDropdown() {
@@ -1512,7 +1526,7 @@
       const mainDateSelect = document.getElementById("selectedDate");
       const modalDateSelect = document.getElementById("modalSelectedDate");
       const proceedBtns = fromModal ? document.querySelectorAll(".booking-modal-btn-proceed") : document.querySelectorAll(".trip-details-proceed-btn-book");
-      const summaryDate = document.querySelector(".booking-modal-summary-date");
+      const summaryDate = document.querySelectorAll(".booking-summary-date");
       dateSelector.style.display = "flex";
       dateSelect.disabled = true;
       if (proceedBtns.length) proceedBtns.forEach(el => el.disabled = true);
@@ -1520,7 +1534,9 @@
       monthTabs.innerHTML = "";
       dateSelector.innerHTML = "";
       dateSelect.innerHTML = "<option value=''>Select a date</option>";
-      if (fromModal && summaryDate) summaryDate.textContent = "Not selected";
+      summaryDate.forEach(e => e.textContent = "Not selected");
+      transportTypes = cityData?.price || [];
+      buildTransport();
       if (!cityData || !cityData.dates || cityData.dates.length === 0) {
         console.warn(`No valid city data or dates for ${selectedCity}`);
         monthTabs.innerHTML = "<p class='text-muted mb-0'>No dates available for this city.</p>";
@@ -1575,7 +1591,7 @@
         }
         if (index === 0) {
           option.selected = true;
-          if (fromModal && summaryDate) summaryDate.textContent = text;
+          summaryDate.forEach(e => e.textContent = text);
         }
       });
       dateSelect.disabled = false;
@@ -1605,6 +1621,56 @@
       }
       if (fromModal) validateModalForm();
       else validateMainForm();
+    }
+
+    function buildTransport() {
+      const transportOptionsEl = document.getElementById('transportOptions');
+      // Remove all children from transportOptionsEl
+      while (transportOptionsEl.firstChild) {
+        transportOptionsEl.removeChild(transportOptionsEl.firstChild);
+      }
+      handleSelection(0); // Set the first option as active by default
+      transportTypes.forEach((item, index) => {
+        // Check if array is empty
+        if (transportTypes.length === 0) {
+          transferOptionsEl.innerHTML = '<p class="text-center text-secondary">No transport available</p>';
+          return;
+        }
+        if(item.transferType != null && item.transferType.trim() !== ''){
+          const button = document.createElement('div');
+          button.classList.add('transport-option');
+          if (index === 0) button.classList.add('active');
+          button.setAttribute('role', 'radio');
+          button.setAttribute('tabindex', '0');
+          button.setAttribute('aria-checked', index === 0 ? 'true' : 'false');
+          button.setAttribute('data-id', item._id);
+          button.innerText = item.transferType.charAt(0).toUpperCase() + item.transferType.slice(1);
+  
+          // Add event listener
+          button.addEventListener('click', () => handleSelection(index));
+  
+          transportOptionsEl.appendChild(button);
+        }
+      });
+    }
+
+    function handleSelection(index) {
+      const options = document.querySelectorAll('.tranport-option');
+      options.forEach((el, idx) => {
+        el.classList.toggle('active', idx === index);
+        el.setAttribute('aria-checked', idx === index ? 'true' : 'false');
+      });
+      updatePrice(index);
+    }
+
+    function updatePrice(index) {
+      const selected = transportTypes[index] || {};
+      const dynamicPriceEl = document.getElementById('dynamicPrice');
+      if (dynamicPriceEl) {
+        dynamicPriceEl.innerHTML = `
+          <strong class="text-primary-emphasis">₹${selected.adultPrice||trip.price}</strong>/Person
+        `;
+      }
     }
 
     function showYear(year, fromModal = false) {
@@ -1674,7 +1740,7 @@
       const cityData = deptCities.find((city) => city.City === selectedCity);
       const dateSelector = fromModal ? document.getElementById("modalDateSelector") : document.getElementById("dateSelector");
       const dateSelect = fromModal ? document.getElementById("modalSelectedDate") : document.getElementById("selectedDate");
-      const summaryDate = document.querySelector(".booking-modal-summary-date");
+      const summaryDate = document.querySelectorAll(".booking-summary-date");
       if (!cityData || !cityData.dates) {
         dateSelector.innerHTML = "<p class='text-muted'>No dates available for this month.</p>";
         dateSelector.style.display = "flex";
@@ -1728,7 +1794,7 @@
           } else if (!fromModal && document.getElementById("modalSelectedDate")) {
             document.getElementById("modalSelectedDate").value = value;
           }
-          if (fromModal && summaryDate) summaryDate.textContent = text;
+          summaryDate.forEach(e => e.textContent = text);
           dateSelect.dispatchEvent(new Event("change"));
           document.querySelectorAll(fromModal ? ".booking-modal-month-tab" : ".trip-details-month-tab").forEach((tab) => tab.classList.remove("active"));
           const monthTabInner = Array.from(document.querySelectorAll(fromModal ? ".booking-modal-month-tab" : ".trip-details-month-tab")).find((tab) => tab.innerText === month);
@@ -1752,7 +1818,7 @@
         } else if (!fromModal && document.getElementById("modalSelectedDate")) {
           document.getElementById("modalSelectedDate").value = value;
         }
-        if (fromModal && summaryDate) summaryDate.textContent = text;
+        summaryDate.forEach(e => e.textContent = text);
         dateSelect.dispatchEvent(new Event("change"));
         const firstDateItem = document.querySelector(fromModal ? ".booking-modal-date-item" : ".trip-details-date-item");
         if (firstDateItem) firstDateItem.classList.add("active");
@@ -1886,8 +1952,8 @@
       const cityState = document.querySelector(".booking-modal-city-state");
       const cityPrice = document.querySelector(".booking-modal-city-price");
       const cityDuration = document.querySelector(".booking-modal-city-duration");
-      const summaryCity = document.querySelector(".booking-modal-summary-city");
-      const summaryDuration = document.querySelector(".booking-modal-summary-duration");
+      const summaryCity = document.querySelectorAll(".booking-summary-city");
+      const summaryDuration = document.querySelectorAll(".booking-summary-duration");
       const summaryPrice = document.querySelector(".booking-modal-summary-price");
       if (citySelect && citySelect.selectedOptions[0]) {
         const selectedOption = citySelect.selectedOptions[0];
@@ -1899,14 +1965,14 @@
         cityState.textContent = state;
         cityPrice.textContent = `₹${price}/adult`;
         cityDuration.textContent = duration;
-        summaryCity.textContent = `${city}, ${state}`;
-        summaryDuration.textContent = duration;
+        summaryCity.forEach(e => e.textContent = `${city}, ${state}`);
+        summaryDuration.forEach(e => e.textContent = duration);
         summaryPrice.textContent = `₹${price}/adult`;
         summaryCard.style.display = "block";
       } else {
         summaryCard.style.display = "none";
-        summaryCity.textContent = "Not selected";
-        summaryDuration.textContent = "Not selected";
+        summaryCity.forEach(e => e.textContent = `Not selected`);
+        summaryDuration.forEach(e => e.textContent = "Not selected");
         summaryPrice.textContent = "Not selected";
       }
       validateModalForm();
@@ -2056,6 +2122,13 @@
     </script>
 
     <script>
+      window.addEventListener('scroll', (e)=>{
+        e.stopImmediatePropagation();
+        const footer = document.querySelector('footer');
+        const rect = footer.getBoundingClientRect();
+        // if(window.innerHeight)
+        // console.log("window: ", window.innerHeight, " scroll hight: ", document.scrollHeight, " footer: ", rect.height, " bottom ", rect.bottom, ' top: ', rect.top);
+      });
       const joiningForm = document.getElementById("proceedToBook");
       const floatingSec = document.querySelector(".floatingSec");
     
