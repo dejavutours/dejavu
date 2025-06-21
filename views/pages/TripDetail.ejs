@@ -561,7 +561,7 @@
     .custom-card{background-color: #fff; border-radius: 0.75rem;}.custom-card + .custom-card{margin-top: 3rem;}
     .transport-option{border: 1px solid grey;display: inline-flex;border-radius: var(--bs-border-radius);padding: 0.2rem 0.75rem;justify-content: center;color: grey;cursor: pointer;}
     .transport-option.active{background-color: var(--primary-blue);border-color: var(--primary-blue); color: #fff;}
-    .stickySec{position: sticky; bottom: -170px; z-index: 1;}
+    .stickySec{z-index: 1; left: 0;}
     img{max-width: 100%;} .accordion-body img {max-height: 300px;}.stickySec .card{border-radius: 2rem 2rem 0 0;--bs-card-cap-padding-y: 1rem;}
     .price strong{font-size: 1.5rem;}.summaryPara>:not(span){color: #525252;}
     @media screen and (min-width: 992px) {
@@ -697,7 +697,7 @@
 
   <div class="container-md container-lg pt-4">
     <section class="row g-3 mt-0">
-      <div class="col-lg-7 col-xl-8">
+      <div class="col-lg-7 col-xl-8 detailSec">
         <div class="custom-card p-lg-3">
           <h1 class="trek-title"><%= trips.name %></h1>
           <article class="subtitle"><%- trips.destinations %></article>
@@ -2122,13 +2122,30 @@
     </script>
 
     <script>
-      window.addEventListener('scroll', (e)=>{
-        e.stopImmediatePropagation();
-        const footer = document.querySelector('footer');
-        const rect = footer.getBoundingClientRect();
-        // if(window.innerHeight)
-        // console.log("window: ", window.innerHeight, " scroll hight: ", document.scrollHeight, " footer: ", rect.height, " bottom ", rect.bottom, ' top: ', rect.top);
-      });
+      function managePostionPricecard(){
+        const isTab = window.innerWidth < 992;
+        const topPosition = window.innerWidth < 640 ? '-170px' : '-130px';
+        if(!isTab) return;
+        const detailSec = document.querySelector('.detailSec');
+        const priceSec = document.querySelector('.stickySec');
+        if(!detailSec || !priceSec) return;
+        const rect = detailSec.getBoundingClientRect();
+        // Get the viewport height dynamically
+        const viewportHeight = window.innerHeight;
+        // If the bottom of the main content section is at or above the bottom of the screen
+        // This means we have scrolled past or reached the end of the main content
+        if (rect.bottom <= viewportHeight) {
+          // Make the mobile sticky card fully visible
+          priceSec.style.bottom = 'unset';
+          priceSec.style.position = 'relative';
+        } else {
+            // Revert the mobile sticky card to half-visible
+          priceSec.style.bottom = topPosition;
+          priceSec.style.position = 'fixed';
+        }
+      }
+      managePostionPricecard();
+      window.addEventListener('scroll', managePostionPricecard);
       const joiningForm = document.getElementById("proceedToBook");
       const floatingSec = document.querySelector(".floatingSec");
     
