@@ -11,6 +11,16 @@ router.get('/bookings', isAuth, adminBookingController.getBookings);
 router.get('/bookings/:id', isAuth, adminBookingController.getBookingDetails);
 router.patch('/bookings/:id/status', isAuth, adminBookingController.updateBookingStatus);
 router.patch('/bookings/bulk-status', isAuth, adminBookingController.bulkUpdateBookingStatus);
+// Add these routes
+router.post('/send-email/:bookingId',isAuth, adminBookingController.sendEmail);
+router.post('/send-invoice/:bookingId',isAuth, adminBookingController.sendInvoice);
+
+router.get('/search-documents', isAuth, adminBookingController.searchAndGenerateDocs);
+router.get('/search-bookings', isAuth, adminBookingController.searchBookings);
+router.post('/generate/invoice/:id', isAuth, adminBookingController.generateInvoice);
+router.post('/generate/receipt/:bookingId/:paymentLogId', isAuth, adminBookingController.generateReceipt);
+router.get('/download/invoice/:id', isAuth, adminBookingController.downloadInvoice);
+router.get('/download/receipt/:id', isAuth, adminBookingController.downloadReceipt);
 
 // Other routes
 router.post('/getstateCities', makepdfController.getstateCities);

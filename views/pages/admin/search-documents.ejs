@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../../partials/headtag', {isNiceSelect: false}); %>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Search and Generate Documents</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css">
+  <style>
+    body { background-color: #f7fafc; }
+    .autocomplete-container { position: relative; width: 100%; max-width: 500px; margin-bottom: 1.5rem; }
+    #bookingNumberInput { 
+      padding: 0.75rem; 
+      font-size: 1rem; 
+      border: 1px solid #d1d5db; 
+      border-radius: 0.375rem; 
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      transition: border-color 0.2s;
+    }
+    #bookingNumberInput:focus { 
+      border-color: #1e40af; 
+      outline: none; 
+      box-shadow: 0 0 0 3px rgba(30,64,175,0.2);
+    }
+    #autocompleteList { 
+      position: absolute; 
+      top: 100%; 
+      left: 0; 
+      right: 0; 
+      background: white; 
+      border: 1px solid #d1d5db; 
+      border-radius: 0.375rem; 
+      max-height: 200px; 
+      overflow-y: auto; 
+      z-index: 1000; 
+      list-style: none; 
+      padding: 0; 
+      margin: 0.25rem 0 0 0; 
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    #autocompleteList li { 
+      padding: 0.75rem; 
+      cursor: pointer; 
+      font-size: 0.9rem;
+      transition: background-color 0.2s;
+    }
+    #autocompleteList li:hover { background-color: #f3f4f6; }
+    .booking-details { 
+      background: white; 
+      padding: 1.5rem; 
+      border-radius: 0.75rem; 
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+      margin-top: 1.5rem;
+    }
+    .booking-details-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .booking-details h4 { 
+      font-size: 1.5rem; 
+      font-weight: 600; 
+      color: #1e3a8a; 
+    }
+    .booking-details p { 
+      margin: 0.5rem 0; 
+      font-size: 0.95rem; 
+      color: #374151;
+    }
+    .action-buttons { 
+      display: flex; 
+      gap: 0.75rem; 
+      flex-wrap: wrap; 
+      margin-top: 1.5rem;
+    }
+    .error-message { 
+      color: #b91c1c; 
+      background: #fee2e2; 
+      padding: 1rem; 
+      border-radius: 0.375rem; 
+      margin-top: 1rem;
+      font-size: 1rem;
+      font-weight: 500;
+      border: 1px solid #ef4444;
+      position: relative;
+      z-index: 10;
+    }
+    .success-message { 
+      color: #15803d; 
+      background: #dcfce7; 
+      padding: 1rem; 
+      border-radius: 0.375rem; 
+      margin-top: 1rem;
+      font-size: 1rem;
+      font-weight: 500;
+      border: 1px solid #22c55e;
+      position: relative;
+      z-index: 10;
+    }
+    .table-container { 
+      margin-top: 1.5rem; 
+      overflow-x: auto;
+    }
+    .table th { 
+      background: #1e3a8a; 
+      color: white; 
+      font-weight: 600; 
+      padding: 0.75rem;
+    }
+    .table td { 
+      padding: 0.75rem; 
+      vertical-align: middle; 
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .btn-regenerate { 
+      background: #f97316; 
+      border-color: #f97316; 
+      color: white;
+    }
+    .btn-regenerate:hover { 
+      background: #ea580c; 
+      border-color: #ea580c;
+    }
+    .btn-disabled { 
+      background: #d1d5db; 
+      border-color: #d1d5db; 
+      color: #6b7280; 
+      cursor: not-allowed;
+    }
+    .btn-help {
+      background: #1e3a8a;
+      border-color: #1e3a8a;
+      color: white;
+    }
+    .btn-help:hover {
+      background: #1e40af;
+      border-color: #1e40af;
+    }
+    .email-form { 
+      background: white; 
+      padding: 2rem; 
+      border-radius: 0.75rem; 
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+      margin-top: 1.5rem;
+      border-left: 4px solid #1e3a8a;
+    }
+    .email-form-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .email-form-header i {
+      font-size: 1.5rem;
+      color: #1e3a8a;
+    }
+    .email-form label { 
+      font-weight: 600; 
+      color: #374151; 
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    .email-form input, .email-form textarea { 
+      width: 100%; 
+      padding: 0.75rem; 
+      border: 1px solid #d1d5db; 
+      border-radius: 0.375rem; 
+      font-size: 0.95rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .email-form input:focus, .email-form textarea:focus {
+      border-color: #1e40af;
+      box-shadow: 0 0 0 3px rgba(30,64,175,0.2);
+      outline: none;
+    }
+    .email-form textarea { 
+      min-height: 120px; 
+      resize: vertical;
+    }
+    .email-form .form-check { 
+      margin: 1rem 0; 
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .email-form .form-check-input {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+    .email-form .form-check-label {
+      font-size: 0.95rem;
+      color: #374151;
+    }
+    .email-form .btn-preview {
+      background: #6b7280;
+      border-color: #6b7280;
+      color: white;
+    }
+    .email-form .btn-preview:hover {
+      background: #4b5563;
+      border-color: #4b5563;
+    }
+    @media (max-width: 768px) {
+      .autocomplete-container { max-width: 100%; }
+      .booking-details, .email-form { padding: 1.5rem; }
+      .action-buttons { flex-direction: column; }
+      .table th, .table td { font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+  <%- include('../../partials/header', {isSearch: false}); %>
+  <div class="container mx-auto px-4 py-6">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Search and Generate Documents</h2>
+    <div class="autocomplete-container">
+      <input type="text" id="bookingNumberInput" placeholder="Enter Booking Number" autocomplete="off" class="w-full" value="<%= booking ? booking.bookingNumber : '' %>">
+      <ul id="autocompleteList"></ul>
+    </div>
+    <% if (error) { %>
+      <div class="error-message"><%= error %></div>
+    <% } %>
+    <% if (success) { %>
+      <div class="success-message"><%= success %></div>
+    <% } %>
+    <% if (booking) { %>
+      <div class="booking-details">
+        <div class="booking-details-header">
+          <h4>Booking Details</h4>
+          <button type="button" class="btn btn-help btn-sm" onclick="showHelpPopup()" data-tippy-content="View document generation rules">
+            <i class="bi bi-question-circle"></i> Help
+          </button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <p><strong>Booking Number:</strong> <%= booking.bookingNumber %></p>
+          <p><strong>Trip Name:</strong> <%= booking.tourDetails ? booking.tourDetails.name : 'N/A' %></p>
+          <p><strong>Customer:</strong> <%= booking.personDetails[0].firstName %> <%= booking.personDetails[0].surname %></p>
+          <p><strong>Contact:</strong> <%= booking.personDetails[0].phone %></p>
+          <p><strong>Travel Dates:</strong> <%= new Date(booking.tripStartDate).toLocaleDateString('en-GB') %> to <%= new Date(booking.tripEndDate).toLocaleDateString('en-GB') %></p>
+          <p><strong>Total Cost:</strong> ₹<%= booking.totalTripCostWithGST.toFixed(2) %></p>
+          <p><strong>Paid Amount:</strong> ₹<%= booking.paidAmount.toFixed(2) %></p>
+          <p><strong>Due Amount:</strong> ₹<%= booking.duePayment.toFixed(2) %></p>
+          <p><strong>Payment Status:</strong> 
+            <span class="badge <%= booking.paymentStatus === 'Paid' ? 'bg-success' : booking.paymentStatus === 'Partial' ? 'bg-info text-dark' : booking.paymentStatus === 'Pending' ? 'bg-warning text-dark' : 'bg-danger' %>">
+              <%= booking.paymentStatus %>
+            </span>
+          </p>
+          <p><strong>Booking Status:</strong> 
+            <span class="badge <%= booking.bookingStatus === 'Confirmed' ? 'bg-success' : booking.bookingStatus === 'Pending' ? 'bg-warning text-dark' : 'bg-danger' %>">
+              <%= booking.bookingStatus %>
+            </span>
+          </p>
+        </div>
+        
+        <h5 class="mt-6 mb-3 text-lg font-semibold text-gray-800">Payment Logs</h5>
+        <div class="table-container">
+          <% if (paymentLogs && paymentLogs.length > 0) { %>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Payment ID</th>
+                  <th>Amount</th>
+                  <th>Method</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Receipt</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% paymentLogs.forEach(log => { %>
+                  <tr>
+                    <td><%= log._id %></td>
+                    <td>₹<%= log.amount.toFixed(2) %></td>
+                    <td><%= log.paymentMethod %></td>
+                    <td><%= new Date(log.paymentDate).toLocaleDateString('en-GB') %></td>
+                    <td>
+                      <span class="badge <%= log.status === 'success' ? 'bg-success' : 'bg-danger' %>">
+                        <%= log.status %>
+                      </span>
+                    </td>
+                    <td>
+                      <% if (log.receiptPath && log.status === 'success') { %>
+                        <a href="/admin/download/receipt/<%= log._id %>" class="btn btn-sm btn-success" data-tippy-content="Download receipt">
+                          <i class="bi bi-download"></i> Download
+                        </a>
+                      <% } else if (log.status === 'success') { %>
+                        <form action="/admin/generate/receipt/<%= booking._id %>/<%= log._id %>" method="POST">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                          <button type="submit" class="btn btn-sm btn-regenerate" data-tippy-content="Regenerate receipt">
+                            <i class="bi bi-file-earmark-arrow-up"></i> Regenerate
+                          </button>
+                        </form>
+                      <% } else { %>
+                        <span class="text-gray-500">N/A</span>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          <% } else { %>
+            <p class="text-gray-500">No payment logs found.</p>
+          <% } %>
+        </div>
+        
+        <div class="action-buttons">
+          <% if (booking.invoicePath && booking.bookingStatus !== 'Cancelled') { %>
+            <a href="/admin/download/invoice/<%= booking._id %>" class="btn btn-success" data-tippy-content="Download invoice">
+              <i class="bi bi-download"></i> Download Invoice
+            </a>
+          <% } %>
+          <% if (booking.bookingStatus !== 'Cancelled') { %>
+            <form action="/admin/generate/invoice/<%= booking._id %>" method="POST">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" class="btn <%= booking.invoicePath ? 'btn-regenerate' : 'btn-primary' %>" data-tippy-content="<%= booking.invoicePath ? 'Regenerate invoice' : 'Generate invoice' %>">
+                <i class="bi bi-file-earmark-arrow-up"></i> <%= booking.invoicePath ? 'Regenerate Invoice' : 'Generate Invoice' %>
+              </button>
+            </form>
+            <form action="/admin/send-invoice/<%= booking._id %>" method="POST">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" class="btn btn-primary" data-tippy-content="Send invoice to booking email">
+                <i class="bi bi-envelope"></i> Send Invoice
+              </button>
+            </form>
+          <% } else { %>
+            <button class="btn btn-disabled" disabled data-tippy-content="Invoice actions are disabled for cancelled bookings">
+              <i class="bi bi-file-earmark-arrow-up"></i> Generate Invoice
+            </button>
+            <button class="btn btn-disabled" disabled data-tippy-content="Invoice actions are disabled for cancelled bookings">
+              <i class="bi bi-envelope"></i> Send Invoice
+            </button>
+          <% } %>
+        </div>
+      </div>
+      
+      <div class="email-form">
+        <div class="email-form-header">
+          <i class="bi bi-envelope-fill"></i>
+          <h4 class="text-lg font-semibold text-gray-800">Send Custom Email</h4>
+        </div>
+        <form action="/admin/send-email/<%= booking._id %>?bookingNumber=<%= booking.bookingNumber %>" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="mb-4">
+            <label for="emailTo" class="form-label">Recipient Email</label>
+            <input type="email" id="emailTo" name="to" class="form-control" placeholder="Enter email address" value="<%= booking.email %>" required>
+          </div>
+          <div class="mb-4">
+            <label for="emailSubject" class="form-label">Subject</label>
+            <input type="text" id="emailSubject" name="subject" class="form-control" placeholder="Enter subject" value="Booking Documents: <%= booking.tourDetails ? booking.tourDetails.name : 'N/A' %> (<%= booking.bookingNumber %>)" required>
+          </div>
+          <div class="mb-4">
+            <label for="emailBody" class="form-label">Message</label>
+            <textarea id="emailBody" name="body" class="form-control" placeholder="Enter your message" required></textarea>
+          </div>
+          <% if (booking.bookingStatus !== 'Cancelled') { %>
+            <div class="form-check">
+              <input type="checkbox" id="includeInvoice" name="includeInvoice" class="form-check-input" <%= booking.invoicePath ? 'checked' : '' %>>
+              <label for="includeInvoice" class="form-check-label">Include Invoice</label>
+            </div>
+          <% } else { %>
+            <div class="form-check">
+              <input type="checkbox" id="includeInvoice" name="includeInvoice" class="form-check-input" disabled data-tippy-content="Invoice inclusion is disabled for cancelled bookings">
+              <label for="includeInvoice" class="form-check-label text-gray-500">Include Invoice</label>
+            </div>
+          <% } %>
+          <% if (paymentLogs && paymentLogs.some(log => log.status === 'success')) { %>
+            <div class="form-check">
+              <input type="checkbox" id="includeReceipts" name="includeReceipts" class="form-check-input" checked>
+              <label for="includeReceipts" class="form-check-label">Include Receipts</label>
+            </div>
+          <% } else { %>
+            <div class="form-check">
+              <input type="checkbox" id="includeReceipts" name="includeReceipts" class="form-check-input" disabled data-tippy-content="No successful payments found to include receipts">
+              <label for="includeReceipts" class="form-check-label text-gray-500">Include Receipts</label>
+            </div>
+          <% } %>
+          <div class="flex gap-3 mt-4">
+            <button type="submit" class="btn btn-primary" data-tippy-content="Send email with selected documents">
+              <i class="bi bi-envelope"></i> Send Email
+            </button>
+            <button type="button" class="btn btn-preview" onclick="previewEmail()" data-tippy-content="Preview email content">
+              <i class="bi bi-eye"></i> Preview
+            </button>
+          </div>
+        </form>
+      </div>
+    <% } %>
+  </div>
+  <%- include('../../partials/footer'); %>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy-bundle.umd.min.js"></script>
+  <script>
+    // Function to get URL parameters
+    function getUrlParameter(name) {
+      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      const results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    // Check for success or error messages in URL and display as popup
+    document.addEventListener('DOMContentLoaded', () => {
+      const error = getUrlParameter('error');
+      const success = getUrlParameter('success');
+      
+      if (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error,
+          confirmButtonColor: '#1e3a8a',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          // Clear URL parameters after showing the popup
+          window.history.replaceState({}, document.title, window.location.pathname + (getUrlParameter('bookingNumber') ? `?bookingNumber=${getUrlParameter('bookingNumber')}` : ''));
+        });
+      } else if (success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: success,
+          confirmButtonColor: '#1e3a8a',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          // Clear URL parameters after showing the popup
+          window.history.replaceState({}, document.title, window.location.pathname + (getUrlParameter('bookingNumber') ? `?bookingNumber=${getUrlParameter('bookingNumber')}` : ''));
+        });
+      }
+    });
+
+    // Autocomplete for booking number
+    const bookingNumberInput = document.getElementById('bookingNumberInput');
+    const autocompleteList = document.getElementById('autocompleteList');
+
+    bookingNumberInput.addEventListener('input', async () => {
+      const query = bookingNumberInput.value.trim();
+      if (query.length < 3) {
+        autocompleteList.innerHTML = '';
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/search-bookings?query=${encodeURIComponent(query)}`, {
+          headers: { 'X-CSRF-Token': '<%= csrfToken %>' }
+        });
+        const bookings = await response.json();
+        autocompleteList.innerHTML = '';
+        bookings.forEach(booking => {
+          const li = document.createElement('li');
+          li.textContent = `${booking.bookingNumber} - ${booking.tourName}`;
+          li.addEventListener('click', () => {
+            bookingNumberInput.value = booking.bookingNumber;
+            autocompleteList.innerHTML = '';
+            window.location.href = `/admin/search-documents?bookingNumber=${booking.bookingNumber}`;
+          });
+          autocompleteList.appendChild(li);
+        });
+      } catch (error) {
+        console.error('Error fetching bookings:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to fetch bookings. Please try again.',
+          confirmButtonColor: '#1e3a8a'
+        });
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!bookingNumberInput.contains(e.target) && !autocompleteList.contains(e.target)) {
+        autocompleteList.innerHTML = '';
+      }
+    });
+
+    // Email preview function
+    function previewEmail() {
+      const to = document.getElementById('emailTo').value;
+      const subject = document.getElementById('emailSubject').value;
+      const body = document.getElementById('emailBody').value;
+      const includeInvoice = document.getElementById('includeInvoice').checked;
+      const includeReceipts = document.getElementById('includeReceipts').checked;
+
+      let attachments = '';
+      if (includeInvoice || includeReceipts) {
+        attachments = '<p><strong>Attachments:</strong><ul>';
+        if (includeInvoice) attachments += '<li>Invoice</li>';
+        if (includeReceipts) attachments += '<li>Receipt(s)</li>';
+        attachments += '</ul></p>';
+      }
+
+      Swal.fire({
+        title: 'Email Preview',
+        html: `
+          <div style="text-align: left; font-family: Arial, sans-serif;">
+            <p><strong>To:</strong> ${to}</p>
+            <p><strong>Subject:</strong> ${subject}</p>
+            <p><strong>Body:</strong></p>
+            <div style="border: 1px solid #ddd; padding: 10px; min-height: 100px;">${body}</div>
+            ${attachments}
+          </div>
+        `,
+        confirmButtonColor: '#1e3a8a',
+        confirmButtonText: 'Close'
+      });
+    }
+
+    // Help popup for document generation rules
+    function showHelpPopup() {
+      Swal.fire({
+        title: 'Document Generation Rules',
+        html: `
+          <div style="text-align: left; font-family: Arial, sans-serif;">
+            <h5 style="font-weight: 600; margin-bottom: 1rem;">Rules for Generating Documents</h5>
+            <ul style="list-style-type: disc; padding-left: 1.5rem;">
+              <li><strong>Invoices:</strong> Can be generated or sent for bookings with a status of "Pending" or "Confirmed". Invoices are not allowed for "Cancelled" bookings.</li>
+              <li><strong>Receipts:</strong> Can only be generated or included in emails if there is at least one successful payment (Payment Log with status "success").</li>
+              <li><strong>Custom Emails:</strong> Emails can include invoices only for non-cancelled bookings and receipts only if successful payments exist.</li>
+            </ul>
+            <p style="margin-top: 1rem;">For assistance, contact support at travel@dejavutours.in.</p>
+          </div>
+        `,
+        confirmButtonColor: '#1e3a8a',
+        confirmButtonText: 'Close',
+        width: '600px'
+      });
+    }
+
+    // Initialize tooltips
+    tippy('[data-tippy-content]', {
+      placement: 'top',
+      theme: 'light-border',
+      animation: 'scale'
+    });
+  </script>
+</body>
+</html>

@@ -6,6 +6,7 @@ const NewTours = require('../models/newTours');
 const { nanoid } = require('nanoid');
 const generateReceiptPDF = require('../util/generateReceiptPDF');
 const generateInvoicePDF = require('../util/generateInvoicePDF');
+const EmailService = require('../util/emailService');
 const path = require('path');
 
 const razorpayInstance = new Razorpay({
@@ -121,6 +122,9 @@ class PaymentService {
           await generateInvoicePDF(booking, tour, booking.invoicePath);
         }
         await booking.save();
+         // Send email notifications
+         await EmailService.sendBookingConfirmation(booking, tour, paymentLog);
+         await EmailService.sendAdminNotification(booking, tour, paymentLog);
 
         return { success: true, booking };
       } else {
@@ -198,7 +202,8 @@ class PaymentService {
         await generateInvoicePDF(booking, tour, booking.invoicePath);
       }
       await booking.save();
-
+      await EmailService.sendBookingConfirmation(booking, tour, paymentLog);
+      await EmailService.sendAdminNotification(booking, tour, paymentLog);
       return paymentLog;
     } catch (err) {
       throw new Error(`Failed to record manual payment: ${err.message}`);

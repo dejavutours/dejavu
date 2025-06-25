@@ -96,15 +96,15 @@ const generateReceiptPDF = (booking, tour, paymentLog, outputPath) => {
       doc.text(`Booking ID: ${booking.bookingNumber}`, 50, 335);
       doc.text(`Trip Name: ${tour.name}`, 50, 350);
       doc.text(`Payment Method: ${paymentLog.paymentMethod}`, 50, 365);
-      doc.text(`Pickup at: ${booking.joiningFrom} on ${formatDate(new Date(booking.tripStartDate))}`, 50, 370);
+      doc.text(`Pickup at: ${booking.joiningFrom} on ${formatDate(new Date(booking.tripStartDate))}`, 50, 380);
 
       // Transaction Details
       if (paymentLog.paymentMethod === 'razorpay') {
-        doc.text(`Order ID: ${paymentLog.transactionDetails.orderId || 'N/A'}`, 50, 380);
+        // doc.text(`Order ID: ${paymentLog.transactionDetails.orderId || 'N/A'}`, 50, 380);
         doc.text(`Payment ID: ${paymentLog.transactionDetails.paymentId || 'N/A'}`, 50, 395);
       } else {
-        doc.text(`Reference ID: ${paymentLog.transactionDetails.referenceId || 'N/A'}`, 50, 380);
-        doc.text(`Notes: ${paymentLog.transactionDetails.notes || 'N/A'}`, 50, 395);
+        doc.text(`Reference ID: ${paymentLog.transactionDetails.referenceId || 'N/A'}`, 50, 395);
+        doc.text(`Notes: ${paymentLog.transactionDetails.notes || 'N/A'}`, 50, 405);
       }
 
       // Payment Breakdown Table

@@ -136,8 +136,8 @@ const generateInvoicePDF = (booking, tour, outputPath) => {
         doc.rect(tableLeft, currentY, tableWidth, 20).stroke();
         const adultText = `Adult x ${adultCount}`;
         doc.text(adultText, tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2, ellipsis: true });
-        doc.text(`₹${Number(adultPrice).toFixed(2)}`, tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: rateWidth - cellPadding * 2 });
-        doc.text(`₹${Number(adultCount * adultPrice).toFixed(2)}`, tableLeft + descWidth + rateWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
+        doc.text(`Rs.${Number(adultPrice).toFixed(2)}`, tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: rateWidth - cellPadding * 2 });
+        doc.text(`Rs.${Number(adultCount * adultPrice).toFixed(2)}`, tableLeft + descWidth + rateWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
         currentY += 20;
       }
 
@@ -146,8 +146,8 @@ const generateInvoicePDF = (booking, tour, outputPath) => {
         doc.rect(tableLeft, currentY, tableWidth, 20).stroke();
         const childText = `Child x ${childCount}`;
         doc.text(childText, tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2, ellipsis: true });
-        doc.text(`₹${Number(childPrice).toFixed(2)}`, tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: rateWidth - cellPadding * 2 });
-        doc.text(`₹${Number(childCount * childPrice).toFixed(2)}`, tableLeft + descWidth + rateWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
+        doc.text(`Rs.${Number(childPrice).toFixed(2)}`, tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: rateWidth - cellPadding * 2 });
+        doc.text(`Rs.${Number(childCount * childPrice).toFixed(2)}`, tableLeft + descWidth + rateWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
         currentY += 20;
       }
 
@@ -155,35 +155,35 @@ const generateInvoicePDF = (booking, tour, outputPath) => {
       doc.rect(tableLeft, currentY, tableWidth, 20).stroke();
       doc.font('Helvetica-Bold').text('Subtotal', tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2 });
       doc.text('', tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: rateWidth - cellPadding * 2 }); // Empty Rate
-      doc.text(`₹${Number(subtotal).toFixed(2)}`, tableLeft + descWidth + rateWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
+      doc.text(`Rs.${Number(subtotal).toFixed(2)}`, tableLeft + descWidth + rateWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
       currentY += 20;
 
       // GST
       doc.rect(tableLeft, currentY, tableWidth, 20).stroke();
       doc.font('Helvetica').text('GST (5%)', tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2 });
       doc.text('', tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: rateWidth - cellPadding * 2 }); // Empty Rate
-      doc.text(`₹${Number(gst).toFixed(2)}`, tableLeft + descWidth + rateWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
+      doc.text(`Rs.${Number(gst).toFixed(2)}`, tableLeft + descWidth + rateWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
       currentY += 20;
 
       // Grand Total
       doc.rect(tableLeft, currentY, tableWidth, 20).stroke();
       doc.font('Helvetica-Bold').text('Grand Total', tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2 });
       doc.text('', tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: rateWidth - cellPadding * 2 }); // Empty Rate
-      doc.text(`₹${Number(grandTotal).toFixed(2)}`, tableLeft + descWidth + rateWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
+      doc.text(`Rs.${Number(grandTotal).toFixed(2)}`, tableLeft + descWidth + rateWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
       currentY += 20;
 
       // Paid Amount
       doc.rect(tableLeft, currentY, tableWidth, 20).stroke();
-      doc.text('Total Paid Amount', tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2 });
+      doc.text(`Total Paid Amount${booking.paymentStatus === 'Paid' && booking.duePayment === 0 ? ' (include 5% GST)' : ''}`, tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2 });
       doc.text('', tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: rateWidth - cellPadding * 2 }); // Empty Rate
-      doc.text(`₹${Number(paidAmount).toFixed(2)}`, tableLeft + descWidth + rateWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
+      doc.text(`Rs.${Number(paidAmount).toFixed(2)}`, tableLeft + descWidth + rateWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
       currentY += 20;
 
       // Due Amount
       doc.rect(tableLeft, currentY, tableWidth, 20).stroke();
       doc.text('Due Amount', tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2 });
       doc.text('', tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: rateWidth - cellPadding * 2 }); // Empty Rate
-      doc.text(`₹${Number(booking.duePayment).toFixed(2)}`, tableLeft + descWidth + rateWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
+      doc.text(`Rs.${Number(booking.duePayment).toFixed(2)}`, tableLeft + descWidth + rateWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
 
       // Information Section
       doc.font('Helvetica').fontSize(10).fillColor('#333333')
