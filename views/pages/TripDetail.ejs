@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <%- include('../partials/headtag', {isNiceSelect: false}); %>
   <title><%= trips.name %> - Trip Details | Deja-vu Tours</title>
@@ -542,7 +541,7 @@
     @media screen and (min-width: 992px) {
       body{background-color: #f3f3f6;}
       .image-slider img {height: 500px;}.custom-card + .custom-card{margin-top: 1rem;}
-      .stickySec{position: sticky; top: 80px; bottom: unset;}.stickySec .card, .custom-card, .actionCard {box-shadow: var(--bs-box-shadow-sm);border-radius: 0.75rem;}
+      .stickySec{position: sticky; top: 100px; bottom: unset;}.stickySec .card, .custom-card, .actionCard {box-shadow: var(--bs-box-shadow-sm);border-radius: 0.75rem;}
       .price strong{font-size: calc(1.5rem+0.3vw);}.btnSec{width: 100%; text-align: end;}
     }
     @media (max-width: 768px) {
@@ -679,7 +678,7 @@
           <div class="d-flex flex-wrap d-lg-none gap-2 align-items-center pt-2">
             <a href="/dreamtrip" class="btn btn-outline-secondary rounded-pill" target="_blank">Inquire Now</a>
             <button class="btn btn-outline-secondary rounded-pill" data-bs-toggle="modal" data-bs-target="#quickCallModal">Request Call Back</button>
-            <a class="btn btn-outline-secondary rounded-pill text-start" href="/assets/travel doc/Booking_Policy.pdf" target="_blank" title="Cancellation policy">Booking and Cancellation</a>
+            <!-- <a class="btn btn-outline-secondary rounded-pill text-start" href="/assets/travel doc/Booking_Policy.pdf" target="_blank" title="Cancellation policy">Booking and Cancellation</a> -->
           </div>
         </div>
         
@@ -899,25 +898,21 @@
               <option value="">Select a date</option>
             </select>
             <p class="error-message visually-hidden" id="dateError">Please select a date.</p>
-            <p class="summaryPara pt-3 d-none d-lg-block">Joining from <span class="fw-medium booking-summary-city">Departure City</span> &middot; 
+            <p class="summaryPara pt-3 d-none d-lg-block">Joining from: <span class="fw-medium booking-summary-city">Departure City</span> &middot; 
               <span class="fw-medium booking-summary-duration">Not selected</span>
             </p>
             <p class="summaryPara d-none d-lg-block">Departure date <span class="fw-medium booking-summary-date">Tour Date</span></p>
             <p class="btnSec ms-auto mb-auto">
               <button class="btn trip-details-proceed-btn-book" type="button" onclick="proceedWithBooking()" disabled>Proceed to Book</button>
+              <button class="btn trip-details-proceed-btn-book" type="button" onclick="proceedWithBooking()" disabled>Pay Part Payment</button>
             </p>
           </div>
         </form>
         <div class="actionCard card border-0 p-3 flex-row flex-wrap gap-2 align-items-start mt-3">
           <h5 class="w-100">Still Got Queries ?</h5>
-          <a href="/dreamtrip" class="btn btn-outline-secondary rounded-pill" target="_blank">Inquire Now</a>
+          <a href="https://wa.me/+918511117891" class="btn btn-outline-secondary rounded-pill" target="_blank">WhatsApp Us</a>
           <button class="btn btn-outline-secondary rounded-pill" data-bs-toggle="modal" data-bs-target="#quickCallModal">Request Call Back</button>
-          <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities.some(city => city.dates && city.dates.length > 0)) { %>
-          <button class="btn btn-app-primary rounded-pill" onclick="openBookingModal()">Book now</button>
-          <% } else { %>
-          <button class="btn btn-outline-secondary rounded-pill" onclick="openInquiryModal()">Inquire now</button>
-          <% } %>
-          <a class="btn btn-outline-secondary rounded-pill text-start" href="/assets/travel doc/Booking_Policy.pdf" target="_blank" title="Cancellation policy">Booking and Cancellation</a>
+          <a class="btn btn-outline-secondary rounded-pill text-start" href="/dreamtrip" target="_blank" title="Cancellation policy">Plan your dream trip</a>
         </div>
       </aside>
     </section>
@@ -1123,10 +1118,10 @@
     }
 
     async function downloadItinerary() {
-      console.log("Attempting to download itinerary...");
+      // console.log("Attempting to download itinerary...");
       try {
         if (!isLoggedIn) {
-          console.log("User not logged in, showing login modal...");
+          // console.log("User not logged in, showing login modal...");
           $('#signinModal').modal('show');
           return;
         }
@@ -1135,7 +1130,7 @@
           try {
             let url = documentUrl.replace(/^\/+/, '/');
             url = encodeURI(url);
-            console.log("Processed URL:", url);
+            // console.log("Processed URL:", url);
             const link = document.createElement('a');
             link.href = url;
             link.download = '<%= trips.name %>_Itinerary.pdf';
@@ -1143,15 +1138,15 @@
             link.click();
             document.body.removeChild(link);
           } catch (e) {
-            console.error("Failed to download itinerary:", e.message);
+            // console.error("Failed to download itinerary:", e.message);
             showContactModal("Download failed. Please contact support at +91 851111 7891.");
           }
         } else {
-          console.warn("Document URL is empty or invalid");
+          // console.warn("Document URL is empty or invalid");
           showContactModal("Itinerary PDF is not available for this trip.");
         }
       } catch (error) {
-        console.error("Error checking authentication:", error);
+        // console.error("Error checking authentication:", error);
         showContactModal("Failed to verify login status. Please try again.");
       }
     }
@@ -1392,7 +1387,7 @@
       updateDatesAndTabs();
       validateMainForm();
       const cityName = element.getAttribute('data-city') || 'N/A';
-      const statueName = element.getAttribute('data-city') || 'N/A';
+      const statueName = element.getAttribute('data-state') || 'N/A';
       const duration = element.getAttribute('data-duration') || 'N/A';
       document.querySelectorAll(".booking-summary-city").forEach(e => e.textContent = `${cityName}, ${statueName}`);
       document.querySelectorAll(".booking-summary-duration").forEach(e => e.textContent = `${duration}`);
@@ -2136,7 +2131,7 @@
     <script>
       function managePostionPricecard(){
         const isTab = window.innerWidth < 992;
-        const topPosition = window.innerWidth < 640 ? '-170px' : '-130px';
+        const topPosition = window.innerWidth < 640 ? '-140px' : '-130px';
         if(!isTab) return;
         const detailSec = document.querySelector('.detailSec');
         const priceSec = document.querySelector('.stickySec');
