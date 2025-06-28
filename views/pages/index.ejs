@@ -2,67 +2,46 @@
 <html class="no-js" lang="zxx">
 
 <head>
-  <%- include('../partials/headtag'); %>
+  <%- include('../partials/headtag', {title: "Deja-vu tours treks and travel", isNiceSelect: false}); %>
   
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <link rel="stylesheet" href="css/dashboard.css">
-  <link rel="stylesheet" href="css/style.css">
   <style>
     /* Departure City Section */
     .departure_city_section {
       padding-bottom: 3rem;
     }
-
-    /* Tabs Styling */
-    .departure-city-tabs {
-      border-bottom: 1px solid #dee2e6;
-      gap: 0.5rem;
-    }
-
+    .nav.departure-city-tabs { 
+      /* -webkit-mask-image: linear-gradient(to left, transparent, rgb(0 0 0 / 50%) 20%, rgb(0 0 0 / 100%) 80%, transparent); mask-image: linear-gradient(to left, transparent, rgb(0 0 0 / 50%) 20%, rgb(0 0 0 / 100%) 80%, transparent); mask-size: 100% 100%; mask-repeat: no-repeat; padding-inline: 1rem;  */
+      white-space: nowrap; scrollbar-width: none; /* Hide scrollbar for Firefox */ -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */ --bs-nav-tabs-link-hover-bg: #dee2e6;--bs-nav-tabs-link-hover-border-color: #dee2e6; --bs-nav-tabs-link-active-border-color: #000000; --bs-nav-tabs-border-color: transparent;}
     .departure-city-tabs .nav-link {
-      padding: 0.5rem 1.5rem;
-      border: 1px solid transparent;
       border-radius: 10px;
       color: #6c757d;
       font-weight: 500;
       transition: all 0.3s ease;
     }
 
-    .departure-city-tabs .nav-link:hover {
-      background-color: #f8f9fa;
-      border-color: #dee2e6;
-    }
-
-    .departure-city-tabs .nav-link.active {
-      background-color: #ffffff;
-      color: #000000;
-      border-color: #000000;
-    }
-
+    .departure-city-tabs .nav-link:hover { background-color: #f8f9fa; }
     /* Trip Cards Container */
     .trip-cards-container {
       position: relative;
       overflow-x: auto;
       scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
       scroll-snap-type: x mandatory;
       /* Enable scroll snapping */
     }
 
     /* Hide Scrollbar on Webkit Browsers */
-    .trip-cards-container::-webkit-scrollbar {
+    /* .trip-cards-container::-webkit-scrollbar {
       display: none;
-    }
+    } */
 
     .trip-cards-row {
       display: flex;
       flex-wrap: nowrap;
       gap: 1rem;
-      padding: 0 1rem;
+      /* padding: 0 1rem; */
       /* Add padding to ensure cards don't touch edges */
       min-width: max-content;
     }
@@ -71,7 +50,7 @@
     .trip-card {
       flex: 0 0 auto;
       width: 340px;
-      height: 369px;
+      height: inherit;
       border: 1px solid #dee2e6;
       border-radius: 20px;
       overflow: hidden;
@@ -176,17 +155,14 @@
 
     /* Responsive Adjustments */
     @media (max-width: 767.98px) {
-      .trip-card {
-        width: 280px;
-      }
-
       .trip-image-slider {
         height: 180px;
       }
+      #modalApplyBtn{width: 180px;}
 
-      .trip-cards-row {
+      /* .trip-cards-row {
         padding: 0 5px;
-      }
+      } */
 
       .row-nav-btn {
         width: 32px;
@@ -201,6 +177,7 @@
       .row-nav-next {
         right: 5px;
       }
+      .nav.departure-city-tabs {--bs-nav-link-padding-x: 0.5rem; --bs-nav-link-padding-y: 0.25rem;}
     }
 
     @media (max-width: 575.98px) {
@@ -212,9 +189,9 @@
 </head>
 
 <body>
-  <%- include('../partials/header', {title: "Deja-vu tours treks and travel"}); %>
+  <%- include('../partials/header', {isSearch: true}); %>
 
-  <section class="banner_section pb-4 position-relative">
+  <section class="banner_section position-relative">
     <div class="container-fluid">
       <div class="image-slider swiper">
         <div class="swiper-wrapper">
@@ -246,7 +223,7 @@
     </div>
     <div class="hero_section position-absolute top-0 left-0 h-100 w-100 text-center d-flex align-items-center">
       <div class="container position-relative z-1">
-        <div class="form rounded-5 bg-white p-md-2 mt-md-4 position-relative">
+        <div class="form rounded-5 bg-white p-md-2 position-relative">
           <div class="filter_row rounded-5 d-none d-md-flex gap-2 position-relative z-1">
             <div class="dropdown">
               <button class="btn btn-light d-flex gap-2 align-items-center rounded-pill dropdownBtn" type="button" data-bs-toggle="dropdown" aria-expanded="false">All <i class="bi bi-chevron-down ms-auto"></i></button>
@@ -264,31 +241,36 @@
           <div class="d-none text-start text-body rounded-5 position-absolute top-0 start-0 w-100 shadow-sm filters bg-white px-3">
             <br><br><br>
             <article class="categories_filter filter_item">
-              <p class="mb-1">Categories</p>
+              <p class="mb-1 fw-medium">Categories</p>
               <ul class="d-inline-flex flex-wrap gap-2 px-0 filter_list" data-filter-key="category">
                 <% categoryItems.forEach(category => { %>
-                <li role="button" tabindex="-1" data-item="<%= category.name %>" class="border rounded px-2 py-1 small">
+                <li role="button" tabindex="-1" data-item="<%= category.name %>" class="rounded px-2 py-1 small">
                   <%= category.name %>
                 </li>
                 <% }) %>
               </ul>
             </article>
             <article class="destinations_filter filter_item">
-              <p class="mb-1">Trending Destinations</p>
+              <p class="mb-1 fw-medium">Trending Destinations</p>
               <ul class="d-inline-flex flex-wrap gap-2 px-0 filter_list" data-filter-key="destination">
+                <% function titleClase(str) {
+                  const strArray = str.split(' ');
+                  const newArray = strArray.map(e => `${e.substring(0,1).toUpperCase()}${e.substring(1).toLowerCase()}`);
+                  return newArray.join(' ');
+                } %>
                 <% placeItems.forEach(place => { %>
-                <li role="button" tabindex="-1" data-item="<%= place.name %>" class="border rounded px-2 py-1 small"><%= place.name %></li>
+                <li role="button" tabindex="-1" data-item="<%= place.name %>" class="rounded px-2 py-1 small"><%= titleClase(place.name) %></li>
                 <% }) %>
               </ul>
             </article>
             <article class="tourtype_filter filter_item">
-              <p class="mb-1">Tour Type</p>
+              <p class="mb-1 fw-medium">Tour Type</p>
               <ul class="d-inline-flex flex-wrap gap-2 px-0 filter_list" data-filter-key="tourType">
-                <li role="button" tabindex="-1" data-item="Family" class="border rounded px-2 py-1 small">Family</li>
-                <li role="button" tabindex="-1" data-item="Solo" class="border rounded px-2 py-1 small">Solo</li>
-                <li role="button" tabindex="-1" data-item="Couple friendly" class="border rounded px-2 py-1 small">Couple friendly</li>
-                <li role="button" tabindex="-1" data-item="Bachelors" class="border rounded px-2 py-1 small">Bachelors</li>
-                <li role="button" tabindex="-1" data-item="Students" class="border rounded px-2 py-1 small">Students</li>
+                <li role="button" tabindex="-1" data-item="Family" class="rounded px-2 py-1 small">Family</li>
+                <li role="button" tabindex="-1" data-item="Solo" class="rounded px-2 py-1 small">Solo</li>
+                <li role="button" tabindex="-1" data-item="Couple friendly" class="rounded px-2 py-1 small">Couple friendly</li>
+                <li role="button" tabindex="-1" data-item="Bachelors" class="rounded px-2 py-1 small">Bachelors</li>
+                <li role="button" tabindex="-1" data-item="Students" class="rounded px-2 py-1 small">Students</li>
               </ul>
             </article>
           </div>
@@ -299,35 +281,35 @@
 
   <!-- Filter Modal for Small Screens -->
   <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable modal-dialog-centered">
       <div class="modal-content rounded-4">
-        <div class="modal-header border-0 pb-0">
+        <div class="modal-header border-0">
           <h5 class="modal-title" id="filterModalLabel">Search & Filters</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body pt-2">
+        <div class="modal-body">
           <div class="mb-3">
-            <input type="text" class="form-control rounded-pill" placeholder="Search destination" id="modalSearchInput">
+            <input type="text" class="form-control" aria-label="Search text" placeholder="Search destination" id="modalSearchInput">
           </div>
           <div class="mb-3">
-            <label class="form-label fw-semibold">Category</label>
-            <select class="form-select rounded-pill" id="modalCategorySelect">
+            <label class="form-label fw-semibold" for="modalCategorySelect">Category</label>
+            <select class="form-select" id="modalCategorySelect">
               <% categoryItems.forEach(category => { %>
               <option value="<%= category.name %>"><%= category.name %></option>
               <% }) %>
             </select>
           </div>
           <div class="mb-3">
-            <label class="form-label fw-semibold">Destination</label>
-            <select class="form-select rounded-pill" id="modalDestinationSelect">
+            <label class="form-label fw-semibold" for="modalDestinationSelect">Destination</label>
+            <select class="form-select" id="modalDestinationSelect">
               <% placeItems.forEach(place => { %>
               <option value="<%= place.name %>"><%= place.name %></option>
               <% }) %>
             </select>
           </div>
           <div class="mb-3">
-            <label class="form-label fw-semibold">Tour Type</label>
-            <select class="form-select rounded-pill" id="modalTourTypeSelect">
+            <label class="form-label fw-semibold" for="modalTourTypeSelect">Tour Type</label>
+            <select class="form-select" id="modalTourTypeSelect">
               <option value="">All</option>
               <option value="Family">Family</option>
               <option value="Solo">Solo</option>
@@ -354,7 +336,7 @@
   <section class="trending_section container-xl mt-3 py-4 py-lg-5">
     <p>
       <small class="text-dejavu-secondary-light">Experience our</small><br>
-      <span class="fw-semibold h3">Trending destinations</span>
+      <span class="h3">Trending destinations</span>
     </p>
     <aside class="overflow-auto d-flex h-scroll">
       <% displayedPackages.forEach(function(tour, index) { %>
@@ -367,8 +349,8 @@
           </p>
         </div>
         <p class="bg-white px-3 py-2 mb-0 d-flex justify-content-between gap-3 position-relative">
-          <small>From <strong>₹<%- tour.price %></strong>/person</small>
-          <small class="text-end"><i class="bi bi-calendar"></i> <strong><%- tour.days %></strong></small>
+          <span class="text-muted">From<br/><strong class="text-dark">₹<%- tour.price %></strong>/person</span>
+          <span class="text-end"><i class="bi bi-calendar"></i> <strong><%- tour.days %></strong></span>
         </p>
       </a>
       <% }); %>
@@ -379,7 +361,7 @@
   <section class="trending_state_section container-xl py-4 pb-lg-5">
     <p class="pb-md-3">
       <small class="text-dejavu-secondary-light">Explore trips by</small><br>
-      <span class="fw-semibold h3">Trending State</span>
+      <span class="h3">Trending State</span>
     </p>
     <aside class="overflow-auto d-flex position-relative">
       <% for (let item of placeItems ) { %>
@@ -397,7 +379,7 @@
   <section class="cat_section container-xl pb-4 pb-lg-5">
     <p class="pb-md-3">
       <small class="text-dejavu-secondary-light">Explore trips by</small><br>
-      <span class="fw-semibold h3">Categories</span>
+      <span class="h3">Categories</span>
     </p>
     <aside class="overflow-auto text-nowrap">
       <% categoryItems.forEach(category => { %>
@@ -416,16 +398,16 @@
   <section class="departure_city_section container-xl py-4 pb-lg-5">
     <p class="pb-md-3">
       <small class="text-dejavu-secondary-light">Departing from your nearby location</small><br>
-      <span class="fw-semibold h3">Tour packages available from</span>
+      <span class="h3">Tour packages available from</span>
     </p>
 
     <!-- Tabs for Departure Cities -->
-    <ul class="nav nav-tabs departure-city-tabs mb-4" id="departureCityTabs" role="tablist">
+    <ul class="nav nav-tabs departure-city-tabs mb-4 flex-nowrap overflow-x-auto pb-1 gap-2" id="departureCityTabs" role="tablist">
       <% departureCities.forEach((city, index) => { %>
       <li class="nav-item" role="presentation">
-        <button class="nav-link <%= index === 0 ? 'active' : '' %>" id="tab-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" data-bs-toggle="tab" data-bs-target="#pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" type="button" role="tab" aria-controls="pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" aria-selected="<%= index === 0 ? 'true' : 'false' %>">
+        <a href="#" class="nav-link text-nowrap <%= index === 0 ? 'active' : '' %>" id="tab-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" data-bs-toggle="tab" data-bs-target="#pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" type="button" role="tab" aria-controls="pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" aria-selected="<%= index === 0 ? 'true' : 'false' %>">
           <%= city.name %>
-        </button>
+        </a>
       </li>
       <% }); %>
     </ul>
@@ -439,7 +421,7 @@
           <div class="trip-cards-container">
             <div class="trip-cards-row">
               <% city.trips.forEach((trip, tripIndex) => { %>
-              <div class="trip-card" data-card-index="<%= tripIndex %>" onclick="window.location.href='/tripdetail/<%= trip.name %>'">
+              <a class="trip-card" data-card-index="<%= tripIndex %>" href="/tripdetail/<%= trip.name %>" title="<%= trip.name %>">
                 <!-- Swiper Slider for Banner Images -->
                 <div class="trip-image-slider swiper">
                   <div class="swiper-wrapper">
@@ -457,29 +439,27 @@
                   </div>
                   <!-- Navigation Buttons for Slider -->
                   <% if (trip.bannerimages && trip.bannerimages.length > 1) { %>
-                  <div class="swiper-button-prev swiper-button-white-black" aria-label="Previous slide"></div>
-                  <div class="swiper-button-next swiper-button-white-black" aria-label="Next slide"></div>
+                    <div class="swiper-button-prev swiper-button-white-black" aria-label="Previous slide"></div>
+                    <div class="swiper-button-next swiper-button-white-black" aria-label="Next slide"></div>
                   <% } %>
                 </div>
                 <!-- Trip Details -->
                 <div class="p-3">
-                  <h6 class="mb-1"><%= trip.name %></h6>
-                  <p class="text-muted small mb-2">
-                    <%= trip.destinations %>
-                  </p>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <span class="fw-bold">₹<%= trip.adultPrice || trip.price %>/person</span>
-                    <span class="text-muted small">
-                      <i class="bi bi-calendar"></i> <%= trip.tripDuration || '2 Days - 3 Nights' %>
+                  <h5 class="mb-1"><%= trip.name %></h5>
+                  <p class="text-muted small mb-2"><%= trip.destinations %></p>
+                  <p class="d-flex justify-content-between align-items-center mb-0">
+                    <span><strong>₹<%= trip.adultPrice || trip.price %></strong>/person</span>
+                    <span class="">
+                      <i class="text-muted bi bi-calendar"></i> <%= trip.tripDuration || '2 Days - 3 Nights' %>
                     </span>
-                  </div>
+                  </p>
                 </div>
-              </div>
+              </a>
               <% }); %>
             </div>
           </div>
           <!-- Navigation Buttons for Row -->
-          <button class="row-nav-btn row-nav-prev btn btn-light rounded-circle shadow-sm" aria-label="Previous cards" disabled>
+          <button class="row-nav-btn row-nav-prev btn btn-light rounded-circle shadow-sm" aria-label="Previous cards">
             <i class="bi bi-chevron-left"></i>
           </button>
           <button class="row-nav-btn row-nav-next btn btn-light rounded-circle shadow-sm" aria-label="Next cards">
@@ -525,7 +505,7 @@
   <section class="international_section container-xl py-4 pb-lg-5 position-relative overflow-hidden">
     <p class="pb-md-3">
       <small class="text-dejavu-secondary-light">Dejavu global</small><br>
-      <span class="fw-semibold h3">Experience International Gateways!</span>
+      <span class="h3">Experience International Gateways!</span>
     </p>
     <div class="row g-2 international-cards-row">
       <!-- Dubai -->
@@ -564,7 +544,7 @@
   </section>
 
   <%- include('../partials/footer'); %>
-  <%- include('../partials/scripttag'); %>
+  <%- include('../partials/scripttag', {isNiceSelect: false}); %>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -635,9 +615,18 @@
         function updateNavButtons() {
           const scrollLeft = container.scrollLeft;
           const maxScroll = container.scrollWidth - container.clientWidth;
-
-          prevBtn.disabled = scrollLeft <= 0;
-          nextBtn.disabled = scrollLeft >= maxScroll - 1;
+          if(scrollLeft <= 0){
+            prevBtn.classList.add('d-none');
+            nextBtn.classList.remove('d-none');
+          } else {
+            prevBtn.classList.remove('d-none');
+          }
+          if(scrollLeft >= maxScroll - 1){
+            prevBtn.classList.remove('d-none');
+            nextBtn.classList.add('d-none');
+          } else {
+            nextBtn.classList.remove('d-none');
+          }
 
           // Update visual cue for scrollability
           container.classList.toggle("scrolled-to-start", scrollLeft <= 0);
@@ -703,6 +692,18 @@
             nextBtn.click();
           }
         });
+
+        // Check for overflow and show/hide navigation buttons
+        const checkOverflow = () => {
+          const isOverflowing = container.scrollWidth > container.clientWidth;
+          prevBtn.style.display = isOverflowing ? 'flex' : 'none';
+          nextBtn.style.display = isOverflowing ? 'flex' : 'none';
+          updateNavButtons();
+        };
+
+        new ResizeObserver(checkOverflow).observe(container);
+        window.addEventListener('resize', checkOverflow);
+        checkOverflow(); // initial check
       });
     });
 
@@ -741,42 +742,6 @@
         }
       }
     }
-
-    // Packages Show More Logic
-    document.addEventListener("DOMContentLoaded", function() {
-      // Initialize Bootstrap tooltips
-      $('[data-bs-toggle="tooltip"]').tooltip();
-
-      // Packages Show More Logic
-      const grid = document.querySelector(".packages-grid");
-      const cards = grid.querySelectorAll(".package-card");
-      const showMoreBtn = document.getElementById("btn-packages");
-      const maxInitialCards = 6;
-
-      // Hide cards beyond initial limit
-      cards.forEach((card, index) => {
-        if (index >= maxInitialCards) {
-          card.style.display = "none";
-        }
-      });
-
-      // Toggle visibility on button click
-      showMoreBtn.addEventListener("click", function() {
-        const isShowingMore = showMoreBtn.innerText === "Show Less";
-        showMoreBtn.innerText = isShowingMore ? "Show More" : "Show Less";
-
-        cards.forEach((card, index) => {
-          if (index >= maxInitialCards) {
-            card.style.display = isShowingMore ? "none" : "block";
-          }
-        });
-      });
-
-      // Hide button if fewer than maxInitialCards
-      if (cards.length <= maxInitialCards) {
-        showMoreBtn.style.display = "none";
-      }
-    });
 
     // Define Shared State Object for filter and search
     const filterState = {
@@ -913,10 +878,26 @@
             syncInputs(key);
           }
         });
+
+        // Call redirectWithFilters when user hits Enter in modal search input
+        searchInput?.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            redirectWithFilters();
+          }
+        });
       });
 
       input2?.addEventListener('input', (e) => {
         filterState['search'] = e.target.value;
+      });
+      
+      // Call redirectWithFilters when user hits Enter in modal search input
+      input2?.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          redirectWithFilters();
+        }
       });
 
       function syncInputs(key) {
@@ -956,6 +937,15 @@
       }
 
       heroSearchBtn?.addEventListener('click', redirectWithFilters);
+
+
+      // Stop navigation on next or prev button click of the swiper
+      document.querySelectorAll('.swiper-button-next, .swiper-button-prev').forEach(button => {
+        button.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+        });
+      });
     });
 
     const filterLists = document.querySelectorAll(".filter_list");

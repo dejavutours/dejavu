@@ -2,7 +2,7 @@
 <html class="no-js" lang="zxx">
 
 <head>
-    <%- include('../partials/headtag'); %>
+    <%- include('../partials/headtag', {isNiceSelect: true}); %>
 </head>
 <script src="/js/sorttable.js"></script>
 <body>
@@ -164,7 +164,7 @@
       </table>
 
     <%- include('../partials/footer'); %>
-    <%- include('../partials/scripttag'); %>
+    <%- include('../partials/scripttag', {isNiceSelect: true}); %>
     <script>
         $(document).ready(function(){
           $("#myInput").on("keyup", function() {

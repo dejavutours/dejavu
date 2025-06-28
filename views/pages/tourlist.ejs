@@ -2,60 +2,60 @@
 <html lang="en">
 
 <head>
-  <%- include('../partials/headtag'); %>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+  <%- include('../partials/headtag', {isNiceSelect: true}); %>
   <style>
-    .subtitle {
-      color: #f05a5a;
-      font-size: 14px;
-      margin-bottom: 8px;
+    /* Defining CSS variables for consistent theming */
+    :root {
+      --primary-blue: #1a4b8e;
+      --light-gray: #f8f9fa;
+      --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      --transition: 0.3s ease;
+      --error-red: #dc3545;
+      --premium-gold: #FFD700;
+      --dark-gray: #333333;
     }
 
-    .subtitle h1 {
-      font-size: 28px;
-      margin-bottom: 20px;
+    /* Subtitle styling */
+    .subtitle {
+      color: #f05a5a;
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle + h1 {
+      font-size: 1.75rem;
+      margin-bottom: 1.25rem;
       color: #222;
     }
 
-    .search-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      gap: 15px;
-    }
-
+    /* Search bar styling */
     .search-container .search-bar {
       display: flex;
       flex-grow: 1;
       max-width: 800px;
       border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      overflow: hidden;
+      border-radius: 8px;
       background-color: white;
+      box-shadow: var(--shadow);
     }
 
     .search-container .select-wrapper {
-      position: relative;
-      min-width: 55px;
+      min-width: 70px;
       border-right: 1px solid #e0e0e0;
+      position: relative;
     }
 
-    .search-container  .select-wrapper .select {
-      display: block;
+    .search-container .select {
       width: 100%;
-      padding: 10px 30px 10px 15px;
+      padding: 12px 30px 12px 15px;
       border: none;
-      background-color: white;
-      font-size: 14px;
+      font-size: 0.9rem;
       cursor: pointer;
-      color: #333;
+      color: var(--dark-gray);
+      background-color: white;
     }
 
-    .search-container  .select-wrapper::after {
+    .search-container .select-wrapper::after {
       content: "▼";
       font-size: 10px;
       color: #888;
@@ -66,84 +66,78 @@
       pointer-events: none;
     }
 
-    .search-container  .input-wrapper {
-      position: relative;
+    .search-container .input-wrapper {
       flex-grow: 1;
       display: flex;
       align-items: center;
+      position: relative;
     }
 
-    .search-container  .search-icon {
+    .search-container .search-icon {
       position: absolute;
       left: 15px;
       width: 16px;
       height: 16px;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%239e9e9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-    }
-
-    .search-container  .search-input {
-      width: 100%;
-      padding: 10px 15px 10px 40px;
-      border: none;
-      font-size: 14px;
-      outline: none;
-      color: #333;
-    }
-
-    .search-container  .search-input::placeholder {
       color: #9e9e9e;
     }
 
-    .search-container  .filters-btn {
+    .search-container .search-input {
+      width: 100%;
+      padding: 12px 15px 12px 40px;
+      border: none;
+      font-size: 0.9rem;
+      outline: none;
+      color: var(--dark-gray);
+    }
+
+    .search-container .search-input::placeholder {
+      color: #9e9e9e;
+    }
+
+    /* Filters button */
+    .filters-btn {
       display: flex;
       align-items: center;
-      padding: 10px 20px;
-      background-color: white;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      font-size: 14px;
-      cursor: pointer;
       gap: 8px;
-      color: #333;
+      --bs-btn-font-size: 0.9rem;
+      --bs-btn-padding-x: 20px;
+      --bs-btn-padding-y: 10px;
+      --bs-btn-bg: #fff;
+      --bs-btn-border-color: #e0e0e0;
+      --bs-btn-hover-bg: var(--primary-blue);
+      --bs-btn-hover-border-color: var(--primary-blue);
+      --bs-btn-hover-color: #fff;
     }
 
-    .search-container  .filters-btn .filters-icon {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-    }
-
-    .packages-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-      gap: 10px;
-    }
-
+    /* Package card styling */
     .package-card {
-      cursor: pointer;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      text-decoration: none;
+      color: inherit;
+      box-shadow: var(--shadow);
+      transition: box-shadow var(--transition), transform var(--transition);
+      position: relative;
+      border-radius: 8px;
     }
 
     .package-card:hover {
-      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+      transform: translateY(-4px);
+    }
+
+    .package-card.inactive {
+      opacity: 0.7;
+      border: 2px solid #d1d5db;
     }
 
     .card-image-container {
-      position: relative;
-      height: 280px;
+      height: 200px;
       overflow: hidden;
-      border-radius: 12px;
+      margin: 0.75rem;
+      border-radius: 8px;
     }
 
     .card-image {
-      width: 100%;
-      height: 100%;
+      max-height: 100%;
       object-fit: cover;
       transition: transform 0.5s ease;
     }
@@ -152,125 +146,284 @@
       transform: scale(1.05);
     }
 
-    .card-body .card-title {
-      font-size: 22px;
-      font-weight: 400 !important;
-      color: #040E27;
+    .card-title {
+      font-weight: 500;
+      font-size: 1.25rem;
+      color: var(--dark-gray);
     }
 
-    .discount-tag {
+    /* Admin status badge */
+    .status-badge {
       position: absolute;
       top: 10px;
-      right: 10px;
-      background-color: #ff5a5f;
+      left: 10px;
+      background-color: #28a745;
       color: white;
-      padding: 5px 10px;
+      padding: 4px 8px;
       border-radius: 4px;
-      font-size: 12px;
+      font-size: 0.75rem;
       font-weight: bold;
+      z-index: 1;
     }
 
-    .region {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-      color: #666;
-      font-size: 13px;
+    .status-badge.inactive {
+      background-color: var(--error-red);
     }
 
-    .region::before {
-      content: "";
-      display: inline-block;
-      width: 14px;
-      height: 14px;
-      margin-right: 5px;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>');
-      background-repeat: no-repeat;
-      background-position: center;
-    }
-
-    .font-weight-bold {
-      font-weight: bold;
-    }
-
-    .overflow-auto {
-      overflow: auto;
-    }
-
+    /* Chip styling */
     .chip {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      padding: 3px 10px;
-      margin: 0px 0px 11px 7px;
-      font-size: 14px;
-      border-radius: 10px;
-      background-color: #f1f3f5;
-      color: #333;
-      border: 1px solid #d1d1d1;
+      padding: 6px 12px;
+      margin: 4px 8px 4px 0;
+      font-size: 0.85rem;
+      border-radius: 16px;
+      background-color: var(--light-gray);
+      color: var(--dark-gray);
+      border: 1px solid #d1d5db;
       cursor: pointer;
     }
 
     .chip .close {
-      margin-left: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      color: #666;
+      margin-left: 6px;
+      font-size: 1rem;
+      color: #6b7280;
     }
 
     .chip .close:hover {
       color: #000;
     }
 
-    .location-text {
-      color: #6c757d;
-      font-size: 14px;
+    /* Quick Call Modal Styling */
+    .quick-call-modal-content {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      border: none;
+      max-width: 400px;
+      margin: 0 auto;
     }
 
-    .icon-text {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 14px;
-      color: #000000;
-    }
-
-    .icon-text i {
-      color: #020202;
-    }
-
-    .details {
-      font-size: 14px;
-      color: #6c757d;
-    }
-
-    .bottom-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 10px;
-    }
-
-    .price {
-      font-weight: bold;
-      font-size: 18px;
-      color: #000;
-    }
-
-    .price small {
-      font-size: 14px;
-      color: #6c757d;
-    }
-
-    /* Modal-specific styles */
-    .image-preview {
+    .quick-call-modal-header {
+      background: var(--primary-blue);
+      background-image: url('/images/quick-call-bg.jpg');
+      background-size: cover;
+      background-position: center;
       position: relative;
+      border-bottom: none;
+      padding: 30px 20px;
+      min-height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .image-preview img {
+    .quick-call-modal-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(26, 75, 142, 0.7);
+    }
+
+    .quick-call-modal-header .btn-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 1;
+      filter: brightness(0) invert(1);
+    }
+
+    .modal-body-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .quick-call-modal-header .modal-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.3;
+      color: white;
+    }
+
+    .quick-call-modal-header p {
+      font-size: 0.9rem;
+      margin-bottom: 0;
+      line-height: 1.4;
+      color: white;
+    }
+
+    .quick-call-modal-body {
+      padding: 20px 24px;
+      background: #fff;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+    }
+
+    .quick-call-modal-body .form-label {
+      font-size: 0.85rem;
+      color: var(--dark-gray);
+      text-align: left;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .quick-call-modal-body .form-control,
+    .quick-call-modal-body .form-select {
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      box-shadow: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .quick-call-modal-body .form-select {
+      max-width: 90px;
+      padding-right: 30px;
+      background-size: 10px;
+    }
+
+    .quick-call-modal-body .form-control:focus,
+    .quick-call-modal-body .form-select:focus {
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 2px rgba(26, 75, 142, 0.2);
+      outline: none;
+    }
+
+    .quick-call-modal-body .form-control.is-invalid,
+    .quick-call-modal-body .form-select.is-invalid {
+      border-color: var(--error-red);
+    }
+
+    .quick-call-modal-body .invalid-feedback {
+      color: var(--error-red);
+      font-size: 0.75rem;
+      margin-top: 4px;
+    }
+
+    .quick-call-modal-body .notes {
+      margin-top: 16px;
+    }
+
+    .quick-call-modal-body .note-icon {
+      color: var(--primary-blue);
+      margin-right: 8px;
+      font-size: 1rem;
+    }
+
+    .quick-call-modal-body .notes span {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    .quick-call-modal-footer {
+      padding: 16px 24px;
+      border-top: none;
+      display: flex;
+      justify-content: center;
+      background: #fff;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+    }
+
+    .quick-call-modal-btn {
+      background: var(--premium-gold);
+      color: var(--dark-gray);
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background var(--transition), transform var(--transition);
+      display: flex;
+      align-items: center;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .quick-call-modal-btn:hover {
+      background: #e6c200;
+      transform: translateY(-2px);
+    }
+
+    .quick-call-modal-btn:disabled {
+      background: #d1d5db;
+      color: #6b7280;
+      cursor: not-allowed;
+    }
+
+    .quick-call-modal-btn i {
+      font-size: 1rem;
+    }
+
+    /* Action buttons */
+    .call-now-btn, .whatsapp-btn, .request-callback-btn {
+      --bs-btn-font-size: 0.875rem;
+      --bs-btn-padding-y: 0.375rem;
+      --bs-btn-padding-x: 0.75rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .call-now-btn {
+      --bs-btn-bg: var(--primary-blue);
+      --bs-btn-color: #fff;
+    }
+
+    .whatsapp-btn {
+      --bs-btn-border-color: #25d366;
+      --bs-btn-color: #25d366;
+      --bs-btn-hover-bg: #25d366;
+      --bs-btn-hover-color: #fff;
+    }
+
+    .request-callback-btn {
+      --bs-btn-bg: var(--premium-gold);
+      --bs-btn-color: var(--dark-gray);
+      --bs-btn-hover-bg: #e6c200;
+    }
+
+    /* Admin buttons */
+    .edit-tour, .manage-images, .change-status, .delete-tour {
+      --bs-btn-font-size: 0.875rem;
+      --bs-btn-padding-y: 0.375rem;
+      --bs-btn-padding-x: 0.75rem;
+    }
+
+    /* Share button */
+    /* .share-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      padding: 6px;
+      box-shadow: var(--shadow);
+    } */
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1055;
       border-radius: 8px;
     }
 
-    .image-preview .btn {
+    /* Image management modal */
+    .image-preview img, .banner-image img {
+      max-width: 150px;
+      max-height: 150px;
+      border-radius: 8px;
+    }
+
+    .image-preview .btn, .banner-image .btn {
       padding: 2px 6px;
     }
 
@@ -284,17 +437,10 @@
       transform: scale(1.05);
     }
 
-    .banner-image img {
-      max-width: 150px;
-      max-height: 150px;
-      border-radius: 8px;
-    }
-
     .banner-image .remove-btn {
       position: absolute;
       top: 5px;
       right: 5px;
-      padding: 2px 6px;
     }
 
     #imageManagementModal .modal-dialog,
@@ -302,28 +448,89 @@
       max-width: 800px;
     }
 
+    /* Responsive adjustments */
     @media (max-width: 768px) {
-      .packages-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      .card-image-container {
+        height: 150px;
+      }
+
+      .card-title {
+        font-size: 1.1rem;
       }
     }
 
     @media (max-width: 576px) {
-      .search-container {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .search-bar {
+      .search-container .search-bar {
         max-width: 100%;
       }
 
-      .filters-btn {
-        align-self: flex-end;
+      .quick-call-modal-content {
+        max-width: 100%;
+        margin: 10px;
       }
 
-      .packages-grid {
-        grid-template-columns: 1fr;
+      .quick-call-modal-header {
+        min-height: 120px;
+        padding: 20px 16px;
+      }
+
+      .quick-call-modal-header .modal-title {
+        font-size: 1.1rem;
+      }
+
+      .quick-call-modal-header p {
+        font-size: 0.85rem;
+      }
+
+      .quick-call-modal-header .btn-close {
+        top: 10px;
+        right: 10px;
+      }
+
+      .quick-call-modal-body {
+        padding: 16px 20px;
+      }
+
+      .quick-call-modal-body .form-label {
+        font-size: 0.8rem;
+      }
+
+      .quick-call-modal-body .form-control,
+      .quick-call-modal-body .form-select {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+      }
+
+      .quick-call-modal-body .form-select {
+        max-width: 80px;
+      }
+
+      .quick-call-modal-body .invalid-feedback {
+        font-size: 0.7rem;
+      }
+
+      .quick-call-modal-body .notes .note-icon {
+        font-size: 0.9rem;
+        margin-right: 6px;
+      }
+
+      .quick-call-modal-body .notes span {
+        font-size: 0.75rem;
+      }
+
+      .quick-call-modal-footer {
+        padding: 12px 20px;
+      }
+
+      .quick-call-modal-btn {
+        font-size: 0.85rem;
+        padding: 8px 20px;
+      }
+
+      .call-now-btn, .whatsapp-btn, .request-callback-btn {
+        --bs-btn-font-size: 0.75rem;
+        --bs-btn-padding-y: 0.25rem;
+        --bs-btn-padding-x: 0.5rem;
       }
 
       #imageManagementModal .modal-dialog,
@@ -338,320 +545,243 @@
         max-height: 100px;
       }
     }
+
+    @media (max-width: 400px) {
+      .quick-call-modal-header {
+        min-height: 110px;
+        padding: 16px 12px;
+      }
+
+      .quick-call-modal-header .modal-title {
+        font-size: 1rem;
+      }
+
+      .quick-call-modal-header p {
+        font-size: 0.8rem;
+      }
+
+      .quick-call-modal-body {
+        padding: 12px 16px;
+      }
+
+      .quick-call-modal-body .form-label {
+        font-size: 0.75rem;
+      }
+
+      .quick-call-modal-body .form-control,
+      .quick-call-modal-body .form-select {
+        font-size: 0.8rem;
+        padding: 6px 8px;
+      }
+
+      .quick-call-modal-body .form-select {
+        max-width: 70px;
+      }
+
+      .quick-call-modal-body .invalid-feedback {
+        font-size: 0.65rem;
+      }
+
+      .quick-call-modal-body .notes .note-icon {
+        font-size: 0.85rem;
+        margin-right: 5px;
+      }
+
+      .quick-call-modal-body .notes span {
+        font-size: 0.7rem;
+      }
+
+      .quick-call-modal-footer {
+        padding: 10px 16px;
+      }
+
+      .quick-call-modal-btn {
+        font-size: 0.8rem;
+        padding: 8px 16px;
+      }
+    }
   </style>
 </head>
 
 <body>
-  <%- include('../partials/header'); %>
-  <div class="container">
-    <div class="subtitle">Our curated tour packages</div>
-    <h1>Where are you planning to go next?</h1>
-    <div class="search-container">
+  <%- include('../partials/header', {isSearch: false}); %>
+  <!-- Main header -->
+  <header class="container-xl py-3">
+    <span class="subtitle">Our curated tour packages</span>
+    <h1 class="h2">Where are you planning to go next?</h1>
+    <div class="search-container d-flex flex-wrap align-items-md-center justify-content-between gap-3 pt-2 pt-md-3">
       <div class="search-bar">
         <div class="select-wrapper">
-          <span class="select">ALL</span>
+          <select class="select" aria-label="Filter by region">
+            <option value="ALL" selected>ALL</option>
+            <option value="India">India</option>
+            <option value="International">International</option>
+          </select>
         </div>
         <div class="input-wrapper">
-          <span class="search-icon"></span>
-          <input id="SearchEntry" type="text" class="search-input" placeholder="Try searching place name, region, category">
+          <i class="bi bi-search search-icon"></i>
+          <input id="searchEntry" type="text" class="search-input" placeholder="Try searching place name, region, category" aria-label="Search tours">
         </div>
       </div>
-      <button class="filters-btn" id="filterButton">
-        <span class="filters-icon"></span>
-        Filters
+      <button class="btn filters-btn ms-auto" id="filterButton" aria-label="Open filters">
+        <i class="bi bi-sliders2-vertical"></i> Filters
       </button>
     </div>
-    <div class="container mt-4">
-      <div id="chipContainer" class="d-flex flex-wrap">
-        <% filterChips.forEach((chip, index) => { %>
-        <div class="chip">
-          <span><%= chip %></span>
-          <span class="close" onclick="removeChip('<%= chip %>','<%=index%>')">×</span>
-        </div>
-        <% }); %>
-        <% if (Searchvalue) { %>
-        <div class="chip">
-          <span><%= Searchvalue %></span>
-          <span class="close" onclick="removeSearchChip('<%= Searchvalue %>')">×</span>
-        </div>
-        <% } %>
-      </div>
+    <!-- Filter chips -->
+    <div class="mt-4 d-flex flex-wrap gap-2" id="chipContainer">
+      <% filterChips.forEach((chip, index) => { %>
+      <span class="chip" data-chip="<%= chip %>">
+        <span class="text-truncate"><%= chip %></span>
+        <span class="close" aria-label="Remove filter <%= chip %>">×</span>
+      </span>
+      <% }); %>
+      <% if (Searchvalue) { %>
+      <span class="chip" data-chip="<%= Searchvalue %>">
+        <span class="text-truncate"><%= Searchvalue %></span>
+        <span class="close" aria-label="Remove search term <%= Searchvalue %>">×</span>
+      </span>
+      <% } %>
     </div>
-    <!-- the package card section -->
-    <div class="packages-grid">
-      <% 
-      // Filter packages based on user role
-      let displayedPackages = (profile?.email === process.env.GMAIL_ADMIN || profile?.email === process.env.GMAIL_ADMIN_TWO)
-      ? tourPackages : tourPackages.filter(tour => tour.isActive);
-     displayedPackages.forEach(function(tour, index) { 
-      %>
-      <% 
-      const isAdmin = profile?.email === process.env.GMAIL_ADMIN || profile?.email === process.env.GMAIL_ADMIN_TWO; 
+  </header>
+
+  <!-- Main content -->
+  <main class="container-xl">
+    <% 
+      const isAdmin = (profile?.email === process.env.GMAIL_ADMIN) || (profile?.email === process.env.GMAIL_ADMIN_TWO);
+      let displayedPackages = isAdmin ? tourPackages : tourPackages.filter(tour => tour.isActive);
     %>
-    <div class="package-card p-2 border rounded-4 <%= !tour.isActive ? 'inactive' : '' %>" 
-         onclick="window.location.href='/tripdetail/<%= tour.name %>'" 
-         <% if (!tour.isActive && isAdmin) { %> 
-             data-bs-toggle="tooltip" data-placement="top" title="This trip is inactive" 
-         <% } %>>
-    
-        <div class="card-image-container">
-          <img src="<%= tour.imageurl %>" alt="Tour package - <%= tour.name %> in <%= tour.state %>, India" class="card-image card-img-top img-fluid rounded-4" loading="lazy" onerror="this.onerror=null; this.src='/images/placeholder.jpg';">
-        </div>
-        <div class="card-body p-2">
-          <h2 class="card-title fw-bold"><%= tour.name %></h2>
-          <p class="location-text"><%- tour.destinations %></p>
-          <div class="icon-text">
-            <i class="bi bi-geo-alt-fill"></i>
-            <span><%= tour.state %>, India</span>
-          </div>
-          <div class="bottom-info">
-            <span class="details"><i class="bi bi-calendar-event"></i> <%- tour.days %></span>
-            <span class="price">From ₹<%- tour.price %><small>/person</small></span>
-          </div>
-          <% if (profile?.email === process.env.GMAIL_ADMIN || profile?.email === process.env.GMAIL_ADMIN_TWO) { %>
-          <div class="mt-2 mb-2 d-flex align-items-center gap-2">
-            <!-- Option 1: Keep as <a> with stopPropagation -->
-            <a href="/admin/addtours?tripid=<%= tour._id %>" class="btn btn-primary btn-sm edit-tour" data-id="<%= tour._id %>">Edit</a>
-            <!-- Option 2: Convert to <button> (uncomment if preferred) -->
-            <!-- <button class="btn btn-primary btn-sm edit-tour" data-id="<%= tour._id %>">Edit</button> -->
-            <button class="btn btn-primary btn-sm manage-images" data-id="<%= tour._id %>">Manage Images</button>
-            <button class="btn btn-warning btn-sm change-status" data-id="<%= tour._id %>" data-active="<%= tour.isActive !== false %>">
-              <%= tour.isActive !== false ? 'Disable' : 'Enable' %>
-            </button>
-            <button class="btn btn-danger btn-sm delete-tour" data-id="<%= tour._id %>">Delete</button>
-          </div>
+    <div class="row g-3">
+      <% displayedPackages.forEach(function(tour) { %>
+      <article class="col-sm-6 col-lg-4">
+        <div class="card package-card h-100 rounded-4 <%= !tour.isActive ? 'inactive' : '' %>" 
+             role="button" 
+             aria-label="View details for <%= tour.name %> in <%= tour.state %>, India"
+             data-bs-toggle="<%= (!tour.isActive && isAdmin) ? 'tooltip' : '' %>"
+             title="<%= (!tour.isActive && isAdmin) ? 'This trip is inactive' : '' %>">
+          <!-- Admin status badge -->
+          <% if (isAdmin) { %>
+          <span class="status-badge <%= !tour.isActive ? 'inactive' : '' %>">
+            <%= tour.isActive ? 'Published' : 'Draft' %>
+          </span>
           <% } %>
+          <figure class="card-image-container rounded-3">
+            <img src="<%= tour.imageurl %>" 
+                 alt="Tour package - <%= tour.name %> in <%= tour.state %>, India" 
+                 class="card-image card-img-top h-100" 
+                 loading="lazy"
+                 onerror="this.src='/images/placeholder.jpg';">
+            <figcaption class="visually-hidden">Trip image for <%= tour.name %></figcaption>
+          </figure>
+          <div class="card-body">
+            <h3 class="card-title mb-1"><%= tour.name %></h3>
+            <p class="small text-truncate text-muted mb-1"><%- tour.destinations %></p>
+            <p class="text-truncate mb-1 small text-muted">
+              <i class="bi bi-geo-alt-fill"></i>
+              <span><%= tour.state %>, India</span>
+            </p>
+            <p class="d-flex justify-content-between align-items-center mb-1">
+              <small><i class="bi bi-calendar-event text-muted"></i> <%- tour.days %></small>
+              <span class="fw-medium">From ₹<%- tour.price %><small>/person</small></span>
+            </p>
+            <% if (isAdmin) { %>
+            <div class="my-2 d-flex align-items-center gap-2 flex-wrap">
+              <button class="btn btn-primary btn-sm edit-tour" data-id="<%= tour._id %>" data-bs-toggle="tooltip" title="Edit tour details">Edit</button>
+              <button class="btn btn-primary btn-sm manage-images" data-id="<%= tour._id %>" data-bs-toggle="tooltip" title="Manage tour images">Manage Images</button>
+              <button class="btn btn-warning btn-sm change-status" data-id="<%= tour._id %>" data-active="<%= tour.isActive !== false %>" data-bs-toggle="tooltip" title="Toggle tour status">
+                <%= tour.isActive !== false ? 'Disable' : 'Enable' %>
+              </button>
+              <button class="btn btn-danger btn-sm delete-tour" data-id="<%= tour._id %>" data-bs-toggle="tooltip" title="Delete tour">Delete</button>
+            </div>
+            <% } %>
+            <div class="d-flex flex-wrap gap-2 mt-2">
+              <a class="btn call-now-btn" 
+                 href="tel:+918511117891" 
+                 aria-label="Call now for <%= tour.name %>">
+                <i class="bi bi-telephone-fill me-1"></i> Call Now
+              </a>
+              <button class="btn request-callback-btn" 
+                      data-bs-toggle="modal" 
+                      data-bs-target="#quickCallModal" 
+                      data-trip-id="<%= tour._id %>" 
+                      aria-label="Request callback for <%= tour.name %>">
+                <i class="bi bi-telephone-inbound-fill me-1"></i> Request Call
+              </button>
+              <a class="btn whatsapp-btn" 
+                href="https://wa.me/+918511117891?text=Hello%20I%20am%20interested%20in%20the%20trip%20*<%= encodeURIComponent(tour.name) %>*%20tour.%20Could%20you%20please%20share%20more%20details." 
+                target="_blank" 
+                aria-label="Contact via WhatsApp for <%= tour.name %>">
+                <i class="bi bi-whatsapp me-1"></i> WhatsApp
+              </a>
+            </div>
+            <!-- <button class="btn share-btn" 
+                    aria-label="Share <%= tour.name %>">
+              <i class="bi bi-share-fill"></i>
+              <span class="visually-hidden">Share this trip</span>
+            </button> -->
+          </div>
         </div>
-      </div>
+      </article>
       <% }); %>
     </div>
-  </div>
+  </main>
 
   <!-- Filters Modal -->
   <div class="modal fade bd-example-modal-lg" id="filtersModal" tabindex="-1" aria-labelledby="filtersModalLabel" aria-hidden="true">
-    <!-- Existing filter modal content unchanged -->
-    <div class="modal-dialog modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header">
+    <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable">
+      <form class="modal-content" id="tourList" action="/triplist" method="GET">
+        <div class="modal-header text-white">
           <h5 class="modal-title" id="filtersModalLabel">Filters</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form id="tourList" action="/triplist" method="GET" class="overflow-auto">
-          <div class="modal-body">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <input id="filterValue" name="filterValue" type="hidden">
-            <input id="searchValue" name="searchValue" type="hidden">
-            <!-- Existing filter sections unchanged -->
-            <!-- <div class="filter-section mb-4"> -->
-            <!-- <div class="filter-section-title font-weight-bold">Filter by departure date between</div> -->
-            <!-- <div class="row">
-                <div class="col-md-6 mb-3"><label class="form-label">From date</label><select class="form-select"><option selected>Select...</option></select></div>
-                <div class="col-md-6 mb-3"><label class="form-label">To date</label><select class="form-select"><option selected>Select...</option></select></div>
-              </div> -->
-            <!-- </div> -->
-            <div class="filter-section mb-4">
-              <div class="filter-section-title font-weight-bold">Tour category</div>
-              <div class="row">
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="adventure">
-                    <label class="form-check-label" for="adventure">Adventure</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="heritage">
-                    <label class="form-check-label" for="heritage">Heritage</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="wildlife">
-                    <label class="form-check-label" for="wildlife">Wildlife</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="safari">
-                    <label class="form-check-label" for="safari">Safari</label>
-                  </div>
-                </div>
-
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="trekking">
-                    <label class="form-check-label" for="trekking">Trekking</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="camping">
-                    <label class="form-check-label" for="camping">Camping</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="sightseeing">
-                    <label class="form-check-label" for="sightseeing">Sightseeing</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="offbeat">
-                    <label class="form-check-label" for="offbeat">Offbeat</label>
-                  </div>
-                </div>
-
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="backpacking">
-                    <label class="form-check-label" for="backpacking">Backpacking</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="spiritual">
-                    <label class="form-check-label" for="spiritual">Spiritual</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="summer">
-                    <label class="form-check-label" for="summer">Summer</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="leisure">
-                    <label class="form-check-label" for="leisure">Leisure</label>
-                  </div>
-                </div>
-
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="himalaya">
-                    <label class="form-check-label" for="himalaya">Himalaya</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="festival">
-                    <label class="form-check-label" for="festival">Festival</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="winter">
-                    <label class="form-check-label" for="winter">Winter</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="monsoon">
-                    <label class="form-check-label" for="monsoon">Monsoon</label>
-                  </div>
+        <div class="modal-body">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input id="filterValue" name="filterValue" type="hidden">
+          <input id="searchValue" name="searchValue" type="hidden">
+          <div class="filter-section mb-4">
+            <p class="filter-section-title h6">Tour category</p>
+            <div class="row gy-2">
+              <% ['adventure', 'heritage', 'wildlife', 'safari', 'trekking', 'camping', 'sightseeing', 'offbeat', 'backpacking', 'spiritual', 'summer', 'leisure', 'himalaya', 'festival', 'winter', 'monsoon'].forEach(category => { %>
+              <div class="col-6 col-md-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="<%= category %>" name="category">
+                  <label class="form-check-label" for="<%= category %>"><%= category.charAt(0).toUpperCase() + category.slice(1) %></label>
                 </div>
               </div>
-            </div>
-            <div class="filter-section mb-4">
-              <div class="filter-section-title font-weight-bold">Tour type</div>
-              <div class="row">
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="family">
-                    <label class="form-check-label" for="family">Family</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="solo">
-                    <label class="form-check-label" for="solo">Solo</label>
-                  </div>
-                </div>
-
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="couple">
-                    <label class="form-check-label" for="couple">Couple friendly</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="bachelors">
-                    <label class="form-check-label" for="bachelors">Bachelors</label>
-                  </div>
-                </div>
-
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="students">
-                    <label class="form-check-label" for="students">Students</label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="filter-section mb-4">
-              <div class="filter-section-title font-weight-bold">Departure city</div>
-              <div class="row">
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="ahmedabad">
-                    <label class="form-check-label" for="ahmedabad">Ahmedabad</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="mumbai">
-                    <label class="form-check-label" for="mumbai">Mumbai</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="bhuj">
-                    <label class="form-check-label" for="bhuj">Bhuj</label>
-                  </div>
-                </div>
-
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="vadodara">
-                    <label class="form-check-label" for="vadodara">Vadodara</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="pune">
-                    <label class="form-check-label" for="pune">Pune</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="rajkot">
-                    <label class="form-check-label" for="rajkot">Rajkot</label>
-                  </div>
-                </div>
-
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="surat">
-                    <label class="form-check-label" for="surat">Surat</label>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3 mb-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="delhi">
-                    <label class="form-check-label" for="delhi">Delhi</label>
-                  </div>
-                </div>
-              </div>
+              <% }); %>
             </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-outline-secondary" id="clearButton">Clear selection</button>
-            <button type="submit" class="btn btn-primary show-trips-btn" id="ApplyFilterButton">Show trips</button>
+          <div class="filter-section mb-4">
+            <p class="filter-section-title h6">Tour type</p>
+            <div class="row gy-2">
+              <% ['family', 'solo', 'couple', 'bachelors', 'students'].forEach(type => { %>
+              <div class="col-6 col-md-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="<%= type %>" name="type">
+                  <label class="form-check-label" for="<%= type %>"><%= type.charAt(0).toUpperCase() + type.slice(1) %></label>
+                </div>
+              </div>
+              <% }); %>
+            </div>
           </div>
-        </form>
-      </div>
+          <div class="filter-section mb-4">
+            <p class="filter-section-title h6">Departure city</p>
+            <div class="row gy-2">
+              <% ['ahmedabad', 'mumbai', 'bhuj', 'vadodara', 'pune', 'rajkot', 'surat', 'delhi'].forEach(city => { %>
+              <div class="col-6 col-md-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="<%= city %>" name="city">
+                  <label class="form-check-label" for="<%= city %>"><%= city.charAt(0).toUpperCase() + city.slice(1) %></label>
+                </div>
+              </div>
+              <% }); %>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" id="clearButton" aria-label="Clear all filters">Clear selection</button>
+          <button type="submit" class="btn btn-primary show-trips-btn" id="applyFilterButton" aria-label="Apply filters">Show trips</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -665,353 +795,144 @@
         </div>
         <div class="modal-body">
           <input type="hidden" id="tripIdForImages">
-          <!-- Main Image Section -->
           <div class="mb-4">
             <h6>Main Image (Required)</h6>
             <div id="mainImagePreview" class="image-preview position-relative d-inline-block">
               <img src="" alt="Main Image" class="img-thumbnail">
-              <button class="btn btn-sm btn-warning position-absolute top-0 end-0 update-main-image" title="Update Main Image">
+              <button class="btn btn-sm btn-warning position-absolute top-0 end-0 update-main-image" title="Update Main Image" aria-label="Update main image">
                 <i class="bi bi-pencil"></i>
               </button>
             </div>
-            <input type="file" class="form-control mt-2 d-none" id="mainImageInput" accept="image/*">
+            <input type="file" class="form-control mt-2 d-none" id="mainImageInput" accept="image/*" aria-label="Upload main image">
             <small class="text-muted d-block mt-1">This image is required and can only be updated (not deleted).</small>
           </div>
-          <!-- Banner Images Section -->
           <div>
             <h6>Banner Images (Optional)</h6>
             <div id="bannerImagesPreview" class="d-flex flex-wrap gap-2"></div>
-            <input type="file" class="form-control mt-2" id="bannerImagesInput" multiple accept="image/*">
+            <input type="file" class="form-control mt-2" id="bannerImagesInput" multiple accept="image/*" aria-label="Upload banner images">
             <small class="text-muted d-block mt-1">Add up to 12 banner images. Click an image to remove it.</small>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" id="saveImages">Save Changes</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Close</button>
+          <button type="button" class="btn btn-primary" id="saveImages" aria-label="Save image changes">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Call Modal -->
+  <div class="modal fade" id="quickCallModal" tabindex="-1" aria-labelledby="quickCallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content quick-call-modal-content">
+        <div class="modal-header quick-call-modal-header">
+          <div class="modal-body-content">
+            <h5 class="modal-title" id="quickCallModalLabel">Plan Your Next Adventure!</h5>
+            <p>Leave your details, and we'll call you back to plan your trip!</p>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body quick-call-modal-body">
+          <form id="quickCallForm">
+            <input type="hidden" id="tripId" name="tripId">
+            <div class="mb-3">
+              <label for="guestName" class="form-label">Guest Name *</label>
+              <input type="text" class="form-control quick-call-input" id="guestName" name="guestName" placeholder="Enter your name" required aria-describedby="guestNameError">
+              <div class="invalid-feedback" id="guestNameError">Please enter your name</div>
+            </div>
+            <div class="mb-3">
+              <label for="mobileNo" class="form-label">Mobile Number *</label>
+              <div class="input-group">
+                <select class="form-select quick-call-select" id="countryCode" name="countryCode" aria-label="Select country code">
+                  <option value="+91" data-flag="🇮🇳">🇮🇳 +91</option>
+                  <option value="+1" data-flag="🇺🇸">🇺🇸 +1</option>
+                  <option value="+44" data-flag="🇬🇧">🇬🇧 +44</option>
+                </select>
+                <input type="tel" class="form-control quick-call-input" id="mobileNo" name="mobileNo" placeholder="Enter mobile number" required aria-describedby="mobileNoError">
+                <div class="invalid-feedback" id="mobileNoError">Please enter a valid mobile number</div>
+              </div>
+            </div>
+            <div class="notes d-flex flex-column gap-2 mt-4">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-shield-lock-fill note-icon me-2"></i>
+                <span>Your contact data is secure with us.</span>
+              </div>
+              <div class="d-flex align-items-center">
+                <i class="bi bi-telephone-x-fill note-icon me-2"></i>
+                <span>No spam calls, we promise!</span>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer quick-call-modal-footer">
+          <button type="button" class="btn quick-call-modal-btn" id="submitQuickCall" disabled aria-label="Request call back">
+            <i class="bi bi-telephone-fill me-2"></i> Request Call Back
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div class="modal fade" id="quickCallSuccessModal" tabindex="-1" aria-labelledby="quickCallSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="quickCallSuccessModalLabel">Request Submitted!</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+          <p class="mt-3">Thank you for your request! We'll call you back soon to discuss your trip.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Close</button>
         </div>
       </div>
     </div>
   </div>
 
   <%- include('../partials/footer'); %>
-  <%- include('../partials/scripttag'); %>
-
-
+  <%- include('../partials/scripttag', {isNiceSelect: true}); %>
   <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> -->
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Helper to stop event propagation
-      const stopPropagation = (e) => e.stopPropagation();
+    // Utility to debounce functions
+    const debounce = (func, wait) => {
+      let timeout;
+      return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    };
 
-      // Filter Logic
-      const filterChips = '<%= filterChips || "" %>'.split(',').filter(Boolean);
-      if (filterChips.length > 0) {
-        filterChips.forEach(chip => {
-          const chipProperty = document.getElementById(chip);
-          if (chipProperty) chipProperty.checked = true;
-        });
-      }
-      const searchValue = '<%= Searchvalue || "" %>';
-      if (searchValue) document.getElementById('searchValue').value = searchValue;
+    // Show toast notification
+    const showToast = (message, type = 'primary') => {
+      const toast = document.createElement('div');
+      toast.className = `toast align-items-center text-bg-${type} border-0`;
+      toast.setAttribute('role', 'alert');
+      toast.setAttribute('aria-live', 'assertive');
+      toast.setAttribute('aria-atomic', 'true');
+      toast.innerHTML = `
+        <div class="d-flex">
+          <div class="toast-body">${message}</div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      `;
+      document.body.appendChild(toast);
+      const bsToast = new bootstrap.Toast(toast);
+      bsToast.show();
+      setTimeout(() => toast.remove(), 3000);
+    };
 
-      const searchEntry = document.getElementById('SearchEntry');
-      if (searchEntry) {
-        searchEntry.addEventListener('keypress', function(event) {
-          if (event.key === 'Enter') {
-            document.getElementById('searchValue').value = searchEntry.value;
-            updatefilterValueforApiCall();
-            getTourListAPICall();
-          }
-        });
-      }
-
-      // Modal Filter Logic
-      const filterButton = document.getElementById('filterButton');
-      const filtersModal = document.getElementById('filtersModal');
-      const clearButton = document.getElementById('clearButton');
-      const applyFilterButton = document.getElementById('ApplyFilterButton');
-      let modal = filtersModal && typeof bootstrap !== 'undefined' ? new bootstrap.Modal(filtersModal) : null;
-
-      if (filterButton && modal) filterButton.addEventListener('click', () => modal.show());
-      if (clearButton) {
-        clearButton.addEventListener('click', () => {
-          document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
-          document.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
-        });
-      }
-      if (applyFilterButton) {
-        applyFilterButton.addEventListener('click', () => {
-          updatefilterValueforApiCall();
-          getTourListAPICall();
-          if (modal) modal.hide();
-        });
-      }
-
-      // Button Event Listeners
-      // Edit Button (Option 1: Keep as <a>)
-      document.querySelectorAll('.edit-tour').forEach(button => {
-        button.addEventListener('click', function(e) {
-          stopPropagation(e); // Prevent card redirect
-          // Default <a> behavior will navigate to /admin/addtours?tripid=<id>
-        });
+    // Initialize Bootstrap tooltips
+    const initTooltips = () => {
+      document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+        new bootstrap.Toast(el);
       });
+    };
 
-      // Edit Button (Option 2: As <button>, uncomment if preferred)
-      /*
-      document.querySelectorAll('.edit-tour').forEach(button => {
-        button.addEventListener('click', function (e) {
-          stopPropagation(e);
-          const tripId = this.dataset.id;
-          window.location.href = `/admin/addtours?tripid=${tripId}`; // Manual navigation
-        });
-      });
-      */
-
-      // Manage Images
-      const imageModalElement = document.getElementById('imageManagementModal');
-      let imageModal = imageModalElement && typeof bootstrap !== 'undefined' ? new bootstrap.Modal(imageModalElement) : null;
-      const allTours = <%- JSON.stringify(tourPackages || []) %>;
-
-      document.querySelectorAll('.manage-images').forEach(button => {
-        button.addEventListener('click', function(e) {
-          stopPropagation(e);
-          openImageModal(this.dataset.id);
-        });
-      });
-
-      // Change Status
-      document.querySelectorAll('.change-status').forEach(button => {
-        button.addEventListener('click', async function(e) {
-          stopPropagation(e);
-          const tripId = this.dataset.id;
-          const currentStatus = this.dataset.active === 'true';
-          const newStatus = !currentStatus;
-
-          try {
-            const response = await fetch('/admin/changeTripStatus', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': '<%= csrfToken %>'
-              },
-              body: JSON.stringify({
-                tripId,
-                isActive: newStatus
-              })
-            });
-            const result = await response.json();
-            if (result.success) {
-              this.textContent = newStatus ? 'Disable' : 'Enable';
-              this.dataset.active = newStatus;
-              this.closest('.package-card').classList.toggle('inactive', !newStatus);
-              alert(`Trip status changed to ${newStatus ? 'Enabled' : 'Disabled'}`);
-            } else {
-              alert('Failed to change status: ' + result.message);
-            }
-          } catch (error) {
-            console.error('Error changing status:', error);
-            alert('An error occurred while changing the status.');
-          }
-        });
-      });
-
-      // Delete Trip
-      document.querySelectorAll('.delete-tour').forEach(button => {
-        button.addEventListener('click', async function(e) {
-          stopPropagation(e);
-          const tripId = this.dataset.id;
-          if (confirm('Are you sure you want to delete this trip? This action cannot be undone.')) {
-            try {
-              // console.log('Sending delete request for tripId:', tripId); // Debug log
-              const response = await fetch('/admin/deleteTripDetail', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'X-CSRF-Token': '<%= csrfToken %>' // Ensure this is valid
-                },
-                body: JSON.stringify({
-                  tripId
-                })
-              });
-
-              // Log full response details
-              // console.log('Response status:', response.status);
-              if (!response.ok) {
-                const text = await response.text();
-                // console.error('Raw response:', text);
-                throw new Error(`HTTP error! Status: ${response.status}`);
-              }
-
-              const result = await response.json();
-              // console.log('Response JSON:', result); // Debug log
-              if (result.success) {
-                this.closest('.package-card').remove();
-                alert('Trip deleted successfully');
-              } else {
-                alert('Failed to delete trip: ' + result.message);
-              }
-            } catch (error) {
-              console.error('Error deleting trip:', error);
-              alert('An error occurred while deleting the trip.');
-            }
-          }
-        });
-      });
-      // Image Management Logic 
-      const tripIdInput = document.getElementById('tripIdForImages');
-      const mainImagePreview = document.getElementById('mainImagePreview')?.querySelector('img');
-      const mainImageInput = document.getElementById('mainImageInput');
-      const bannerImagesPreview = document.getElementById('bannerImagesPreview');
-      const bannerImagesInput = document.getElementById('bannerImagesInput');
-      const saveImagesBtn = document.getElementById('saveImages');
-
-      function openImageModal(tripId) {
-        if (!imageModal || !tripIdInput || !mainImagePreview || !bannerImagesPreview) return;
-        tripIdInput.value = tripId;
-        const tour = allTours.find(t => t._id === tripId);
-        if (!tour) return;
-
-        mainImagePreview.src = tour.imageurl || '/images/default.jpg';
-        mainImageInput.value = '';
-        bannerImagesPreview.innerHTML = '';
-        const bannerImages = tour.bannerimages || [];
-        bannerImages.forEach((img, index) => {
-          const div = document.createElement('div');
-          div.className = 'banner-image';
-          div.innerHTML = `
-          <img src="${img}" alt="Banner ${index + 1}">
-          <button class="btn btn-sm btn-danger remove-btn" title="Remove"><i class="bi bi-trash"></i></button>
-        `;
-          div.querySelector('.remove-btn').addEventListener('click', () => removeBannerImage(tripId, img));
-          bannerImagesPreview.appendChild(div);
-        });
-        bannerImagesInput.value = '';
-        imageModal.show();
-      }
-
-      if (mainImagePreview && mainImageInput) {
-        mainImagePreview.nextElementSibling?.addEventListener('click', () => mainImageInput.click());
-        mainImageInput.addEventListener('change', () => {
-          if (mainImageInput.files.length > 0) {
-            const file = mainImageInput.files[0];
-            if (!file.type.startsWith('image/')) {
-              alert('Please upload a valid image file.');
-              mainImageInput.value = '';
-              return;
-            }
-            mainImagePreview.src = URL.createObjectURL(file);
-          }
-        });
-      }
-
-      async function removeBannerImage(tripId, imageUrl) {
-        if (confirm('Are you sure you want to remove this banner image?')) {
-          try {
-            const response = await fetch('/admin/removeBannerImage', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': '<%= csrfToken %>'
-              },
-              body: JSON.stringify({
-                tripId,
-                imageUrl
-              })
-            });
-            const result = await response.json();
-            if (result.success) {
-              const bannerDiv = bannerImagesPreview.querySelector(`img[src="${imageUrl}"]`).parentElement;
-              bannerDiv.remove();
-              alert('Banner image removed successfully');
-            } else {
-              alert('Failed to remove banner image: ' + result.message);
-            }
-          } catch (error) {
-            console.error('Error removing banner image:', error);
-            alert('An error occurred while removing the banner image.');
-          }
-        }
-      }
-
-      if (saveImagesBtn) {
-        saveImagesBtn.addEventListener('click', async () => {
-          const tripId = tripIdInput.value;
-          const mainImageFile = mainImageInput.files[0];
-          const bannerImageFiles = bannerImagesInput.files;
-
-          if (mainImageFile) {
-            if (!mainImageFile.type.startsWith('image/')) {
-              alert('Please upload a valid image for the main image.');
-              return;
-            }
-            const mainFormData = new FormData();
-            mainFormData.append('image', mainImageFile);
-            mainFormData.append('tripId', tripId);
-            const mainResponse = await fetch('/admin/updateImageUrl', {
-              method: 'POST',
-              headers: {
-                'X-CSRF-Token': '<%= csrfToken %>'
-              },
-              body: mainFormData
-            });
-            const mainData = await mainResponse.json();
-            if (!mainData.success) {
-              alert('Error updating main image: ' + mainData.message);
-              return;
-            }
-          }
-
-          if (bannerImageFiles.length > 0) {
-            const invalidFiles = Array.from(bannerImageFiles).filter(file => !file.type.startsWith('image/'));
-            if (invalidFiles.length > 0) {
-              alert('Please upload only valid image files for banner images.');
-              return;
-            }
-            const bannerFormData = new FormData();
-            for (let i = 0; i < bannerImageFiles.length; i++) {
-              bannerFormData.append('image', bannerImageFiles[i]);
-            }
-            bannerFormData.append('tripId', tripId);
-            const bannerResponse = await fetch('/admin/updateBannerImages', {
-              method: 'POST',
-              headers: {
-                'X-CSRF-Token': '<%= csrfToken %>'
-              },
-              body: bannerFormData
-            });
-            const bannerData = await bannerResponse.json();
-            if (!bannerData.success) {
-              alert('Error updating banner images: ' + bannerData.message);
-              return;
-            }
-          }
-
-          alert('Images updated successfully!');
-          getTourListAPICall();
-          if (imageModal) imageModal.hide();
-        });
-      }
-    });
-
-    // Filter Helper Functions
-    function getTourListAPICall() {
-      document.getElementById('tourList').submit();
-    }
-
-    function removeChip(chip, index) {
-      const chipProperty = document.getElementById(chip);
-      if (chipProperty) chipProperty.checked = false;
-      updatefilterValueforApiCall();
-      getTourListAPICall();
-    }
-
-    function removeSearchChip(value) {
-      document.getElementById('searchValue').value = null;
-      updatefilterValueforApiCall();
-      getTourListAPICall();
-    }
-
-    function getCheckedValues() {
+    // Handle filter updates
+    const updateFilterValue = () => {
       const categories = {};
       document.querySelectorAll('.filter-section').forEach(section => {
         const sectionTitle = section.querySelector('.filter-section-title')?.innerText.trim();
@@ -1019,13 +940,389 @@
         const checkedValues = Array.from(section.querySelectorAll('input[type="checkbox"]:checked')).map(input => input.id);
         categories[sectionTitle] = checkedValues;
       });
-      return categories;
-    }
+      document.getElementById('filterValue').value = JSON.stringify(categories);
+    };
 
-    function updatefilterValueforApiCall() {
-      const filterValue = getCheckedValues();
-      document.getElementById('filterValue').value = JSON.stringify(filterValue);
-    }
+    // Submit tour list form
+    const submitTourList = () => {
+      document.getElementById('tourList').submit();
+    };
+
+    // Handle chip removal
+    const removeChip = (chip) => {
+      const chipProperty = document.getElementById(chip);
+      if (chipProperty) chipProperty.checked = false;
+      updateFilterValue();
+      submitTourList();
+    };
+
+    // Handle search chip removal
+    const removeSearchChip = () => {
+      document.getElementById('searchValue').value = '';
+      document.getElementById('searchEntry').value = '';
+      updateFilterValue();
+      submitTourList();
+    };
+
+    // // Handle share functionality
+    // const handleShare = (name, state, imageurl) => {
+    //   const shareUrl = `${window.location.origin}/tripdetail/${name}`;
+    //   const shareData = {
+    //     title: `${decodeURIComponent(name)} - ${state}`,
+    //     text: `Check out this amazing trip: ${decodeURIComponent(name)} in ${state}, India!`,
+    //     url: shareUrl
+    //   };
+    //   if (navigator.share) {
+    //     navigator.share(shareData)
+    //       .then(() => showToast('Shared successfully!'))
+    //       .catch(() => fallbackToClipboard(shareUrl));
+    //   } else {
+    //     fallbackToClipboard(shareUrl);
+    //   }
+    // };
+
+    // // Fallback to clipboard for share
+    // const fallbackToClipboard = (url) => {
+    //   navigator.clipboard.writeText(url)
+    //     .then(() => showToast('Link copied to clipboard!'))
+    //     .catch(() => showToast('Failed to copy link.', 'danger'));
+    // };
+
+    // Image management logic
+    const openImageModal = (tripId) => {
+      const imageModal = new bootstrap.Modal(document.getElementById('imageManagementModal'));
+      const tripIdInput = document.getElementById('tripIdForImages');
+      const mainImagePreview = document.getElementById('mainImagePreview')?.querySelector('img');
+      const bannerImagesPreview = document.getElementById('bannerImagesPreview');
+      const allTours = <%- JSON.stringify(tourPackages || []) %>;
+
+      if (!imageModal || !tripIdInput || !mainImagePreview || !bannerImagesPreview) return;
+
+      tripIdInput.value = tripId;
+      const tour = allTours.find(t => t._id === tripId);
+      if (!tour) return;
+
+      mainImagePreview.src = tour.imageurl || '/images/default.jpg';
+      document.getElementById('mainImageInput').value = '';
+      bannerImagesPreview.innerHTML = '';
+      const bannerImages = tour.bannerimages || [];
+      bannerImages.forEach((img, index) => {
+        const div = document.createElement('div');
+        div.className = 'banner-image';
+        div.innerHTML = `
+          <img src="${img}" alt="Banner ${index + 1}">
+          <button class="btn btn-sm btn-danger remove-btn" title="Remove banner image" aria-label="Remove banner image"><i class="bi bi-trash"></i></button>
+        `;
+        div.querySelector('.remove-btn').addEventListener('click', () => removeBannerImage(tripId, img));
+        bannerImagesPreview.appendChild(div);
+      });
+      imageModal.show();
+    };
+
+    // Remove banner image
+    const removeBannerImage = async (tripId, imageUrl) => {
+      if (!confirm('Are you sure you want to remove this banner image?')) return;
+      try {
+        const response = await fetch('/admin/removeBannerImage', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': '<%= csrfToken %>'
+          },
+          body: JSON.stringify({ tripId, imageUrl })
+        });
+        const result = await response.json();
+        if (result.success) {
+          document.querySelector(`#bannerImagesPreview img[src="${imageUrl}"]`)?.parentElement.remove();
+          showToast('Banner image removed successfully');
+        } else {
+          showToast(`Failed to remove banner image: ${result.message}`, 'danger');
+        }
+      } catch (error) {
+        showToast('Error removing banner image.', 'danger');
+      }
+    };
+
+    // Save images
+    const saveImages = async () => {
+      const tripId = document.getElementById('tripIdForImages').value;
+      const mainImageInput = document.getElementById('mainImageInput');
+      const bannerImagesInput = document.getElementById('bannerImagesInput');
+
+      if (mainImageInput.files[0]) {
+        if (!mainImageInput.files[0].type.startsWith('image/')) {
+          showToast('Please upload a valid image for the main image.', 'danger');
+          return;
+        }
+        const mainFormData = new FormData();
+        mainFormData.append('image', mainImageInput.files[0]);
+        mainFormData.append('tripId', tripId);
+        try {
+          const response = await fetch('/admin/updateImageUrl', {
+            method: 'POST',
+            headers: { 'X-CSRF-Token': '<%= csrfToken %>' },
+            body: mainFormData
+          });
+          const result = await response.json();
+          if (!result.success) {
+            showToast(`Error updating main image: ${result.message}`, 'danger');
+            return;
+          }
+        } catch (error) {
+          showToast('Error updating main image.', 'danger');
+          return;
+        }
+      }
+
+      if (bannerImagesInput.files.length > 0) {
+        const invalidFiles = Array.from(bannerImagesInput.files).filter(file => !file.type.startsWith('image/'));
+        if (invalidFiles.length > 0) {
+          showToast('Please upload only valid image files for banner images.', 'danger');
+          return;
+        }
+        const bannerFormData = new FormData();
+        for (let i = 0; i < bannerImagesInput.files.length; i++) {
+          bannerFormData.append('image', bannerImagesInput.files[i]);
+        }
+        bannerFormData.append('tripId', tripId);
+        try {
+          const response = await fetch('/admin/updateBannerImages', {
+            method: 'POST',
+            headers: { 'X-CSRF-Token': '<%= csrfToken %>' },
+            body: bannerFormData
+          });
+          const result = await response.json();
+          if (!result.success) {
+            showToast(`Error updating banner images: ${result.message}`, 'danger');
+            return;
+          }
+        } catch (error) {
+          showToast('Error updating banner images.', 'danger');
+          return;
+        }
+      }
+
+      showToast('Images updated successfully!');
+      submitTourList();
+      bootstrap.Modal.getInstance(document.getElementById('imageManagementModal')).hide();
+    };
+
+    // Validate quick call form
+    const validateQuickCallForm = () => {
+      const guestName = document.getElementById('guestName');
+      const mobileNo = document.getElementById('mobileNo');
+      const submitBtn = document.getElementById('submitQuickCall');
+
+      const isNameValid = guestName.value.trim().length > 0;
+      const isMobileValid = /^\d{8,15}$/.test(mobileNo.value.trim());
+
+      guestName.classList.toggle('is-invalid', !isNameValid);
+      mobileNo.classList.toggle('is-invalid', !isMobileValid);
+      submitBtn.disabled = !(isNameValid && isMobileValid);
+
+      return isNameValid && isMobileValid;
+    };
+
+    // Submit quick call form
+    const submitQuickCall = async () => {
+      if (!validateQuickCallForm()) return;
+
+      const formData = {
+        guestName: document.getElementById('guestName').value.trim(),
+        mobileNo: `${document.getElementById('countryCode').value}${document.getElementById('mobileNo').value.trim()}`,
+        tripId: document.getElementById('tripId').value,
+        responded: false,
+        markAsSpam: false,
+        requestedDate: new Date().toISOString()
+      };
+
+      try {
+        const response = await fetch('/quick-call/request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': '<%= csrfToken %>'
+          },
+          body: JSON.stringify(formData)
+        });
+        if (response.ok) {
+          bootstrap.Modal.getInstance(document.getElementById('quickCallModal')).hide();
+          const successModal = new bootstrap.Modal(document.getElementById('quickCallSuccessModal'));
+          successModal.show();
+          document.getElementById('quickCallForm').reset();
+          validateQuickCallForm();
+        } else {
+          showToast('Failed to submit request.', 'danger');
+        }
+      } catch (error) {
+        showToast('Error submitting request.', 'danger');
+      }
+    };
+
+    // Initialize on DOM load
+    document.addEventListener('DOMContentLoaded', () => {
+      initTooltips();
+
+      // Initialize filter chips
+      const filterChips = '<%= filterChips || "" %>'.split(',').filter(Boolean);
+      filterChips.forEach(chip => {
+        const chipProperty = document.getElementById(chip);
+        if (chipProperty) chipProperty.checked = true;
+      });
+      const searchValue = '<%= Searchvalue || "" %>';
+      if (searchValue) {
+        document.getElementById('searchValue').value = searchValue;
+        document.getElementById('searchEntry').value = searchValue;
+      }
+
+      // Event delegation for package cards
+      document.querySelectorAll('.package-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          const target = e.target.closest('a, button');
+          if (!target) {
+            const tourName = card.querySelector('.card-title').textContent;
+            window.location.href = `/tripdetail/${encodeURIComponent(tourName)}`;
+            return;
+          }
+
+          if (target.classList.contains('call-now-btn') || target.classList.contains('whatsapp-btn')) {
+            e.stopPropagation();
+            return;
+          }
+
+          if (target.classList.contains('request-callback-btn')) {
+            e.stopPropagation();
+            document.getElementById('tripId').value = target.dataset.tripId;
+          }
+
+          // if (target.classList.contains('share-btn')) {
+          //   e.stopPropagation();
+          //   const name = encodeURIComponent(card.querySelector('.card-title').textContent);
+          //   const state = card.querySelector('.text-muted span').textContent;
+          //   const imageurl = card.querySelector('.card-image').src;
+          //   handleShare(name, state, imageurl);
+          // }
+
+          if (target.classList.contains('edit-tour')) {
+            e.stopPropagation();
+            window.location.href = `/admin/addtours?tripid=${target.dataset.id}`;
+          }
+
+          if (target.classList.contains('manage-images')) {
+            e.stopPropagation();
+            openImageModal(target.dataset.id);
+          }
+
+          if (target.classList.contains('change-status')) {
+            e.stopPropagation();
+            const tripId = target.dataset.id;
+            const currentStatus = target.dataset.active === 'true';
+            const newStatus = !currentStatus;
+            fetch('/admin/changeTripStatus', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': '<%= csrfToken %>'
+              },
+              body: JSON.stringify({ tripId, isActive: newStatus })
+            })
+              .then(response => response.json())
+              .then(result => {
+                if (result.success) {
+                  target.textContent = newStatus ? 'Disable' : 'Enable';
+                  target.dataset.active = newStatus;
+                  card.classList.toggle('inactive', !newStatus);
+                  showToast(`Trip status changed to ${newStatus ? 'Enabled' : 'Disabled'}`);
+                } else {
+                  showToast(`Failed to change status: ${result.message}`, 'danger');
+                }
+              })
+              .catch(() => showToast('Error changing status.', 'danger'));
+          }
+
+          if (target.classList.contains('delete-tour')) {
+            e.stopPropagation();
+            if (confirm('Are you sure you want to delete this trip? This action cannot be undone.')) {
+              fetch('/admin/deleteTripDetail', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRF-Token': '<%= csrfToken %>'
+                },
+                body: JSON.stringify({ tripId: target.dataset.id })
+              })
+                .then(response => response.json())
+                .then(result => {
+                  if (result.success) {
+                    card.remove();
+                    showToast('Trip deleted successfully');
+                  } else {
+                    showToast(`Failed to delete trip: ${result.message}`, 'danger');
+                  }
+                })
+                .catch(() => showToast('Error deleting trip.', 'danger'));
+            }
+          }
+        });
+      });
+
+      // Filter modal logic
+      const filterModal = new bootstrap.Modal(document.getElementById('filtersModal'));
+      document.getElementById('filterButton')?.addEventListener('click', () => filterModal.show());
+      document.getElementById('clearButton')?.addEventListener('click', () => {
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
+        updateFilterValue();
+      });
+      document.getElementById('applyFilterButton')?.addEventListener('click', () => {
+        updateFilterValue();
+        submitTourList();
+        filterModal.hide();
+      });
+
+      // Chip removal
+      document.querySelectorAll('.chip .close').forEach(closeBtn => {
+        closeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const chip = closeBtn.parentElement.dataset.chip;
+          if (chip === '<%= Searchvalue %>') {
+            removeSearchChip();
+          } else {
+            removeChip(chip);
+          }
+        });
+      });
+
+      // Search input with debounce
+      document.getElementById('searchEntry')?.addEventListener('keypress', debounce((e) => {
+        if (e.key === 'Enter') {
+          document.getElementById('searchValue').value = e.target.value;
+          updateFilterValue();
+          submitTourList();
+        }
+      }, 300));
+
+      // Quick call form logic
+      document.getElementById('guestName')?.addEventListener('input', validateQuickCallForm);
+      document.getElementById('mobileNo')?.addEventListener('input', validateQuickCallForm);
+      document.getElementById('submitQuickCall')?.addEventListener('click', submitQuickCall);
+
+      // Image management logic
+      const mainImageInput = document.getElementById('mainImageInput');
+      const mainImagePreview = document.getElementById('mainImagePreview')?.querySelector('img');
+      if (mainImageInput && mainImagePreview) {
+        mainImagePreview.nextElementSibling?.addEventListener('click', () => mainImageInput.click());
+        mainImageInput.addEventListener('change', () => {
+          if (mainImageInput.files.length > 0 && mainImageInput.files[0].type.startsWith('image/')) {
+            mainImagePreview.src = URL.createObjectURL(mainImageInput.files[0]);
+          } else {
+            showToast('Please upload a valid image file.', 'danger');
+            mainImageInput.value = '';
+          }
+        });
+      }
+
+      document.getElementById('saveImages')?.addEventListener('click', saveImages);
+    });
   </script>
 </body>
 

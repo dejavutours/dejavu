@@ -2,14 +2,8 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <%- include('../partials/headtag', {isNiceSelect: true}); %>
   <title>Dream Trip Form</title>
-  <%- include('../partials/headtag'); %>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
-  <link rel="stylesheet" href="/css/style.css">
   <style>
     .dream-trip-page {
       font-family: "Arial", sans-serif;
@@ -118,7 +112,7 @@
 </head>
 
 <body>
-  <%- include('../partials/header'); %>
+  <%- include('../partials/header', {isSearch: false}); %>
 
   <div class="dream-trip-page">
     <div class="text-center mb-4">
@@ -128,66 +122,63 @@
       </p>
     </div>
 
-    <div class="container">
-      <div class="row">
-        <!-- Form -->
-        <div class="col-12 col-md-10">
-          <div class="form-container">
-            <form id="customTripDetailForm">
-              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <div class="container-xl">
+        <div class="row g-3">
+          <!-- Form -->
+          <div class="col-12 col-md-8">
+            <div class="form-container">
+              <form id="customTripDetailForm" class="row gy-3">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
 
-              <!-- Name -->
-              <div class="mb-3">
-                <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control" id="name" placeholder="Type Your Name Here" />
-              </div>
+                <!-- Name -->
+                <div class="col-12">
+                  <label for="name" class="form-label">Name</label>
+                  <input type="text" class="form-control" id="name" placeholder="Type Your Name Here"/>
+                </div>
 
-              <!-- Mobile + Place -->
-              <div class="row mb-3">
-                <div class="col-12 col-md-6">
+                <!-- Mobile + Place -->
+                <div class="col-12 col-sm-6">
                   <label for="mobile" class="form-label">Mobile</label>
                   <div class="input-group">
                     <span class="input-group-text">+91</span>
-                    <input type="tel" class="form-control" id="mobile" placeholder="00000 00000" />
+                    <input type="tel" class="form-control" id="mobile" placeholder="00000 00000"/>
                   </div>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-sm-6">
                   <label for="place" class="form-label">Place of Resident</label>
-                  <input type="text" class="form-control" id="place" placeholder="Type city and state of your resident" />
+                  <input type="text" class="form-control" id="place" placeholder="Type city and state of your resident"/>
                 </div>
-              </div>
 
-              <!-- Email -->
-              <div class="mb-3">
-                <label for="email" class="form-label">Email ID</label>
-                <div class="input-group">
-                  <span class="input-group-text">@</span>
-                  <input type="email" class="form-control" id="email" placeholder="mail" />
+                <!-- Email -->
+                <div class="col-12">
+                  <label for="email" class="form-label">Email ID</label>
+                  <div class="input-group">
+                    <span class="input-group-text">@</span>
+                    <input type="email" class="form-control" id="email" placeholder="mail"/>
+                  </div>
                 </div>
-              </div>
 
-              <!-- Destination -->
-              <div class="mb-3">
-                <label for="destination" class="form-label">Travel Destination</label>
-                <input type="text" class="form-control" id="destination" placeholder="Let Us Know Where Do You Want To Travel.." />
-              </div>
+                <!-- Destination -->
+                <div class="col-12">
+                  <label for="destination" class="form-label">Travel Destination</label>
+                  <input type="text" class="form-control" id="destination" placeholder="Let Us Know Where Do You Want To Travel.."/>
+                </div>
 
-              <!-- Days + Persons -->
-              <div class="row mb-3">
-                <div class="col-12 col-md-6">
+                <!-- Days + Persons -->
+                <div class="col-12 col-sm-6">
                   <label for="days" class="form-label">No. of Days</label>
-                  <input type="number" class="form-control" id="days" placeholder="00" min="0" />
+                  <input type="number" class="form-control" id="days" placeholder="00" min="0"/>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-sm-6">
                   <label for="persons" class="form-label">No. of Person</label>
-                  <input type="number" class="form-control" id="persons" placeholder="00" min="0" />
+                  <input type="number" class="form-control" id="persons" placeholder="00" min="0"/>
                 </div>
-              </div>
-              <!-- More Details -->
-              <div class="mb-3">
-                <label for="details" class="form-label">More Detail</label>
-                <textarea class="form-control" id="details" rows="3" placeholder="Let Us know anything in your mind about your plan other than mentioned above.."></textarea>
-              </div>
+
+                <!-- More Details -->
+                <div class="col-12">
+                  <label for="details" class="form-label">More Detail</label>
+                  <textarea class="form-control" id="details" rows="3" placeholder="Let Us know anything in your mind about your plan other than mentioned above.."></textarea>
+                </div>
 
               <!-- Submit -->
               <div class="text-center">
@@ -197,59 +188,65 @@
           </div>
         </div>
 
-        <!-- Contact Info -->
-        <div class="col-12 col-md-2 d-none d-sm-block contact-info mt-4 mt-md-0">
-          <a class="navbar-brand me-auto" href="/">
-            <img src="/img/logo_2x.png" alt="Deja Vu" height="50" class="d-inline-block align-text-top object-fit-contain" fetchpriority="high" loading="eager" />
-          </a>
-          <p class="mt-2">+91 85111 77891</p>
-          <p>Dejavuoutdoors@Gmail.Com</p>
-          <p>11, Patelkunj, Maninagar East,<br />Ahmedabad, India.</p>
+          <!-- Contact Info -->
+          <div class="col-12 col-md-4 col-lg-3 d-none d-md-block contact-info">
+            <a class="navbar-brand me-auto" href="/">
+              <img
+                src="/img/logo_2x.png"
+                alt="Deja Vu"
+                height="50"
+                class="d-inline-block align-text-top object-fit-contain"
+                fetchpriority="high"
+                loading="eager"
+              />
+            </a>
+            <p class="mt-2">+91 85111 77891</p>
+            <p>Dejavuoutdoors@Gmail.Com</p>
+            <address>11, Patelkunj, Maninagar East,<br />Ahmedabad, India.</address>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <%- include('../partials/footer'); %>
-  <%- include('../partials/scripttag'); %>
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script>
-    document
-      .querySelector("#customTripDetailForm")
-      .addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const formData = {
-          name: document.getElementById("name").value,
-          mobile: document.getElementById("mobile").value,
-          email: document.getElementById("email").value,
-          place: document.getElementById("place").value,
-          destination: document.getElementById("destination").value,
-          days: document.getElementById("days").value,
-          persons: document.getElementById("persons").value,
-          details: document.getElementById("details").value,
-        };
-        const csrfToken = document.querySelector('input[name="_csrf"]').value;
-        try {
-          const response = await fetch("/customTrip", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRF-Token": csrfToken,
-            },
-            body: JSON.stringify(formData),
-          });
-          const result = await response.json();
-          if (result.success) {
-            alert("Trip details submitted successfully!");
-            document.querySelector("form").reset();
-            window.location.href = "/";
-          } else {
-            alert("Error: " + result.message);
-          }
-        } catch (error) {
-          alert("Failed to submit form. Please try again.");
-        }
-      });
-  </script>
-</body>
 
+    <%- include('../partials/footer'); %>
+    <%- include('../partials/scripttag', {isNiceSelect: true}); %>
+    <script>
+      document
+        .querySelector("#customTripDetailForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = {
+            name: document.getElementById("name").value,
+            mobile: document.getElementById("mobile").value,
+            email: document.getElementById("email").value,
+            place: document.getElementById("place").value,
+            destination: document.getElementById("destination").value,
+            days: document.getElementById("days").value,
+            persons: document.getElementById("persons").value,
+            details: document.getElementById("details").value,
+          };
+          const csrfToken = document.querySelector('input[name="_csrf"]').value;
+          try {
+            const response = await fetch("/customTrip", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken,
+              },
+              body: JSON.stringify(formData),
+            });
+            const result = await response.json();
+            if (result.success) {
+              alert("Trip details submitted successfully!");
+              document.querySelector("form").reset();
+              window.location.href = "/";
+            } else {
+              alert("Error: " + result.message);
+            }
+          } catch (error) {
+            alert("Failed to submit form. Please try again.");
+          }
+        });
+    </script>
+  </body>
 </html>

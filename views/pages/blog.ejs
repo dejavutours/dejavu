@@ -2,12 +2,12 @@
 <html class="no-js" lang="zxx">
 
     <head>
-        <%- include('../partials/headtag'); %>
+        <%- include('../partials/headtag', {isNiceSelect: true}); %>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     </head>
 
 <body>
-    <%- include('../partials/header'); %>
+    <%- include('../partials/header', {isSearch: false}); %>
 
     <!-- bradcam_area  -->
     <div class="bradcam_area bradcam_bg_4">
@@ -259,7 +259,7 @@
   </div>
     <!-- JS here -->
     
-    <%- include('../partials/scripttag'); %>
+    <%- include('../partials/scripttag', {isNiceSelect: true}); %>
     <script>
         $('#datepicker').datepicker({
             iconsLibrary: 'fontawesome',

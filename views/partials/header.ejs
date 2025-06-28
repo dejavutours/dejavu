@@ -35,11 +35,8 @@
     z-index: 3;
   }
   
-  .navbar .nav-item-link {
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
-    transition: color 0.2s ease;
-  }
+  .nav-link {transition: color 0.2s ease;}
+  .nav-link.contactLink{--bs-nav-link-padding-x: 1rem; --bs-nav-link-padding-y: 0.5rem}
   
   .navbar .nav-icon {
     font-size: 1.25rem; /* Larger icons for contact/profile */
@@ -84,10 +81,8 @@
   }
   
   /* Hide search bar on larger screens */
-  @media (min-width: 768px) {
-    .navbar .search-bar {
-      display: none !important;
-    }
+  @media (min-width: 992px) {
+    .navbar-nav{--bs-nav-link-padding-x: 0.5rem; --bs-nav-link-padding-y: 1rem;}
   }
 
   /*# sourceMappingURL=style.css.map */
@@ -268,48 +263,52 @@
       <img src="/img/logo_2x.png" alt="Deja Vu" height="50" class="d-inline-block align-text-top object-fit-contain" fetchpriority="high" loading="eager">
     </a>
     <!-- Search bar for small screens -->
-    <div class="search-bar d-flex d-md-none align-items-center flex-grow-1 mx-3" data-bs-toggle="modal" data-bs-target="#filterModal">
-      <div class="position-relative w-100">
-        <input type="text" class="form-control border-0 shadow-none search-input" placeholder="Search destination">
-        <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y search-icon me-3" aria-hidden="true"></i>
+    <% if(isSearch) {%>
+      <div class="search-bar d-flex d-md-none align-items-center flex-grow-1 mx-3" data-bs-toggle="modal" data-bs-target="#filterModal">
+        <div class="position-relative w-100">
+          <input type="text" class="form-control border-0 shadow-none search-input" placeholder="Search destination">
+          <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y search-icon me-3" aria-hidden="true"></i>
+        </div>
       </div>
-    </div>
+    <%}%>
     <div class="collapse navbar-collapse" id="topNavbar">
       <ul class="navbar-nav gap-lg-3 ms-auto mt-2 mt-lg-0">
         <li class="nav-item">
-          <a class="nav-link nav-item-link" aria-current="page" href="/">Home</a>
+          <a class="nav-link" aria-current="page" href="/">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link nav-item-link" aria-current="page" href="/triplist">Tour packages</a>
+          <a class="nav-link" aria-current="page" href="/triplist">Tour packages</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link nav-item-link" aria-current="page" href="/dreamtrip">Customize trips</a>
+          <a class="nav-link" aria-current="page" href="/dreamtrip">Customize trips</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link nav-item-link" aria-current="page" href="/triplist">Global trips</a>
+          <a class="nav-link" aria-current="page" href="/triplist">Global trips</a>
         </li>
         <% if(!profile?.email || !accessToken) { %>
         <% } %>
         <li class="nav-item">
-          <div class="d-flex gap-2">
-            <a class="nav-link nav-item-link" aria-current="page" href="tel:+918511117891">
-              <i class="bi bi-telephone nav-icon"></i>
+          <div class="d-lg-flex gap-2 h-100">
+            <a class="nav-link rounded-pill fw-semibold contactLink mb-auto mb-lg-0" aria-current="page" href="tel:+918511117891">
+              <i class="bi bi-telephone"></i>
+              +918511117891
               <span class="visually-hidden">Contact</span>
             </a>
             <% if(profile?.email || accessToken) { %>
             <span class="dropdown">
-              <a class="nav-link nav-item-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <a class="nav-link userDropdown dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-person-circle nav-icon"></i>
                 <span class="visually-hidden">My Profile</span>
               </a>
               <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-              <ul class="dropdown-menu dropdown-menu-lg-end">
+              <ul class="dropdown-menu dropdown-menu-lg-end navbaruserdropdown">
                 <li><a class="dropdown-item" href="/profile">My Profile</a></li>
                 <% if(profile?.email === process.env.GMAIL_ADMIN || profile?.email === process.env.GMAIL_ADMIN_TWO) { %>
                 <!-- <li><a class="dropdown-item" href="/admin/login" target="_blank">Admin</a></li> -->
                 <li><a class="dropdown-item" href="/admin/bookings" target="_blank">Bookings</a></li>
+                <li><a class="dropdown-item" href="/admin/users" target="_blank">User</a></li>
                 <li><a class="dropdown-item" href="/admin/addtours" target="_blank">Add Tours</a></li>
-                <li><a class="dropdown-item" href="/cities" target="_blank">Master setting</a></li>
+                <li><a class="dropdown-item" href="/cities" target="_blank">Master setting</a></li>               
                 <% } %>
                 <li>
                   <form id="my_form" action="/logout" method="post">
@@ -321,7 +320,7 @@
             </span>
             <% }else { %>
             <li class="nav-item">
-              <a class="nav-link nav-item-link" aria-current="page" data-bs-toggle="modal" data-bs-target="#signinModal">Login</a>
+              <a class="nav-link" role="button" tabindex="-1" aria-current="page" data-bs-toggle="modal" data-bs-target="#signinModal">Login</a>
             </li>
             <% } %>
           </div>

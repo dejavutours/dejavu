@@ -2,7 +2,7 @@
 <html class="no-js" lang="zxx">
 
 <head>
-  <%- include('../partials/headtag'); %>
+  <%- include('../partials/headtag', {isNiceSelect: true}); %>
     <style>
       .bs-example {
         margin: 20px;
@@ -124,7 +124,7 @@
 
 <body>
 
-  <%- include('../partials/header'); %>
+  <%- include('../partials/header', {isSearch: false}); %>
 
     <% if(trips?.bannerimage==null){ %>
       <div class="destination_banner_wrap overlay" style="background-image: url('/images/<%= trips?.imageurl %>');">
@@ -406,7 +406,7 @@
             </div>
             <!-- newletter_area_end  -->
             <%- include('../partials/footer'); %>
-              <%- include('../partials/scripttag'); %>
+              <%- include('../partials/scripttag', {isNiceSelect: true}); %>
 </body>
 
 </html>

@@ -2,7 +2,7 @@
 <html class="no-js" lang="zxx">
 
 <head>
-    <%- include('../partials/headtag'); %>
+    <%- include('../partials/headtag', {isNiceSelect: true}); %>
     <style>
         .bs-example{
             margin: 20px;
@@ -119,7 +119,7 @@
 </head>
 
 <body>
-    <%- include('../partials/header'); %>
+    <%- include('../partials/header', {isSearch: false}); %>
 
     <% if(accod.bannerimage == null){ %>
         <div class="destination_banner_dholavira overlay" style="background-image: url('/images/<%= accod.imageurl %>');">
@@ -391,7 +391,7 @@
     </div> -->
 
     <%- include('../partials/footer'); %>
-    <%- include('../partials/scripttag'); %>
+    <%- include('../partials/scripttag', {isNiceSelect: true}); %>
 </body>
 
 </html>

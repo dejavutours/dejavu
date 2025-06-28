@@ -201,10 +201,10 @@
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
-  <%- include('../../partials/headtag'); %>
+  <%- include('../../partials/headtag', {isNiceSelect: true}); %>
 </head>
 <body class="bg-gray-100">
-  <%- include('../../partials/header'); %>
+  <%- include('../../partials/header', {isSearch: false}); %>
   <div class="sm-container">
     <!-- Loading Overlay -->
     <div class="sm-loading" id="smLoadingOverlay">
@@ -219,6 +219,7 @@
       <div class="sm-tab" data-tab="banners" data-redirect="/banner">Banner Master</div>
       <div class="sm-tab active" data-tab="trips" data-redirect="/trips">Trip Master</div>
       <div class="sm-tab" data-tab="customTrip" data-redirect="/customTrip">Custom Trip</div>
+      <div class="sm-tab" data-tab="quickcall" data-redirect="quick-call">Quick Call</div>
     </div>
 
     <!-- Trip Management Tab Content -->

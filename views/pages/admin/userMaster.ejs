@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../../partials/headtag', {isNiceSelect: true}); %>
+  <title>Admin - User Management Dashboard</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    :root {--primary: #2A4365;--bg-light: #F7FAFC;}
+    body { background: var(--bg-light); }
+    .card { --bs-card-border-radius: 12px; }.card-body {margin-bottom: 1rem; }
+    .table th { background: var(--primary); color: white; position: sticky; top: 0; }
+    .table-responsive { max-height: 80dvh; }.table>:not(caption)>*>*{padding-inline: 0.75rem;}.name-cell{min-width: 150px;}
+  </style>
+</head>
+<body>
+  <%- include('../../partials/header', {isSearch: false}); %>
+  <section class="container-xl pt-4">
+    <% if (error) { %>
+      <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+    <div class="d-flex justify-content-between align-items-center gap-2 mb-4">
+      <h1 class="h3">User Management</h1>
+      <button id="exportBtn" class="btn btn-outline-primary"><i class="bi bi-download"></i> Export CSV</button>
+    </div>
+
+    <!-- Filter Panel -->
+    <aside class="filter-panel card border-light pb-3 shadow">
+      <div class="card-body">
+        <h5 class="mb-3">Filters</h5>
+        <form id="filterForm" class="row g-3" action="/admin/users" method="GET">
+          <div class="col-sm-6 col-md-3">
+            <label for="userType">User Type</label>
+            <select id="userType" name="type" class="form-select">
+              <option value="" <%= !filters.type ? 'selected' : '' %>>All</option>
+              <option value="gmail" <%= filters.type === 'gmail' ? 'selected' : '' %>>Gmail</option>
+              <option value="mobile" <%= filters.type === 'mobile' ? 'selected' : '' %>>Mobile</option>
+            </select>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <label for="tripName">Trip Name</label>
+            <input type="text" id="tripName" name="tripName" class="form-control" placeholder="Enter trip name" value="<%= filters.tripName || '' %>">
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <label for="contact">Contact Info</label>
+            <input type="text" id="contact" name="contact" class="form-control" placeholder="Email or Phone" value="<%= filters.contact || '' %>">
+          </div>
+          <div class="col d-flex align-items-end">
+            <button type="submit" class="btn btn-primary me-2">Apply</button>
+            <a href="/admin/users" class="btn btn-outline-secondary">Reset</a>
+          </div>
+        </form>
+      </div>
+      <!-- Users Table -->
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="selectAll" aria-label="Select All"></th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Contact</th>
+              <th>Bookings</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersTable">
+            <% if (users.length === 0) { %>
+              <tr>
+                <td colspan="6" class="text-center">No users found</td>
+              </tr>
+            <% } else { %>
+              <% users.forEach(user => { %>
+                <tr>
+                  <td><input type="checkbox" class="user-select" data-id="<%= user._id %>" id="<%= user._id %>" aria-label="Select this user"></td>
+                  <td class="name-cell"><%= user.name || user.details?.firstName || 'N/A' %></td>
+                  <td><span class="badge bg-<%= user.type === 'gmail' ? 'primary' : 'info' %>"><%= user.type %></span></td>
+                  <td><%= user.email || user.phoneNumber || user.details?.email || user.details?.mobileNumber || 'N/A' %></td>
+                  <td><%= user.bookings || 0 %></td>
+                  <td class="text-nowrap">
+                    <a href="/admin/users/<%= user._id %>" class="btn btn-sm btn-primary action-btn text-decoration-none rounded-pill"><i class="bi bi-eye"></i></a>
+                    <a href="tel:<%= user.phoneNumber || user.details?.mobileNumber || '' %>" class="btn btn-sm btn-success action-btn text-decoration-none rounded-pill"><i class="bi bi-telephone"></i></a>
+                    <a href="https://wa.me/<%= user.phoneNumber || user.details?.mobileNumber || '' %>" target="_blank" class="btn btn-sm btn-whatsapp action-btn text-decoration-none rounded-pill"><i class="bi bi-whatsapp"></i></a>
+                    <a href="mailto:<%= user.email || user.details?.email || '' %>" class="btn btn-sm btn-info action-btn text-decoration-none rounded-pill"><i class="bi bi-envelope"></i></a>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </aside>
+
+
+    <!-- Pagination -->
+    <div class="pagination mt-4 d-flex justify-content-center gap-2">
+      <% for(let i = 1; i <= Math.ceil(total / 30); i++) { %>
+        <a href="/admin/users?page=<%= i %>&type=<%= filters.type || '' %>&tripName=<%= filters.tripName || '' %>&contact=<%= filters.contact || '' %>" class="btn btn-sm <%= currentPage === i ? 'btn-primary' : 'btn-outline-primary' %>"><%= i %></a>
+      <% } %>
+    </div>
+  </section>
+
+  <%- include('../../partials/footer') %>
+  <script>
+    // Handle select all checkbox
+    document.getElementById('selectAll').addEventListener('change', e => {
+      document.querySelectorAll('.user-select').forEach(cb => cb.checked = e.target.checked);
+    });
+
+    // CSV Export
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      const headers = ['ID', 'Type', 'Name', 'Email', 'Phone', 'State', 'City'];
+      const rows = <%- JSON.stringify(users.map(user => [
+        user._id.toString(),
+        user.type,
+        user.name || user.details?.firstName || 'N/A',
+        user.email || user.details?.email || 'N/A',
+        user.phoneNumber || user.details?.mobileNumber || 'N/A',
+        user.details?.state || 'N/A',
+        user.details?.city || 'N/A'
+      ])) %>;
+      const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'users.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>

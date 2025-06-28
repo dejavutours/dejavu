@@ -20,7 +20,7 @@
     <link href="vendor/select2/select2.min.css" rel="stylesheet" media="all">
     <link href="vendor/datepicker/daterangepicker.css" rel="stylesheet" media="all">
 
-    <%- include('../partials/headtag'); %>
+    <%- include('../partials/headtag', {isNiceSelect: true}); %>
 
     <!-- Main CSS-->
     <link href="css/reg.css" rel="stylesheet" media="all">
@@ -32,7 +32,7 @@
 </head>
 
 <body>
-    <%- include('../partials/header'); %>
+    <%- include('../partials/header', {isSearch: false}); %>
     <% if (locals.msg) { %>
         <div class="alert alert-success alert-dismissible">
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -105,7 +105,7 @@
         </div>
     </div>
     <%- include('../partials/footer'); %>
-    <%- include('../partials/scripttag'); %>
+    <%- include('../partials/scripttag', {isNiceSelect: true}); %>
     <!-- Jquery JS-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <!-- Vendor JS-->

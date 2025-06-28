@@ -2,7 +2,7 @@
 <html class="no-js" lang="zxx">
 
 <head>
-  <%- include('../partials/headtag'); %>
+  <%- include('../partials/headtag', {isNiceSelect: true}); %>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <style>
     /* Ensure grid layout adjusts properly */
@@ -118,7 +118,7 @@
 </head>
 
 <body>
-  <%- include('../partials/header'); %>
+  <%- include('../partials/header', {isSearch: false}); %>
   <%- include('../partials/slider'); %>
   <!-- Tours and Trek event - popular places area start -->
   <section class="popular_places_area" aria-label="Tour and Trek Packages">
@@ -166,7 +166,7 @@
   </section>
   <!-- Tours and Trek event - popular places area end -->
   <%- include('../partials/footer'); %>
-  <%- include('../partials/scripttag'); %>
+  <%- include('../partials/scripttag', {isNiceSelect: true}); %>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       document.querySelectorAll("img.card-image").forEach(img => {
