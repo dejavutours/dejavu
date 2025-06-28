@@ -748,7 +748,44 @@
         $(".modal-backdrop").remove();
         $("body").removeClass("modal-open");
       });
+
+      $(document).ready(function() {
+  $(".select2").select2();
+
+  // Cleanup for imageModal
+  $("#imageModal").on("hidden.bs.modal", function() {
+    try {
+      $(".modal-backdrop").remove();
+      $("body").removeClass("modal-open").css({ overflow: '', paddingRight: '' });
+    } catch (error) {
+      console.error('Error in imageModal hidden.bs.modal:', error);
+    }
+  });
+
+  // Cleanup for pdfModal
+  $("#pdfModal").on("hidden.bs.modal", function() {
+    try {
+      $(".modal-backdrop").remove();
+      $("body").removeClass("modal-open").css({ overflow: '', paddingRight: '' });
+    } catch (error) {
+      console.error('Error in pdfModal hidden.bs.modal:', error);
+    }
+  });
+
+  // Cleanup for messageModal
+  $("#messageModal").on("hidden.bs.modal", function() {
+    try {
+      $(".modal-backdrop").remove();
+      $("body").removeClass("modal-open").css({ overflow: '', paddingRight: '' });
+      // Ensure Select2 dropdowns are interactive
+      $(".select2").select2();
+    } catch (error) {
+      console.error('Error in messageModal hidden.bs.modal:', error);
+    }
+  });
+});
     });
+
 
     const csrfToken = document.querySelector('input[name="_csrf"]').value;
 
@@ -968,31 +1005,55 @@
 
     // Check for state in trips.state that doesn't exist in master data
     function checkNonExistentRegions(masterStates) {
-      const tripState = '<%- trips.state || "" %>';
-      const masterStateNames = masterStates.map(state => state.name);
-      if (tripState && !masterStateNames.includes(tripState)) {
-        const modal = new bootstrap.Modal(document.getElementById('messageModal'));
-        const modalBody = document.getElementById('messageModalBody');
-        const modalAction = document.getElementById('messageModalAction');
-        const modalClose = document.getElementById('messageModalClose');
-
-        modalBody.innerHTML = `
-            <p class="text-warning">
-              The selected region <strong>${tripState}</strong> is not in the master list.<br>
-              <a href="/state" target="_blank">Update or add regions</a> to include it, or click OK to continue without this region.
-            </p>
-          `;
-        modalAction.classList.remove('d-none');
-        modalAction.textContent = 'OK';
-        modalAction.onclick = () => {
-          document.getElementById('state').value = ''; // Clear invalid state
-          $(document.getElementById('state')).select2(); // Update Select2
-          modal.hide();
-        };
-        modalClose.style.display = 'block';
-        modal.show();
+  const tripState = '<%- trips.state || "" %>';
+  const masterStateNames = masterStates.map(state => state.name);
+  if (tripState && !masterStateNames.includes(tripState)) {
+    // Hide other modals to prevent backdrop stacking
+    const otherModals = ['imageModal', 'pdfModal'];
+    otherModals.forEach(modalId => {
+      const modalElement = document.getElementById(modalId);
+      if (modalElement) {
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
       }
-    }
+    });
+
+    const modal = new bootstrap.Modal(document.getElementById('messageModal'), { backdrop: true });
+    const modalBody = document.getElementById('messageModalBody');
+    const modalAction = document.getElementById('messageModalAction');
+    const modalClose = document.getElementById('messageModalClose');
+
+    modalBody.innerHTML = `
+      <p class="text-warning">
+        The selected region <strong>${tripState}</strong> is not in the master list.<br>
+        <a href="/state" target="_blank">Update or add regions</a> to include it, or click OK to continue without this region.
+      </p>
+    `;
+    modalAction.classList.remove('d-none');
+    modalAction.textContent = 'OK';
+    modalAction.onclick = () => {
+      try {
+        document.getElementById('state').value = ''; // Clear invalid state
+        $(document.getElementById('state')).select2(); // Update Select2
+        modal.hide();
+        // Forcefully clean up modal states
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = ''; // Restore scrolling
+        document.body.style.paddingRight = ''; // Remove padding added by Bootstrap
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+          backdrop.remove();
+        }
+      } catch (error) {
+        console.error('Error in modalAction.onclick:', error);
+      }
+    };
+    modalClose.style.display = 'block';
+    modal.show();
+  }
+}
 
     // Show region-related warning in modal
     function showRegionWarning(message) {

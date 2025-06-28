@@ -240,9 +240,9 @@
           <p><strong>Customer:</strong> <%= booking.personDetails[0].firstName %> <%= booking.personDetails[0].surname %></p>
           <p><strong>Contact:</strong> <%= booking.personDetails[0].phone %></p>
           <p><strong>Travel Dates:</strong> <%= new Date(booking.tripStartDate).toLocaleDateString('en-GB') %> to <%= new Date(booking.tripEndDate).toLocaleDateString('en-GB') %></p>
-          <p><strong>Total Cost:</strong> ₹<%= booking.totalTripCostWithGST.toFixed(2) %></p>
-          <p><strong>Paid Amount:</strong> ₹<%= booking.paidAmount.toFixed(2) %></p>
-          <p><strong>Due Amount:</strong> ₹<%= booking.duePayment.toFixed(2) %></p>
+          <p><strong>Total Cost:</strong> ₹<%= booking.totalTripCostWithGST?.toFixed(2) %></p>
+          <p><strong>Paid Amount:</strong> ₹<%= booking.paidAmount?.toFixed(2) %></p>
+          <p><strong>Due Amount:</strong> ₹<%= booking.duePayment?.toFixed(2) %></p>
           <p><strong>Payment Status:</strong> 
             <span class="badge <%= booking.paymentStatus === 'Paid' ? 'bg-success' : booking.paymentStatus === 'Partial' ? 'bg-info text-dark' : booking.paymentStatus === 'Pending' ? 'bg-warning text-dark' : 'bg-danger' %>">
               <%= booking.paymentStatus %>

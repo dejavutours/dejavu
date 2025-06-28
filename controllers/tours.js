@@ -1751,11 +1751,16 @@ exports.getFiltertourAPIUseOnly = async (req, res, sortByLatestUpdate) => {
 exports.getTours = async (req, res) => {
   try {
     const response = await this.getFiltertourAPIUseOnly(req, res, true); // Use NewTours instead of NewToursSchema
+    // Determine baseUrl based on environment
+    const baseUrl = process.env.NODE_ENV === 'production'
+      ? 'https://https://www.dejavutours.in/' // Replace with your production domain
+      : 'http://localhost:5000'; // Adjust port if needed
     //res.json(tours);
     res.render("pages/tourlist", {
       tourPackages: response.tours,
       filterChips: Object.values(response.filters).flat(),
       Searchvalue: req.query.searchValue,
+      baseUrl
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

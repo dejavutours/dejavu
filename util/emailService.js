@@ -1,4 +1,3 @@
-// util/emailService.js
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
@@ -97,23 +96,79 @@ class EmailService {
     });
     
     const paymentStatus = booking.paymentStatus === 'Partial' ? 
-      `Partial Payment (₹${paymentLog?.amount || 0}) - Remaining: ₹${booking.duePayment}` : 
+      `Partial Payment` : 
       'Full Payment Completed';
 
     return `
       <!DOCTYPE html>
-      <html>
+      <html lang="en">
       <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Booking Confirmation - Deja-vu Tours</title>
         <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background-color: #1a4b8e; color: white; padding: 20px; text-align: center; }
-          .content { padding: 20px; }
-          .footer { margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #777; }
-          .booking-details { margin: 20px 0; }
-          .detail-row { display: flex; margin-bottom: 10px; }
-          .detail-label { font-weight: bold; width: 150px; }
-          .thank-you { font-size: 18px; margin: 20px 0; }
+          /* Reset styles */
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: #2d3748; background-color: #f7fafc; }
+          
+          /* Container */
+          .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+          
+          /* Header */
+          .header { position: relative; text-align: center; color: #ffffff; padding: 40px 20px; background: linear-gradient(135deg, #1a4b8e, #2b6cb0); }
+          .header img { max-width: 150px; margin-bottom: 20px; }
+          .header h1 { font-size: 24px; font-weight: 600; }
+          
+          /* Hero Image */
+          .hero { width: 100%; height: 200px; object-fit: cover; }
+          
+          /* Content */
+          .content { padding: 30px 20px; }
+          .greeting { font-size: 18px; font-weight: 500; margin-bottom: 20px; }
+          .thank-you { font-size: 16px; color: #4a5568; margin-bottom: 20px; }
+          
+          /* Booking Details Card */
+          .booking-details { background-color: #f7fafc; border-radius: 8px; padding: 20px; margin: 20px 0; }
+          .detail-row { display: flex; flex-wrap: wrap; margin-bottom: 12px; }
+          .detail-label { font-weight: 600; width: 150px; color: #2d3748; }
+          .detail-value { flex: 1; color: #4a5568; }
+          
+          /* Call to Action */
+          .cta { text-align: center; margin: 30px 0; }
+          .cta a { display: inline-block; padding: 12px 24px; background-color: #1a4b8e; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 500; transition: background-color 0.3s ease; }
+          .cta a:hover { background-color: #2b6cb0; }
+          
+          /* Contact Info */
+          .contact-info { font-size: 14px; color: #4a5568; text-align: center; margin: 20px 0; }
+          .contact-info a { color: #1a4b8e; text-decoration: none; }
+          .contact-info a:hover { text-decoration: underline; }
+          
+          /* Divider */
+          .divider { border-top: 1px solid #e2e8f0; margin: 20px 0; }
+          
+          /* Footer */
+          .footer { background-color: #f7fafc; padding: 20px; text-align: center; font-size: 12px; color: #718096; }
+          .footer p { margin-bottom: 8px; }
+          .social-links { margin-top: 15px; }
+          .social-links a { margin: 0 8px; text-decoration: none; }
+          .social-links img { width: 24px; height: 24px; }
+          
+          /* Responsive Design */
+          @media (max-width: 600px) {
+            .container { max-width: 100%; border-radius: 0; }
+            .header { padding: 30px 15px; }
+            .header h1 { font-size: 20px; }
+            .hero { height: 150px; }
+            .content { padding: 20px 15px; }
+            .detail-row { flex-direction: column; }
+            .detail-label, .detail-value { width: 100%; }
+            .detail-label { margin-bottom: 4px; }
+            .cta a { padding: 10px 20px; font-size: 14px; }
+          }
+          
+          /* Animations */
+          @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+          .container { animation: fadeIn 0.5s ease-in; }
         </style>
       </head>
       <body>
@@ -122,46 +177,65 @@ class EmailService {
             <h1>Booking Confirmation</h1>
           </div>
           <div class="content">
-            <p>Dear ${booking.personDetails[0].firstName},</p>
-            <p>Thank you for booking with Deja-vu Tours! Your trip has been confirmed.</p>
+            <p class="greeting">Dear ${booking.personDetails[0].firstName},</p>
+            <p class="thank-you">Thank you for choosing Deja-vu Tours! We're thrilled to confirm your booking for an unforgettable adventure.</p>
             
             <div class="booking-details">
+              <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 15px;">Booking Details</h2>
               <div class="detail-row">
                 <div class="detail-label">Booking Number:</div>
-                <div>${booking.bookingNumber}</div>
+                <div class="detail-value">${booking.bookingNumber}</div>
               </div>
               <div class="detail-row">
                 <div class="detail-label">Trip Name:</div>
-                <div>${tour.name}</div>
+                <div class="detail-value">${tour.name}</div>
               </div>
               <div class="detail-row">
                 <div class="detail-label">Travel Dates:</div>
-                <div>${formatDate(booking.tripStartDate)} to ${formatDate(booking.tripEndDate)}</div>
+                <div class="detail-value">${formatDate(booking.tripStartDate)} to ${formatDate(booking.tripEndDate)}</div>
               </div>
               <div class="detail-row">
                 <div class="detail-label">Joining From:</div>
-                <div>${booking.joiningFrom}</div>
+                <div class="detail-value">${booking.joiningFrom}</div>
               </div>
               <div class="detail-row">
                 <div class="detail-label">Travelers:</div>
-                <div>${booking.totalPerson.adult} Adult(s), ${booking.totalPerson.child} Child(ren)</div>
+                <div class="detail-value">${booking.totalPerson.adult} Adult(s), ${booking.totalPerson.child} Child(ren)</div>
               </div>
               <div class="detail-row">
                 <div class="detail-label">Total Cost:</div>
-                <div>₹${booking.totalTripCostWithGST} (including 5% GST)</div>
+                <div class="detail-value">₹${booking.totalTripCostWithGST} (including 5% GST)</div>
               </div>
               <div class="detail-row">
                 <div class="detail-label">Payment Status:</div>
-                <div>${paymentStatus}</div>
+                <div class="detail-value">${paymentStatus}</div>
               </div>
             </div>
             
-            <p class="thank-you">We look forward to serving you on this amazing journey!</p>
-            <p>For any queries, please contact us at travel@dejavutours.in or call +91 8511178991.</p>
+            <div class="cta">
+              <a href="https://dejavutours.in" target="_blank">View Your Booking</a>
+            </div>
+            
+            <div class="contact-info">
+              <p>Have questions? We're here to help!</p>
+              <p>Email: <a href="mailto:travel@dejavutours.in">travel@dejavutours.in</a> | Phone: <a href="tel:+918511178991">+91 8511178991</a></p>
+              <p>WhatsApp: <a href="https://wa.me/+918511178991" target="_blank">Chat with Us</a></p>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <p style="font-size: 14px; color: #4a5568;">We can't wait to make your journey memorable. Stay tuned for your detailed itinerary!</p>
           </div>
           <div class="footer">
             <p>Deja-vu Outdoors Private Limited</p>
             <p>CIN: U63090GJ2019PTC110667 | GST: 24AAHCD4984A1ZT</p>
+            <p>123 Adventure Lane, Ahmedabad, Gujarat, India</p>
+            <div class="social-links">
+              <a class="socialLinks" href="https://www.instagram.com/dejavutours/" target="_blank"><i class="bi bi-instagram"></i></a>
+              <a class="socialLinks" href="https://www.facebook.com/dejavutours.in" target="_blank"><i class="bi bi-facebook"></i></a>
+              <a class="socialLinks" href="https://www.youtube.com/watch?v=56-u7Pv-cQg" target="_blank"><i class="bi bi-youtube"></i></a>
+              <a class="socialLinks" href="https://www.twitter.com" target="_blank"><i class="bi bi-twitter"></i></a>
+            </div>
           </div>
         </div>
       </body>
@@ -176,17 +250,58 @@ class EmailService {
 
     return `
       <!DOCTYPE html>
-      <html>
+      <html lang="en">
       <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>New Booking Notification - Deja-vu Tours</title>
         <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background-color: #1a4b8e; color: white; padding: 20px; text-align: center; }
-          .content { padding: 20px; }
-          .booking-details { margin: 20px 0; }
-          .detail-row { display: flex; margin-bottom: 10px; }
-          .detail-label { font-weight: bold; width: 150px; }
-          .alert { background-color: #f8f9fa; padding: 15px; border-left: 4px solid #1a4b8e; }
+          /* Reset styles */
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: #2d3748; background-color: #f7fafc; }
+          
+          /* Container */
+          .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+          
+          /* Header */
+          .header { position: relative; text-align: center; color: #ffffff; padding: 30px 20px; background: linear-gradient(135deg, #1a4b8e, #2b6cb0); }
+          .header img { max-width: 150px; margin-bottom: 15px; }
+          .header h1 { font-size: 22px; font-weight: 600; }
+          
+          /* Content */
+          .content { padding: 25px 20px; }
+          .alert { background-color: #fefcbf; border-left: 4px solid #ecc94b; padding: 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; }
+          
+          /* Booking Details Card */
+          .booking-details { background-color: #f7fafc; border-radius: 8px; padding: 20px; margin: 20px 0; }
+          .detail-row { display: flex; flex-wrap: wrap; margin-bottom: 12px; }
+          .detail-label { font-weight: 600; width: 150px; color: #2d3748; }
+          .detail-value { flex: 1; color: #4a5568; }
+          
+          /* Call to Action */
+          .cta { text-align: center; margin: 25px 0; }
+          .cta a { display: inline-block; padding: 12px 24px; background-color: #1a4b8e; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 500; transition: background-color 0.3s ease; }
+          .cta a:hover { background-color: #2b6cb0; }
+          
+          /* Footer */
+          .footer { background-color: #f7fafc; padding: 20px; text-align: center; font-size: 12px; color: #718096; }
+          .footer p { margin-bottom: 8px; }
+          
+          /* Responsive Design */
+          @media (max-width: 600px) {
+            .container { max-width: 100%; border-radius: 0; }
+            .header { padding: 25px 15px; }
+            .header h1 { font-size: 18px; }
+            .content { padding: 20px 15px; }
+            .detail-row { flex-direction: column; }
+            .detail-label, .detail-value { width: 100%; }
+            .detail-label { margin-bottom: 4px; }
+            .cta a { padding: 10px 20px; font-size: 14px; }
+          }
+          
+          /* Animations */
+          @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+          .container { animation: fadeIn 0.5s ease-in; }
         </style>
       </head>
       <body>
@@ -195,60 +310,68 @@ class EmailService {
             <h1>New Booking Notification</h1>
           </div>
           <div class="content">
-            <p>A new booking has been received:</p>
+            <div class="alert">
+              <p>A new booking has been received. Please review and prepare necessary arrangements.</p>
+            </div>
             
             <div class="booking-details">
+              <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 15px;">Booking Details</h2>
               <div class="detail-row">
                 <div class="detail-label">Booking Number:</div>
-                <div>${booking.bookingNumber}</div>
+                <div class="detail-value">${booking.bookingNumber}</div>
               </div>
               <div class="detail-row">
                 <div class="detail-label">Customer:</div>
-                <div>${booking.personDetails[0].firstName} ${booking.personDetails[0].surname}</div>
+                <div class="detail-value">${booking.personDetails[0].firstName} ${booking.personDetails[0].surname}</div>
               </div>
               <div class="detail-row">
                 <div class="detail-label">Contact:</div>
-                <div>${booking.personDetails[0].phone}</div>
+                <div class="detail-value">${booking.personDetails[0].phone}</div>
               </div>
               <div class="detail-row">
                 <div class="detail-label">Trip Name:</div>
-                <div>${tour.name}</div>
+                <div class="detail-value">${tour.name}</div>
               </div>
               <div class="detail-row">
                 <div class="detail-label">Travel Dates:</div>
-                <div>${formatDate(booking.tripStartDate)} to ${formatDate(booking.tripEndDate)}</div>
+                <div class="detail-value">${formatDate(booking.tripStartDate)} to ${formatDate(booking.tripEndDate)}</div>
               </div>
               <div class="detail-row">
                 <div class="detail-label">Joining From:</div>
-                <div>${booking.joiningFrom}</div>
+                <div class="detail-value">${booking.joiningFrom}</div>
               </div>
               <div class="detail-row">
                 <div class="detail-label">Travelers:</div>
-                <div>${booking.totalPerson.adult} Adult(s), ${booking.totalPerson.child} Child(ren)</div>
+                <div class="detail-value">${booking.totalPerson.adult} Adult(s), ${booking.totalPerson.child} Child(ren)</div>
               </div>
               <div class="detail-row">
                 <div class="detail-label">Total Cost:</div>
-                <div>₹${booking.totalTripCostWithGST}</div>
+                <div class="detail-value">₹${booking.totalTripCostWithGST}</div>
               </div>
               <div class="detail-row">
                 <div class="detail-label">Payment Status:</div>
-                <div>${booking.paymentStatus}</div>
+                <div class="detail-value">${booking.paymentStatus}</div>
               </div>
               ${paymentLog ? `
               <div class="detail-row">
                 <div class="detail-label">Payment Amount:</div>
-                <div>₹${paymentLog.amount}</div>
+                <div class="detail-value">₹${paymentLog.amount}</div>
               </div>
               <div class="detail-row">
                 <div class="detail-label">Payment Method:</div>
-                <div>${paymentLog.paymentMethod}</div>
+                <div class="detail-value">${paymentLog.paymentMethod}</div>
               </div>
               ` : ''}
             </div>
             
-            <div class="alert">
-              <p>Please review this booking in the admin panel and prepare necessary arrangements.</p>
+            <div class="cta">
+              <a href="https://dejavutours.in/" target="_blank">Review Booking</a>
             </div>
+          </div>
+          <div class="footer">
+            <p>Deja-vu Outdoors Private Limited</p>
+            <p>CIN: U63090GJ2019PTC110667 | GST: 24AAHCD4984A1ZT</p>
+            <p>123 Adventure Lane, Ahmedabad, Gujarat, India</p>
           </div>
         </div>
       </body>

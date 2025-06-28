@@ -30,636 +30,747 @@
       },
       "offers": {
         "@type": "Offer",
-        "price": "<%= trips.price || 'Contact for details' %>",
+        "price": "<%= trips.deptcities && trips.deptcities[0] && trips.deptcities[0].price && trips.deptcities[0].price[0] ? trips.deptcities[0].price[0].adultPrice : trips.price || 'Contact for details' %>",
         "priceCurrency": "INR",
-        "availability": "<%= trips.deptcities && trips.deptcities.length > 0 ? 'InStock' : 'OutOfStock' %>",
+        "availability": "<%= trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].City !== 'Unknown' ? 'InStock' : 'OutOfStock' %>",
         "url": "https://yourwebsite.com/bookingTour/<%= trips._id %>"
       }
     }
   </script>
   <style>
     :root {
-      --primary-blue: #1a4b8e;
-      --light-gray: #f8f9fa;
-      --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      --transition: 0.3s ease;
-      --error-red: #dc3545;
-      --premium-gold: #FFD700;
-      --dark-gray: #333333;
-    }
-    .normal-hight{line-height: normal;}
-
-    /* Image slider styling */
-    .image-slider {width: 100%;border-radius: 12px;overflow: hidden;position: relative;}
-    .swiper-slide {width: 100%;height: 100%;}
-    .image-slider img {width: 100%;height: 300px;object-fit: cover;}
-
-    .swiper-button-next,
-    .swiper-button-prev {
-      color: white;
-      background: rgba(0, 0, 0, 0.3);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      transition: background var(--transition);
-    }
-
-    .swiper-button-next:hover,
-    .swiper-button-prev:hover {
-      background: rgba(0, 0, 0, 0.5);
-    }
-
-    .swiper-button-next:after,
-    .swiper-button-prev:after {
-      font-size: 20px;
-    }
-
-    .swiper-pagination-bullet {
-      background: white;
-      opacity: 0.7;
-      transition: opacity var(--transition);
-    }
-
-    .swiper-pagination-bullet-active {
-      opacity: 1;
-    }
-
-    /* Trek header styling */
-    .trek-title {
-      margin: 0;
-      font-size: 2rem;
-    }
-
-    header .subtitle {color: #6c757d;font-size: 0.875rem;}
-
-    /* Book now button */
-    .btn-book-now {--bs-btn-bg: var(--primary-blue);--bs-btn-hover-bg: #143c73;--bs-btn-color: #fff;--bs-btn-hover-color: #fff;--bs-btn-active-bg: #143c73;--bs-btn-active-color: #fff;transition: background var(--transition);}
-
-    /* Inquiry button */
-    .btn-inquiry {--bs-btn-bg: var(--premium-gold);--bs-btn-hover-bg: #e6c200;--bs-btn-active-bg: #e6c200;--bs-btn-color: var(--dark-gray);--bs-btn-hover-color: var(--dark-gray);--bs-btn-active-color: var(--dark-gray);text-decoration: none;transition: background var(--transition), transform var(--transition);}
-    .abouts:not(.expanded){ max-height: 150px; overflow: hidden; text-overflow: ellipsis; -o-text-overflow: ellipsis; -ms-text-overflow: ellipsis;}
-    .about-mask{height: 40px; pointer-events: none; background-image: linear-gradient(to bottom, rgba(255,255,255,0) 0%, #fff 90%); z-index: 1;} .about-read-more-btn{text-underline-offset: 2px;}
-
-    /* City card styling */
-    .city-card {
-      width: 150px;
-      flex-shrink: 0;
-      text-align: center;
-      background: #fff;
-      padding: 10px;
-      border: 1px solid #dee2e6;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
-    }
-
-    .city-card:hover {
-      box-shadow: var(--shadow);
-      transform: translateY(-2px);
-    }
-
-    .city-card.active {
-      border-color: var(--primary-blue);
-      box-shadow: var(--shadow);
-    }
-
-    .city-card img {
-      width: 100%;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 5px;
-    }
-
-    /* Carousel track */
-    #carouselTrack {
-      white-space: nowrap;
-      scroll-behavior: smooth;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-
-    #carouselTrack::-webkit-scrollbar {
-      display: none;
-    }
-
-    /* Carousel controls */
-    .carousel-control-prev,
-    .carousel-control-next {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 10;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      transition: background var(--transition);
-      opacity: 0.8;
-    }
-
-    .carousel-control-prev:hover,
-    .carousel-control-next:hover {
-      background: rgba(0, 0, 0, 0.5);
-      opacity: 1;
-    }
-
-    .carousel-control-prev {
-      left: -10px;
-    }
-
-    .carousel-control-next {
-      right: -10px;
-    }
-
-    /* Specific dropdown styling for trip details */
-    .trip-details-form-select {
-      border: 1px solid #dee2e6;
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-size: 0.95rem;
-      color: #333;
-      background-color: white;
-      box-shadow: var(--shadow);
-      transition: border-color var(--transition), box-shadow var(--transition);
-    }
-    .form-select{box-shadow: var(--shadow); transition: border-color var(--transition), box-shadow var(--transition);}
-
-    .trip-details-form-select:focus {
-      border-color: var(--primary-blue);
-      box-shadow: 0 0 0 0.2rem rgba(26, 75, 142, 0.25);
-      outline: none;
-    }
-
-    .trip-details-form-select option {
-      color: #333;
-    }
-
-    .trip-details-form-select:disabled {
-      background-color: #e9ecef;
-      cursor: not-allowed;
-    }
-
-    .trip-details-form-select.is-invalid {
-      border-color: var(--error-red);
-    }
-
-    /* Year tabs */
-    .trip-details-year-tabs,
-    .booking-modal-year-tabs {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-
-    .trip-details-year-tab,
-    .booking-modal-year-tab {
-      background: none;
-      border: none;
-      padding: 8px 16px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 1rem;
-      border-bottom: 3px solid transparent;
-      transition: border-color var(--transition), color var(--transition);
-    }
-
-    .trip-details-year-tab:hover,
-    .trip-details-year-tab.active,
-    .booking-modal-year-tab:hover,
-    .booking-modal-year-tab.active {
-      border-color: var(--primary-blue);
-      color: var(--primary-blue);
-    }
-
-    /* Month tabs */
-    .trip-details-month-tabs,
-    .booking-modal-month-tabs {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .trip-details-month-tab,
-    .booking-modal-month-tab {
-      background: none;
-      border: none;
-      padding: 8px 16px;
-      cursor: pointer;
-      font-weight: 500;
-      font-size: 0.875rem;
-      border-radius: 6px;
-      transition: background var(--transition), color var(--transition), box-shadow var(--transition);
-    }
-
-    .trip-details-month-tab:hover,
-    .booking-modal-month-tab:hover {
-      background: var(--light-gray);
-      color: var(--primary-blue);
-    }
-
-    .trip-details-month-tab.active,
-    .booking-modal-month-tab.active {
-      background: var(--primary-blue);
-      color: white;
-      box-shadow: var(--shadow);
-    }
-
-    /* Date selector */
-    .trip-details-date-selector,
-    .booking-modal-date-selector {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 10px 0;
-      max-width: 100%;
-    }
-
-    .trip-details-date-item,.booking-modal-date-item {min-width: 44px;--bs-btn-hover-bg: var(--light-gray);--bs-btn-hover-border-color: var(--primary-blue);--bs-btn-border-color: #dee2e6;--bs-btn-active-bg: var(--primary-blue);--bs-btn-active-color: white;--bs-btn-active-border-color: var(--primary-blue);transition: background var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition);}
-    .trip-details-date-item.active,.booking-modal-date-item.active {box-shadow: var(--shadow);}
-
-    /* Proceed button */
-    .trip-details-proceed-btn-book,
-    .booking-modal-btn-proceed {
-      --bs-btn-bg: var(--primary-blue); --bs-btn-hover-bg: #143c73; --bs-btn-active-bg: var(--primary-blue); --bs-btn-color: white; --bs-btn-hover-color: #fff; --bs-btn-active-color: #fff; transition: background var(--transition); --bs-btn-disabled-bg: #6c757d;
-    }
-
-    /* Inquiry button in form */
-    .btn-inquiry-form { --bs-btn-bg: var(--premium-gold); --bs-btn-hover-bg: #e6c200; --bs-btn-active-bg: var(--premium-gold); --bs-btn-color: var(--dark-gray); --bs-btn-hover-color: var(--dark-gray); --bs-btn-active-color: var(--dark-gray); transition: background var(--transition), transform var(--transition);}
-    .btn-inquiry-form:hover {transform: translateY(-2px);}
-
-    /* Inquiry modal styling */
-    .inquiry-modal-content {background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);}
-    .inquiry-modal-body p {color: var(--dark-gray);}
-    .inquiry-modal-footer { border-top: 1px solid #dee2e6;}
-
-    .inquiry-modal-btn {transition: background var(--transition), transform var(--transition);}
-    .inquiry-modal-btn-whatsapp {--bs-btn-bg: #25D366; --bs-btn-hover-bg: #20b358;--bs-btn-hover-color: #fff; --bs-btn-color: #fff;}
-    .inquiry-modal-btn-customize {--bs-btn-bg: var(--premium-gold); --bs-btn-hover-bg: #e6c200;--bs-btn-hover-color: var(--dark-gray); --bs-btn-color: var(--dark-gray);}
-    .inquiry-modal-btn-ok {--bs-btn-bg: var(--primary-blue); --bs-btn-hover-bg: #143c73;--bs-btn-hover-color: #fff; --bs-btn-color: #fff;}
-    .inquiry-modal-btn-ok:hover, .inquiry-modal-btn-customize:hover, .inquiry-modal-btn-whatsapp:hover {transform: translateY(-2px);}
-
-    .error-message {
-      color: var(--error-red);
-      font-size: 0.85rem;
-      margin-top: 5px;
-      display: none;
-    }
-
-    .accordion{ --bs-accordion-btn-padding-x: 1rem; --bs-accordion-btn-padding-y: 0.5rem;}
-    .accordion-button{font-size: inherit;}
-
-    .tab-menu { border-bottom: 2px solid #e0e0e0; }
-    .tab {
-      background: none;
-      border: none;
-      padding-block: 10px;
-      font-weight: 500;
-      border-bottom: 3px solid transparent;
-      transition: border-color var(--transition), color var(--transition);
-    }
-    .tab:hover, .tab.active {border-color: #111; color: #111;}
-
-    .tab-content {display: none;}
-    .tab-content.active {display: block;}
-    .tab-content li {list-style: unset;}
-
-    #contactModal .modal-content{border-radius: 10px; }
-
-    #contactModal .modal-header{ background: var(--primary-blue); color: white; }
-    a {text-decoration: none;}
-
-    .booking-modal-section {
-      background: var(--light-gray);
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: var(--shadow);
-    }
-
-    .booking-modal-select {
-      width: 100%;
-      padding: 12px;
-      font-size: 1rem;
-      border-radius: 8px;
-      border: 1px solid #dee2e6;
-      background: white;
-      box-shadow: var(--shadow);
-      transition: border-color var(--transition), box-shadow var(--transition);
-    }
-
-    .booking-modal-select:focus {
-      border-color: var(--primary-blue);
-      box-shadow: 0 0 0 0.2rem rgba(26, 75, 142, 0.25);
-      outline: none;
-    }
-
-    .booking-modal-select.is-invalid {
-      border-color: var(--error-red);
-    }
-
-    .booking-modal-city-summary {
-      background: white;
-      border-radius: 8px;
-      border: 1px solid #dee2e6;
-      transition: opacity var(--transition);
-    }
-
-    .booking-modal-summary {
-      background: var(--light-gray);
-      border-radius: 8px;
-      border: 1px solid #dee2e6;
-    }
-
-    .booking-modal-btn-cancel {
-      border-radius: 8px;
-    }
-
-    .floatingSec{position: fixed; display: flex; bottom: 1rem; left: 0; right: 0; padding-inline: 50px; z-index: 3;}
-
-
-    /* Quick Call Modal Styling */
-    .quick-call-modal-content {
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-      border: none;
-      max-width: 500px;
-      margin: 0 auto;
-    }
-
-    .quick-call-modal-header {
-      background: var(--primary-blue);
-      background-image: url('/images/exit-modal-banner.avif');
-      /* Replace with the actual background image URL */
-      background-size: 100% 100%; /* Stretch to fill entire container */
-      background-position: center;
-      position: relative;
-      border-bottom: none;
-      padding: 70px 20px;
-      min-height: 140px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .quick-call-modal-header .btn-close-white {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      z-index: 1;
-      filter: brightness(0) invert(1);
-    }
-
-    .modal-body-content {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-    }
-
-    .quick-call-modal-header .modal-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-      line-height: 1.3;
-    }
-
-    .quick-call-modal-header p {
-      font-size: 0.9rem;
-      margin-bottom: 0;
-      line-height: 1.4;
-    }
-
-    .quick-call-modal-body {
-      padding: 20px 24px;
-      background: #fff;
-      border-bottom-left-radius: 16px;
-      border-bottom-right-radius: 16px;
-    }
-
-    .quick-call-modal-body .form-label {
-      font-size: 0.85rem;
-      color: var(--dark-gray);
-      text-align: left;
-      margin-bottom: 6px;
-      font-weight: 500;
-    }
-
-    .quick-call-modal-body .form-control,
-    .quick-call-modal-body .form-select {
-      border-radius: 8px;
-      border: 1px solid #d1d5db;
-      padding: 8px 12px;
-      font-size: 0.9rem;
-      box-shadow: none;
-      transition: border-color var(--transition), box-shadow var(--transition);
-    }
-
-    .quick-call-modal-body .form-select {
-      max-width: 90px;
-      padding-right: 30px;
-      background-size: 10px;
-    }
-
-    .quick-call-modal-body .form-control:focus,
-    .quick-call-modal-body .form-select:focus {
-      border-color: var(--primary-blue);
-      box-shadow: 0 0 0 2px rgba(26, 75, 142, 0.2);
-      outline: none;
-    }
-
-    .quick-call-modal-body .form-control.is-invalid,
-    .quick-call-modal-body .form-select.is-invalid {
-      border-color: var(--error-red);
-    }
-
-    .quick-call-modal-body .error-message {
-      color: var(--error-red);
-      font-size: 0.75rem;
-      margin-top: 4px;
-      display: none;
-    }
-
-    .quick-call-modal-body .notes {
-      margin-top: 16px;
-    }
-
-    .quick-call-modal-body .notes .note-icon {
-      color: var(--primary-blue);
-      margin-right: 8px;
-      font-size: 1rem;
-    }
-
-    .quick-call-modal-body .notes span {
-      font-size: 0.8rem;
-      color: #6b7280;
-    }
-
-    .quick-call-modal-footer {
-      padding: 16px 24px;
-      border-top: none;
-      display: flex;
-      justify-content: center;
-      background: #fff;
-      border-bottom-left-radius: 16px;
-      border-bottom-right-radius: 16px;
-    }
-
-    .quick-call-modal-btn {
-      background: var(--premium-gold);
-      color: var(--dark-gray);
-      padding: 10px 24px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: background var(--transition), transform var(--transition);
-      display: flex;
-      align-items: center;
-      width: 100%;
-      justify-content: center;
-    }
-
-    .quick-call-modal-btn:hover {
-      background: #e6c200;
-      transform: translateY(-2px);
-    }
-
-    .quick-call-modal-btn:disabled {
-      background: #d1d5db;
-      color: #6b7280;
-      cursor: not-allowed;
-    }
-
-    .quick-call-modal-btn i {
-      font-size: 1rem;
-    }
-    .custom-card{background-color: #fff; border-radius: 0.75rem;}.custom-card + .custom-card{margin-top: 3rem;}
-    .transport-option{border: 1px solid grey;display: inline-flex;border-radius: var(--bs-border-radius);padding: 0.2rem 0.75rem;justify-content: center;color: grey;cursor: pointer;}
-    .transport-option.active{background-color: var(--primary-blue);border-color: var(--primary-blue); color: #fff;}
-    .stickySec{z-index: 1; left: 0;}
-    img{max-width: 100%;} .accordion-body img {max-height: 300px;}.stickySec .card{border-radius: 2rem 2rem 0 0;--bs-card-cap-padding-y: 1rem;}
-    .price strong{font-size: 1.5rem;}.summaryPara>:not(span){color: #525252;}
-    @media screen and (min-width: 992px) {
-      body{background-color: #f3f3f6;}
-      .image-slider img {height: 500px;}.custom-card + .custom-card{margin-top: 1rem;}
-      .stickySec{position: sticky; top: 100px; bottom: unset;}.stickySec .card, .custom-card, .actionCard {box-shadow: var(--bs-box-shadow-sm);border-radius: 0.75rem;}
-      .price strong{font-size: calc(1.5rem+0.3vw);}.btnSec{width: 100%; text-align: end;}
-    }
-    @media (max-width: 768px) {
-      .trek-title, h3 {font-size: 1.5rem;}
-      .accordion-button{font-size: 1rem;}
-
-      .trip-details-form-select,
-      .booking-modal-select {
-        font-size: 0.9rem;
-        padding: 8px 12px;
-      }
-
-      .trip-details-date-item,
-      .booking-modal-date-item {
-        width: 40px;
-        height: 40px;
-        font-size: 0.85rem;
-      }
-    }
-    /* Responsiveness for Small Screens */
-    @media (max-width: 576px) {
-      .image-slider img {height: 200px;}
-      .city-card img {height: 80px;}
-
-      .trip-details-month-tab,.booking-modal-month-tab {padding: 6px 12px;font-size: 0.8rem;}
-      .trip-details-date-item,.booking-modal-date-item {width: 36px;height: 36px;font-size: 0.8rem;}
-      .booking-modal-section {padding: 10px;}
-      .booking-modal-city-summary,.booking-modal-summary {font-size: 0.85rem;}
-      .booking-modal-btn-cancel,.booking-modal-btn-proceed {font-size: 0.9rem;}
-      .quick-call-modal-content {max-width: 100%;margin: 10px;}
-      .quick-call-modal-header {min-height: 120px;padding: 20px 16px;}
-
-      .quick-call-modal-header .modal-title {font-size: 1.1rem;}
-      .quick-call-modal-header p {font-size: 0.85rem;}
-      .quick-call-modal-header .btn-close-white {top: 10px;right: 10px;}
-      .quick-call-modal-body {padding: 16px 20px;}
-      .quick-call-modal-body .form-label {font-size: 0.8rem;}
-      .quick-call-modal-body .form-control,.quick-call-modal-body .form-select {font-size: 0.85rem;padding: 6px 10px;}
-      .quick-call-modal-body .form-select {max-width: 80px;}
-      .quick-call-modal-body .error-message {font-size: 0.7rem;}
-      .quick-call-modal-body .notes .note-icon {font-size: 0.9rem;margin-right: 6px;}
-      .quick-call-modal-body .notes span {font-size: 0.75rem;}
-      .quick-call-modal-footer {padding: 12px 20px;}
-      .quick-call-modal-btn {font-size: 0.85rem;padding: 8px 20px;}
-    }
-
-    @media (max-width: 400px) {
-      .quick-call-modal-header {
-        min-height: 110px;
-        padding: 16px 12px;
-      }
-
-      .quick-call-modal-header .modal-title {
-        font-size: 1rem;
-      }
-
-      .quick-call-modal-header p {
-        font-size: 0.8rem;
-      }
-
-      .quick-call-modal-body {
-        padding: 12px 16px;
-      }
-
-      .quick-call-modal-body .form-label {
-        font-size: 0.75rem;
-      }
-
-      .quick-call-modal-body .form-control,
-      .quick-call-modal-body .form-select {
-        font-size: 0.8rem;
-        padding: 6px 8px;
-      }
-
-      .quick-call-modal-body .form-select {
-        max-width: 70px;
-      }
-
-      .quick-call-modal-body .error-message {
-        font-size: 0.65rem;
-      }
-
-      .quick-call-modal-body .notes .note-icon {
-        font-size: 0.85rem;
-        margin-right: 5px;
-      }
-
-      .quick-call-modal-body .notes span {
-        font-size: 0.7rem;
-      }
-
-      .quick-call-modal-footer {
-        padding: 10px 16px;
-      }
-
-      .quick-call-modal-btn {
-        font-size: 0.8rem;
-        padding: 8px 16px;
-      }
-    }
+  --primary-blue: #1a4b8e;
+  --light-gray: #f8f9fa;
+  --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --transition: 0.3s ease;
+  --error-red: #dc3545;
+  --premium-gold: #FFD700;
+  --dark-gray: #333333;
+}
+
+.normal-hight { line-height: normal; }
+
+/* Image slider styling */
+.image-slider {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+.swiper-slide { width: 100%; height: 100%; }
+.image-slider img { width: 100%; height: 300px; object-fit: cover; }
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: white;
+  background: rgba(0, 0, 0, 0.3);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: background var(--transition);
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after { font-size: 20px; }
+
+.swiper-pagination-bullet {
+  background: white;
+  opacity: 0.7;
+  transition: opacity var(--transition);
+}
+
+.swiper-pagination-bullet-active { opacity: 1; }
+
+header .subtitle { color: #6c757d; font-size: 0.875rem; }
+
+.abouts:not(.expanded) {
+  max-height: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  -ms-text-overflow: ellipsis;
+}
+
+.about-mask {
+  height: 40px;
+  pointer-events: none;
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, #fff 90%);
+  z-index: 1;
+}
+
+.about-read-more-btn { text-underline-offset: 2px; }
+
+/* City card styling */
+.tour-booking-city-card {
+  width: 160px;
+  flex-shrink: 0;
+  text-align: center;
+  background: #fff;
+  padding: 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+
+.tour-booking-city-card:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+
+.tour-booking-city-card.active {
+  border-color: var(--primary-blue);
+  box-shadow: var(--shadow);
+}
+
+.tour-booking-city-card img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.tour-booking-city-card h6 {
+  font-size: 0.95rem;
+  margin: 8px 0 4px;
+}
+
+.tour-booking-city-card small {
+  font-size: 0.8rem;
+  line-height: 1.3;
+}
+
+/* Carousel track */
+#carouselTrack {
+  white-space: nowrap;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 10px 0;
+}
+
+#carouselTrack::-webkit-scrollbar { display: none; }
+
+/* Carousel controls */
+.carousel-control-prev,
+.carousel-control-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  transition: background var(--transition);
+  opacity: 0.9;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 1;
+}
+
+.carousel-control-prev { left: -15px; }
+.carousel-control-next { right: -15px; }
+
+/* Departure city and available dates */
+.tour-booking-departure-section { margin-top: 1.5rem; }
+.tour-booking-departure-section h5 { font-size: 1.1rem; font-weight: 600; }
+
+.tour-booking-year-tabs,
+.tour-booking-month-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.tour-booking-year-tab,
+.tour-booking-month-tab {
+  background: none;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  transition: background var(--transition), color var(--transition);
+}
+
+.tour-booking-year-tab:hover,
+.tour-booking-year-tab.active,
+.tour-booking-month-tab:hover,
+.tour-booking-month-tab.active {
+  background: var(--primary-blue);
+  color: white;
+}
+
+.tour-booking-date-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 0;
+}
+
+.tour-booking-date-item {
+  min-width: 40px;
+  padding: 8px;
+  font-size: 0.85rem;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.tour-booking-date-item:hover {
+  background: var(--light-gray);
+  border-color: var(--primary-blue);
+}
+
+.tour-booking-date-item.active {
+  background: var(--primary-blue);
+  color: white;
+  border-color: var(--primary-blue);
+  box-shadow: var(--shadow);
+}
+
+/* Booking summary and payment options */
+.tour-booking-summary-card {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 12px;
+  max-height: 350px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.tour-booking-summary-card::-webkit-scrollbar { display: none; }
+
+.tour-booking-summary-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.tour-booking-summary-item span:first-child { color: #6c757d; }
+.tour-booking-summary-item span:last-child { font-weight: 500; }
+
+.tour-booking-payment-options {
+  margin-top: 1rem;
+  padding: 12px;
+  background: var(--light-gray);
+  border-radius: 8px;
+}
+
+.tour-booking-payment-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+.tour-booking-payment-option input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.tour-booking-payment-option label {
+  flex: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tour-booking-payment-option label:hover { color: var(--primary-blue); }
+
+.tour-booking-proceed-btn {
+  width: 100%;
+  padding: 10px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  background: var(--primary-blue);
+  color: #fff;
+  transition: background var(--transition);
+}
+
+.tour-booking-proceed-btn:hover { background: #143c73;  color: #fff;}
+.tour-booking-proceed-btn:disabled { background: #6c757d; cursor: not-allowed;  color: #fff;}
+
+/* Floating book now section for mobile */
+.tour-booking-floating-sec {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  transition: transform var(--transition);
+  transform: translateY(100%);
+}
+
+.tour-booking-floating-sec.active {
+  transform: translateY(0);
+}
+
+.tour-booking-floating-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 999;
+  display: none;
+}
+
+.tour-booking-floating-backdrop.active { display: block; }
+
+.tour-booking-floating-panel {
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  padding: 16px;
+  max-height: 60vh;
+  overflow-y: auto;
+  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tour-booking-floating-btn {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background: var(--primary-blue);
+  color: #fff;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+  transition: background var(--transition), transform var(--transition);
+}
+
+.tour-booking-floating-btn:hover {
+  background: #143c73;
+  transform: scale(1.05);
+}
+
+.tour-booking-floating-btn i { font-size: 1.2rem; }
+
+/* Modal and form styling */
+.trip-details-form-select,
+.booking-modal-select {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  color: #333;
+  background-color: white;
+  box-shadow: var(--shadow);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.trip-details-form-select:focus,
+.booking-modal-select:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 0.2rem rgba(26, 75, 142, 0.25);
+  outline: none;
+}
+
+.trip-details-form-select:disabled,
+.booking-modal-select:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+.trip-details-form-select.is-invalid,
+.booking-modal-select.is-invalid {
+  border-color: var(--error-red);
+}
+
+/* Inquiry modal styling */
+.inquiry-modal-content {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.inquiry-modal-body p { color: var(--dark-gray); }
+.inquiry-modal-footer { border-top: 1px solid #dee2e6; }
+
+.inquiry-modal-btn {
+  transition: background var(--transition), transform var(--transition);
+}
+
+.inquiry-modal-btn-whatsapp {
+  --bs-btn-bg: #25D366;
+  --bs-btn-hover-bg: #20b358;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-color: #fff;
+}
+
+.inquiry-modal-btn-customize {
+  --bs-btn-bg: var(--premium-gold);
+  --bs-btn-hover-bg: #e6c200;
+  --bs-btn-hover-color: var(--dark-gray);
+  --bs-btn-color: var(--dark-gray);
+}
+
+.inquiry-modal-btn-ok {
+  --bs-btn-bg: var(--primary-blue);
+  --bs-btn-hover-bg: #143c73;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-color: #fff;
+}
+
+.inquiry-modal-btn-ok:hover,
+.inquiry-modal-btn-customize:hover,
+.inquiry-modal-btn-whatsapp:hover {
+  transform: translateY(-2px);
+}
+
+/* Quick call modal styling */
+.quick-call-modal-content {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border: none;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.quick-call-modal-header {
+  background: var(--primary-blue);
+  background-image: url('/images/exit-modal-banner.avif');
+  background-size: 100% 100%;
+  background-position: center;
+  position: relative;
+  border-bottom: none;
+  padding: 70px 20px;
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-call-modal-header .btn-close-white {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+  filter: brightness(0) invert(1);
+}
+
+.quick-call-modal-header .modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.quick-call-modal-header p {
+  font-size: 0.9rem;
+  margin-bottom: 0;
+  line-height: 1.4;
+}
+
+.quick-call-modal-body {
+  padding: 20px 24px;
+  background: #fff;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+.quick-call-modal-body .form-label {
+  font-size: 0.85rem;
+  color: var(--dark-gray);
+  text-align: left;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.quick-call-modal-body .form-control,
+.quick-call-modal-body .form-select {
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  box-shadow: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.quick-call-modal-body .form-select {
+  max-width: 90px;
+  padding-right: 30px;
+  background-size: 10px;
+}
+
+.quick-call-modal-body .form-control:focus,
+.quick-call-modal-body .form-select:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 2px rgba(26, 75, 142, 0.2);
+  outline: none;
+}
+
+.quick-call-modal-body .form-control.is-invalid,
+.quick-call-modal-body .form-select.is-invalid {
+  border-color: var(--error-red);
+}
+
+.quick-call-modal-body .error-message {
+  color: var(--error-red);
+  font-size: 0.75rem;
+  margin-top: 4px;
+  display: none;
+}
+
+.quick-call-modal-body .notes {
+  margin-top: 16px;
+}
+
+.quick-call-modal-body .notes .note-icon {
+  color: var(--primary-blue);
+  margin-right: 8px;
+  font-size: 1rem;
+}
+
+.quick-call-modal-body .notes span {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.quick-call-modal-footer {
+  padding: 16px 24px;
+  border-top: none;
+  display: flex;
+  justify-content: center;
+  background: #fff;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+.quick-call-modal-btn {
+  background: var(--premium-gold);
+  color: var(--dark-gray);
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background var(--transition), transform var(--transition);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+}
+
+.quick-call-modal-btn:hover {
+  background: #e6c200;
+  transform: translateY(-2px);
+}
+
+.quick-call-modal-btn:disabled {
+  background: #d1d5db;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.quick-call-modal-btn i { font-size: 1rem; }
+
+.custom-card { background-color: #fff; border-radius: 0.75rem; }
+.custom-card + .custom-card { margin-top: 1.5rem; }
+
+.transport-option {
+  border: 1px solid #dee2e6;
+  display: inline-flex;
+  border-radius: 6px;
+  padding: 6px 12px;
+  justify-content: center;
+  color: #6c757d;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all var(--transition);
+}
+
+.transport-option.active {
+  background-color: var(--primary-blue);
+  border-color: var(--primary-blue);
+  color: #fff;
+}
+
+.stickySec {
+  z-index: 1;
+  left: 0;
+  transition: bottom 0.3s ease, position 0.3s ease;
+}
+
+.stickySec .card {
+  border-radius: 1rem;
+  --bs-card-cap-padding-y: 0.75rem;
+}
+
+.price strong { font-size: 1.5rem; }
+.summaryPara > :not(span) { color: #525252; }
+
+.tab-menu { border-bottom: 2px solid #e0e0e0; }
+.tab {
+  background: none;
+  border: none;
+  padding-block: 10px;
+  font-weight: 500;
+  border-bottom: 3px solid transparent;
+  transition: border-color var(--transition), color var(--transition);
+}
+
+.tab:hover, .tab.active { border-color: #111; color: #111; }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.tab-content li { list-style: unset; }
+
+#contactModal .modal-content { border-radius: 10px; }
+#contactModal .modal-header { background: var(--primary-blue); color: white };
+a { text-decoration: none; }
+.modal-header .modal-title {color: white !important};
+
+.booking-modal-section {
+  background: var(--light-gray);
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.trust-signals {
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.8rem;
+  margin-top: 10px;
+}
+
+.trust-signals i { font-size: 0.9rem; margin-right: 4px; }
+
+.cutoff-modal-content {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.cutoff-modal-header {
+  background: var(--primary-blue);
+  color: white;
+  border-bottom: none;
+  padding: 20px;
+}
+
+.cutoff-modal-body {
+  padding: 20px;
+  text-align: center;
+}
+
+.cutoff-modal-footer {
+  border-top: none;
+  justify-content: center;
+  padding: 15px;
+}
+
+.cutoff-modal-btn {
+  transition: background var(--transition), transform var(--transition);
+}
+
+.cutoff-modal-btn:hover { transform: translateY(-2px); }
+
+/* Media Queries */
+@media screen and (min-width: 992px) {
+  body { background-color: #f3f3f6; }
+  .image-slider img { height: 500px; }
+  .custom-card + .custom-card { margin-top: 1rem; }
+  .stickySec { position: sticky; top: 100px; bottom: unset; }
+  .stickySec .card, .custom-card, .actionCard { box-shadow: var(--bs-box-shadow-sm); border-radius: 0.75rem; }
+  .price strong { font-size: calc(1.5rem + 0.3vw); }
+  .btnSec { width: 100%; text-align: end; }
+}
+
+@media (max-width: 768px) {
+  .trek-title, h3 { font-size: 1.5rem; }
+  .accordion-button { font-size: 1rem; }
+  .tour-booking-city-card { width: 140px; }
+  .tour-booking-city-card img { height: 90px; }
+  .tour-booking-year-tab, .tour-booking-month-tab { font-size: 0.85rem; padding: 5px 10px; }
+  .tour-booking-date-item { min-width: 36px; padding: 6px; font-size: 0.8rem; }
+  .tour-booking-summary-card { max-height: 300px; padding: 10px; }
+  .tour-booking-payment-options { padding: 10px; }
+  .tour-booking-payment-option { font-size: 0.85rem; }
+  .tour-booking-floating-panel { max-height: 50vh; }
+  .tour-booking-floating-btn { width: 48px; height: 48px; }
+  .tour-booking-floating-btn i { font-size: 1rem; }
+}
+
+@media (max-width: 576px) {
+  .image-slider img { height: 200px; }
+  .tour-booking-city-card { width: 120px; }
+  .tour-booking-city-card img { height: 80px; }
+  .tour-booking-city-card h6 { font-size: 0.85rem; }
+  .tour-booking-city-card small { font-size: 0.75rem; }
+  .tour-booking-year-tab, .tour-booking-month-tab { font-size: 0.8rem; padding: 4px 8px; }
+  .tour-booking-date-item { min-width: 32px; padding: 5px; font-size: 0.75rem; }
+  .tour-booking-summary-card { max-height: 250px; font-size: 0.8rem; }
+  .tour-booking-payment-options { padding: 8px; }
+  .tour-booking-payment-option { font-size: 0.8rem; }
+  .quick-call-modal-content { max-width: 100%; margin: 10px; }
+  .quick-call-modal-header { min-height: 120px; padding: 20px 16px; }
+  .quick-call-modal-header .modal-title { font-size: 1.1rem; }
+  .quick-call-modal-header p { font-size: 0.85rem; }
+  .quick-call-modal-header .btn-close-white { top: 10px; right: 10px; }
+  .quick-call-modal-body { padding: 16px 20px; }
+  .quick-call-modal-body .form-label { font-size: 0.8rem; }
+  .quick-call-modal-body .form-control, .quick-call-modal-body .form-select { font-size: 0.85rem; padding: 6px 10px; }
+  .quick-call-modal-body .form-select { max-width: 80px; }
+  .quick-call-modal-body .error-message { font-size: 0.7rem; }
+  .quick-call-modal-body .notes .note-icon { font-size: 0.9rem; margin-right: 6px; }
+  .quick-call-modal-body .notes span { font-size: 0.75rem; }
+  .quick-call-modal-footer { padding: 12px 20px; }
+  .quick-call-modal-btn { font-size: 0.85rem; padding: 8px 20px; }
+}
+
+@media (max-width: 400px) {
+  .quick-call-modal-header { min-height: 110px; padding: 16px 12px; }
+  .quick-call-modal-header .modal-title { font-size: 1rem; }
+  .quick-call-modal-header p { font-size: 0.8rem; }
+  .quick-call-modal-body { padding: 12px 16px; }
+  .quick-call-modal-body .form-label { font-size: 0.75rem; }
+  .quick-call-modal-body .form-control, .quick-call-modal-body .form-select { font-size: 0.8rem; padding: 6px 8px; }
+  .quick-call-modal-body .form-select { max-width: 70px; }
+  .quick-call-modal-body .error-message { font-size: 0.65rem; }
+  .quick-call-modal-body .notes .note-icon { font-size: 0.85rem; margin-right: 5px; }
+  .quick-call-modal-body .notes span { font-size: 0.7rem; }
+  .quick-call-modal-footer { padding: 10px 16px; }
+  .quick-call-modal-btn { font-size: 0.8rem; padding: 8px 16px; }
+}
   </style>
 </head>
-
 <body>
   <%- include('../partials/header', {isSearch: false}); %>
-
   <div class="container-xl pt-4">
     <section class="image-slider swiper">
       <div class="swiper-wrapper">
         <% if (trips.bannerimages && trips.bannerimages.length > 0) { %>
         <% trips.bannerimages.forEach((img, index) => { %>
         <div class="swiper-slide">
-          <img src="<%= img %>" alt="Banner Image <%= index + 1 %>" onerror="this.onerror=null; this.src='/images/placholderbanner.jpg';" />
+          <img src="<%= img %>" alt="Banner Image <%= index + 1 %>" loading="lazy" onerror="this.onerror=null; this.src='/images/placholderbanner.jpg';" />
         </div>
         <% }); %>
         <% } else { %>
         <div class="swiper-slide">
-          <img src="<%= trips.imageurl %>" alt="Main Image" onerror="this.onerror=null; this.src='/images/placholderbanner.jpg';">
+          <img src="<%= trips.imageurl %>" alt="Main Image" loading="lazy" onerror="this.onerror=null; this.src='/images/placholderbanner.jpg';">
         </div>
         <% } %>
       </div>
@@ -668,7 +779,6 @@
       <div class="swiper-button-next"></div>
     </section>
   </div>
-
   <div class="container-md container-lg pt-4">
     <section class="row g-3 mt-0">
       <div class="col-lg-7 col-xl-8 detailSec">
@@ -678,14 +788,12 @@
           <div class="d-flex flex-wrap d-lg-none gap-2 align-items-center pt-2">
             <a href="/dreamtrip" class="btn btn-outline-secondary rounded-pill" target="_blank">Inquire Now</a>
             <button class="btn btn-outline-secondary rounded-pill" data-bs-toggle="modal" data-bs-target="#quickCallModal">Request Call Back</button>
-            <!-- <a class="btn btn-outline-secondary rounded-pill text-start" href="/assets/travel doc/Booking_Policy.pdf" target="_blank" title="Cancellation policy">Booking and Cancellation</a> -->
           </div>
         </div>
-        
         <article class="custom-card p-lg-3">
           <h3>About</h3>
-          <div class="abouts position-relative">
-            <%- trips.about %>
+          <div class="about-wrapper position-relative">
+            <div class="abouts"><%- trips.about %></div>
           </div>
         </article>
         <article class="custom-card p-lg-3">
@@ -704,7 +812,7 @@
               </span>
               <p class="mb-0">
                 <small class="text-muted">Duration</small>
-                <span class="fw-semibold d-block"><%= trips.days %></spa>
+                <span class="fw-semibold d-block"><%= trips.days %></span>
               </p>
             </div>
             <% } %>
@@ -730,14 +838,14 @@
               </p>
             </div>
             <% } %>
-            <% if (trips.bestSession && trips.bestSession.length>0) { %>
+            <% if (trips.bestSession && trips.bestSession.length > 0) { %>
             <div class="col-6 col-sm-4 d-flex gap-2 align-items-center">
               <span class="icon-circle">
                 <i class="bi bi-cloud-sun"></i>
               </span>
               <p class="mb-0">
                 <small class="text-muted">Best season</small>
-                <span class="fw-semibold d-block"><%= trips.bestSession %></span>
+                <span class="fw-semibold d-block"><%= trips.bestSession.join(', ') %></span>
               </p>
             </div>
             <% } %>
@@ -754,18 +862,22 @@
             <% } %>
           </div>
         </article>
-
-        <!-- Departure City Section -->
         <article class="custom-card p-lg-3">
           <h3>Departure City</h3>
           <div class="position-relative">
             <div class="d-flex gap-3 overflow-auto py-2" id="carouselTrack">
-              <% if (trips.deptcities && trips.deptcities.length > 0) { %>
+              <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].City !== 'Unknown') { %>
                 <% trips.deptcities.forEach((city, index) => { %>
-                <div class="city-card bg-light <%= index === 0 ? 'active' : '' %>" data-city="<%= city.City %>" data-state="<%= city.State %>" data-price="<%= city.price && city.price[0] ? city.price[0].adultPrice : 0 %>" data-duration="<%= city.tripDuration %>">
-                  <img src="<%= city.image %>" alt="<%= city.City %>" onerror="this.onerror=null; this.src='/images/placeholder.jpg';" />
+                <div class="tour-booking-city-card bg-light <%= index === 0 ? 'active' : '' %>" 
+                     data-city="<%= city.City %>" 
+                     data-state="<%= city.State %>" 
+                     data-price="<%= city.price && city.price[0] ? city.price[0].adultPrice : 0 %>" 
+                     data-duration="<%= city.tripDuration %>" 
+                     data-cutoff="<%= city.bookingCutoffDays || '0' %>"
+                     data-partial="<%= city.partialPayment || '0' %>">
+                  <img src="<%= city.image %>" alt="<%= city.City %>" loading="lazy" onerror="this.onerror=null; this.src='/images/placeholder.jpg';" />
                   <h6 class="mt-2 mb-1"><%= city.City %></h6>
-                  <small><i class="bi bi-calendar"></i> <%= city.tripDuration %></small><br />
+                  <small><i class="bi bi-calendar-event"></i> <%= city.tripDuration %></small><br />
                   <small class="fw-semibold text-dark">
                     ₹<%= city.price && city.price[0] ? city.price[0].adultPrice : 'N/A' %>/person
                   </small>
@@ -784,17 +896,17 @@
               <span class="visually-hidden">Next</span>
             </button>
           </div>
-          <h5 class="pt-3">Travelling options</h5>
+          <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].City !== 'Unknown') { %>
+          <h5 class="pt-3">Travelling Options</h5>
           <div class="transport-options d-flex flex-wrap gap-2" id="transportOptions" role="radiogroup" aria-label="Transport Types"></div>
-
           <div class="mt-4">
             <h5>Available Dates</h5>
-            <div class="trip-details-year-tabs" id="yearTabs"></div>
-            <div class="trip-details-month-tabs" id="monthTabs"></div>
-            <div class="trip-details-date-selector" id="dateSelector"></div>
+            <div class="tour-booking-year-tabs" id="yearTabs"></div>
+            <div class="tour-booking-month-tabs" id="monthTabs"></div>
+            <div class="tour-booking-date-selector" id="dateSelector"></div>
           </div>
+          <% } %>
         </article>
-
         <% if (trips && trips.itinerary && trips.itinerary.length > 0) { %>
           <article class="custom-card p-lg-3">
             <h3>Itinerary</h3>
@@ -813,83 +925,96 @@
             </div>
           </article>
         <% } %>
-
         <article class="pt-4 mt-3 mt-lg-0">
           <h3>More Information</h3>
-          <% 
-            const isContentValid = (content) => {
-              if (!content) return false;
-              const trimmed = content.trim();
-              return trimmed !== '' && trimmed !== '<p><br></p>' && trimmed !== '<p></p>';
-            };
-          %>
-          <div class="tab-menu d-flex overflow-auto gap-3 mb-3 scroll-hide h-scroll">
-            <% if (isContentValid(trips.package_cost)) { %>
-            <button class="tab text-nowrap active" onclick="showTab('package')">Package cost</button>
+          <div class="tab-menu more-info-tabs d-flex overflow-auto gap-3 mb-3 scroll-hide h-scroll">
+            <% if (trips.package_cost) { %>
+            <button class="tab text-nowrap active" onclick="showTab('package')"><i class="bi bi-wallet2"></i> Package Cost</button>
             <% } %>
-            <% if (isContentValid(trips.activities)) { %>
-            <button class="tab text-nowrap" onclick="showTab('attractions')">Main attractions</button>
+            <% if (trips.activities) { %>
+            <button class="tab text-nowrap" onclick="showTab('attractions')"><i class="bi bi-star-fill"></i> Main Attractions</button>
             <% } %>
-            <% if (isContentValid(trips.things_to_carry)) { %>
-            <button class="tab text-nowrap" onclick="showTab('carry')">Things to carry</button>
+            <% if (trips.things_to_carry) { %>
+            <button class="tab text-nowrap" onclick="showTab('carry')"><i class="bi bi-backpack"></i> Things to Carry</button>
             <% } %>
-            <% if (isContentValid(trips.bookncancel)) { %>
-            <button class="tab text-nowrap" onclick="showTab('bookncancel')">Cancellation Policy</button>
+            <% if (trips.bookncancel) { %>
+            <button class="tab text-nowrap" onclick="showTab('bookncancel')"><i class="bi bi-info-circle"></i> Cancellation Policy</button>
             <% } %>
-            <% if (isContentValid(trips.includenexclude)) { %>
-            <button class="tab text-nowrap" onclick="showTab('includenexclude')">Inclusion & Exclusion</button>
+            <% if (trips.includenexclude) { %>
+            <button class="tab text-nowrap" onclick="showTab('includenexclude')"><i class="bi bi-check-circle"></i> Inclusion & Exclusion</button>
             <% } %>
-            <% if (isContentValid(trips.infonfaq)) { %>
-            <button class="tab text-nowrap" onclick="showTab('infonfaq')">Info & FAQs</button>
+            <% if (trips.infonfaq) { %>
+            <button class="tab text-nowrap" onclick="showTab('infonfaq')"><i class="bi bi-question-circle"></i> Info & FAQs</button>
             <% } %>
           </div>
-
-          <% if (isContentValid(trips.package_cost)) { %>
-          <div id="package" class="tab-content active">
-            <%- trips.package_cost %>
-          </div>
+          <% if (trips.package_cost) { %>
+          <div id="package" class="tab-content active"><%- trips.package_cost %></div>
           <% } %>
-          <% if (isContentValid(trips.activities)) { %>
-          <div id="attractions" class="tab-content">
-            <%- trips.activities %>
-          </div>
+          <% if (trips.activities) { %>
+          <div id="attractions" class="tab-content"><%- trips.activities %></div>
           <% } %>
-          <% if (isContentValid(trips.things_to_carry)) { %>
-          <div id="carry" class="tab-content">
-            <%- trips.things_to_carry %>
-          </div>
+          <% if (trips.things_to_carry) { %>
+          <div id="carry" class="tab-content"><%- trips.things_to_carry %></div>
           <% } %>
-          <% if (isContentValid(trips.bookncancel)) { %>
-          <div id="bookncancel" class="tab-content">
-            <%- trips.bookncancel %>
-          </div>
+          <% if (trips.bookncancel) { %>
+          <div id="bookncancel" class="tab-content"><%- trips.bookncancel %></div>
           <% } %>
-          <% if (isContentValid(trips.includenexclude)) { %>
-          <div id="includenexclude" class="tab-content">
-            <%- trips.includenexclude %>
-          </div>
+          <% if (trips.includenexclude) { %>
+          <div id="includenexclude" class="tab-content"><%- trips.includenexclude %></div>
           <% } %>
-          <% if (isContentValid(trips.infonfaq)) { %>
-          <div id="infonfaq" class="tab-content">
-            <%- trips.infonfaq %>
-          </div>
+          <% if (trips.infonfaq) { %>
+          <div id="infonfaq" class="tab-content"><%- trips.infonfaq %></div>
           <% } %>
         </article>
-
       </div>
       <aside class="col-lg-5 col-xl-4 align-self-start stickySec">
         <form class="card border-0 overflow-hidden" id="proceedToBook" action="/bookingTour/<%- trips._id %>" method="GET">
           <p class="card-header mb-0 bg-primary bg-opacity-10 fw-bold fs-5 border-primary-subtle">Book Now</p>
-          <div class="card-body d-flex gap-2 d-lg-block">
-            <% if (trips.price && trips.price?.trim?.() !== '' && trips.price !== '0') { %>
-              <span id="dynamicPrice" class="text-secondary price flex-grow-1"><strong class="text-primary-emphasis">₹<%= trips.price %></strong>/ Person</span>
-            <% } %>
+          <div class="card-body d-flex flex-column gap-2">
+            <div class="tour-booking-summary-card">
+              <h6 class="fw-bold mb-3"><b>Booking Summary</b></h6>
+              <div class="booking-summary-item">
+                <span class="text-primary-emphasis">Departure City:</span>
+                <span class="booking-summary-city">Not selected</span>
+              </div>
+              <div class="booking-summary-item">
+                <span class="text-primary-emphasis">Tour Date:</span>
+                <span class="booking-summary-date">Not selected</span>
+              </div>
+              <div class="booking-summary-item">
+                <span class="text-primary-emphasis">Trip Duration:</span>
+                <span class="booking-summary-duration">Not selected</span>
+              </div>
+              <div class="booking-summary-item">
+                <span class="text-primary-emphasis">Price:</span>
+                <span class="booking-summary-price">Not selected</span>
+              </div>
+              <div class="booking-summary-item">
+                <span class="text-primary-emphasis">Transport Type:</span>
+                <span class="booking-summary-transport">Not selected</span>
+              </div>
+              <% if(trips.seats){ %>
+              <div class="booking-summary-item">
+                <span>Seats Available</span>
+                <span class="booking-summary-seats text-success"><%= trips.seats %> left!</span>
+              </div>
+              <% } %>
+            </div>
             <label for="selectedCity" class="form-label visually-hidden">Joining from</label>
             <select class="form-select mb-3 visually-hidden" id="selectedCity" name="city" onchange="updateCityFromDropdown()">
-              <% if (trips.deptcities && trips.deptcities.length > 0) { %>
+              <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].City !== 'Unknown') { %>
               <% trips.deptcities.forEach((city) => { %>
-              <option value="<%= city.City %>"><%= city.City %>, <%= city.State %></option>
+              <option value="<%= city.City %>" 
+                      data-state="<%= city.State %>" 
+                      data-price="<%= city.price && city.price[0] ? city.price[0].adultPrice : 'N/A' %>" 
+                      data-duration="<%= city.tripDuration %>" 
+                      data-cutoff="<%= city.bookingCutoffDays || '0' %>"
+                      data-partial="<%= city.partialPayment || '0' %>">
+                <%= city.City %>, <%= city.State %>
+              </option>
               <% }); %>
+              <% } else { %>
+              <option value="">No cities available</option>
               <% } %>
             </select>
             <p class="error-message visually-hidden" id="cityError">Please select a city.</p>
@@ -898,46 +1023,87 @@
               <option value="">Select a date</option>
             </select>
             <p class="error-message visually-hidden" id="dateError">Please select a date.</p>
-            <p class="summaryPara pt-3 d-none d-lg-block">Joining from: <span class="fw-medium booking-summary-city">Departure City</span> &middot; 
-              <span class="fw-medium booking-summary-duration">Not selected</span>
-            </p>
-            <p class="summaryPara d-none d-lg-block">Departure date <span class="fw-medium booking-summary-date">Tour Date</span></p>
-            <p class="btnSec ms-auto mb-auto">
-              <button class="btn trip-details-proceed-btn-book" type="button" onclick="proceedWithBooking()" disabled>Proceed to Book</button>
-              <button class="btn trip-details-proceed-btn-book" type="button" onclick="proceedWithBooking()" disabled>Pay Part Payment</button>
-            </p>
+            <label for="selectedTransport" class="form-label visually-hidden">Transport Type</label>
+            <select class="form-select mb-3 visually-hidden" id="selectedTransport" name="transportType">
+              <option value="">Select a transport type</option>
+            </select>
+            <label for="paymentOption" class="form-label visually-hidden">Payment Option</label>
+            <select class="form-select mb-3 visually-hidden" id="paymentOption" name="paymentOption">
+              <option value="full">Pay Full Amount</option>
+              <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].partialPayment && parseFloat(trips.deptcities[0].partialPayment) > 0) { %>
+              <option value="partial">Pay Partial Amount</option>
+              <% } %>
+              <option value="bnpl">Book Now, Pay Later</option>
+            </select>
+            <div class="tour-booking-payment-options">
+              <h6 class="fw-bold mb-3">Payment Options</h6>
+              <div class="tour-booking-payment-option">
+                <input type="radio" id="payFull" name="paymentOptionRadio" value="full" checked>
+                <label for="payFull">Pay Full Amount <span class="booking-summary-price-full">Not selected</span></label>
+              </div>
+              <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].partialPayment && parseFloat(trips.deptcities[0].partialPayment) > 0) { %>
+              <div class="tour-booking-payment-option">
+                <input type="radio" id="payPartial" name="paymentOptionRadio" value="partial">
+                <label for="payPartial">Pay Partial <span class="booking-summary-price-partial">₹<%= trips.deptcities[0].partialPayment %></span>, Balance Later</label>
+              </div>
+              <% } %>
+              <div class="tour-booking-payment-option">
+                <input type="radio" id="payLater" name="paymentOptionRadio" value="bnpl">
+                <label for="payLater">Book Now, Pay Later <span class="text-success">(No payment now)</span></label>
+              </div>
+              <div class="trust-signals">
+                <span><i class="bi bi-shield-lock-fill"></i> Secure Payments</span>
+                <span><i class="bi bi-arrow-repeat"></i> Flexible Cancellation</span>
+                <span><i class="bi bi-check-circle-fill"></i> Trusted by Thousands</span>
+              </div>
+            </div>
+            <div class="btnSec ms-auto mb-auto">
+              <button class="btn tour-booking-proceed-btn w-100" type="button" onclick="proceedWithBooking()" disabled>Proceed to Book</button>
+            </div>
           </div>
         </form>
         <div class="actionCard card border-0 p-3 flex-row flex-wrap gap-2 align-items-start mt-3">
-          <h5 class="w-100">Still Got Queries ?</h5>
-          <a href="https://wa.me/+918511117891" class="btn btn-outline-secondary rounded-pill" target="_blank">WhatsApp Us</a>
+          <h5 class="w-100">Still Got Queries?</h5>
+          <!-- <a href="https://wa.me/+918511117891" class="btn btn-outline-secondary rounded-pill" target="_blank">WhatsApp Us</a> -->
+          <a class="btn whatsapp-btn btn-outline-secondary rounded-pill"
+          href="https://wa.me/+918511117891?text=Hello%20I%20am%20interested%20in%20the%20following%20trip%20<%= encodeURIComponent(trips.name) %>%20tour.%20could%20you%20please%20share%20more%20details." 
+          target="_blank" 
+          aria-label="Contact via WhatsApp for <%= trips.name %>">
+         <i class="bi bi-whatsapp me-1"></i> WhatsApp
+       </a>
           <button class="btn btn-outline-secondary rounded-pill" data-bs-toggle="modal" data-bs-target="#quickCallModal">Request Call Back</button>
-          <a class="btn btn-outline-secondary rounded-pill text-start" href="/dreamtrip" target="_blank" title="Cancellation policy">Plan your dream trip</a>
+          <a class="btn btn-outline-secondary rounded-pill text-start" href="/dreamtrip" target="_blank" title="Plan your dream trip">Plan your dream trip</a>
         </div>
       </aside>
     </section>
   </div>
-
-  <!-- Contact Modal -->
+  <div class="tour-booking-floating-sec d-none justify-content-end">
+    <button class="tour-booking-floating-btn" onclick="toggleFloatingPanel()">
+      <i class="bi bi-bookmark-check-fill"></i>
+    </button>
+  </div>
   <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="contactModalLabel">Contact Details</h5>
+      <div class="modal-content cutoff-modal-content">
+        <div class="modal-header cutoff-modal-header">
+          <h5 class="modal-title" id="contactModalLabel">Booking Unavailable</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
-          <p><strong>Online booking is temporarily unavailable.</strong></p>
-          <p><strong>Please call/WhatsApp us:</strong> +91 851111 7891</p>
+        <div class="modal-body cutoff-modal-body">
+          <p id="contactModalMessage">Online booking is temporarily unavailable or the selected date is too soon. Please contact our team to proceed.</p>
+          <p><strong>Call/WhatsApp:</strong> <a href="https://wa.me/+918511117891" target="_blank">+91 851111 7891</a></p>
+          <div class="trust-signals mt-3">
+            <span><i class="bi bi-shield-lock-fill"></i> Secure Booking Process</span>
+            <span><i class="bi bi-person-fill"></i> Expert Support</span>
+          </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <div class="modal-footer cutoff-modal-footer">
+          <a href="https://wa.me/+918511117891" class="btn cutoff-modal-btn btn-success" target="_blank">Contact via WhatsApp</a>
+          <button type="button" class="btn cutoff-modal-btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- Inquiry Modal -->
   <div class="modal fade" id="inquiryModal" tabindex="-1" aria-labelledby="inquiryModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content inquiry-modal-content">
@@ -946,7 +1112,11 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body inquiry-modal-body">
-          <p class="fw-medium">Group Batch is not available.<br>Inquire now to customise this trip.</p>
+          <p class="fw-medium">Group Batch is not available or the selected date is too soon.<br>Contact our team or customize this trip.</p>
+          <div class="trust-signals mt-3">
+            <span><i class="bi bi-shield-lock-fill"></i> Secure Booking Process</span>
+            <span><i class="bi bi-person-fill"></i> Expert Support</span>
+          </div>
         </div>
         <div class="modal-footer inquiry-modal-footer justify-content-center">
           <a href="https://wa.me/+918511117891" class="btn inquiry-modal-btn inquiry-modal-btn-whatsapp" target="_blank">WhatsApp Us</a>
@@ -956,8 +1126,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Booking Modal -->
   <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable modal-dialog-centered">
       <div class="modal-content">
@@ -967,20 +1135,25 @@
         </div>
         <div class="modal-body booking-modal-body">
           <form id="modalBookingForm">
-            <!-- City Selection -->
             <div class="mb-4 booking-modal-section">
               <h6 class="fw-bold mb-2">Select Departure City</h6>
               <select class="trip-details-form-select booking-modal-select" id="modalSelectedCity" name="city" onchange="updateModalCityFromDropdown()">
-                <% if (trips.deptcities && trips.deptcities.length > 0) { %>
+                <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].City !== 'Unknown') { %>
                 <% trips.deptcities.forEach((city) => { %>
-                <option value="<%= city.City %>" data-duration="<%= city.tripDuration %>" data-price="<%= city.price && city.price[0] ? city.price[0].adultPrice : 'N/A' %>" data-state="<%= city.State %>">
+                <option value="<%= city.City %>" 
+                        data-duration="<%= city.tripDuration %>" 
+                        data-price="<%= city.price && city.price[0] ? city.price[0].adultPrice : 'N/A' %>" 
+                        data-state="<%= city.State %>"
+                        data-cutoff="<%= city.bookingCutoffDays || '0' %>"
+                        data-partial="<%= city.partialPayment || '0' %>">
                   <%= city.City %>, <%= city.State %>
                 </option>
                 <% }); %>
+                <% } else { %>
+                <option value="">No cities available</option>
                 <% } %>
               </select>
               <div class="error-message" id="modalCityError">Please select a city.</div>
-              <!-- City Summary Card -->
               <div class="booking-modal-city-summary card mt-3 p-3 shadow-sm" style="display: none;">
                 <div class="d-flex justify-content-between align-items-center">
                   <div>
@@ -994,48 +1167,78 @@
                 </div>
               </div>
             </div>
-            <!-- Date Selection -->
+            <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].City !== 'Unknown') { %>
+            <div class="mb-4 booking-modal-section">
+              <h6 class="fw-bold mb-2">Select Transport Type</h6>
+              <div class="transport-options d-flex flex-wrap gap-2" id="modalTransportOptions" role="radiogroup" aria-label="Transport Types"></div>
+            </div>
             <div class="mb-4 booking-modal-section">
               <h6 class="fw-bold mb-2">Select Tour Date</h6>
-              <div class="trip-details-year-tabs booking-modal-year-tabs" id="modalYearTabs"></div>
-              <div class="trip-details-month-tabs booking-modal-month-tabs" id="modalMonthTabs"></div>
-              <div class="trip-details-date-selector booking-modal-date-selector" id="modalDateSelector"></div>
+              <div class="tour-booking-year-tabs booking-modal-year-tabs" id="modalYearTabs"></div>
+              <div class="tour-booking-month-tabs booking-modal-month-tabs" id="modalMonthTabs"></div>
+              <div class="tour-booking-date-selector booking-modal-date-selector" id="modalDateSelector"></div>
               <select class="trip-details-form-select booking-modal-select" id="modalSelectedDate" name="date" style="display: none;">
                 <option value="">Select a date</option>
               </select>
               <div class="error-message" id="modalDateError">Please select a date.</div>
             </div>
-            <!-- Booking Summary -->
+            <% } %>
             <div class="booking-modal-summary card p-3 shadow-sm">
               <h6 class="fw-bold mb-3">Booking Summary</h6>
               <div class="d-flex justify-content-between mb-2">
-                <span>Departure City</span>
+                <span>Departure City: </span>
                 <span class="fw-semibold booking-summary-city">Not selected</span>
               </div>
               <div class="d-flex justify-content-between mb-2">
-                <span>Trip Duration</span>
+                <span>Trip Duration: </span>
                 <span class="fw-semibold booking-summary-duration">Not selected</span>
               </div>
               <div class="d-flex justify-content-between mb-2">
-                <span>Adult Price</span>
+                <span>Adult Price :</span>
                 <span class="fw-semibold booking-modal-summary-price">Not selected</span>
               </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span>Transport Type :</span>
+                <span class="fw-semibold booking-summary-transport">Not selected</span>
+              </div>
+             
               <div class="d-flex justify-content-between">
-                <span>Tour Date</span>
-                <span class="fw-semibold booking-summary-date">Not selected</span>
+                <span>Seats Available</span>
+                <span class="fw-semibold booking-summary-seats text-success"><%= trips.seats %> left!</span>
+              </div>
+           
+            </div>
+            <div class="tour-booking-payment-options mt-3">
+              <h6 class="fw-bold mb-3">Payment Options</h6>
+              <div class="tour-booking-payment-option">
+                <input type="radio" id="modalPayFull" name="modalPaymentOptionRadio" value="full" checked>
+                <label for="modalPayFull">Pay Full Amount <span class="booking-summary-price-full">Not selected</span></label>
+              </div>
+              <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].partialPayment && parseFloat(trips.deptcities[0].partialPayment) > 0) { %>
+              <div class="tour-booking-payment-option">
+                <input type="radio" id="modalPayPartial" name="modalPaymentOptionRadio" value="partial">
+                <label for="modalPayPartial">Pay Partial <span class="booking-summary-price-partial">₹<%= trips.deptcities[0].partialPayment %></span>, Balance Later</label>
+              </div>
+              <% } %>
+              <div class="tour-booking-payment-option">
+                <input type="radio" id="modalPayLater" name="modalPaymentOptionRadio" value="bnpl">
+                <label for="modalPayLater">Book Now, Pay Later <span class="text-success">(No payment now)</span></label>
+              </div>
+              <div class="trust-signals">
+                <span><i class="bi bi-shield-lock-fill"></i> Secure Payments</span>
+                <span><i class="bi bi-arrow-repeat"></i> Flexible Cancellation</span>
+                <span><i class="bi bi-check-circle-fill"></i> Trusted by Thousands</span>
               </div>
             </div>
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary booking-modal-btn-cancel" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn trip-details-proceed-btn-book booking-modal-btn-proceed" onclick="submitModalBooking()" disabled>Proceed to Book</button>
+          <button type="button" class="btn tour-booking-proceed-btn booking-modal-btn-proceed" onclick="submitModalBooking()" disabled>Proceed to Book</button>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- Quick Call Modal -->
   <div class="modal fade" id="quickCallModal" tabindex="-1" aria-labelledby="quickCallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content quick-call-modal-content">
@@ -1060,7 +1263,6 @@
                   <option value="+91" data-flag="🇮🇳">🇮🇳 +91</option>
                   <option value="+1" data-flag="🇺🇸">🇺🇸 +1</option>
                   <option value="+44" data-flag="🇬🇧">🇬🇧 +44</option>
-                  <!-- Add more country codes as needed -->
                 </select>
                 <input type="tel" class="form-control quick-call-input" id="mobileNo" name="mobileNo" placeholder="Enter mobile number" required>
               </div>
@@ -1086,8 +1288,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Success Popup -->
   <div class="modal fade" id="quickCallSuccessModal" tabindex="-1" aria-labelledby="quickCallSuccessModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -1104,133 +1304,128 @@
       </div>
     </div>
   </div>
-
   <%- include('../partials/footer'); %>
   <%- include('../partials/scripttag', {isNiceSelect: false}); %>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
+          // Check content validity
+  function isContentValid(content) {
+    return content && content.trim() !== "" && content !== "<p></p>" && content !== "<p><br></p>";
+  }
+    // Initialize global variables
     const isLoggedIn = sessionStorage.length || !!<%- JSON.stringify(trips.loggedGmailUser) %>;
     const csrfToken = "<%= csrfToken %>";
+    const deptCities = <%- JSON.stringify(trips.deptcities) %>;
+    const trip = <%- JSON.stringify(trips) %>;
+    let isUpdating = false;
+    let transportTypes = [];
+
+    // Helper function to open inquiry modal
     function openInquiryModal() {
       const modalElement = document.getElementById("inquiryModal");
       const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
       modal.show();
     }
 
+    // Helper function to show contact modal with custom message
+    function showContactModal(message = "Online booking is temporarily unavailable or the selected date is too soon. Please contact our team to proceed.") {
+      const modalElement = document.getElementById("contactModal");
+      const modalMessage = document.getElementById("contactModalMessage");
+      if (modalMessage) modalMessage.textContent = message;
+      const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+      modal.show();
+    }
+
+    // Download itinerary with login check
     async function downloadItinerary() {
-      // console.log("Attempting to download itinerary...");
       try {
         if (!isLoggedIn) {
-          // console.log("User not logged in, showing login modal...");
           $('#signinModal').modal('show');
           return;
         }
         const documentUrl = '<%= trips.documentUrl %>';
         if (documentUrl && documentUrl.trim() !== '') {
-          try {
-            let url = documentUrl.replace(/^\/+/, '/');
-            url = encodeURI(url);
-            // console.log("Processed URL:", url);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = '<%= trips.name %>_Itinerary.pdf';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          } catch (e) {
-            // console.error("Failed to download itinerary:", e.message);
-            showContactModal("Download failed. Please contact support at +91 851111 7891.");
-          }
+          let url = documentUrl.replace(/^\/+/, '/');
+          url = encodeURI(url);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = '<%= trips.name %>_Itinerary.pdf';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
         } else {
-          // console.warn("Document URL is empty or invalid");
           showContactModal("Itinerary PDF is not available for this trip.");
         }
       } catch (error) {
-        // console.error("Error checking authentication:", error);
+        console.error("Error downloading itinerary:", error);
         showContactModal("Failed to verify login status. Please try again.");
       }
     }
 
+    // DOM Content Loaded Event Listener
     document.addEventListener("DOMContentLoaded", function() {
+      
+      // Prevent scroll restoration
       if ("scrollRestoration" in history) {
         history.scrollRestoration = "manual";
       }
       window.scrollTo(0, 0);
 
+      // Initialize Swiper
       try {
         const swiper = new Swiper('.image-slider', {
           loop: true,
-          autoplay: {
-            delay: 3000,
-            disableOnInteraction: false
-          },
-          navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev'
-          },
-          pagination: {
-            el: '.swiper-pagination',
-            clickable: true
-          },
+          autoplay: { delay: 3000, disableOnInteraction: false },
+          navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+          pagination: { el: '.swiper-pagination', clickable: true },
         });
       } catch (e) {
         console.error("Swiper initialization failed:", e);
       }
 
+      // Check carousel slide buttons
       checkSlideButtons();
+
+      // Select first city if available
       selectFirstCity();
 
-      // about section of the trip detail
+      // Handle About section read more/less
       const aboutSec = document.querySelector('.abouts');
       if (aboutSec) {
         function addReadMoreIfNeeded() {
-          // Remove previous mask/read-more if any
           const prevMask = aboutSec.querySelector('.about-mask');
           if (prevMask) prevMask.remove();
           const prevBtn = aboutSec.parentElement.querySelector('.about-read-more-btn');
           if (prevBtn) prevBtn.remove();
-
-          // Reset style
           aboutSec.style.maxHeight = '';
           aboutSec.style.overflow = '';
           aboutSec.classList.remove('expanded');
-
-          // Check height
           if (aboutSec.scrollHeight > 150) {
-            // Add mask image (gradient overlay)
+            aboutSec.style.maxHeight = '150px';
+            aboutSec.style.overflow = 'hidden';
             const mask = document.createElement('div');
             mask.className = 'about-mask position-absolute bottom-0 end-0 w-100';
             aboutSec.appendChild(mask);
-
-            // Add read more button
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'about-read-more-btn btn btn-link p-0 mt-2';
             btn.textContent = 'Read more';
             btn.onclick = function () {
               const expanded = aboutSec.classList.toggle('expanded');
+              aboutSec.style.maxHeight = expanded ? 'none' : '150px';
+              aboutSec.style.overflow = expanded ? 'visible' : 'hidden';
               btn.textContent = expanded ? 'Read less' : 'Read more';
-              if(expanded){
-                mask.classList.add('d-none');
-              } else {
-                mask.classList.remove('d-none');
-              }
+              mask.classList.toggle('d-none', expanded);
             };
             aboutSec.parentElement.appendChild(btn);
           }
-        }
-        // Wrap aboutSec in a relative container if not already
-        if (!aboutSec.parentElement.classList.contains('about-wrapper')) {
-          const wrapper = document.createElement('div');
-          wrapper.className = 'about-wrapper position-relative';
-          aboutSec.parentNode.insertBefore(wrapper, aboutSec);
-          wrapper.appendChild(aboutSec);
         }
         addReadMoreIfNeeded();
         window.addEventListener('resize', addReadMoreIfNeeded);
       }
 
-      document.querySelectorAll(".city-card").forEach((card) => {
+      // City card click handlers
+      document.querySelectorAll(".tour-booking-city-card").forEach((card) => {
         card.addEventListener("click", () => {
           card.dataset.userInitiated = "true";
           const city = card.getAttribute("data-city");
@@ -1240,10 +1435,12 @@
         });
       });
 
+      // Set first tab active
       const firstTab = document.querySelector(".tab-menu .tab");
       if (firstTab) firstTab.classList.add("active");
 
-      ["selectedCity", "selectedDate"].forEach(id => {
+      // Remove NiceSelect for form elements
+      ["selectedCity", "selectedDate", "selectedTransport", "paymentOption"].forEach(id => {
         const select = document.getElementById(id);
         if (select) {
           select.style.display = "block";
@@ -1254,24 +1451,23 @@
         }
       });
 
+      // Initial form validation
       validateMainForm();
+
+      // Sync payment options
+      syncPaymentOptions();
     });
 
+    // Carousel navigation
     function slideLeft() {
       const container = document.getElementById("carouselTrack");
-      container.scrollBy({
-        left: -200,
-        behavior: "smooth"
-      });
+      container.scrollBy({ left: -200, behavior: "smooth" });
       setTimeout(checkSlideButtons, 300);
     }
 
     function slideRight() {
       const container = document.getElementById("carouselTrack");
-      container.scrollBy({
-        left: 200,
-        behavior: "smooth"
-      });
+      container.scrollBy({ left: 200, behavior: "smooth" });
       setTimeout(checkSlideButtons, 300);
     }
 
@@ -1286,31 +1482,30 @@
 
     window.onresize = checkSlideButtons;
 
-    const deptCities = <%- JSON.stringify(trips.deptcities) %>;
-    const trip = <%- JSON.stringify(trips) %>;
-    let isUpdating = false;
-    var transportTypes = [];
-
-    function filterFutureDates(dates) {
+    // Filter future dates based on current date and booking cutoff
+    function filterFutureDates(dates, cutoffDays = 0) {
       const now = new Date();
       now.setHours(0, 0, 0, 0);
+      const cutoffDate = new Date(now);
+      cutoffDate.setDate(now.getDate() + parseInt(cutoffDays, 10));
       return dates.filter((date) => {
         if (!date.Year || !date.Month || !date.dates) return false;
         const monthDates = typeof date.dates === "string" ? date.dates.split(", ").map(Number) : [];
         const filteredDates = monthDates.filter((day) => {
           const tripDate = new Date(Date.UTC(parseInt(date.Year), new Date(`${date.Month} 1`).getMonth(), day));
-          return tripDate >= now;
+          return tripDate > cutoffDate;
         });
         return filteredDates.length > 0;
       }).map((date) => ({
         ...date,
         dates: typeof date.dates === "string" ? date.dates.split(", ").map(Number).filter((day) => {
           const tripDate = new Date(Date.UTC(parseInt(date.Year), new Date(`${date.Month} 1`).getMonth(), day));
-          return tripDate >= now;
+          return tripDate > cutoffDate;
         }).sort((a, b) => a - b).join(", ") : ""
       })).filter((date) => date.dates !== "");
     }
 
+    // Format date for display
     function formatDate(date) {
       return date.toLocaleDateString("en-GB", {
         day: "numeric",
@@ -1319,20 +1514,20 @@
       });
     }
 
-    function generateDateRanges(dates, tripDuration) {
-      const now = new Date();
-      now.setHours(0, 0, 0, 0);
-      const parseDuration = (duration) => {
-        if (!duration) {
-          console.warn("Trip duration is empty, defaulting to 1 day");
-          return 1;
-        }
-        const match = duration.match(/(\d+)\s*(D|Day|Days|d)/i);
-        return match ? parseInt(match[1], 10) : 1;
-      };
-      const days = parseDuration(tripDuration);
+    // Parse trip duration for calculations
+    function parseDuration(duration) {
+      if (!duration) {
+        console.warn("Trip duration is empty, defaulting to 1 day");
+        return 1;
+      }
+      const match = duration.match(/(\d+)\s*(D|Day|Days|d)/i);
+      return match ? parseInt(match[1], 10) : 1;
+    }
+
+    // Generate date ranges with duration
+    function generateDateRanges(dates, tripDuration, cutoffDays) {
       const dateOptions = [];
-      const filteredDates = filterFutureDates(dates);
+      const filteredDates = filterFutureDates(dates, cutoffDays);
       filteredDates.forEach((date) => {
         if (!date.Year || !date.Month || !date.dates) {
           console.warn(`Invalid date object: ${JSON.stringify(date)}`);
@@ -1341,138 +1536,127 @@
         const monthDates = typeof date.dates === "string" ? date.dates.split(", ").map(Number).filter(n => !isNaN(n)) : [];
         monthDates.forEach((day) => {
           const startDate = new Date(Date.UTC(parseInt(date.Year), new Date(`${date.Month} 1`).getMonth(), day));
-          if (isNaN(startDate.getTime()) || startDate < now) return;
+          if (isNaN(startDate.getTime())) return;
+          const days = parseDuration(tripDuration);
           const endDate = new Date(startDate);
           endDate.setUTCDate(startDate.getUTCDate() + (days - 1));
           const value = startDate.toISOString();
           const text = `${formatDate(startDate)} - ${formatDate(endDate)}`;
-          dateOptions.push({
-            startDate,
-            endDate,
-            value,
-            text
-          });
+          dateOptions.push({ startDate, endDate, value, text });
         });
       });
       return dateOptions.sort((a, b) => a.startDate - b.startDate);
     }
 
+    // Select first city if available
     function selectFirstCity() {
-      const firstCityCard = document.querySelector(".city-card");
-      if (firstCityCard) {
+      const firstCityCard = document.querySelector(".tour-booking-city-card");
+      if (firstCityCard && firstCityCard.dataset.city !== "Unknown") {
         firstCityCard.dataset.userInitiated = "false";
         const city = firstCityCard.getAttribute("data-city");
         const state = firstCityCard.getAttribute("data-state");
         const price = firstCityCard.getAttribute("data-price") || 0;
         selectCity(firstCityCard, city, state, price);
       } else {
-        showContactModal();
+        showContactModal("No departure cities available for this trip.");
+        document.querySelectorAll(".tour-booking-proceed-btn").forEach(btn => btn.disabled = true);
       }
     }
 
+    // Handle city selection
     function selectCity(element, city, state, price) {
-      document.querySelectorAll(".city-card").forEach((el) => el.classList.remove("active"));
+      document.querySelectorAll(".tour-booking-city-card").forEach((el) => el.classList.remove("active"));
       element.classList.add("active");
       const selectedCityDropdown = document.getElementById("selectedCity");
       const modalCityDropdown = document.getElementById("modalSelectedCity");
       if (selectedCityDropdown) selectedCityDropdown.value = city;
       if (modalCityDropdown) modalCityDropdown.value = city;
       if (element.dataset.userInitiated === "true") {
-        element.scrollIntoView({
-          behavior: "smooth",
-          inline: "nearest",
-          block: "start"
-        });
+        element.scrollIntoView({ behavior: "smooth", inline: "nearest", block: "start" });
       }
       updateDatesAndTabs();
+      updateBookingSummary();
       validateMainForm();
-      const cityName = element.getAttribute('data-city') || 'N/A';
-      const statueName = element.getAttribute('data-state') || 'N/A';
-      const duration = element.getAttribute('data-duration') || 'N/A';
-      document.querySelectorAll(".booking-summary-city").forEach(e => e.textContent = `${cityName}, ${statueName}`);
-      document.querySelectorAll(".booking-summary-duration").forEach(e => e.textContent = `${duration}`);
-      
-      const dateTab = document.querySelector('.trip-details-date-item.active');
-      selectDate(dateTab);
-      // document.querySelectorAll(".booking-summary-date").forEach(e => e.textContent = `${duration}`);
     }
 
-    function selectDate(element){
-      const yearTab = document.querySelector('.trip-details-year-tab.active');
-      const monthTab = document.querySelector('.trip-details-month-tab.active');
-      const activeCityCard = document.querySelector('.city-card.active');
-      const bookingBtn = document.querySelector('.trip-details-proceed-btn-book');
-      if(!element || !monthTab || !yearTab || !activeCityCard || !trip?.deptcities || !Array.isArray(trip.deptcities)){
-        bookingBtn.disabled = true;
-      } else {
-        const activeYear = yearTab.textContent.trim().padStart(4, '0');
-        const activeMonth = monthTab.textContent.trim();
-        const activeDate = element.textContent.trim().padStart(2, '0');
-        const duration = `${activeYear} ${activeMonth} ${activeDate}`;
-        const cityVal = activeCityCard.getAttribute('data-city') || "";
-        const stateVal = activeCityCard.getAttribute('data-state') || "";
-        const activeCityIndex = [...trip?.deptcities].findIndex(item => item.City === cityVal);
-        let bookingCutoff = 0;
-        if(activeCityIndex > -1){
-          bookingCutoff = Number(trip?.deptcities[activeCityIndex].bookingCutoffDays) || 0;
+    // Update booking summary
+    function updateBookingSummary(fromModal = false) {
+      const selectedCity = fromModal ? document.getElementById("modalSelectedCity") : document.getElementById("selectedCity");
+      const cityValue = selectedCity ? selectedCity.value : "";
+      const cityData = deptCities.find(c => c.City === cityValue);
+      const summaryCity = document.querySelectorAll(".booking-summary-city");
+      const summaryDuration = document.querySelectorAll(".booking-summary-duration");
+      const summaryPrice = document.querySelectorAll(".booking-summary-price, .booking-modal-summary-price");
+      const summaryTransport = document.querySelectorAll(".booking-summary-transport");
+      const priceFull = document.querySelectorAll(".booking-summary-price-full");
+      const pricePartial = document.querySelectorAll(".booking-summary-price-partial");
+      if (cityData && cityData.City !== "Unknown") {
+        summaryCity.forEach(e => e.textContent = `${cityData.City}, ${cityData.State}`);
+        summaryDuration.forEach(e => e.textContent = cityData.tripDuration || "N/A");
+        const adultPrice = cityData.price && cityData.price[0] ? cityData.price[0].adultPrice : trip.price || "N/A";
+        summaryPrice.forEach(e => e.textContent = `₹${adultPrice}/person`);
+        priceFull.forEach(e => e.textContent = `₹${adultPrice}`);
+        const partialAmount = parseFloat(cityData.partialPayment || "0");
+        if (partialAmount > 0) {
+          pricePartial.forEach(e => e.textContent = `₹${partialAmount}`);
         }
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const diffInMs = new Date(duration) - today;
-        const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-        const shouldDisable = new Date(selectedDate) > today && diffInDays <= bookingCutoff;
-        // console.log("Selected duration:", duration, shouldDisable, diffInDays, new Date(selectedDate) > today, );
-        bookingBtn.disabled = shouldDisable
+        const transportType = cityData.price && cityData.price[0] && cityData.price[0].transferType ? cityData.price[0].transferType : "Not available";
+        summaryTransport.forEach(e => e.textContent = transportType);
+      } else {
+        summaryCity.forEach(e => e.textContent = "Not selected");
+        summaryDuration.forEach(e => e.textContent = "Not selected");
+        summaryPrice.forEach(e => e.textContent = "Not selected");
+        summaryTransport.forEach(e => e.textContent = "Not selected");
+        priceFull.forEach(e => e.textContent = "Not selected");
+        pricePartial.forEach(e => e.textContent = "Not selected");
       }
     }
 
+    // Update city from dropdown
     function updateCityFromDropdown() {
       const selectedCity = document.getElementById("selectedCity").value;
       const modalCityDropdown = document.getElementById("modalSelectedCity");
       if (modalCityDropdown) modalCityDropdown.value = selectedCity;
-      const cityCard = document.querySelector(`.city-card[data-city="${selectedCity}"]`);
+      const cityCard = document.querySelector(`.tour-booking-city-card[data-city="${selectedCity}"]`);
       if (cityCard) {
         cityCard.dataset.userInitiated = "true";
-        document.querySelectorAll(".city-card").forEach((el) => el.classList.remove("active"));
+        document.querySelectorAll(".tour-booking-city-card").forEach((el) => el.classList.remove("active"));
         cityCard.classList.add("active");
-        cityCard.scrollIntoView({
-          behavior: "smooth",
-          inline: "nearest",
-          block: "start"
-        });
+        cityCard.scrollIntoView({ behavior: "smooth", inline: "nearest", block: "start" });
       }
       updateDatesAndTabs();
+      updateBookingSummary();
       validateMainForm();
     }
 
+    // Update modal city from dropdown
     function updateModalCityFromDropdown() {
       const selectedCity = document.getElementById("modalSelectedCity").value;
       const mainCityDropdown = document.getElementById("selectedCity");
       if (mainCityDropdown) mainCityDropdown.value = selectedCity;
-      const cityCard = document.querySelector(`.city-card[data-city="${selectedCity}"]`);
+      const cityCard = document.querySelector(`.tour-booking-city-card[data-city="${selectedCity}"]`);
       if (cityCard) {
         cityCard.dataset.userInitiated = "true";
-        document.querySelectorAll(".city-card").forEach((el) => el.classList.remove("active"));
+        document.querySelectorAll(".tour-booking-city-card").forEach((el) => el.classList.remove("active"));
         cityCard.classList.add("active");
-        cityCard.scrollIntoView({
-          behavior: "smooth",
-          inline: "nearest",
-          block: "start"
-        });
+        cityCard.scrollIntoView({ behavior: "smooth", inline: "nearest", block: "start" });
       }
       updateModalCitySummary();
       updateDatesAndTabs(true);
+      updateBookingSummary(true);
       validateModalForm();
     }
 
+    // Validate main form
     function validateMainForm() {
       const citySelect = document.getElementById("selectedCity");
       const dateSelect = document.getElementById("selectedDate");
-      const proceedBtns = document.querySelectorAll(".trip-details-proceed-btn-book");
+      const transportSelect = document.getElementById("selectedTransport");
+      const proceedBtns = document.querySelectorAll(".tour-booking-proceed-btn");
       const cityError = document.getElementById("cityError");
       const dateError = document.getElementById("dateError");
       let isValid = true;
-      if (!citySelect.value) {
+      if (!citySelect.value || citySelect.value === "Unknown") {
         citySelect.classList.add("is-invalid");
         cityError.style.display = "block";
         isValid = false;
@@ -1481,8 +1665,8 @@
         cityError.style.display = "none";
       }
       if (!dateSelect.value || dateSelect.value === "Select a date") {
-        // dateSelect.classList.add("is-invalid");
-        // dateError.style.display = "block";
+        dateSelect.classList.add("is-invalid");
+        dateError.style.display = "block";
         isValid = false;
       } else {
         dateSelect.classList.remove("is-invalid");
@@ -1491,6 +1675,7 @@
       proceedBtns.forEach(el => el.disabled = !isValid);
     }
 
+    // Validate modal form
     function validateModalForm() {
       const citySelect = document.getElementById("modalSelectedCity");
       const dateSelect = document.getElementById("modalSelectedDate");
@@ -1498,7 +1683,7 @@
       const cityError = document.getElementById("modalCityError");
       const dateError = document.getElementById("modalDateError");
       let isValid = true;
-      if (!citySelect.value) {
+      if (!citySelect.value || citySelect.value === "Unknown") {
         citySelect.classList.add("is-invalid");
         cityError.style.display = "block";
         isValid = false;
@@ -1508,17 +1693,95 @@
       }
       if (!dateSelect.value) {
         dateSelect.classList.add("is-invalid");
-        // dateError.style.display = "block";
+        dateError.style.display = "block";
         isValid = false;
       } else {
-        // dateSelect.classList.remove("is-invalid");
+        dateSelect.classList.remove("is-invalid");
         dateError.style.display = "none";
       }
       proceedBtn.disabled = !isValid;
     }
 
+    // Build transport options
+    function buildTransport(fromModal = false) {
+      const transportOptionsEl = fromModal ? document.getElementById('modalTransportOptions') : document.getElementById('transportOptions');
+      const transportSelect = fromModal ? document.getElementById("modalSelectedTransport") : document.getElementById("selectedTransport");
+      const selectedCity = fromModal ? document.getElementById("modalSelectedCity").value : document.getElementById("selectedCity").value;
+      const cityData = deptCities.find((city) => city.City === selectedCity);
+      transportTypes = cityData?.price || [];
+      while (transportOptionsEl.firstChild) {
+        transportOptionsEl.removeChild(transportOptionsEl.firstChild);
+      }
+      if (transportSelect) {
+        transportSelect.innerHTML = '<option value="">Select a transport type</option>';
+      }
+      if (!transportTypes.length) {
+        transportOptionsEl.innerHTML = '<p class="text-center text-secondary">No transport available</p>';
+        document.querySelectorAll(".booking-summary-transport").forEach(e => e.textContent = "Not available");
+        return;
+      }
+      transportTypes.forEach((item, index) => {
+        if (item.transferType && item.transferType.trim() !== '') {
+          const button = document.createElement('div');
+          button.classList.add('transport-option');
+          if (index === 0) button.classList.add('active');
+          button.setAttribute('role', 'radio');
+          button.setAttribute('tabindex', '0');
+          button.setAttribute('aria-checked', index === 0 ? 'true' : 'false');
+          button.setAttribute('data-id', item._id);
+          button.setAttribute('data-price', item.adultPrice || 0);
+          button.innerText = item.transferType.charAt(0).toUpperCase() + item.transferType.slice(1);
+          button.addEventListener('click', () => handleTransportSelection(index, fromModal));
+          transportOptionsEl.appendChild(button);
+          if (transportSelect) {
+            const option = document.createElement('option');
+            option.value = item.transferType;
+            option.text = item.transferType.charAt(0).toUpperCase() + item.transferType.slice(1);
+            transportSelect.appendChild(option);
+            if (index === 0) transportSelect.value = item.transferType;
+          }
+        }
+      });
+      if (transportTypes.length > 0) {
+        handleTransportSelection(0, fromModal);
+      }
+    }
+
+    // Handle transport selection
+    function handleTransportSelection(index, fromModal = false) {
+      const transportOptionsEl = fromModal ? document.getElementById('modalTransportOptions') : document.getElementById('transportOptions');
+      const transportSelect = fromModal ? document.getElementById("modalSelectedTransport") : document.getElementById("selectedTransport");
+      const options = transportOptionsEl.querySelectorAll('.transport-option');
+      options.forEach((el, idx) => {
+        el.classList.toggle('active', idx === index);
+        el.setAttribute('aria-checked', idx === index ? 'true' : 'false');
+      });
+      const selected = transportTypes[index] || {};
+      const transportType = selected.transferType || "Not available";
+      document.querySelectorAll(".booking-summary-transport").forEach(e => e.textContent = transportType);
+      if (transportSelect) transportSelect.value = transportType;
+      updatePrice(index, fromModal);
+    }
+
+    // Update price based on transport selection
+    function updatePrice(index, fromModal = false) {
+      const selected = transportTypes[index] || {};
+      const price = selected.adultPrice || trip.price || "N/A";
+      const summaryPrice = document.querySelectorAll(fromModal ? ".booking-modal-summary-price" : ".booking-summary-price");
+      const priceFull = document.querySelectorAll(fromModal ? ".booking-summary-price-full" : ".booking-summary-price-full");
+      const pricePartial = document.querySelectorAll(fromModal ? ".booking-summary-price-partial" : ".booking-summary-price-partial");
+      summaryPrice.forEach(e => e.textContent = `₹${price}/person`);
+      priceFull.forEach(e => e.textContent = `₹${price}`);
+      const selectedCity = fromModal ? document.getElementById("modalSelectedCity").value : document.getElementById("selectedCity").value;
+      const cityData = deptCities.find((city) => city.City === selectedCity);
+      const partialAmount = parseFloat(cityData?.partialPayment || "0");
+      if (partialAmount > 0) {
+        pricePartial.forEach(e => e.textContent = `₹${partialAmount}`);
+      }
+    }
+
+    // Update dates and tabs
     function updateDatesAndTabs(fromModal = false) {
-      console.log("Updating dates and tabs...");
       const selectedCityInput = fromModal ? document.getElementById("modalSelectedCity") : document.getElementById("selectedCity");
       const selectedCity = selectedCityInput ? selectedCityInput.value : "";
       const cityData = deptCities.find((city) => city.City === selectedCity);
@@ -1528,59 +1791,48 @@
       const dateSelect = fromModal ? document.getElementById("modalSelectedDate") : document.getElementById("selectedDate");
       const mainDateSelect = document.getElementById("selectedDate");
       const modalDateSelect = document.getElementById("modalSelectedDate");
-      const proceedBtns = fromModal ? document.querySelectorAll(".booking-modal-btn-proceed") : document.querySelectorAll(".trip-details-proceed-btn-book");
+      const proceedBtns = fromModal ? document.querySelectorAll(".booking-modal-btn-proceed") : document.querySelectorAll(".tour-booking-proceed-btn");
       const summaryDate = document.querySelectorAll(".booking-summary-date");
       dateSelector.style.display = "flex";
       dateSelect.disabled = true;
-      if (proceedBtns.length) proceedBtns.forEach(el => el.disabled = true);
+      proceedBtns.forEach(el => el.disabled = true);
       yearTabs.innerHTML = "";
       monthTabs.innerHTML = "";
       dateSelector.innerHTML = "";
       dateSelect.innerHTML = "<option value=''>Select a date</option>";
       summaryDate.forEach(e => e.textContent = "Not selected");
-      transportTypes = cityData?.price || [];
-      buildTransport();
-      if (!cityData || !cityData.dates || cityData.dates.length === 0) {
-        console.warn(`No valid city data or dates for ${selectedCity}`);
+      buildTransport(fromModal);
+      if (!cityData || !cityData.dates || cityData.dates.length === 0 || cityData.City === "Unknown") {
         monthTabs.innerHTML = "<p class='text-muted mb-0'>No dates available for this city.</p>";
         dateSelect.disabled = false;
         if (fromModal) openInquiryModal();
         else validateMainForm();
         return;
       }
-      const dateOptions = generateDateRanges(cityData.dates, cityData.tripDuration);
+      const cutoffDays = parseInt(cityData.bookingCutoffDays || "0", 10);
+      const dateOptions = generateDateRanges(cityData.dates, cityData.tripDuration, cutoffDays);
       if (dateOptions.length === 0) {
-        console.warn(`No future dates available for ${selectedCity}`);
         monthTabs.innerHTML = "<p class='text-muted'>No future dates available.</p>";
         dateSelect.disabled = false;
-        if (fromModal) openInquiryModal();
-        else validateMainForm();
+        showContactModal("No future dates available for this city. Please contact our team.");
         return;
       }
       const datesByYear = {};
       dateOptions.forEach((option) => {
         const year = option.startDate.getUTCFullYear().toString();
-        const month = option.startDate.toLocaleString("en-US", {
-          month: "long",
-          timeZone: "UTC"
-        });
+        const month = option.startDate.toLocaleString("en-US", { month: "long", timeZone: "UTC" });
         if (!datesByYear[year]) datesByYear[year] = {};
         if (!datesByYear[year][month]) datesByYear[year][month] = [];
         datesByYear[year][month].push(option);
       });
       const years = Object.keys(datesByYear).sort();
       if (years.length === 0) {
-        console.warn("No valid years found.");
         monthTabs.innerHTML = "<p class='text-muted'>No valid years available.</p>";
         dateSelect.disabled = false;
-        if (fromModal) openInquiryModal();
-        else validateMainForm();
+        showContactModal("No valid dates available. Please contact our team.");
         return;
       }
-      dateOptions.forEach(({
-        value,
-        text
-      }, index) => {
+      dateOptions.forEach(({ value, text }, index) => {
         const option = document.createElement("option");
         option.value = value;
         option.text = text;
@@ -1600,7 +1852,7 @@
       dateSelect.disabled = false;
       years.forEach((year, index) => {
         const tab = document.createElement("button");
-        tab.className = `${fromModal ? 'booking-modal-year-tab' : 'trip-details-year-tab'} ${index === 0 ? "active" : ""}`;
+        tab.className = `${fromModal ? 'booking-modal-year-tab' : 'tour-booking-year-tab'} ${index === 0 ? "active" : ""}`;
         tab.innerText = year;
         tab.onclick = (e) => {
           e.preventDefault();
@@ -1614,10 +1866,7 @@
       if (!isNaN(initialStartDate.getTime())) {
         const initialYear = initialStartDate.getUTCFullYear().toString();
         showYear(initialYear, fromModal);
-        const initialMonth = initialStartDate.toLocaleString("en-US", {
-          month: "long",
-          timeZone: "UTC"
-        });
+        const initialMonth = initialStartDate.toLocaleString("en-US", { month: "long", timeZone: "UTC" });
         showMonth(initialYear, initialMonth, fromModal);
       } else {
         showYear(years[0], fromModal);
@@ -1626,58 +1875,8 @@
       else validateMainForm();
     }
 
-    function buildTransport() {
-      const transportOptionsEl = document.getElementById('transportOptions');
-      // Remove all children from transportOptionsEl
-      while (transportOptionsEl.firstChild) {
-        transportOptionsEl.removeChild(transportOptionsEl.firstChild);
-      }
-      handleSelection(0); // Set the first option as active by default
-      transportTypes.forEach((item, index) => {
-        // Check if array is empty
-        if (transportTypes.length === 0) {
-          transferOptionsEl.innerHTML = '<p class="text-center text-secondary">No transport available</p>';
-          return;
-        }
-        if(item.transferType != null && item.transferType.trim() !== ''){
-          const button = document.createElement('div');
-          button.classList.add('transport-option');
-          if (index === 0) button.classList.add('active');
-          button.setAttribute('role', 'radio');
-          button.setAttribute('tabindex', '0');
-          button.setAttribute('aria-checked', index === 0 ? 'true' : 'false');
-          button.setAttribute('data-id', item._id);
-          button.innerText = item.transferType.charAt(0).toUpperCase() + item.transferType.slice(1);
-  
-          // Add event listener
-          button.addEventListener('click', () => handleSelection(index));
-  
-          transportOptionsEl.appendChild(button);
-        }
-      });
-    }
-
-    function handleSelection(index) {
-      const options = document.querySelectorAll('.tranport-option');
-      options.forEach((el, idx) => {
-        el.classList.toggle('active', idx === index);
-        el.setAttribute('aria-checked', idx === index ? 'true' : 'false');
-      });
-      updatePrice(index);
-    }
-
-    function updatePrice(index) {
-      const selected = transportTypes[index] || {};
-      const dynamicPriceEl = document.getElementById('dynamicPrice');
-      if (dynamicPriceEl) {
-        dynamicPriceEl.innerHTML = `
-          <strong class="text-primary-emphasis">₹${selected.adultPrice||trip.price}</strong>/Person
-        `;
-      }
-    }
-
+    // Show year tabs
     function showYear(year, fromModal = false) {
-      console.log(`Showing year: ${year}`);
       const selectedCity = fromModal ? document.getElementById("modalSelectedCity").value : document.getElementById("selectedCity").value;
       const cityData = deptCities.find((city) => city.City === selectedCity);
       const monthTabs = fromModal ? document.getElementById("modalMonthTabs") : document.getElementById("monthTabs");
@@ -1689,11 +1888,12 @@
         if (fromModal) openInquiryModal();
         return;
       }
-      document.querySelectorAll(fromModal ? ".booking-modal-year-tab" : ".trip-details-year-tab").forEach((tab) => tab.classList.remove("active"));
-      const yearTab = Array.from(document.querySelectorAll(fromModal ? ".booking-modal-year-tab" : ".trip-details-year-tab")).find((tab) => tab.innerText === year);
+      document.querySelectorAll(fromModal ? ".booking-modal-year-tab" : ".tour-booking-year-tab").forEach((tab) => tab.classList.remove("active"));
+      const yearTab = Array.from(document.querySelectorAll(fromModal ? ".booking-modal-year-tab" : ".tour-booking-year-tab")).find((tab) => tab.innerText === year);
       if (yearTab) yearTab.classList.add("active");
       monthTabs.innerHTML = "";
-      const filteredDates = filterFutureDates(cityData.dates);
+      const cutoffDays = parseInt(cityData.bookingCutoffDays || "0", 10);
+      const filteredDates = filterFutureDates(cityData.dates, cutoffDays);
       const datesByYear = {};
       filteredDates.forEach((date) => {
         if (!date.Year || !date.Month || !date.dates) return;
@@ -1715,7 +1915,7 @@
       }
       months.forEach((month, index) => {
         const tab = document.createElement("button");
-        tab.className = `${fromModal ? 'booking-modal-month-tab' : 'trip-details-month-tab'} ${index === 0 ? "active" : ""}`;
+        tab.className = `${fromModal ? 'booking-modal-month-tab' : 'tour-booking-month-tab'} ${index === 0 ? "active" : ""}`;
         tab.innerText = month;
         tab.onclick = (e) => {
           e.preventDefault();
@@ -1727,453 +1927,315 @@
       const dateSelect = fromModal ? document.getElementById("modalSelectedDate") : document.getElementById("selectedDate");
       const selectedDate = dateSelect.value ? new Date(dateSelect.value) : null;
       const selectedMonth = selectedDate && selectedDate.getFullYear().toString() === year ?
-        selectedDate.toLocaleString("en-US", {
-          month: "long",
-          timeZone: "UTC"
-        }) : months[0];
+        selectedDate.toLocaleString("en-US", { month: "long", timeZone: "UTC" }) : months[0];
       showMonth(year, selectedMonth, fromModal);
     }
 
+    // Show month tabs (continued)
     function showMonth(year, month, fromModal = false) {
-      if (isUpdating) {
-        return;
-      }
-      console.log(`Showing month: ${month} ${year}`);
-      const selectedCity = fromModal ? document.getElementById("modalSelectedCity").value : document.getElementById("selectedCity").value;
-      const cityData = deptCities.find((city) => city.City === selectedCity);
-      const dateSelector = fromModal ? document.getElementById("modalDateSelector") : document.getElementById("dateSelector");
-      const dateSelect = fromModal ? document.getElementById("modalSelectedDate") : document.getElementById("selectedDate");
-      const summaryDate = document.querySelectorAll(".booking-summary-date");
-      if (!cityData || !cityData.dates) {
-        dateSelector.innerHTML = "<p class='text-muted'>No dates available for this month.</p>";
-        dateSelector.style.display = "flex";
-        if (fromModal) openInquiryModal();
-        return;
-      }
-      document.querySelectorAll(fromModal ? ".booking-modal-month-tab" : ".trip-details-month-tab").forEach((tab) => tab.classList.remove("active"));
-      const monthTab = Array.from(document.querySelectorAll(fromModal ? ".booking-modal-month-tab" : ".trip-details-month-tab")).find((tab) => tab.innerText === month);
-      if (monthTab) monthTab.classList.add("active");
-      dateSelector.style.display = "flex";
-      dateSelector.innerHTML = "";
-      const dateOptions = generateDateRanges(cityData.dates, cityData.tripDuration);
-      const monthOptions = dateOptions.filter((option) => {
-        const optionYear = option.startDate.getUTCFullYear().toString();
-        const optionMonth = option.startDate.toLocaleString("en-US", {
-          month: "long",
-          timeZone: "UTC"
-        });
-        return optionYear === year && optionMonth === month;
-      });
-      if (monthOptions.length === 0) {
-        dateSelector.innerHTML = "<p class='text-muted'>No dates available for this month.</p>";
-        dateSelector.style.display = "flex";
-        if (fromModal) openInquiryModal();
-        return;
-      }
-      const selectedDate = dateSelect.value ? new Date(dateSelect.value) : null;
-      const selectedDay = selectedDate ? selectedDate.getUTCDate() : null;
-      const selectedMonthStr = selectedDate ? selectedDate.toLocaleString("en-US", {
-        month: "long",
-        timeZone: "UTC"
-      }) : null;
-      const selectedYear = selectedDate ? selectedDate.getUTCFullYear().toString() : null;
-      monthOptions.forEach(({
-        startDate,
-        value,
-        text
-      }) => {
-        const date = startDate.getUTCDate();
-        const newButtonEl = document.createElement("button");
-        const isActive = selectedDay === date && selectedMonthStr === month && selectedYear === year;
-        newButtonEl.className = `btn ${fromModal ? 'booking-modal-date-item' : 'trip-details-date-item'} ${isActive ? "active" : ""}`;
-        newButtonEl.innerText = date;
-        newButtonEl.onclick = () => {
-          isUpdating = true;
-          document.querySelectorAll(fromModal ? ".booking-modal-date-item" : ".trip-details-date-item").forEach((d) => d.classList.remove("active"));
-          newButtonEl.classList.add("active");
-          dateSelect.value = value;
-          if (fromModal && document.getElementById("selectedDate")) {
-            document.getElementById("selectedDate").value = value;
-          } else if (!fromModal && document.getElementById("modalSelectedDate")) {
-            document.getElementById("modalSelectedDate").value = value;
-          }
-          summaryDate.forEach(e => e.textContent = text);
-          dateSelect.dispatchEvent(new Event("change"));
-          document.querySelectorAll(fromModal ? ".booking-modal-month-tab" : ".trip-details-month-tab").forEach((tab) => tab.classList.remove("active"));
-          const monthTabInner = Array.from(document.querySelectorAll(fromModal ? ".booking-modal-month-tab" : ".trip-details-month-tab")).find((tab) => tab.innerText === month);
-          if (monthTabInner) monthTabInner.classList.add("active");
-          isUpdating = false;
-          if (fromModal) validateModalForm();
-          else validateMainForm();
-          selectDate(newButtonEl);
-        };
-        dateSelector.appendChild(newButtonEl);
-      });
-      if (!document.querySelector(fromModal ? ".booking-modal-date-item.active" : ".trip-details-date-item.active") && monthOptions.length > 0) {
-        console.log(`No active date, setting default for ${month} ${year}`);
-        isUpdating = true;
-        const {
-          value,
-          text
-        } = monthOptions[0];
-        dateSelect.value = value;
-        if (fromModal && document.getElementById("selectedDate")) {
-          document.getElementById("selectedDate").value = value;
-        } else if (!fromModal && document.getElementById("modalSelectedDate")) {
-          document.getElementById("modalSelectedDate").value = value;
-        }
-        summaryDate.forEach(e => e.textContent = text);
-        dateSelect.dispatchEvent(new Event("change"));
-        const firstDateItem = document.querySelector(fromModal ? ".booking-modal-date-item" : ".trip-details-date-item");
-        if (firstDateItem) {
-          firstDateItem.classList.add("active");
-          selectDate(firstDateItem);
-        }
-        isUpdating = false;
+  if (isUpdating) return;
+  isUpdating = true;
+  const selectedCity = fromModal ? document.getElementById("modalSelectedCity").value : document.getElementById("selectedCity").value;
+  const cityData = deptCities.find((city) => city.City === selectedCity);
+  const dateSelector = fromModal ? document.getElementById("modalDateSelector") : document.getElementById("dateSelector");
+  const dateSelect = fromModal ? document.getElementById("modalSelectedDate") : document.getElementById("selectedDate");
+  const summaryDate = document.querySelectorAll(".booking-summary-date");
+  if (!cityData || !cityData.dates) {
+    dateSelector.innerHTML = "<p class='text-muted'>No dates available for this month.</p>";
+    dateSelector.style.display = "flex";
+    if (fromModal) openInquiryModal();
+    isUpdating = false;
+    return;
+  }
+  document.querySelectorAll(fromModal ? ".booking-modal-month-tab" : ".tour-booking-month-tab").forEach((tab) => tab.classList.remove("active"));
+  const monthTab = Array.from(document.querySelectorAll(fromModal ? ".booking-modal-month-tab" : ".tour-booking-month-tab")).find((tab) => tab.innerText === month);
+  if (monthTab) monthTab.classList.add("active");
+  dateSelector.style.display = "flex";
+  dateSelector.innerHTML = "";
+  const cutoffDays = parseInt(cityData.bookingCutoffDays || "0", 10);
+  const dateOptions = generateDateRanges(cityData.dates, cityData.tripDuration, cutoffDays);
+  const monthOptions = dateOptions.filter((option) => {
+    return option.startDate.getUTCFullYear().toString() === year && 
+           option.startDate.toLocaleString("en-US", { month: "long", timeZone: "UTC" }) === month;
+  });
+  if (monthOptions.length === 0) {
+    dateSelector.innerHTML = "<p class='text-muted'>No dates available for this month.</p>";
+    if (fromModal) openInquiryModal();
+    isUpdating = false;
+    return;
+  }
+  monthOptions.forEach((option, index) => {
+    const button = document.createElement("button");
+    button.className = `${fromModal ? 'booking-modal-date-btn' : 'tour-booking-date-item'} ${index === 0 ? "active" : ""}`;
+    // Show only day in departure section, full date in summary
+    button.innerText = option.startDate.getUTCDate();
+    button.setAttribute("data-value", option.value);
+    button.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      document.querySelectorAll(fromModal ? ".booking-modal-date-btn" : ".tour-booking-date-item").forEach((btn) => btn.classList.remove("active"));
+      button.classList.add("active");
+      dateSelect.value = option.value;
+      summaryDate.forEach((e) => (e.textContent = option.text)); // Full date in summary
+      if (fromModal && document.getElementById("selectedDate")) {
+        document.getElementById("selectedDate").value = option.value;
+      } else if (!fromModal && document.getElementById("modalSelectedDate")) {
+        document.getElementById("modalSelectedDate").value = option.value;
       }
       if (fromModal) validateModalForm();
       else validateMainForm();
-    }
-
-    document.getElementById("selectedDate").addEventListener("change", () => {
-      console.log(`Dropdown changed to: ${document.getElementById("selectedDate").value}`);
-      if (isUpdating) return;
-      isUpdating = true;
-      try {
-        const startISO = document.getElementById("selectedDate").value;
-        const startDate = new Date(startISO);
-        if (isNaN(startDate.getTime())) {
-          console.warn(`Invalid dropdown date: ${startISO}`);
-          return;
-        }
-        const year = startDate.getUTCFullYear().toString();
-        const month = startDate.toLocaleString("en-US", {
-          month: "long",
-          timeZone: "UTC"
-        });
-        const day = startDate.getUTCDate();
-        const modalDateSelect = document.getElementById("modalSelectedDate");
-        if (modalDateSelect) modalDateSelect.value = startISO;
-        document.querySelectorAll(".trip-details-year-tab").forEach((tab) => tab.classList.remove("active"));
-        const yearTab = Array.from(document.querySelectorAll(".trip-details-year-tab")).find((tab) => tab.innerText === year);
-        if (yearTab) yearTab.classList.add("active");
-        showYear(year);
-        showMonth(year, month);
-        document.querySelectorAll(".trip-details-date-item").forEach((item) => {
-          item.classList.toggle("active", parseInt(item.innerText) === day);
-        });
-      } finally {
-        isUpdating = false;
-      }
-      validateMainForm();
+    };
+    dateSelector.appendChild(button);
+  });
+  if (!dateSelect.value && monthOptions.length > 0) {
+    dateSelect.value = monthOptions[0].value;
+    summaryDate.forEach((e) => (e.textContent = monthOptions[0].text));
+    document.querySelectorAll(fromModal ? ".booking-modal-date-btn" : ".tour-booking-date-item").forEach((btn, idx) => {
+      btn.classList.toggle("active", idx === 0);
     });
+    if (fromModal && document.getElementById("selectedDate")) {
+      document.getElementById("selectedDate").value = monthOptions[0].value;
+    } else if (!fromModal && document.getElementById("modalSelectedDate")) {
+      document.getElementById("modalSelectedDate").value = monthOptions[0].value;
+    }
+  }
+  isUpdating = false;
+  if (fromModal) validateModalForm();
+  else validateMainForm();
+}
 
-    const modalDateSelect = document.getElementById("modalSelectedDate");
-    if (modalDateSelect) {
-      modalDateSelect.addEventListener("change", () => {
-        console.log(`Modal dropdown changed to: ${modalDateSelect.value}`);
-        if (isUpdating) return;
-        isUpdating = true;
-        try {
-          const startISO = modalDateSelect.value;
-          const startDate = new Date(startISO);
-          if (isNaN(startDate.getTime())) {
-            console.warn(`Invalid modal dropdown date: ${startISO}`);
-            return;
+  // Update modal city summary
+  function updateModalCitySummary() {
+    const selectedCity = document.getElementById("modalSelectedCity").value;
+    const cityData = deptCities.find((city) => city.City === selectedCity);
+    const citySummary = document.querySelector(".booking-modal-city-summary");
+    const cityName = document.querySelector(".booking-modal-city-name");
+    const cityState = document.querySelector(".booking-modal-city-state");
+    const cityPrice = document.querySelector(".booking-modal-city-price");
+    const cityDuration = document.querySelector(".booking-modal-city-duration");
+    if (cityData && cityData.City !== "Unknown") {
+      citySummary.style.display = "block";
+      cityName.textContent = cityData.City;
+      cityState.textContent = cityData.State;
+      const adultPrice = cityData.price && cityData.price[0] ? cityData.price[0].adultPrice : trip.price || "N/A";
+      cityPrice.textContent = `₹${adultPrice}/adult`;
+      cityDuration.textContent = cityData.tripDuration || "N/A";
+    } else {
+      citySummary.style.display = "none";
+      cityName.textContent = "City";
+      cityState.textContent = "State";
+      cityPrice.textContent = "₹0/adult";
+      cityDuration.textContent = "0 Days";
+    }
+  }
+
+  // Sync payment options between main form and modal
+  function syncPaymentOptions() {
+    const paymentOptionRadios = document.querySelectorAll('input[name="paymentOptionRadio"]');
+    const modalPaymentOptionRadios = document.querySelectorAll('input[name="modalPaymentOptionRadio"]');
+    const paymentOptionSelect = document.getElementById("paymentOption");
+    paymentOptionRadios.forEach((radio) => {
+      radio.addEventListener("change", () => {
+        modalPaymentOptionRadios.forEach((modalRadio) => {
+          if (modalRadio.value === radio.value) {
+            modalRadio.checked = true;
           }
-          const mainDateSelect = document.getElementById("selectedDate");
-          if (mainDateSelect) mainDateSelect.value = startISO;
-          const year = startDate.getUTCFullYear().toString();
-          const month = startDate.toLocaleString("en-US", {
-            month: "long",
-            timeZone: "UTC"
-          });
-          const day = startDate.getUTCDate();
-          document.querySelectorAll(".booking-modal-year-tab").forEach((tab) => tab.classList.remove("active"));
-          const yearTab = Array.from(document.querySelectorAll(".booking-modal-year-tab")).find((tab) => tab.innerText === year);
-          if (yearTab) yearTab.classList.add("active");
-          showYear(year, true);
-          showMonth(year, month, true);
-          document.querySelectorAll(".booking-modal-date-item").forEach((item) => {
-            item.classList.toggle("active", parseInt(item.innerText) === day);
-          });
-        } finally {
-          isUpdating = false;
-        }
-        validateModalForm();
-      });
-    }
-
-    function showContactModal(message = "Online booking is temporarily unavailable.") {
-      const modalElement = document.getElementById("contactModal");
-      const modalMessage = document.getElementById("contactModalMessage");
-      if (modalMessage) modalMessage.textContent = message;
-      const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-      modal.show();
-    }
-
-    async function openBookingModal() {
-      console.log("Opening booking modal...");
-      try {
-        if (!isLoggedIn) {
-          console.log("User not logged in, showing login modal...");
-          $('#signinModal').modal('show');
-          return;
-        }
-        if (trip && trip.deptcities && trip.deptcities.length > 0 && trip.deptcities.some(city => city.dates && city.dates.length > 0 && city.price && city.price.length > 0)) {
-          const filteredCities = deptCities.filter(city => filterFutureDates(city.dates).length > 0);
-          if (filteredCities.length === 0) {
-            console.warn("No future dates available for any city");
-            openInquiryModal();
-            return;
-          }
-          const modalElement = document.getElementById("bookingModal");
-          const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-          ["modalSelectedCity", "modalSelectedDate"].forEach(id => {
-            const select = document.getElementById(id);
-            if (select) {
-              select.style.display = id === "modalSelectedDate" ? "none" : "block";
-              const niceSelect = select.nextElementSibling;
-              if (niceSelect && niceSelect.classList.contains("nice-select")) {
-                niceSelect.remove();
-              }
-            }
-          });
-          updateModalCitySummary();
-          updateDatesAndTabs(true);
-          modal.show();
-        } else {
-          console.warn("Cannot book: invalid trip data");
-          showContactModal();
-        }
-      } catch (error) {
-        console.error("Error checking authentication:", error);
-        showContactModal("Failed to verify login status. Please try again.");
-      }
-    }
-
-    function updateModalCitySummary() {
-      const citySelect = document.getElementById("modalSelectedCity");
-      const summaryCard = document.querySelector(".booking-modal-city-summary");
-      const cityName = document.querySelector(".booking-modal-city-name");
-      const cityState = document.querySelector(".booking-modal-city-state");
-      const cityPrice = document.querySelector(".booking-modal-city-price");
-      const cityDuration = document.querySelector(".booking-modal-city-duration");
-      const summaryCity = document.querySelectorAll(".booking-summary-city");
-      const summaryDuration = document.querySelectorAll(".booking-summary-duration");
-      const summaryPrice = document.querySelector(".booking-modal-summary-price");
-      if (citySelect && citySelect.selectedOptions[0]) {
-        const selectedOption = citySelect.selectedOptions[0];
-        const city = selectedOption.value;
-        const state = selectedOption.dataset.state || "N/A";
-        const price = selectedOption.dataset.price || "N/A";
-        const duration = selectedOption.dataset.duration || "N/A";
-        cityName.textContent = city;
-        cityState.textContent = state;
-        cityPrice.textContent = `₹${price}/adult`;
-        cityDuration.textContent = duration;
-        summaryCity.forEach(e => e.textContent = `${city}, ${state}`);
-        summaryDuration.forEach(e => e.textContent = duration);
-        summaryPrice.textContent = `₹${price}/adult`;
-        summaryCard.style.display = "block";
-      } else {
-        summaryCard.style.display = "none";
-        summaryCity.forEach(e => e.textContent = `Not selected`);
-        summaryDuration.forEach(e => e.textContent = "Not selected");
-        summaryPrice.textContent = "Not selected";
-      }
-      validateModalForm();
-    }
-
-    async function proceedWithBooking() {
-      console.log("Proceeding with booking...");
-      try {
-        if (!isLoggedIn) {
-          console.log("User not logged in, showing login modal...");
-          $('#signinModal').modal('show');
-          return;
-        }
-        const form = document.getElementById("proceedToBook");
-        const city = document.getElementById("selectedCity").value;
-        const date = document.getElementById("selectedDate").value;
-        if (city && date) {
-          console.log(`Booking with city: ${form.city.value}, date: ${form.date.value}`);
-          const url = `${form.action}?city=${encodeURIComponent(form.city.value)}&date=${encodeURIComponent(form.date.value)}`;
-          window.location.href = url;
-        } else {
-          console.warn("Invalid booking data");
-          validateMainForm();
-          showContactModal();
-        }
-      } catch (error) {
-        console.error("Error checking authentication:", error);
-        showContactModal("Failed to verify login status. Please try again.");
-      }
-    }
-
-    async function submitModalBooking() {
-      const city = document.getElementById("modalSelectedCity").value;
-      const date = document.getElementById("modalSelectedDate").value;
-      if (city && date) {
-        const mainForm = document.getElementById("proceedToBook");
-        mainForm.querySelector("#selectedCity").value = city;
-        mainForm.querySelector("#selectedDate").value = date;
-        proceedWithBooking();
-      } else {
-        console.warn("Invalid modal booking data");
-        validateModalForm();
-        showContactModal();
-      }
-    }
-
-    function showTab(tabId) {
-      document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
-      document.querySelectorAll(".tab-content").forEach(content => content.classList.remove("active"));
-      document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add("active");
-      document.getElementById(tabId).classList.add("active");
-    }
-
-    document.getElementById("bookingModal").addEventListener("click", function(e) {
-      if (e.target.classList.contains("booking-modal-month-tab")) {
-        e.stopPropagation();
-      }
-    });
-
-    // Queck call request section
-    // Quick Call Form Validation and Submission
-    document.addEventListener("DOMContentLoaded", function() {
-      const quickCallForm = document.getElementById("quickCallForm");
-      const guestNameInput = document.getElementById("guestName");
-      const mobileNoInput = document.getElementById("mobileNo");
-      const countryCodeSelect = document.getElementById("countryCode");
-      const submitBtn = document.getElementById("submitQuickCall");
-      const guestNameError = document.getElementById("guestNameError");
-      const mobileNoError = document.getElementById("mobileNoError");
-
-      function validateQuickCallForm() {
-        let isValid = true;
-
-        // Validate Guest Name
-        if (!guestNameInput.value.trim()) {
-          guestNameInput.classList.add("is-invalid");
-          guestNameError.style.display = "block";
-          isValid = false;
-        } else {
-          guestNameInput.classList.remove("is-invalid");
-          guestNameError.style.display = "none";
-        }
-
-        // Validate Mobile Number (basic validation: at least 8 digits)
-        const mobileNo = mobileNoInput.value.trim();
-        const mobileNoRegex = /^\d{8,15}$/;
-        if (!mobileNoRegex.test(mobileNo)) {
-          mobileNoInput.classList.add("is-invalid");
-          mobileNoError.style.display = "block";
-          isValid = false;
-        } else {
-          mobileNoInput.classList.remove("is-invalid");
-          mobileNoError.style.display = "none";
-        }
-
-        submitBtn.disabled = !isValid;
-        return isValid;
-      }
-
-      guestNameInput.addEventListener("input", validateQuickCallForm);
-      mobileNoInput.addEventListener("input", validateQuickCallForm);
-
-      submitBtn.addEventListener("click", async function(e) {
-        e.preventDefault();
-        if (!validateQuickCallForm()) return;
-
-        const formData = {
-          guestName: guestNameInput.value.trim(),
-          mobileNo: `${countryCodeSelect.value}${mobileNoInput.value.trim()}`,
-          tripId: "<%= trips._id %>",
-          responded: false,
-          markAsSpam: false,
-          requestedDate: new Date().toISOString()
-        };
-
-        try {
-          const response = await fetch("/quick-call/request", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRF-Token": csrfToken
-            },
-            body: JSON.stringify(formData)
-          });
-
-          if (response.ok) {
-            // Close the quick call modal
-            const quickCallModal = bootstrap.Modal.getInstance(document.getElementById("quickCallModal"));
-            quickCallModal.hide();
-
-            // Show success modal
-            const successModal = new bootstrap.Modal(document.getElementById("quickCallSuccessModal"));
-            successModal.show();
-
-            // Reset form
-            quickCallForm.reset();
-            validateQuickCallForm();
-          } else {
-            alert("Failed to submit your request. Please try again.");
-          }
-        } catch (error) {
-          console.error("Error submitting quick call request:", error);
-          alert("An error occurred. Please try again later.");
-        }
+        });
+        if (paymentOptionSelect) paymentOptionSelect.value = radio.value;
       });
     });
-    </script>
-
-    <script>
-      function managePostionPricecard(){
-        const isTab = window.innerWidth < 992;
-        const topPosition = window.innerWidth < 640 ? '-140px' : '-130px';
-        if(!isTab) return;
-        const detailSec = document.querySelector('.detailSec');
-        const priceSec = document.querySelector('.stickySec');
-        if(!detailSec || !priceSec) return;
-        const rect = detailSec.getBoundingClientRect();
-        // Get the viewport height dynamically
-        const viewportHeight = window.innerHeight;
-        // If the bottom of the main content section is at or above the bottom of the screen
-        // This means we have scrolled past or reached the end of the main content
-        if (rect.bottom <= viewportHeight) {
-          // Make the mobile sticky card fully visible
-          priceSec.style.bottom = 'unset';
-          priceSec.style.position = 'relative';
-        } else {
-            // Revert the mobile sticky card to half-visible
-          priceSec.style.bottom = topPosition;
-          priceSec.style.position = 'fixed';
-        }
-      }
-      managePostionPricecard();
-      window.addEventListener('scroll', managePostionPricecard);
-      const joiningForm = document.getElementById("proceedToBook");
-      const floatingSec = document.querySelector(".floatingSec");
-    
-      if (joiningForm && floatingSec) {
-        function checkFormPosition() {
-          const rect = joiningForm.getBoundingClientRect();
-          // If the form is completely above OR below viewport
-          const isOutOfView = (rect.bottom < 0) || (rect.top > window.innerHeight);
-          if (isOutOfView) {
-            floatingSec.classList.add('d-flex');
-            floatingSec.classList.remove('d-none');
-          } else {
-            floatingSec.classList.remove('d-flex');
-            floatingSec.classList.add('d-none');
+    modalPaymentOptionRadios.forEach((modalRadio) => {
+      modalRadio.addEventListener("change", () => {
+        paymentOptionRadios.forEach((radio) => {
+          if (radio.value === modalRadio.value) {
+            radio.checked = true;
           }
-        }
-        window.addEventListener("scroll", checkFormPosition);
-        window.addEventListener("resize", checkFormPosition);
-        window.addEventListener("load", checkFormPosition);
+        });
+        if (paymentOptionSelect) paymentOptionSelect.value = modalRadio.value;
+      });
+    });
+  }
+
+  // Open booking modal
+  function openBookingModal() {
+    const modalElement = document.getElementById("bookingModal");
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    updateModalCitySummary();
+    updateDatesAndTabs(true);
+    modal.show();
+  }
+
+  function toggleFloatingPanel() {
+  const floatingSec = document.querySelector(".tour-booking-floating-sec");
+  const backdrop = document.querySelector(".tour-booking-floating-backdrop");
+  floatingSec.classList.toggle("active");
+  backdrop.classList.toggle("active");
+}
+
+  // Submit modal booking
+  async function submitModalBooking() {
+    if (!isLoggedIn) {
+      $('#signinModal').modal('show');
+      return;
+    }
+    const citySelect = document.getElementById("modalSelectedCity");
+    const dateSelect = document.getElementById("modalSelectedDate");
+    const transportSelect = document.getElementById("modalSelectedTransport");
+    const paymentOption = document.querySelector('input[name="modalPaymentOptionRadio"]:checked').value;
+    if (!citySelect.value || citySelect.value === "Unknown") {
+      document.getElementById("modalCityError").style.display = "block";
+      return;
+    }
+    if (!dateSelect.value) {
+      document.getElementById("modalDateError").style.display = "block";
+      return;
+    }
+    const selectedCity = deptCities.find((city) => city.City === citySelect.value);
+    const cutoffDays = parseInt(selectedCity.bookingCutoffDays || "0", 10);
+    const selectedDate = new Date(dateSelect.value);
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const cutoffDate = new Date(now);
+    cutoffDate.setDate(now.getDate() + cutoffDays);
+    if (selectedDate <= cutoffDate) {
+      showContactModal(`The selected date is within the ${cutoffDays}-day booking cutoff period. Please contact our team to proceed.`);
+      return;
+    }
+    const form = document.getElementById("proceedToBook");
+    const mainCitySelect = document.getElementById("selectedCity");
+    const mainDateSelect = document.getElementById("selectedDate");
+    const mainTransportSelect = document.getElementById("selectedTransport");
+    const mainPaymentOption = document.getElementById("paymentOption");
+    mainCitySelect.value = citySelect.value;
+    mainDateSelect.value = dateSelect.value;
+    if (transportSelect) mainTransportSelect.value = transportSelect.value;
+    mainPaymentOption.value = paymentOption;
+    document.querySelector(`input[name="paymentOptionRadio"][value="${paymentOption}"]`).checked = true;
+    form.submit();
+  }
+
+  // Proceed with booking
+  async function proceedWithBooking() {
+    if (!isLoggedIn) {
+      $('#signinModal').modal('show');
+      return;
+    }
+    const citySelect = document.getElementById("selectedCity");
+    const dateSelect = document.getElementById("selectedDate");
+    const transportSelect = document.getElementById("selectedTransport");
+    if (!citySelect.value || citySelect.value === "Unknown") {
+      document.getElementById("cityError").style.display = "block";
+      return;
+    }
+    if (!dateSelect.value) {
+      document.getElementById("dateError").style.display = "block";
+      return;
+    }
+    const selectedCity = deptCities.find((city) => city.City === citySelect.value);
+    const cutoffDays = parseInt(selectedCity.bookingCutoffDays || "0", 10);
+    const selectedDate = new Date(dateSelect.value);
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const cutoffDate = new Date(now);
+    cutoffDate.setDate(now.getDate() + cutoffDays);
+    if (selectedDate <= cutoffDate) {
+      showContactModal(`The selected date is within the ${cutoffDays}-day booking cutoff period. Please contact our team to proceed.`);
+      return;
+    }
+    document.getElementById("proceedToBook").submit();
+  }
+
+  // Handle quick call form submission
+  document.getElementById("quickCallForm")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const submitBtn = document.getElementById("submitQuickCall");
+    const guestName = document.getElementById("guestName").value.trim();
+    const mobileNo = document.getElementById("mobileNo").value.trim();
+    const countryCode = document.getElementById("countryCode").value;
+    const nameError = document.getElementById("guestNameError");
+    const mobileError = document.getElementById("mobileNoError");
+    let isValid = true;
+    if (!guestName) {
+      nameError.style.display = "block";
+      isValid = false;
+    } else {
+      nameError.style.display = "none";
+    }
+    if (!/^\d{10}$/.test(mobileNo)) {
+      mobileError.style.display = "block";
+      isValid = false;
+    } else {
+      mobileError.style.display = "none";
+    }
+    submitBtn.disabled = !isValid;
+    if (!isValid) return;
+    submitBtn.disabled = true;
+    try {
+      const response = await fetch("/api/submitQuickCall", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "CSRF-Token": csrfToken,
+        },
+        body: JSON.stringify({
+          guestName,
+          mobileNo: `${countryCode}${mobileNo}`,
+          tripId: trip._id,
+        }),
+      });
+      if (response.ok) {
+        bootstrap.Modal.getInstance(document.getElementById("quickCallModal")).hide();
+        bootstrap.Modal.getOrCreateInstance(document.getElementById("quickCallSuccessModal")).show();
+      } else {
+        showContactModal("Failed to submit request. Please try again or contact support.");
       }
-    </script>
+    } catch (error) {
+      console.error("Error submitting quick call:", error);
+      showContactModal("An error occurred. Please try again or contact support.");
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  // Validate quick call form inputs
+  document.getElementById("guestName")?.addEventListener("input", () => {
+    const guestName = document.getElementById("guestName").value.trim();
+    const mobileNo = document.getElementById("mobileNo").value.trim();
+    const submitBtn = document.getElementById("submitQuickCall");
+    const nameError = document.getElementById("guestNameError");
+    if (!guestName) {
+      nameError.style.display = "block";
+      submitBtn.disabled = true;
+    } else {
+      nameError.style.display = "none";
+      submitBtn.disabled = !guestName || !/^\d{10}$/.test(mobileNo);
+    }
+  });
+
+  document.getElementById("mobileNo")?.addEventListener("input", () => {
+    const guestName = document.getElementById("guestName").value.trim();
+    const mobileNo = document.getElementById("mobileNo").value.trim();
+    const submitBtn = document.getElementById("submitQuickCall");
+    const mobileError = document.getElementById("mobileNoError");
+    if (!/^\d{10}$/.test(mobileNo)) {
+      mobileError.style.display = "block";
+      submitBtn.disabled = true;
+    } else {
+      mobileError.style.display = "none";
+      submitBtn.disabled = !guestName || !/^\d{10}$/.test(mobileNo);
+    }
+  });
+
+  // Show tab for More Information section
+  function showTab(tabId) {
+    document.querySelectorAll(".tab-menu .tab").forEach((tab) => tab.classList.remove("active"));
+    document.querySelectorAll(".tab-content").forEach((content) => content.classList.remove("active"));
+    const selectedTab = document.querySelector(`.tab[onclick="showTab('${tabId}')"]`);
+    if (selectedTab) selectedTab.classList.add("active");
+    const selectedContent = document.getElementById(tabId);
+    if (selectedContent) selectedContent.classList.add("active");
+  }
+
+</script>
 </body>
-
 </html>

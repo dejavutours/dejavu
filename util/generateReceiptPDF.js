@@ -125,7 +125,7 @@ const generateReceiptPDF = (booking, tour, paymentLog, outputPath) => {
       // Amount Paid
       doc.rect(tableLeft, currentY, tableWidth, 20).stroke();
       doc.font('Helvetica').fontSize(10).fillColor('#333333');
-      doc.text('Amount Paid (incl. 5% GST)', tableLeft + cellPadding, currentY + cellPadding, {
+      doc.text('Amount Paid', tableLeft + cellPadding, currentY + cellPadding, {
         width: descWidth - cellPadding * 2,
       });
       doc.text(formattedAmount, tableLeft + descWidth + cellPadding, currentY + cellPadding, {
