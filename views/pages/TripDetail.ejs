@@ -4,9 +4,16 @@
   <%- include('../partials/headtag', {isNiceSelect: false}); %>
   <title><%= trips.name %> - Trip Details | Deja-vu Tours</title>
   <!-- Dynamic meta description for SEO -->
-  <meta name="description" content="<%= trips.about ? trips.about.replace(/<[^>]+>/g, '').substring(0, 160) : 'Explore ' + trips.name + ' with Deja-vu Tours. Book your adventure from ' + (trips.deptcities ? trips.deptcities.map(c => c.City).join(', ') : 'various cities') + '.' %>" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <!-- JSON-LD for SEO -->
+  <meta name="description" content="<%= trips.about ? trips.about.replace(/<[^>]+>/g, '').substring(0, 160) : 'Discover ' + trips.name + ' with Deja-vu Tours. Book your trip today!' %>" />
+  <meta property="og:title" content="<%= trips.name %> - Deja-vu Tours" />
+  <meta property="og:description" content="<%= trips.about ? trips.about.replace(/<[^>]+>/g, '').substring(0, 160) : 'Explore ' + trips.name + ' with Deja-vu Tours. Book your adventure now!' %>" />
+  <meta property="og:image" content="<%= trips.bannerimages && trips.bannerimages.length > 0 ? trips.bannerimages[0] : trips.imageurl || 'https://www.dejavutours.in/images/pavagadh-trekking.jpg' %>" />
+  <meta property="og:url" content="https://www.dejavutours.in/tripdetail/<%= trips.name %>" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Deja-vu Tours" />
+  <link rel="canonical" href="https://www.dejavutours.in/tripdetail/<%= trips.name %>" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -26,14 +33,14 @@
       "organizer": {
         "@type": "Organization",
         "name": "Deja-vu Tours Treks and Travel",
-        "url": "https://yourwebsite.com"
+        "url": "https://www.dejavutours.in"
       },
       "offers": {
         "@type": "Offer",
         "price": "<%= trips.deptcities && trips.deptcities[0] && trips.deptcities[0].price && trips.deptcities[0].price[0] ? trips.deptcities[0].price[0].adultPrice : trips.price || 'Contact for details' %>",
         "priceCurrency": "INR",
         "availability": "<%= trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].City !== 'Unknown' ? 'InStock' : 'OutOfStock' %>",
-        "url": "https://yourwebsite.com/bookingTour/<%= trips._id %>"
+        "url": "https://www.dejavutours.in/bookingTour/<%= trips._id %>"
       }
     }
   </script>
