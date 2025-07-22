@@ -1,208 +1,177 @@
 const path = require('path');
-const dotenv = require('dotenv');
-
-// Determine the environment
-const envFile =
-process.env.NODE_ENV === 'production' ? '.env.production' : '.env';
-// Load the appropriate .env file
-dotenv.config({ path: path.resolve(__dirname, envFile) });
-console.log(`Loaded environment variables from ${envFile}`);
-
-// if(process.env.NODE_ENV !== 'production'){
-// require('dotenv').config()// }
+const fs = require('fs');
 const express = require('express');
-const cookieParser = require('cookie-parser');
-const passport = require('passport');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
 const session = require('express-session');
+const mongoose = require('mongoose');
 const MongoDBStore = require('connect-mongodb-session')(session);
+const passport = require('passport');
+const cookieParser = require('cookie-parser');
+const compression = require('compression');
+const helmet = require('helmet');
 const csrf = require('csurf');
 const multer = require('multer');
-const compression = require('compression');
-const fs = require('fs');
+const dotenv = require('dotenv');
 
-const PORT = process.env.PORT || 5000;
-
-const User = require('./models/user');
-const isProduction = process.env.NODE_ENV === 'production';
-
-const MONGODB_URI = isProduction
-? `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.ogxnm.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
-: `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
+// Determine and load correct .env
+const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env';
+dotenv.config({ path: path.resolve(__dirname, envFile) });
+console.log(`✅ Loaded environment variables from ${envFile}`);
 
 const app = express();
+const PORT = process.env.PORT || 5000;
+const isProduction = process.env.NODE_ENV !== 'production';
+
+const User = require('./models/user');
+
+// MongoDB connection URI
+const MONGODB_URI = isProduction
+  ? `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.ogxnm.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
+  : `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
+
+// Session store
 const store = new MongoDBStore({
-    uri: MONGODB_URI,
-    collection: 'sessions',
+  uri: MONGODB_URI,
+  collection: 'sessions',
 });
+
 const csrfProtection = csrf();
 
-// Define constants for file upload limits
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_FILE_TYPES = ["image/png", "image/jpg", "image/jpeg", "application/pdf"];
+// File upload config
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const ALLOWED_FILE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'];
 
 const fileStorage = multer.diskStorage({
-destination: (req, file, cb) => {
-if (req.url === "/booktrip") {
-    cb(null, "images/proofs");
-} else if (req.url === "/admin/addblog" || req.url === "/admin/addEditedblog") {
-    cb(null, "images/blog");
-} else if (
-    req.url === "/admin/postNewAddTours" ||
-    req.url === "/admin/updateImageUrl" ||
-    req.url === "/admin/updateBannerImages"
-) {
-// Handle images and PDFs for tours
-if (file.mimetype === "application/pdf") {
-    const uploadPath = path.join("documents", "tours");
-        fs.mkdirSync(uploadPath, { recursive: true });
-        cb(null, uploadPath);
-    } else {
-        cb(null, "images/tours");
+  destination: (req, file, cb) => {
+    let uploadPath = 'images';
+
+    if (req.url === '/booktrip') {
+      uploadPath = 'images/proofs';
+    } else if (['/admin/addblog', '/admin/addEditedblog'].includes(req.url)) {
+      uploadPath = 'images/blog';
+    } else if (
+      ['/admin/postNewAddTours', '/admin/updateImageUrl', '/admin/updateBannerImages'].includes(req.url)
+    ) {
+      if (file.mimetype === 'application/pdf') {
+        uploadPath = 'documents/tours';
+      } else {
+        uploadPath = 'images/tours';
+      }
+    } else if (req.url === '/cities') {
+      uploadPath = 'images/cities';
+    } else if (req.url === '/states') {
+      uploadPath = 'images/states';
+    } else if (req.url === '/categories') {
+      uploadPath = 'images/categories';
+    } else if (req.url === '/banner') {
+      uploadPath = 'images/banners';
     }
-} else if (req.url === "/cities") {
-    const uploadPath = path.join("images", "cities");
+
     fs.mkdirSync(uploadPath, { recursive: true });
-        cb(null, uploadPath);
-} else if (req.url === "/states") {
-    const uploadPath = path.join("images", "states");
-    fs.mkdirSync(uploadPath, { recursive: true });
-        cb(null, uploadPath);
-} else if (req.url === "/categories") {
-    const uploadPath = path.join("images", "categories");
-    fs.mkdirSync(uploadPath, { recursive: true });
-        cb(null, uploadPath);
-}  else if (req.url === "/banner") {
-    const uploadPath = path.join("images", "banners");
-    fs.mkdirSync(uploadPath, { recursive: true });
-        cb(null, uploadPath);
-}  else { 
-     cb(null, "images");
-    }
-},
-filename: (req, file, cb) => {
-const timestamp = new Date().toISOString().replace(/:/g, "-");
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    const timestamp = new Date().toISOString().replace(/:/g, '-');
     cb(null, `${timestamp}-${file.originalname}`);
-    },
+  },
 });
 
 const fileFilter = (req, file, cb) => {
-if (ALLOWED_FILE_TYPES.includes(file.mimetype)) {
+  if (ALLOWED_FILE_TYPES.includes(file.mimetype)) {
     cb(null, true);
-    } else {
-    cb(new Error("Invalid file type. Only PNG, JPG, JPEG, and PDF are allowed."), false);
-    }
+  } else {
+    cb(new Error('❌ Invalid file type. Only PNG, JPG, JPEG, and PDF are allowed.'), false);
+  }
 };
 
-// Increase the file size limit to accommodate PDFs
 app.use(
-    multer({
-        storage: fileStorage,
-        fileFilter: fileFilter,
-        limits: { fileSize: MAX_FILE_SIZE },
-    }).array("image", 12) // Adjust to allow multiple files (images + 1 PDF)
+  multer({
+    storage: fileStorage,
+    fileFilter,
+    limits: { fileSize: MAX_FILE_SIZE },
+  }).array('image', 12)
 );
 
+// View engine setup
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-const tourRoutes = require('./routes/tours');
-const profileRoutes = require('./routes/profileRoutes');
-const authRoutes = require('./routes/auth');
-const paymentRoutes = require('./routes/payments');
-const cityRoutes = require('./routes/cityRoutes');
-const adminRoutes = require('./routes/admin');
-const stateRoutes= require('./routes/stateRoutes');
-const categoryRoutes = require('./routes/categoryRoutes');
-const bannerRoutes = require('./routes/bannerRoutes');
-const customTripRoutes = require('./routes/customTripRoutes');
-const tripRoutes = require('./routes/tripRoutes');
-const quickCallRoutes = require('./routes/quickCallRoutes');
-
-
-
+// Core middleware
 app.use(compression());
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
+// app.use(helmet());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/documents', express.static(path.join(__dirname, 'documents')));
 
-app.use('/images', express.static(path.join(__dirname, 'images'))); // Serves images/cities as well
-// Serve documents statically
-app.use("/documents", express.static(path.join(__dirname, "documents")));
-
+// Session and CSRF
 app.use(
-    session({
-        secret: 'my secret',
-        resave: false,
-        saveUninitialized: false,
-        store: store,
-    })
+  session({
+    secret: 'my secret', // Change this to a secure .env-based secret
+    resave: false,
+    saveUninitialized: false,
+    store,
+  })
 );
+
 app.use(csrfProtection);
 app.use(passport.authenticate('session'));
+
+// Custom locals for views
 app.use((req, res, next) => {
-    var msgs = req.session.messages || [];
-    res.locals.messages = msgs;
-    res.locals.hasMessages = !!msgs.length;
-    req.session.messages = [];
-    next();
+  res.locals.csrfToken = req.csrfToken();
+  res.locals.accessToken = req.cookies.accessToken || null;
+  res.locals.profile = req.user || null;
+  res.locals.isAuthenticated = req.session.isLoggedIn || false;
+
+  const msgs = req.session.messages || [];
+  res.locals.messages = msgs;
+  res.locals.hasMessages = !!msgs.length;
+  req.session.messages = [];
+
+  if (req.files !== undefined) {
+    req.file = req.files[0]; // backward compatibility
+  }
+
+  next();
 });
 
-app.use((req, res, next) => {
-    res.locals.isAuthenticated = req.session.isLoggedIn;
-    res.locals.csrfToken = req.csrfToken();
-    res.locals.accessToken = req.cookies.accessToken || null;
-    res.locals.profile = req.user || null;
-    if (req.files !== undefined) {
-        req.file = req.files[0];
-    }
-next();
+// Load logged-in user
+app.use(async (req, res, next) => {
+  if (!req.session.user) return next();
+
+  try {
+    const user = await User.findById(req.session.user._id);
+    if (user) req.user = user;
+  } catch (err) {
+    console.error(err);
+  }
+
+  next();
 });
 
-app.use((req, res, next) => {
-    if (!req.session.user) {
-    return next();
-    }
-    User.findById(req.session.user._id)
-        .then((user) => {
-        if (!user) {
-            return next();
-        }
-            req.user = user;
-            next();
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-});
+// Routes
+app.use(require('./routes/tours'));
+app.use(require('./routes/profileRoutes'));
+app.use(require('./routes/auth'));
+app.use('/payment', require('./routes/payments'));
+app.use(require('./routes/cityRoutes'));
+app.use('/admin', require('./routes/admin'));
+app.use(require('./routes/stateRoutes'));
+app.use(require('./routes/categoryRoutes'));
+app.use(require('./routes/bannerRoutes'));
+app.use(require('./routes/customTripRoutes'));
+app.use(require('./routes/tripRoutes'));
+app.use(require('./routes/quickCallRoutes'));
 
-app.use(tourRoutes);
-app.use(profileRoutes);
-app.use(authRoutes);
-app.use('/payment', paymentRoutes);
-app.use(cityRoutes);
-app.use('/admin', adminRoutes);
-app.use(stateRoutes);
-app.use(categoryRoutes);
-app.use(bannerRoutes);
-app.use(customTripRoutes);
-app.use(tripRoutes);
-// Mount Quick Call routes
-app.use(quickCallRoutes);
-
+// DB Connection
 mongoose
-    .connect(MONGODB_URI, {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-    useFindAndModify: false,
-    })
-    .then((result) => {
-    console.log('connected to DB at port 5000');
-    app.listen(PORT);
-    })
-    .catch((err) => {
-    console.log(err);
-    });
+  .connect(MONGODB_URI)
+  .then(() => {
+    console.log(`✅ Connected to MongoDB`);
+    app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+  })
+  .catch((err) => {
+    console.error('❌ Failed to connect to MongoDB:', err);
+  });

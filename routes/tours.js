@@ -1,27 +1,12 @@
 const express = require('express');
-
 const ensureLogIn = require('connect-ensure-login').ensureLoggedIn;
-
 const ensureLoggedIn = ensureLogIn();
-
-const Tours = require('../models/tours');
-
 const toursController = require('../controllers/tours');
-
-const makepdfController = require('../controllers/makepdf');
-
 const isAuth = require('../middleware/is-auth');
-
-const isPhoneAuth = require('../middleware/is-phone-auth');
-
 const validateLogin = require('../middleware/validateLogin');
-
 const jwt = require('jsonwebtoken');
-
 const router = express.Router();
-
 const ensuremultiplelogin = (req, res, next) => {
-  console.log(res.locals.accessToken);
   if (res.locals.accessToken) {
     jwt.verify(
       res.locals.accessToken,
@@ -349,49 +334,6 @@ router.post(
   toursController.deleteStay
 );
 
-router.get(
-  '/admin/makepdf',
-  ensureLoggedIn,
-  isAuth,
-  makepdfController.getMakePdf
-);
-
-router.post(
-  '/admin/makepdf',
-  ensureLoggedIn,
-  isAuth,
-  makepdfController.postMakePdf
-);
-
-router.post('/getstateCities', makepdfController.getstateCities);
-
-router.get(
-  '/admin/getViewPdfdetails',
-  ensureLoggedIn,
-  isAuth,
-  makepdfController.getViewPdfdetails
-);
-
-router.post(
-  '/admin/editpdftrip',
-  ensureLoggedIn,
-  isAuth,
-  makepdfController.editPdfDetails
-);
-
-router.post(
-  '/admin/updatetrip',
-  ensureLoggedIn,
-  isAuth,
-  makepdfController.updatePdfDetails
-);
-
-router.post(
-  '/admin/deletetrip',
-  ensureLoggedIn,
-  isAuth,
-  makepdfController.deletePdftrip
-);
 
 
 // New Routes for new api 

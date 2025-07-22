@@ -3,7 +3,6 @@ const router = express.Router();
 const adminBookingController = require('../controllers/adminBookingController');
 const userController = require('../controllers/userController');
 
-const makepdfController = require('../controllers/makepdf');
 const isAuth = require('../middleware/is-auth');
 
 // Booking routes
@@ -21,9 +20,6 @@ router.post('/generate/invoice/:id', isAuth, adminBookingController.generateInvo
 router.post('/generate/receipt/:bookingId/:paymentLogId', isAuth, adminBookingController.generateReceipt);
 router.get('/download/invoice/:id', isAuth, adminBookingController.downloadInvoice);
 router.get('/download/receipt/:id', isAuth, adminBookingController.downloadReceipt);
-
-// Other routes
-router.post('/getstateCities', makepdfController.getstateCities);
 
 // UI Rendering Routes
 router.get('/users', isAuth, userController.getUsers); // Render user list dashboard
