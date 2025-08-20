@@ -4,8 +4,7 @@
     height: 50px !important;
   }
   .navbar .search-bar {
-    margin-left: 0.75rem;
-    margin-right: 0.75rem;
+    margin-inline: 0.75rem;
   }
   
   .navbar .search-input {
@@ -33,9 +32,14 @@
     font-size: 1.125rem; /* Larger icon */
     pointer-events: none;
     z-index: 3;
+    min-width: 30px;
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;transform: translateY(-50%);
   }
   
-  .nav-link {transition: color 0.2s ease;}
+  .nav-link {transition: color 0.2s ease; white-space: nowrap;}
   .nav-link.contactLink{--bs-nav-link-padding-x: 1rem; --bs-nav-link-padding-y: 0.5rem}
   
   .navbar .nav-icon {
@@ -55,13 +59,10 @@
     }
   
     .navbar .search-icon {
-      font-size: 1rem;
+      transform: translateY(-50%)scale(1.5);
     }
   
-    .navbar .search-bar {
-      margin-left: 0.5rem;
-      margin-right: 0.5rem;
-    }
+    .navbar .search-bar {margin-inline: 0.5rem;}
   }
   
   /* Tablet adjustments */
@@ -251,7 +252,10 @@
   #verifyModal .resend-link:hover {
     text-decoration: underline;
   }
-
+  .search-bar{max-width: 200px;min-width: 30px;min-height: 30px;}
+  #filterModal .modal-footer .btn{flex: 0 1 100px;}
+  @media screen and (min-width: 600px) {#filterModal {--bs-modal-border-radius: var(--bs-border-radius-xl);}}
+  @media screen and (min-width: 992px) {.navbar-collapse{flex-grow: 0;}}
   </style>
 <!-- Bootstrap Icons already included in index.ejs -->
 <nav class="navbar navbar-expand-lg bg-light sticky-top">
@@ -263,16 +267,12 @@
       <img src="/img/logo_2x.png" alt="Deja Vu" height="50" class="d-inline-block align-text-top object-fit-contain" fetchpriority="high" loading="eager">
     </a>
     <!-- Search bar for small screens -->
-    <% if(isSearch) {%>
-      <div class="search-bar d-flex d-md-none align-items-center flex-grow-1 mx-3" data-bs-toggle="modal" data-bs-target="#filterModal">
-        <div class="position-relative w-100">
-          <input type="text" class="form-control border-0 shadow-none search-input" placeholder="Search destination">
-          <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y search-icon me-3" aria-hidden="true"></i>
-        </div>
-      </div>
-    <%}%>
-    <div class="collapse navbar-collapse" id="topNavbar">
-      <ul class="navbar-nav gap-lg-3 ms-auto mt-2 mt-lg-0">
+    <div class="search-bar position-relative ms-auto" data-bs-toggle="modal" data-bs-target="#filterModal">
+      <input type="text" name="search" aria-label="Search" class="d-none d-sm-inline d-lg-none d-xl-inline form-control border-0 shadow-none search-input" placeholder="Search destination">
+      <i class="bi bi-search position-absolute top-50 end-0 search-icon me-sm-3 me-lg-0 me-xl-3 bg-body rounded-pill" aria-hidden="true"></i>
+    </div>
+    <div class="collapse navbar-collapse flex-grow-lg-0" id="topNavbar">
+      <ul class="navbar-nav gap-lg-2 gap-xl-3 ms-auto mt-2 mt-lg-0">
         <li class="nav-item">
           <a class="nav-link" aria-current="page" href="/">Home</a>
         </li>
@@ -396,6 +396,54 @@
           <button type="submit" class="btn btn-primary btn-disabled" id="verifyBtn">Verify code</button>
         </div>
       </form>
+    </div>
+  </div>
+</div>
+
+<!-- Filter Modal for Small Screens -->
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="filterModalLabel">Search & Filters</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <input type="text" class="form-control" aria-label="Search text" placeholder="Search destination" id="modalSearchInput">
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold" for="modalCategorySelect">Category</label>
+          <select class="form-select" id="modalCategorySelect">
+            <!-- <%# (categoryItems || [])?.forEach(category => { %>
+            <option value="<%#= category.name %>"><%#= category.name %></option>
+            <%# }) %> -->
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold" for="modalDestinationSelect">Destination</label>
+          <select class="form-select" id="modalDestinationSelect">
+            <%# (placeItems || []).forEach(place => { %>
+            <!-- <option value="<%#= place.name %>"><%#= place.name %></option> -->
+            <%# }) %>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold" for="modalTourTypeSelect">Tour Type</label>
+          <select class="form-select" id="modalTourTypeSelect">
+            <option value="">All</option>
+            <option value="Family">Family</option>
+            <option value="Solo">Solo</option>
+            <option value="Couple friendly">Couple friendly</option>
+            <option value="Bachelors">Bachelors</option>
+            <option value="Students">Students</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-light rounded-pill" id="modalResetBtn">Reset</button>
+        <button type="button" class="btn btn-dark rounded-pill" id="modalApplyBtn">Apply</button>
+      </div>
     </div>
   </div>
 </div>
@@ -631,4 +679,99 @@ document.addEventListener("DOMContentLoaded", function() {
     }, 1000);
   }
 });
+
+  // filter and search modal
+  document.addEventListener('DOMContentLoaded', () => {
+    const filterState = {
+      search: '',
+      category: '',
+      destination: '',
+      tourType: '',
+    };
+    // Modal filter logic
+    const modal = document.getElementById('filterModal');
+    modal?.addEventListener('shown.bs.modal', () => {
+      const searchInput = document.getElementById('modalSearchInput');
+      const categorySelect = document.getElementById('modalCategorySelect');
+      const destinationSelect = document.getElementById('modalDestinationSelect');
+      const tourTypeSelect = document.getElementById('modalTourTypeSelect');
+      const resetBtn = document.getElementById('modalResetBtn');
+      const applyBtn = document.getElementById('modalApplyBtn');
+
+      // Delay patching inputs and focusing to avoid interfering with global click listener
+      setTimeout(() => {
+        searchInput.value = filterState['search'] || '';
+        categorySelect.value = filterState['category'] || '';
+        destinationSelect.value = filterState['destination'] || '';
+        tourTypeSelect.value = filterState['tourType'] || '';
+        searchInput.focus();
+      }, 50);
+
+      searchInput?.addEventListener('input', function(e) {
+        filterState['search'] = e.target.value;
+      });
+      categorySelect?.addEventListener('change', function(e) {
+        filterState['category'] = e.target.value;
+        syncInputs('category');
+      });
+      destinationSelect?.addEventListener('change', (e) => {
+        filterState['destination'] = e.target.value;
+        syncInputs('destination');
+      });
+      tourTypeSelect?.addEventListener('change', (e) => {
+        filterState['tourType'] = e.target.value;
+        syncInputs('tourType');
+      });
+
+      applyBtn?.addEventListener('click', () => {
+        const modalInstance = bootstrap.Modal.getInstance(modal);
+        modalInstance?.hide();
+        redirectWithFilters();
+      });
+      resetBtn?.addEventListener('click', function() {
+        for (const key in filterState) {
+          filterState[key] = '';
+          syncInputs(key);
+        }
+      });
+
+      // Call redirectWithFilters when user hits Enter in modal search input
+      searchInput?.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          redirectWithFilters();
+        }
+      });
+    });
+
+    function syncInputs(key) {
+      const filterLists = document.querySelectorAll(`.filter_list[data-filter-key="${key}"]`);
+      filterLists.forEach(list => {
+        const listItems = list.querySelectorAll("li");
+        listItems.forEach(li => {
+          li.classList.toggle("text-bg-secondary", li.getAttribute("data-item") === filterState[key]);
+        });
+      });
+    }
+
+    // Redirect with filters
+    function redirectWithFilters() {
+      const filters = {};
+      if (filterState.category) {
+        filters['Tour category'] = [filterState.category.toLocaleLowerCase()];
+      }
+      if (filterState.destination) {
+        filters['States'] = [filterState.destination.toLocaleLowerCase()];
+      }
+      if (filterState.tourType) {
+        filters['Tour type'] = [filterState.tourType.toLocaleLowerCase()];
+      }
+      const queryParams = new URLSearchParams();
+      queryParams.append('filterValue', JSON.stringify(filters));
+      if (filterState.search) {
+        queryParams.append('searchValue', filterState.search);
+      }
+      window.location.href = `/triplist?${queryParams.toString()}`;
+    }
+  });
 </script>

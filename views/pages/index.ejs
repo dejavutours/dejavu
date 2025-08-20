@@ -221,111 +221,7 @@
         <div class="swiper-button-next"></div>
       </div>
     </div>
-    <div class="hero_section position-absolute top-0 left-0 h-100 w-100 text-center d-flex align-items-center">
-      <div class="container position-relative z-1">
-        <div class="form rounded-5 bg-white p-md-2 position-relative">
-          <div class="filter_row rounded-5 d-none d-md-flex gap-2 position-relative z-1">
-            <div class="dropdown">
-              <button class="btn btn-light d-flex gap-2 align-items-center rounded-pill dropdownBtn" type="button" data-bs-toggle="dropdown" aria-expanded="false">All <i class="bi bi-chevron-down ms-auto"></i></button>
-              <ul class="dropdown-menu">
-                <li class="dropdown-item">All</li>
-                <li class="dropdown-item">Categories</li>
-                <li class="dropdown-item">Destinations</li>
-                <li class="dropdown-item">Tour type</li>
-              </ul>
-            </div>
-            <input type="text" class="outline-0 border-0 flex-grow-1" placeholder="Search destination">
-            <button id="search_btn" class="btn btn-link align-self-center"><i class="bi bi-search text-body"></i></button>
-          </div>
-
-          <div class="d-none text-start text-body rounded-5 position-absolute top-0 start-0 w-100 shadow-sm filters bg-white px-3">
-            <br><br><br>
-            <article class="categories_filter filter_item">
-              <p class="mb-1 fw-medium">Categories</p>
-              <ul class="d-inline-flex flex-wrap gap-2 px-0 filter_list" data-filter-key="category">
-                <% categoryItems.forEach(category => { %>
-                <li role="button" tabindex="-1" data-item="<%= category.name %>" class="rounded px-2 py-1 small">
-                  <%= category.name %>
-                </li>
-                <% }) %>
-              </ul>
-            </article>
-            <article class="destinations_filter filter_item">
-              <p class="mb-1 fw-medium">Trending Destinations</p>
-              <ul class="d-inline-flex flex-wrap gap-2 px-0 filter_list" data-filter-key="destination">
-                <% function titleClase(str) {
-                  const strArray = str.split(' ');
-                  const newArray = strArray.map(e => `${e.substring(0,1).toUpperCase()}${e.substring(1).toLowerCase()}`);
-                  return newArray.join(' ');
-                } %>
-                <% placeItems.forEach(place => { %>
-                <li role="button" tabindex="-1" data-item="<%= place.name %>" class="rounded px-2 py-1 small"><%= titleClase(place.name) %></li>
-                <% }) %>
-              </ul>
-            </article>
-            <article class="tourtype_filter filter_item">
-              <p class="mb-1 fw-medium">Tour Type</p>
-              <ul class="d-inline-flex flex-wrap gap-2 px-0 filter_list" data-filter-key="tourType">
-                <li role="button" tabindex="-1" data-item="Family" class="rounded px-2 py-1 small">Family</li>
-                <li role="button" tabindex="-1" data-item="Solo" class="rounded px-2 py-1 small">Solo</li>
-                <li role="button" tabindex="-1" data-item="Couple friendly" class="rounded px-2 py-1 small">Couple friendly</li>
-                <li role="button" tabindex="-1" data-item="Bachelors" class="rounded px-2 py-1 small">Bachelors</li>
-                <li role="button" tabindex="-1" data-item="Students" class="rounded px-2 py-1 small">Students</li>
-              </ul>
-            </article>
-          </div>
-        </div>
-      </div>
-    </div>
   </section>
-
-  <!-- Filter Modal for Small Screens -->
-  <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable modal-dialog-centered">
-      <div class="modal-content rounded-4">
-        <div class="modal-header border-0">
-          <h5 class="modal-title" id="filterModalLabel">Search & Filters</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="mb-3">
-            <input type="text" class="form-control" aria-label="Search text" placeholder="Search destination" id="modalSearchInput">
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-semibold" for="modalCategorySelect">Category</label>
-            <select class="form-select" id="modalCategorySelect">
-              <% categoryItems.forEach(category => { %>
-              <option value="<%= category.name %>"><%= category.name %></option>
-              <% }) %>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-semibold" for="modalDestinationSelect">Destination</label>
-            <select class="form-select" id="modalDestinationSelect">
-              <% placeItems.forEach(place => { %>
-              <option value="<%= place.name %>"><%= place.name %></option>
-              <% }) %>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-semibold" for="modalTourTypeSelect">Tour Type</label>
-            <select class="form-select" id="modalTourTypeSelect">
-              <option value="">All</option>
-              <option value="Family">Family</option>
-              <option value="Solo">Solo</option>
-              <option value="Couple friendly">Couple friendly</option>
-              <option value="Bachelors">Bachelors</option>
-              <option value="Students">Students</option>
-            </select>
-          </div>
-        </div>
-        <div class="modal-footer border-0 pt-0">
-          <button type="button" class="btn btn-light rounded-pill" id="modalResetBtn">Reset</button>
-          <button type="button" class="btn btn-dark rounded-pill" id="modalApplyBtn">Apply</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <% 
     // Filter packages based on user role
@@ -479,6 +375,28 @@
       <h3><strong>Looking for accommodation?</strong></h3>
       <p class="col-md-10">Discover our specially curated local accommodations with delicious food to fulfill your travel desires! Whether you prefer driving on your own or exploring places using local transportation, we will help you find beautiful and unique accommodations.</p>
       <button class="btn btn-dark rounded-pill">Book now</button>
+    </aside>
+  </section>
+
+  <!-- Customized trip section -->
+   <section class="trending_section container-xl mt-3 py-4 py-lg-5">
+    <h3>Customized Trips</h3>
+    <aside class="overflow-auto d-flex h-scroll">
+      <% displayedPackages.forEach(function(tour, index) { %>
+      <a href="/tripdetail/<%= tour.name %>" title="<%= tour.name %>" class="rounded-4 item_card overflow-hidden">
+        <div class="cover position-relative">
+          <img src="<%= tour.imageurl %>" alt="Tour package - <%= tour.name %> in <%= tour.state %>, India" class="w-100 object-fit-cover" height="220" width="300" loading="lazy" onerror="this.onerror=null; this.src='/images/placeholder.jpg';">
+          <p class="px-3 py-2 mb-0 d-flex flex-column text-light position-absolute bottom-0 w-100 shadow_content">
+            <strong><%= tour.name %></strong>
+            <small><%= tour.state %>, India</small>
+          </p>
+        </div>
+        <p class="bg-white px-3 py-2 mb-0 d-flex justify-content-between gap-3 position-relative">
+          <span class="text-muted">From<br/><strong class="text-dark">₹<%- tour.price %></strong>/person</span>
+          <span class="text-end"><i class="bi bi-calendar"></i> <strong><%- tour.days %></strong></span>
+        </p>
+      </a>
+      <% }); %>
     </aside>
   </section>
 
@@ -743,202 +661,7 @@
       }
     }
 
-    // Define Shared State Object for filter and search
-    const filterState = {
-      search: '',
-      category: '',
-      destination: '',
-      tourType: '',
-    };
-
     document.addEventListener("DOMContentLoaded", function() {
-      const dropdownBtn = document.querySelector(".hero_section .dropdownBtn");
-      const dropdownItems = document.querySelectorAll(".hero_section .dropdown-menu .dropdown-item");
-      const filter_row = document.querySelector(".hero_section .filter_row");
-      const filterContainer = document.querySelector(".hero_section .form");
-      const filters = document.querySelector(".hero_section .filters");
-      // Initialize dropdown with "All" selected
-      dropdownBtn.innerHTML = 'All <i class="bi bi-chevron-down ms-auto"></i>';
-      // Show filtersContainer when any element in filter_row is focused
-      document.addEventListener('click', function(e) {
-        const isModalOpen = document.querySelector('#filterModal.show');
-        if (isModalOpen) return;
-        const isClickInside = filterContainer.contains(e.target);
-        if (isClickInside) {
-          filters.classList.remove('d-none');
-          filter_row.classList.add('shadow-sm');
-        } else {
-          filters.classList.add('d-none');
-          filter_row.classList.remove('shadow-sm');
-        }
-      });
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-          filters.classList.add('d-none');
-          filter_row.classList.remove('shadow-sm');
-        }
-      });
-
-      window.addEventListener('resize', (e) => {
-        if (window.innerWidth < 768 && !filters.classList.contains('d-none')) {
-          filters.classList.add('d-none');
-          filter_row.classList.remove('shadow-sm');
-        }
-      });
-      const allSections = [{
-          key: "categories",
-          section: filters.querySelector(".categories_filter")
-        },
-        {
-          key: "destinations",
-          section: filters.querySelector(".destinations_filter")
-        },
-        {
-          key: "tourType",
-          section: filters.querySelector(".tourtype_filter")
-        }
-      ];
-
-      function showSections(selected) {
-        if (selected === "All") {
-          allSections.forEach(obj => obj.section.style.display = "");
-        } else {
-          allSections.forEach(obj => {
-            if (
-              (selected === "Categories" && obj.key === "categories") ||
-              (selected === "Destinations" && obj.key === "destinations") ||
-              (selected === "Tour type" && obj.key === "tourType")
-            ) {
-              obj.section.style.display = "";
-            } else {
-              obj.section.style.display = "none";
-            }
-          });
-        }
-      }
-
-      dropdownItems.forEach(item => {
-        item.addEventListener("click", function(e) {
-          e.preventDefault();
-          dropdownBtn.innerHTML = item.textContent + ' <i class="bi bi-chevron-down ms-auto"></i>';
-          showSections(item.textContent.trim());
-        });
-      });
-
-      // Show all sections by default
-      showSections("All");
-
-      const input2 = filter_row?.querySelector('input');
-      const heroSearchBtn = filter_row?.querySelector('#search_btn');
-
-      // Modal filter logic
-      const modal = document.getElementById('filterModal');
-      modal?.addEventListener('shown.bs.modal', () => {
-        const searchInput = document.getElementById('modalSearchInput');
-        const categorySelect = document.getElementById('modalCategorySelect');
-        const destinationSelect = document.getElementById('modalDestinationSelect');
-        const tourTypeSelect = document.getElementById('modalTourTypeSelect');
-        const resetBtn = document.getElementById('modalResetBtn');
-        const applyBtn = document.getElementById('modalApplyBtn');
-
-        // Delay patching inputs and focusing to avoid interfering with global click listener
-        setTimeout(() => {
-          searchInput.value = filterState['search'] || '';
-          categorySelect.value = filterState['category'] || '';
-          destinationSelect.value = filterState['destination'] || '';
-          tourTypeSelect.value = filterState['tourType'] || '';
-          searchInput.focus();
-        }, 50);
-
-        searchInput?.addEventListener('input', function(e) {
-          filterState['search'] = e.target.value;
-          input2.value = e.target.value;
-        });
-        categorySelect?.addEventListener('change', function(e) {
-          filterState['category'] = e.target.value;
-          syncInputs('category');
-        });
-        destinationSelect?.addEventListener('change', (e) => {
-          filterState['destination'] = e.target.value;
-          syncInputs('destination');
-        });
-        tourTypeSelect?.addEventListener('change', (e) => {
-          filterState['tourType'] = e.target.value;
-          syncInputs('tourType');
-        });
-
-        applyBtn?.addEventListener('click', () => {
-          const modalInstance = bootstrap.Modal.getInstance(modal);
-          modalInstance?.hide();
-          redirectWithFilters();
-        });
-        resetBtn?.addEventListener('click', function() {
-          for (const key in filterState) {
-            filterState[key] = '';
-            syncInputs(key);
-          }
-        });
-
-        // Call redirectWithFilters when user hits Enter in modal search input
-        searchInput?.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            redirectWithFilters();
-          }
-        });
-      });
-
-      input2?.addEventListener('input', (e) => {
-        filterState['search'] = e.target.value;
-      });
-      
-      // Call redirectWithFilters when user hits Enter in modal search input
-      input2?.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          redirectWithFilters();
-        }
-      });
-
-      function syncInputs(key) {
-        const filterLists = document.querySelectorAll(`.filter_list[data-filter-key="${key}"]`);
-        filterLists.forEach(list => {
-          const listItems = list.querySelectorAll("li");
-          listItems.forEach(li => {
-            li.classList.toggle("text-bg-secondary", li.getAttribute("data-item") === filterState[key]);
-          });
-        });
-      }
-
-      // Setup filter list click handlers
-      setupFilterList((key, value) => {
-        filterState[key] = value || '';
-        syncInputs(key);
-      });
-
-      // Redirect with filters
-      function redirectWithFilters() {
-        const filters = {};
-        if (filterState.category) {
-          filters['Tour category'] = [filterState.category.toLocaleLowerCase()];
-        }
-        if (filterState.destination) {
-          filters['States'] = [filterState.destination.toLocaleLowerCase()];
-        }
-        if (filterState.tourType) {
-          filters['Tour type'] = [filterState.tourType.toLocaleLowerCase()];
-        }
-        const queryParams = new URLSearchParams();
-        queryParams.append('filterValue', JSON.stringify(filters));
-        if (filterState.search) {
-          queryParams.append('searchValue', filterState.search);
-        }
-        window.location.href = `/triplist?${queryParams.toString()}`;
-      }
-
-      heroSearchBtn?.addEventListener('click', redirectWithFilters);
-
-
       // Stop navigation on next or prev button click of the swiper
       document.querySelectorAll('.swiper-button-next, .swiper-button-prev').forEach(button => {
         button.addEventListener('click', (e) => {
@@ -947,41 +670,6 @@
         });
       });
     });
-
-    const filterLists = document.querySelectorAll(".filter_list");
-    filterLists.forEach(list => {
-      list.querySelectorAll('li').forEach(li => {
-        li.addEventListener('mouseenter', (e) => {
-          let isActive = li.classList.contains('text-bg-secondary');
-          li.classList.add(isActive ? 'bg-dark' : 'bg-light');
-        });
-        li.addEventListener('mouseleave', (e) => {
-          let isActive = li.classList.contains('text-bg-secondary');
-          li.classList.remove('bg-light');
-          li.classList.remove('bg-dark');
-        });
-      });
-    });
-
-    function setupFilterList(onSelect) {
-      filterLists.forEach(list => {
-        list.addEventListener("click", function(e) {
-          if (e.target.tagName !== "LI") return;
-          const clickedItem = e.target;
-          const key = list.getAttribute("data-filter-key");
-          const selectedValue = clickedItem.getAttribute("data-item");
-          const listItems = list.querySelectorAll("li");
-          if (clickedItem.classList.contains("text-bg-secondary")) {
-            clickedItem.classList.remove("text-bg-secondary");
-            onSelect(key, null);
-          } else {
-            listItems.forEach(li => li.classList.remove("text-bg-secondary"));
-            clickedItem.classList.add("text-bg-secondary");
-            onSelect(key, selectedValue);
-          }
-        });
-      });
-    }
   </script>
   <!-- SEO Schema Markup -->
   <script type="application/ld+json">
