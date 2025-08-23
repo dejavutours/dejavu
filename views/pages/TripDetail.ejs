@@ -45,723 +45,96 @@
     }
   </script>
   <style>
-    :root {
-  --primary-blue: #1a4b8e;
-  --light-gray: #f8f9fa;
-  --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  --transition: 0.3s ease;
-  --error-red: #dc3545;
-  --premium-gold: #FFD700;
-  --dark-gray: #333333;
-}
-
-.normal-hight { line-height: normal; }
-
-/* Image slider styling */
-.image-slider {
-  width: 100%;
-  border-radius: 12px;
-  overflow: hidden;
-  position: relative;
-}
-.swiper-slide { width: 100%; height: 100%; }
-.image-slider img { width: 100%; height: 300px; object-fit: cover; }
-
-.swiper-button-next,
-.swiper-button-prev {
-  color: white;
-  background: rgba(0, 0, 0, 0.3);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  transition: background var(--transition);
-}
-
-.swiper-button-next:hover,
-.swiper-button-prev:hover {
-  background: rgba(0, 0, 0, 0.5);
-}
-
-.swiper-button-next:after,
-.swiper-button-prev:after { font-size: 20px; }
-
-.swiper-pagination-bullet {
-  background: white;
-  opacity: 0.7;
-  transition: opacity var(--transition);
-}
-
-.swiper-pagination-bullet-active { opacity: 1; }
-
-header .subtitle { color: #6c757d; font-size: 0.875rem; }
-
-.abouts:not(.expanded) {
-  max-height: 150px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -o-text-overflow: ellipsis;
-  -ms-text-overflow: ellipsis;
-}
-
-.about-mask {
-  height: 40px;
-  pointer-events: none;
-  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, #fff 90%);
-  z-index: 1;
-}
-
-.about-read-more-btn { text-underline-offset: 2px; }
-
-/* City card styling */
-.tour-booking-city-card {
-  width: 160px;
-  flex-shrink: 0;
-  text-align: center;
-  background: #fff;
-  padding: 12px;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
-}
-
-.tour-booking-city-card:hover {
-  box-shadow: var(--shadow);
-  transform: translateY(-2px);
-}
-
-.tour-booking-city-card.active {
-  border-color: var(--primary-blue);
-  box-shadow: var(--shadow);
-}
-
-.tour-booking-city-card img {
-  width: 100%;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 6px;
-}
-
-.tour-booking-city-card h6 {
-  font-size: 0.95rem;
-  margin: 8px 0 4px;
-}
-
-.tour-booking-city-card small {
-  font-size: 0.8rem;
-  line-height: 1.3;
-}
-
-/* Carousel track */
-#carouselTrack {
-  white-space: nowrap;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  padding: 10px 0;
-}
-
-#carouselTrack::-webkit-scrollbar { display: none; }
-
-/* Carousel controls */
-.carousel-control-prev,
-.carousel-control-next {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  transition: background var(--transition);
-  opacity: 0.9;
-}
-
-.carousel-control-prev:hover,
-.carousel-control-next:hover {
-  background: rgba(0, 0, 0, 0.6);
-  opacity: 1;
-}
-
-.carousel-control-prev { left: -15px; }
-.carousel-control-next { right: -15px; }
-
-/* Departure city and available dates */
-.tour-booking-departure-section { margin-top: 1.5rem; }
-.tour-booking-departure-section h5 { font-size: 1.1rem; font-weight: 600; }
-
-.tour-booking-year-tabs,
-.tour-booking-month-tabs {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
-}
-
-.tour-booking-year-tab,
-.tour-booking-month-tab {
-  background: none;
-  border: none;
-  padding: 6px 12px;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.9rem;
-  border-radius: 6px;
-  transition: background var(--transition), color var(--transition);
-}
-
-.tour-booking-year-tab:hover,
-.tour-booking-year-tab.active,
-.tour-booking-month-tab:hover,
-.tour-booking-month-tab.active {
-  background: var(--primary-blue);
-  color: white;
-}
-
-.tour-booking-date-selector {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 8px 0;
-}
-
-.tour-booking-date-item {
-  min-width: 40px;
-  padding: 8px;
-  font-size: 0.85rem;
-  border: 1px solid #dee2e6;
-  border-radius: 6px;
-  background: #fff;
-  cursor: pointer;
-  transition: background var(--transition), color var(--transition), border-color var(--transition);
-}
-
-.tour-booking-date-item:hover {
-  background: var(--light-gray);
-  border-color: var(--primary-blue);
-}
-
-.tour-booking-date-item.active {
-  background: var(--primary-blue);
-  color: white;
-  border-color: var(--primary-blue);
-  box-shadow: var(--shadow);
-}
-
-/* Booking summary and payment options */
-.tour-booking-summary-card {
-  background: #fff;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  padding: 12px;
-  max-height: 350px;
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-
-.tour-booking-summary-card::-webkit-scrollbar { display: none; }
-
-.tour-booking-summary-item {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  font-size: 0.9rem;
-}
-
-.tour-booking-summary-item span:first-child { color: #6c757d; }
-.tour-booking-summary-item span:last-child { font-weight: 500; }
-
-.tour-booking-payment-options {
-  margin-top: 1rem;
-  padding: 12px;
-  background: var(--light-gray);
-  border-radius: 8px;
-}
-
-.tour-booking-payment-option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-  font-size: 0.9rem;
-}
-
-.tour-booking-payment-option input[type="radio"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-}
-
-.tour-booking-payment-option label {
-  flex: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.tour-booking-payment-option label:hover { color: var(--primary-blue); }
-
-.tour-booking-proceed-btn {
-  width: 100%;
-  padding: 10px;
-  font-size: 0.95rem;
-  border-radius: 8px;
-  background: var(--primary-blue);
-  color: #fff;
-  transition: background var(--transition);
-}
-
-.tour-booking-proceed-btn:hover { background: #143c73;  color: #fff;}
-.tour-booking-proceed-btn:disabled { background: #6c757d; cursor: not-allowed;  color: #fff;}
-
-/* Floating book now section for mobile */
-.tour-booking-floating-sec {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  transition: transform var(--transition);
-  transform: translateY(100%);
-}
-
-.tour-booking-floating-sec.active {
-  transform: translateY(0);
-}
-
-.tour-booking-floating-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 999;
-  display: none;
-}
-
-.tour-booking-floating-backdrop.active { display: block; }
-
-.tour-booking-floating-panel {
-  background: #fff;
-  border-radius: 16px 16px 0 0;
-  padding: 16px;
-  max-height: 60vh;
-  overflow-y: auto;
-  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.tour-booking-floating-btn {
-  position: fixed;
-  bottom: 1rem;
-  right: 1rem;
-  background: var(--primary-blue);
-  color: #fff;
-  border-radius: 50%;
-  width: 56px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow);
-  transition: background var(--transition), transform var(--transition);
-}
-
-.tour-booking-floating-btn:hover {
-  background: #143c73;
-  transform: scale(1.05);
-}
-
-.tour-booking-floating-btn i { font-size: 1.2rem; }
-
-/* Modal and form styling */
-.trip-details-form-select,
-.booking-modal-select {
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 0.95rem;
-  color: #333;
-  background-color: white;
-  box-shadow: var(--shadow);
-  transition: border-color var(--transition), box-shadow var(--transition);
-}
-
-.trip-details-form-select:focus,
-.booking-modal-select:focus {
-  border-color: var(--primary-blue);
-  box-shadow: 0 0 0 0.2rem rgba(26, 75, 142, 0.25);
-  outline: none;
-}
-
-.trip-details-form-select:disabled,
-.booking-modal-select:disabled {
-  background-color: #e9ecef;
-  cursor: not-allowed;
-}
-
-.trip-details-form-select.is-invalid,
-.booking-modal-select.is-invalid {
-  border-color: var(--error-red);
-}
-
-/* Inquiry modal styling */
-.inquiry-modal-content {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-}
-
-.inquiry-modal-body p { color: var(--dark-gray); }
-.inquiry-modal-footer { border-top: 1px solid #dee2e6; }
-
-.inquiry-modal-btn {
-  transition: background var(--transition), transform var(--transition);
-}
-
-.inquiry-modal-btn-whatsapp {
-  --bs-btn-bg: #25D366;
-  --bs-btn-hover-bg: #20b358;
-  --bs-btn-hover-color: #fff;
-  --bs-btn-color: #fff;
-}
-
-.inquiry-modal-btn-customize {
-  --bs-btn-bg: var(--premium-gold);
-  --bs-btn-hover-bg: #e6c200;
-  --bs-btn-hover-color: var(--dark-gray);
-  --bs-btn-color: var(--dark-gray);
-}
-
-.inquiry-modal-btn-ok {
-  --bs-btn-bg: var(--primary-blue);
-  --bs-btn-hover-bg: #143c73;
-  --bs-btn-hover-color: #fff;
-  --bs-btn-color: #fff;
-}
-
-.inquiry-modal-btn-ok:hover,
-.inquiry-modal-btn-customize:hover,
-.inquiry-modal-btn-whatsapp:hover {
-  transform: translateY(-2px);
-}
-
-/* Quick call modal styling */
-.quick-call-modal-content {
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  border: none;
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-.quick-call-modal-header {
-  background: var(--primary-blue);
-  background-image: url('/images/exit-modal-banner.avif');
-  background-size: 100% 100%;
-  background-position: center;
-  position: relative;
-  border-bottom: none;
-  padding: 70px 20px;
-  min-height: 140px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.quick-call-modal-header .btn-close-white {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 1;
-  filter: brightness(0) invert(1);
-}
-
-.quick-call-modal-header .modal-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 8px;
-  line-height: 1.3;
-}
-
-.quick-call-modal-header p {
-  font-size: 0.9rem;
-  margin-bottom: 0;
-  line-height: 1.4;
-}
-
-.quick-call-modal-body {
-  padding: 20px 24px;
-  background: #fff;
-  border-bottom-left-radius: 16px;
-  border-bottom-right-radius: 16px;
-}
-
-.quick-call-modal-body .form-label {
-  font-size: 0.85rem;
-  color: var(--dark-gray);
-  text-align: left;
-  margin-bottom: 6px;
-  font-weight: 500;
-}
-
-.quick-call-modal-body .form-control,
-.quick-call-modal-body .form-select {
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  padding: 8px 12px;
-  font-size: 0.9rem;
-  box-shadow: none;
-  transition: border-color var(--transition), box-shadow var(--transition);
-}
-
-.quick-call-modal-body .form-select {
-  max-width: 90px;
-  padding-right: 30px;
-  background-size: 10px;
-}
-
-.quick-call-modal-body .form-control:focus,
-.quick-call-modal-body .form-select:focus {
-  border-color: var(--primary-blue);
-  box-shadow: 0 0 0 2px rgba(26, 75, 142, 0.2);
-  outline: none;
-}
-
-.quick-call-modal-body .form-control.is-invalid,
-.quick-call-modal-body .form-select.is-invalid {
-  border-color: var(--error-red);
-}
-
-.quick-call-modal-body .error-message {
-  color: var(--error-red);
-  font-size: 0.75rem;
-  margin-top: 4px;
-  display: none;
-}
-
-.quick-call-modal-body .notes {
-  margin-top: 16px;
-}
-
-.quick-call-modal-body .notes .note-icon {
-  color: var(--primary-blue);
-  margin-right: 8px;
-  font-size: 1rem;
-}
-
-.quick-call-modal-body .notes span {
-  font-size: 0.8rem;
-  color: #6b7280;
-}
-
-.quick-call-modal-footer {
-  padding: 16px 24px;
-  border-top: none;
-  display: flex;
-  justify-content: center;
-  background: #fff;
-  border-bottom-left-radius: 16px;
-  border-bottom-right-radius: 16px;
-}
-
-.quick-call-modal-btn {
-  background: var(--premium-gold);
-  color: var(--dark-gray);
-  padding: 10px 24px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: background var(--transition), transform var(--transition);
-  display: flex;
-  align-items: center;
-  width: 100%;
-  justify-content: center;
-}
-
-.quick-call-modal-btn:hover {
-  background: #e6c200;
-  transform: translateY(-2px);
-}
-
-.quick-call-modal-btn:disabled {
-  background: #d1d5db;
-  color: #6b7280;
-  cursor: not-allowed;
-}
-
-.quick-call-modal-btn i { font-size: 1rem; }
-
-.custom-card { background-color: #fff; border-radius: 0.75rem; }
-.custom-card + .custom-card { margin-top: 1.5rem; }
-
-.transport-option {
-  border: 1px solid #dee2e6;
-  display: inline-flex;
-  border-radius: 6px;
-  padding: 6px 12px;
-  justify-content: center;
-  color: #6c757d;
-  cursor: pointer;
-  font-size: 0.85rem;
-  transition: all var(--transition);
-}
-
-.transport-option.active {
-  background-color: var(--primary-blue);
-  border-color: var(--primary-blue);
-  color: #fff;
-}
-
-.stickySec {
-  z-index: 1;
-  left: 0;
-  transition: bottom 0.3s ease, position 0.3s ease;
-}
-
-.stickySec .card {
-  border-radius: 1rem;
-  --bs-card-cap-padding-y: 0.75rem;
-}
-
-.price strong { font-size: 1.5rem; }
-.summaryPara > :not(span) { color: #525252; }
-
-.tab-menu { border-bottom: 2px solid #e0e0e0; }
-.tab {
-  background: none;
-  border: none;
-  padding-block: 10px;
-  font-weight: 500;
-  border-bottom: 3px solid transparent;
-  transition: border-color var(--transition), color var(--transition);
-}
-
-.tab:hover, .tab.active { border-color: #111; color: #111; }
-
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-.tab-content li { list-style: unset; }
-
-#contactModal .modal-content { border-radius: 10px; }
-#contactModal .modal-header { background: var(--primary-blue); color: white };
-a { text-decoration: none; }
-.modal-header .modal-title {color: white !important};
-
-.booking-modal-section {
-  background: var(--light-gray);
-  padding: 12px;
-  border-radius: 8px;
-  box-shadow: var(--shadow);
-}
-
-.trust-signals {
-  flex-wrap: wrap;
-  gap: 10px;
-  font-size: 0.8rem;
-  margin-top: 10px;
-}
-
-.trust-signals i { font-size: 0.9rem; margin-right: 4px; }
-
-.cutoff-modal-content {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.cutoff-modal-header {
-  background: var(--primary-blue);
-  color: white;
-  border-bottom: none;
-  padding: 20px;
-}
-
-.cutoff-modal-body {
-  padding: 20px;
-  text-align: center;
-}
-
-.cutoff-modal-footer {
-  border-top: none;
-  justify-content: center;
-  padding: 15px;
-}
-
-.cutoff-modal-btn {
-  transition: background var(--transition), transform var(--transition);
-}
-
-.cutoff-modal-btn:hover { transform: translateY(-2px); }
-
-/* Media Queries */
-@media screen and (min-width: 992px) {
-  body { background-color: #f3f3f6; }
-  .image-slider img { height: 500px; }
-  .custom-card + .custom-card { margin-top: 1rem; }
-  .stickySec { position: sticky; top: 100px; bottom: unset; }
-  .stickySec .card, .custom-card, .actionCard { box-shadow: var(--bs-box-shadow-sm); border-radius: 0.75rem; }
-  .price strong { font-size: calc(1.5rem + 0.3vw); }
-  .btnSec { width: 100%; text-align: end; }
-}
-
-@media (max-width: 768px) {
-  .trek-title, h3 { font-size: 1.5rem; }
-  .accordion-button { font-size: 1rem; }
-  .tour-booking-city-card { width: 140px; }
-  .tour-booking-city-card img { height: 90px; }
-  .tour-booking-year-tab, .tour-booking-month-tab { font-size: 0.85rem; padding: 5px 10px; }
-  .tour-booking-date-item { min-width: 36px; padding: 6px; font-size: 0.8rem; }
-  .tour-booking-summary-card { max-height: 300px; padding: 10px; }
-  .tour-booking-payment-options { padding: 10px; }
-  .tour-booking-payment-option { font-size: 0.85rem; }
-  .tour-booking-floating-panel { max-height: 50vh; }
-  .tour-booking-floating-btn { width: 48px; height: 48px; }
-  .tour-booking-floating-btn i { font-size: 1rem; }
-}
-
-@media (max-width: 576px) {
-  .image-slider img { height: 200px; }
-  .tour-booking-city-card { width: 120px; }
-  .tour-booking-city-card img { height: 80px; }
-  .tour-booking-city-card h6 { font-size: 0.85rem; }
-  .tour-booking-city-card small { font-size: 0.75rem; }
-  .tour-booking-year-tab, .tour-booking-month-tab { font-size: 0.8rem; padding: 4px 8px; }
-  .tour-booking-date-item { min-width: 32px; padding: 5px; font-size: 0.75rem; }
-  .tour-booking-summary-card { max-height: 250px; font-size: 0.8rem; }
-  .tour-booking-payment-options { padding: 8px; }
-  .tour-booking-payment-option { font-size: 0.8rem; }
-  .quick-call-modal-content { max-width: 100%; margin: 10px; }
-  .quick-call-modal-header { min-height: 120px; padding: 20px 16px; }
-  .quick-call-modal-header .modal-title { font-size: 1.1rem; }
-  .quick-call-modal-header p { font-size: 0.85rem; }
-  .quick-call-modal-header .btn-close-white { top: 10px; right: 10px; }
-  .quick-call-modal-body { padding: 16px 20px; }
-  .quick-call-modal-body .form-label { font-size: 0.8rem; }
-  .quick-call-modal-body .form-control, .quick-call-modal-body .form-select { font-size: 0.85rem; padding: 6px 10px; }
-  .quick-call-modal-body .form-select { max-width: 80px; }
-  .quick-call-modal-body .error-message { font-size: 0.7rem; }
-  .quick-call-modal-body .notes .note-icon { font-size: 0.9rem; margin-right: 6px; }
-  .quick-call-modal-body .notes span { font-size: 0.75rem; }
-  .quick-call-modal-footer { padding: 12px 20px; }
-  .quick-call-modal-btn { font-size: 0.85rem; padding: 8px 20px; }
-}
-
-@media (max-width: 400px) {
-  .quick-call-modal-header { min-height: 110px; padding: 16px 12px; }
-  .quick-call-modal-header .modal-title { font-size: 1rem; }
-  .quick-call-modal-header p { font-size: 0.8rem; }
-  .quick-call-modal-body { padding: 12px 16px; }
-  .quick-call-modal-body .form-label { font-size: 0.75rem; }
-  .quick-call-modal-body .form-control, .quick-call-modal-body .form-select { font-size: 0.8rem; padding: 6px 8px; }
-  .quick-call-modal-body .form-select { max-width: 70px; }
-  .quick-call-modal-body .error-message { font-size: 0.65rem; }
-  .quick-call-modal-body .notes .note-icon { font-size: 0.85rem; margin-right: 5px; }
-  .quick-call-modal-body .notes span { font-size: 0.7rem; }
-  .quick-call-modal-footer { padding: 10px 16px; }
-  .quick-call-modal-btn { font-size: 0.8rem; padding: 8px 16px; }
-}
+    :root {--primary-blue: #1a4b8e;--light-gray: #f8f9fa;--shadow: 0 4px 8px rgba(0, 0, 0, 0.1);--transition: 0.3s ease;--error-red: #dc3545;--premium-gold: #FFD700;--dark-gray: #333333;}.normal-hight {line-height: normal;}.image-slider {width: 100%;border-radius: 12px;overflow: hidden;position: relative;}.swiper-slide {width: 100%;height: 100%;}.image-slider img {width: 100%;height: 300px;object-fit: cover;}.swiper-button-next, .swiper-button-prev {color: white;background: rgba(0, 0, 0, 0.3);width: 40px;height: 40px;border-radius: 50%;transition: background var(--transition);}.swiper-button-next:hover, .swiper-button-prev:hover {background: rgba(0, 0, 0, 0.5);}.swiper-button-next:after, .swiper-button-prev:after {font-size: 20px;}.swiper-pagination-bullet {background: white;opacity: 0.7;transition: opacity var(--transition);}.swiper-pagination-bullet-active {opacity: 1;}
+    header .subtitle {color: #6c757d;font-size: 0.875rem;}.abouts:not(.expanded) {max-height: 150px;overflow: hidden;text-overflow: ellipsis;-o-text-overflow: ellipsis;-ms-text-overflow: ellipsis;}.about-mask {height: 40px;bottom:25px;pointer-events: none;background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, #fff 90%);z-index: 1;}.about-read-more-btn {text-underline-offset: 2px;}
+    .tour-booking-city-card {width: 160px;flex-shrink: 0;text-align: center;background: #fff;padding: 12px;border: 1px solid #dee2e6;border-radius: 8px;cursor: pointer;transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);}.tour-booking-city-card:hover {box-shadow: var(--shadow);transform: translateY(-2px);}.tour-booking-city-card.active {border-color: var(--primary-blue);box-shadow: var(--shadow);}.tour-booking-city-card img {width: 100%;height: 100px;object-fit: cover;border-radius: 6px;}.tour-booking-city-card h6 {font-size: 0.95rem;margin: 8px 0 4px;}.tour-booking-city-card small {font-size: 0.8rem;line-height: 1.3;}
+    #carouselTrack {white-space: nowrap;scroll-behavior: smooth;scrollbar-width: none;-ms-overflow-style: none;padding: 10px 0;}#carouselTrack::-webkit-scrollbar {display: none;}.carousel-control-prev, .carousel-control-next {position: absolute;top: 50%;transform: translateY(-50%);z-index: 10;background: rgba(0, 0, 0, 0.4);border-radius: 50%;width: 36px;height: 36px;transition: background var(--transition);opacity: 0.9;}.carousel-control-prev:hover, .carousel-control-next:hover {background: rgba(0, 0, 0, 0.6);opacity: 1;}.carousel-control-prev {left: -15px;}.carousel-control-next {right: -15px;}
+    .tour-booking-departure-section {margin-top: 1.5rem;}.tour-booking-departure-section h5 {font-size: 1.1rem;font-weight: 600;}.tour-booking-year-tabs, .tour-booking-month-tabs {display: flex;gap: 8px;flex-wrap: wrap;margin-bottom: 12px;}.tour-booking-year-tab, .tour-booking-month-tab {background: none;border: none;padding: 6px 12px;cursor: pointer;font-weight: 500;font-size: 0.9rem;border-radius: 6px;transition: background var(--transition), color var(--transition);}.tour-booking-year-tab:hover, .tour-booking-year-tab.active, .tour-booking-month-tab:hover, .tour-booking-month-tab.active {background: var(--primary-blue);color: white;}.tour-booking-date-selector {display: flex;flex-wrap: wrap;gap: 6px;padding: 8px 0;}.tour-booking-date-item {min-width: 40px;padding: 8px;font-size: 0.85rem;border: 1px solid #dee2e6;border-radius: 6px;background: #fff;cursor: pointer;transition: background var(--transition), color var(--transition), border-color var(--transition);}.tour-booking-date-item:hover {background: var(--light-gray);border-color: var(--primary-blue);}.tour-booking-date-item.active {background: var(--primary-blue);color: white;border-color: var(--primary-blue);box-shadow: var(--shadow);}.tour-booking-summary-card {background: #fff;border: 1px solid #dee2e6;border-radius: 8px;padding: 12px;max-height: 350px;overflow-y: auto;scrollbar-width: none;}.tour-booking-summary-card::-webkit-scrollbar {display: none;}.tour-booking-summary-item {display: flex;justify-content: space-between;margin-bottom: 8px;font-size: 0.9rem;}.tour-booking-summary-item span:first-child {color: #6c757d;}.tour-booking-summary-item span:last-child {font-weight: 500;}.tour-booking-payment-options {padding: 12px;background: var(--light-gray);border-radius: 8px;}.tour-booking-payment-option {display: flex;align-items: center;gap: 8px;margin-bottom: 10px;font-size: 0.9rem;}.tour-booking-payment-option input[type="radio"] {width: 18px;height: 18px;cursor: pointer;}.tour-booking-payment-option label {flex: 1;cursor: pointer;display: flex;align-items: center;gap: 6px;}.tour-booking-payment-option label:hover {color: var(--primary-blue);}.tour-booking-proceed-btn {width: 100%;padding: 10px;font-size: 0.95rem;border-radius: 8px;background: var(--primary-blue);color: #fff;transition: background var(--transition);}.tour-booking-proceed-btn:hover {background: #143c73;color: #fff;}.tour-booking-proceed-btn:disabled {background: #6c757d;cursor: not-allowed;color: #fff;}.tour-booking-floating-sec {position: fixed;bottom: 0;left: 0;right: 0;z-index: 1000;transition: transform var(--transition);transform: translateY(100%);}.tour-booking-floating-sec.active {transform: translateY(0);}.tour-booking-floating-backdrop {position: fixed;top: 0;left: 0;right: 0;bottom: 0;background: rgba(0, 0, 0, 0.3);z-index: 999;display: none;}.tour-booking-floating-backdrop.active {display: block;}.tour-booking-floating-panel {background: #fff;border-radius: 16px 16px 0 0;padding: 16px;max-height: 60vh;overflow-y: auto;box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);}.tour-booking-floating-btn {position: fixed;bottom: 1rem;right: 1rem;background: var(--primary-blue);color: #fff;border-radius: 50%;width: 56px;height: 56px;display: flex;align-items: center;justify-content: center;box-shadow: var(--shadow);transition: background var(--transition), transform var(--transition);}.tour-booking-floating-btn:hover {background: #143c73;transform: scale(1.05);}.tour-booking-floating-btn i {font-size: 1.2rem;}
+    .trip-details-form-select, .booking-modal-select {border: 1px solid #dee2e6;border-radius: 8px;padding: 10px 14px;font-size: 0.95rem;color: #333;background-color: white;box-shadow: var(--shadow);transition: border-color var(--transition), box-shadow var(--transition);}.trip-details-form-select:focus, .booking-modal-select:focus {border-color: var(--primary-blue);box-shadow: 0 0 0 0.2rem rgba(26, 75, 142, 0.25);outline: none;}.trip-details-form-select:disabled, .booking-modal-select:disabled {background-color: #e9ecef;cursor: not-allowed;}.trip-details-form-select.is-invalid, .booking-modal-select.is-invalid {border-color: var(--error-red);}
+    .inquiry-modal-content {background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);}.inquiry-modal-body p {color: var(--dark-gray);}.inquiry-modal-footer {border-top: 1px solid #dee2e6;}.inquiry-modal-btn {transition: background var(--transition), transform var(--transition);}.inquiry-modal-btn-whatsapp {--bs-btn-bg: #25D366;--bs-btn-hover-bg: #20b358;--bs-btn-hover-color: #fff;--bs-btn-color: #fff;}.inquiry-modal-btn-customize {--bs-btn-bg: var(--premium-gold);--bs-btn-hover-bg: #e6c200;--bs-btn-hover-color: var(--dark-gray);--bs-btn-color: var(--dark-gray);}.inquiry-modal-btn-ok {--bs-btn-bg: var(--primary-blue);--bs-btn-hover-bg: #143c73;--bs-btn-hover-color: #fff;--bs-btn-color: #fff;}.inquiry-modal-btn-ok:hover, .inquiry-modal-btn-customize:hover, .inquiry-modal-btn-whatsapp:hover {transform: translateY(-2px);}
+    .quick-call-modal-content {border-radius: 16px;overflow: hidden;box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);border: none;max-width: 500px;margin: 0 auto;}.quick-call-modal-header {background: var(--primary-blue);background-image: url('/images/exit-modal-banner.avif');background-size: 100% 100%;background-position: center;position: relative;border-bottom: none;padding: 70px 20px;min-height: 140px;display: flex;align-items: center;justify-content: center;}.quick-call-modal-header .btn-close-white {position: absolute;top: 12px;right: 12px;z-index: 1;filter: brightness(0) invert(1);}.quick-call-modal-header .modal-title {font-size: 1.25rem;font-weight: 700;margin-bottom: 8px;line-height: 1.3;}.quick-call-modal-header p {font-size: 0.9rem;margin-bottom: 0;line-height: 1.4;}.quick-call-modal-body {padding: 20px 24px;background: #fff;border-bottom-left-radius: 16px;border-bottom-right-radius: 16px;}.quick-call-modal-body .form-label {font-size: 0.85rem;color: var(--dark-gray);text-align: left;margin-bottom: 6px;font-weight: 500;}.quick-call-modal-body .form-control, .quick-call-modal-body .form-select {border-radius: 8px;border: 1px solid #d1d5db;padding: 8px 12px;font-size: 0.9rem;box-shadow: none;transition: border-color var(--transition), box-shadow var(--transition);}.quick-call-modal-body .form-select {max-width: 90px;padding-right: 30px;background-size: 10px;}.quick-call-modal-body .form-control:focus, .quick-call-modal-body .form-select:focus {border-color: var(--primary-blue);box-shadow: 0 0 0 2px rgba(26, 75, 142, 0.2);outline: none;}.quick-call-modal-body .form-control.is-invalid, .quick-call-modal-body .form-select.is-invalid {border-color: var(--error-red);}.quick-call-modal-body .error-message {color: var(--error-red);font-size: 0.75rem;margin-top: 4px;display: none;}.quick-call-modal-body .notes {margin-top: 16px;}.quick-call-modal-body .notes .note-icon {color: var(--primary-blue);margin-right: 8px;font-size: 1rem;}.quick-call-modal-body .notes span {font-size: 0.8rem;color: #6b7280;}.quick-call-modal-footer {padding: 16px 24px;border-top: none;display: flex;justify-content: center;background: #fff;border-bottom-left-radius: 16px;border-bottom-right-radius: 16px;}.quick-call-modal-btn {background: var(--premium-gold);color: var(--dark-gray);padding: 10px 24px;border-radius: 8px;font-size: 0.9rem;font-weight: 500;transition: background var(--transition), transform var(--transition);display: flex;align-items: center;width: 100%;justify-content: center;}.quick-call-modal-btn:hover {background: #e6c200;transform: translateY(-2px);}.quick-call-modal-btn:disabled {background: #d1d5db;color: #6b7280;cursor: not-allowed;}.quick-call-modal-btn i {font-size: 1rem;}
+    .custom-card {background-color: #fff;border-radius: 0.75rem;}.custom-card + .custom-card {margin-top: 1.5rem;}.transport-option {border: 1px solid #dee2e6;display: inline-flex;border-radius: 6px;padding: 6px 12px;justify-content: center;color: #6c757d;cursor: pointer;font-size: 0.85rem;transition: all var(--transition);}.transport-option.active {background-color: var(--primary-blue);border-color: var(--primary-blue);color: #fff;}
+    /*.stickySec{position: sticky;bottom: -18dvh;will-change: height;z-index: 1;left: 0;transition: bottom 0.3s ease, position 0.3s ease;} */.stickySec .card {border-radius: 1rem;--bs-card-cap-padding-y: 0.75rem;will-change: height;}
+    #proceedToBook {position: fixed;bottom: -8px;inset-inline: 0;z-index: 2;--bs-card-bg:#e4ebff;transition: position 0.3s;max-width: 800px;margin-inline: auto;}#proceedToBook.stop-sticky {position: relative;}#proceedToBook:not(.expanded) {height: 140px;will-change: height;transition: height 0.3s ease, transform 0.5s ease;}#proceedToBook.stop-sticky {box-shadow: var(--bs-box-shadow-sm);}#proceedToBook:not(.expanded) .card-body > *:not(.btnSec) {transform: scaleY(0);height: 0;transition: height 0.3s ease, transform 0.5s ease;}#proceedToBook:not(.expanded) .btnSec {position: absolute;bottom: 1rem;inset-inline: 1rem;z-index:1;}
+    /* #proceedToBook .card-header{background-color: var(--dejavue-color);color: #fff;} */
+    .price strong {font-size: 1.5rem;}.summaryPara > :not(span) {color: #525252;}
+    .tab-menu {border-bottom: 2px solid #e0e0e0;}.tab {background: none;border: none;padding-block: 10px;font-weight: 500;border-bottom: 3px solid transparent;transition: border-color var(--transition), color var(--transition);}.tab:hover, .tab.active {border-color: #111;color: #111;}.tab-content {display: none;}.tab-content.active {display: block;}.tab-content li {list-style: unset;}
+    #contactModal .modal-content {border-radius: 10px;}#contactModal .modal-header {background: var(--primary-blue);color: white };a {text-decoration: none;}#contactModal .modal-title {color: white !important};.booking-modal-section {background: var(--light-gray);padding: 12px;border-radius: 8px;box-shadow: var(--shadow);}.trust-signals {flex-wrap: wrap;gap: 10px;font-size: 0.8rem;margin-top: 10px;}.trust-signals i {font-size: 0.9rem;margin-right: 4px;}
+    .cutoff-modal-content {background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);border-radius: 12px;box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);}.cutoff-modal-header {background: var(--primary-blue);color: white;border-bottom: none;padding: 20px;}.cutoff-modal-body {padding: 20px;text-align: center;}.cutoff-modal-footer {border-top: none;justify-content: center;padding: 15px;}
+    .cutoff-modal-btn {transition: background var(--transition), transform var(--transition);}
+    .cutoff-modal-btn:hover { transform: translateY(-2px); }
+    .callbackBtn,.whatsappBtn{position: fixed;right: 10px;z-index: 3;min-width: 50px; aspect-ratio: 1;display: flex;align-items: center;justify-content: center; animation: blinkBtn 0.9s linear alternate infinite;transition: opacity 0.5s ease;}.callbackBtn{bottom: 215px;--shad-color:#ffca2c;}.whatsappBtn{bottom: 150px;animation-delay: 0.45s;--shad-color: #146c43;}
+    @keyframes blinkBtn {
+      from{box-shadow: 0 0 0 2px #fff, 0 0 0 5px var(--shad-color);opacity: 0.75;}to{box-shadow: 0 0 0 3px var(--shad-color),0 0 0 5px #fff;opacity: 1;}
+    }
+
+    /* Media Queries */
+    @media screen and (min-width: 992px) {
+      body { background-color: #f3f3f6; }
+      .image-slider img { height: 500px; }
+      .custom-card + .custom-card { margin-top: 1rem; }
+      .stickySec { position: sticky; top: 100px; bottom: unset; }
+      .stickySec .card, .custom-card, .actionCard { box-shadow: var(--bs-box-shadow-sm); border-radius: 0.75rem; }#proceedToBook{--bs-card-bg:#fff;position: static;}
+      .price strong { font-size: calc(1.5rem + 0.3vw); }
+      .btnSec { width: 100%; text-align: end; }
+    }
+
+    @media (max-width: 768px) {
+      .trek-title, h3 { font-size: 1.5rem; }
+      .accordion-button { font-size: 1rem; }
+      .tour-booking-city-card { width: 140px; }
+      .tour-booking-city-card img { height: 90px; }
+      .tour-booking-year-tab, .tour-booking-month-tab { font-size: 0.85rem; padding: 5px 10px; }
+      .tour-booking-date-item { min-width: 36px; padding: 6px; font-size: 0.8rem; }
+      .tour-booking-summary-card { max-height: 300px; padding: 10px; }
+      .tour-booking-payment-options { padding: 10px; }
+      .tour-booking-payment-option { font-size: 0.85rem; }
+      .tour-booking-floating-panel { max-height: 50vh; }
+      .tour-booking-floating-btn { width: 48px; height: 48px; }
+      .tour-booking-floating-btn i { font-size: 1rem; }
+    }
+
+    @media (max-width: 576px) {
+      .image-slider img { height: 200px; }
+      .tour-booking-city-card { width: 120px; }
+      .tour-booking-city-card img { height: 80px; }
+      .tour-booking-city-card h6 { font-size: 0.85rem; }
+      .tour-booking-city-card small { font-size: 0.75rem; }
+      .tour-booking-year-tab, .tour-booking-month-tab { font-size: 0.8rem; padding: 4px 8px; }
+      .tour-booking-date-item { min-width: 32px; padding: 5px; font-size: 0.75rem; }
+      .tour-booking-summary-card { max-height: 250px; font-size: 0.8rem; }
+      .tour-booking-payment-options { padding: 8px; }
+      .tour-booking-payment-option { font-size: 0.8rem; }
+      .quick-call-modal-content { max-width: 100%; margin: 10px; }
+      .quick-call-modal-header { min-height: 120px; padding: 20px 16px; }
+      .quick-call-modal-header .modal-title { font-size: 1.1rem; }
+      .quick-call-modal-header p { font-size: 0.85rem; }
+      .quick-call-modal-header .btn-close-white { top: 10px; right: 10px; }
+      .quick-call-modal-body { padding: 16px 20px; }
+      .quick-call-modal-body .form-label { font-size: 0.8rem; }
+      .quick-call-modal-body .form-control, .quick-call-modal-body .form-select { font-size: 0.85rem; padding: 6px 10px; }
+      .quick-call-modal-body .form-select { max-width: 80px; }
+      .quick-call-modal-body .error-message { font-size: 0.7rem; }
+      .quick-call-modal-body .notes .note-icon { font-size: 0.9rem; margin-right: 6px; }
+      .quick-call-modal-body .notes span { font-size: 0.75rem; }
+      .quick-call-modal-footer { padding: 12px 20px; }
+      .quick-call-modal-btn { font-size: 0.85rem; padding: 8px 20px; }
+    }
+
+    @media (max-width: 400px) {
+      .quick-call-modal-header { min-height: 110px; padding: 16px 12px; }
+      .quick-call-modal-header .modal-title { font-size: 1rem; }
+      .quick-call-modal-header p { font-size: 0.8rem; }
+      .quick-call-modal-body { padding: 12px 16px; }
+      .quick-call-modal-body .form-label { font-size: 0.75rem; }
+      .quick-call-modal-body .form-control, .quick-call-modal-body .form-select { font-size: 0.8rem; padding: 6px 8px; }
+      .quick-call-modal-body .form-select { max-width: 70px; }
+      .quick-call-modal-body .error-message { font-size: 0.65rem; }
+      .quick-call-modal-body .notes .note-icon { font-size: 0.85rem; margin-right: 5px; }
+      .quick-call-modal-body .notes span { font-size: 0.7rem; }
+      .quick-call-modal-footer { padding: 10px 16px; }
+      .quick-call-modal-btn { font-size: 0.8rem; padding: 8px 16px; }
+    }
   </style>
 </head>
 <body>
@@ -976,8 +349,8 @@ a { text-decoration: none; }
       </div>
       <aside class="col-lg-5 col-xl-4 align-self-start stickySec">
         <form class="card border-0 overflow-hidden" id="proceedToBook" action="/bookingTour/<%- trips._id %>" method="GET">
-          <p class="card-header mb-0 bg-primary bg-opacity-10 fw-bold fs-5 border-primary-subtle">Book Now</p>
-          <div class="card-body d-flex flex-column gap-2">
+          <p class="card-header mb-0 fw-bold fs-5 border-primary-subtle text-primary-emphasis d-flex justify-content-between align-items-center">Book Now <i class="bi bi-chevron-down"></i></p>
+          <div class="card-body">
             <div class="tour-booking-summary-card">
               <h6 class="fw-bold mb-3"><b>Booking Summary</b></h6>
               <div class="booking-summary-item">
@@ -1042,7 +415,7 @@ a { text-decoration: none; }
               <% } %>
               <option value="bnpl">Book Now, Pay Later</option>
             </select>
-            <div class="tour-booking-payment-options">
+            <div class="tour-booking-payment-options my-2">
               <h6 class="fw-bold mb-3">Payment Options</h6>
               <div class="tour-booking-payment-option">
                 <input type="radio" id="payFull" name="paymentOptionRadio" value="full" checked>
@@ -1064,23 +437,25 @@ a { text-decoration: none; }
                 <span><i class="bi bi-check-circle-fill"></i> Trusted by Thousands</span>
               </div>
             </div>
-            <div class="btnSec ms-auto mb-auto">
+            <div class="btnSec ms-auto mb-auto pt-1">
               <button class="btn tour-booking-proceed-btn w-100" type="button" onclick="proceedWithBooking()" disabled>Proceed to Book</button>
             </div>
           </div>
         </form>
-        <div class="actionCard card border-0 p-3 flex-row flex-wrap gap-2 align-items-start mt-3">
+        <div class="actionCard card border-0 p-3 d-none d-md-flex flex-row flex-wrap gap-2 align-items-start mt-3">
           <h5 class="w-100">Still Got Queries?</h5>
           <!-- <a href="https://wa.me/+918511117891" class="btn btn-outline-secondary rounded-pill" target="_blank">WhatsApp Us</a> -->
           <a class="btn whatsapp-btn btn-outline-secondary rounded-pill"
           href="https://wa.me/+918511117891?text=Hello%20I%20am%20interested%20in%20the%20following%20trip%20<%= encodeURIComponent(trips.name) %>%20tour.%20could%20you%20please%20share%20more%20details." 
           target="_blank" 
           aria-label="Contact via WhatsApp for <%= trips.name %>">
-         <i class="bi bi-whatsapp me-1"></i> WhatsApp
-       </a>
+            <i class="bi bi-whatsapp me-1"></i> WhatsApp
+          </a>
           <button class="btn btn-outline-secondary rounded-pill" data-bs-toggle="modal" data-bs-target="#quickCallModal">Request Call Back</button>
           <a class="btn btn-outline-secondary rounded-pill text-start" href="/dreamtrip" target="_blank" title="Plan your dream trip">Plan your dream trip</a>
         </div>
+        <button class="btn callbackBtn btn-warning rounded-pill d-md-none" data-bs-toggle="modal" data-bs-target="#quickCallModal" aria-label="Request Call Back"><i class="bi bi-telephone-outbound display-6"></i></button>
+        <a href="https://wa.me/+918511117891?text=Hello%20I%20am%20interested%20in%20the%20following%20trip%20<%= encodeURIComponent(trips.name) %>%20tour.%20could%20you%20please%20share%20more%20details." class="btn whatsappBtn btn-success rounded-pill d-md-none" data-bs-toggle="modal" data-bs-target="#quickCallModal" aria-label="Contact via WhatsApp for <%= trips.name %>"><i class="bi bi-whatsapp display-6"></i></a>
       </aside>
     </section>
   </div>
@@ -1411,11 +786,11 @@ a { text-decoration: none; }
             aboutSec.style.maxHeight = '150px';
             aboutSec.style.overflow = 'hidden';
             const mask = document.createElement('div');
-            mask.className = 'about-mask position-absolute bottom-0 end-0 w-100';
+            mask.className = 'about-mask position-absolute end-0 w-100';
             aboutSec.appendChild(mask);
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = 'about-read-more-btn btn btn-link p-0 mt-2';
+            btn.className = 'about-read-more-btn btn btn-link p-0';
             btn.textContent = 'Read more';
             btn.onclick = function () {
               const expanded = aboutSec.classList.toggle('expanded');
@@ -1940,76 +1315,76 @@ a { text-decoration: none; }
 
     // Show month tabs (continued)
     function showMonth(year, month, fromModal = false) {
-  if (isUpdating) return;
-  isUpdating = true;
-  const selectedCity = fromModal ? document.getElementById("modalSelectedCity").value : document.getElementById("selectedCity").value;
-  const cityData = deptCities.find((city) => city.City === selectedCity);
-  const dateSelector = fromModal ? document.getElementById("modalDateSelector") : document.getElementById("dateSelector");
-  const dateSelect = fromModal ? document.getElementById("modalSelectedDate") : document.getElementById("selectedDate");
-  const summaryDate = document.querySelectorAll(".booking-summary-date");
-  if (!cityData || !cityData.dates) {
-    dateSelector.innerHTML = "<p class='text-muted'>No dates available for this month.</p>";
-    dateSelector.style.display = "flex";
-    if (fromModal) openInquiryModal();
-    isUpdating = false;
-    return;
-  }
-  document.querySelectorAll(fromModal ? ".booking-modal-month-tab" : ".tour-booking-month-tab").forEach((tab) => tab.classList.remove("active"));
-  const monthTab = Array.from(document.querySelectorAll(fromModal ? ".booking-modal-month-tab" : ".tour-booking-month-tab")).find((tab) => tab.innerText === month);
-  if (monthTab) monthTab.classList.add("active");
-  dateSelector.style.display = "flex";
-  dateSelector.innerHTML = "";
-  const cutoffDays = parseInt(cityData.bookingCutoffDays || "0", 10);
-  const dateOptions = generateDateRanges(cityData.dates, cityData.tripDuration, cutoffDays);
-  const monthOptions = dateOptions.filter((option) => {
-    return option.startDate.getUTCFullYear().toString() === year && 
-           option.startDate.toLocaleString("en-US", { month: "long", timeZone: "UTC" }) === month;
-  });
-  if (monthOptions.length === 0) {
-    dateSelector.innerHTML = "<p class='text-muted'>No dates available for this month.</p>";
-    if (fromModal) openInquiryModal();
-    isUpdating = false;
-    return;
-  }
-  monthOptions.forEach((option, index) => {
-    const button = document.createElement("button");
-    button.className = `${fromModal ? 'booking-modal-date-btn' : 'tour-booking-date-item'} ${index === 0 ? "active" : ""}`;
-    // Show only day in departure section, full date in summary
-    button.innerText = option.startDate.getUTCDate();
-    button.setAttribute("data-value", option.value);
-    button.onclick = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      document.querySelectorAll(fromModal ? ".booking-modal-date-btn" : ".tour-booking-date-item").forEach((btn) => btn.classList.remove("active"));
-      button.classList.add("active");
-      dateSelect.value = option.value;
-      summaryDate.forEach((e) => (e.textContent = option.text)); // Full date in summary
-      if (fromModal && document.getElementById("selectedDate")) {
-        document.getElementById("selectedDate").value = option.value;
-      } else if (!fromModal && document.getElementById("modalSelectedDate")) {
-        document.getElementById("modalSelectedDate").value = option.value;
+      if (isUpdating) return;
+      isUpdating = true;
+      const selectedCity = fromModal ? document.getElementById("modalSelectedCity").value : document.getElementById("selectedCity").value;
+      const cityData = deptCities.find((city) => city.City === selectedCity);
+      const dateSelector = fromModal ? document.getElementById("modalDateSelector") : document.getElementById("dateSelector");
+      const dateSelect = fromModal ? document.getElementById("modalSelectedDate") : document.getElementById("selectedDate");
+      const summaryDate = document.querySelectorAll(".booking-summary-date");
+      if (!cityData || !cityData.dates) {
+        dateSelector.innerHTML = "<p class='text-muted'>No dates available for this month.</p>";
+        dateSelector.style.display = "flex";
+        if (fromModal) openInquiryModal();
+        isUpdating = false;
+        return;
       }
+      document.querySelectorAll(fromModal ? ".booking-modal-month-tab" : ".tour-booking-month-tab").forEach((tab) => tab.classList.remove("active"));
+      const monthTab = Array.from(document.querySelectorAll(fromModal ? ".booking-modal-month-tab" : ".tour-booking-month-tab")).find((tab) => tab.innerText === month);
+      if (monthTab) monthTab.classList.add("active");
+      dateSelector.style.display = "flex";
+      dateSelector.innerHTML = "";
+      const cutoffDays = parseInt(cityData.bookingCutoffDays || "0", 10);
+      const dateOptions = generateDateRanges(cityData.dates, cityData.tripDuration, cutoffDays);
+      const monthOptions = dateOptions.filter((option) => {
+        return option.startDate.getUTCFullYear().toString() === year && 
+              option.startDate.toLocaleString("en-US", { month: "long", timeZone: "UTC" }) === month;
+      });
+      if (monthOptions.length === 0) {
+        dateSelector.innerHTML = "<p class='text-muted'>No dates available for this month.</p>";
+        if (fromModal) openInquiryModal();
+        isUpdating = false;
+        return;
+      }
+      monthOptions.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.className = `${fromModal ? 'booking-modal-date-btn' : 'tour-booking-date-item'} ${index === 0 ? "active" : ""}`;
+        // Show only day in departure section, full date in summary
+        button.innerText = option.startDate.getUTCDate();
+        button.setAttribute("data-value", option.value);
+        button.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          document.querySelectorAll(fromModal ? ".booking-modal-date-btn" : ".tour-booking-date-item").forEach((btn) => btn.classList.remove("active"));
+          button.classList.add("active");
+          dateSelect.value = option.value;
+          summaryDate.forEach((e) => (e.textContent = option.text)); // Full date in summary
+          if (fromModal && document.getElementById("selectedDate")) {
+            document.getElementById("selectedDate").value = option.value;
+          } else if (!fromModal && document.getElementById("modalSelectedDate")) {
+            document.getElementById("modalSelectedDate").value = option.value;
+          }
+          if (fromModal) validateModalForm();
+          else validateMainForm();
+        };
+        dateSelector.appendChild(button);
+      });
+      if (!dateSelect.value && monthOptions.length > 0) {
+        dateSelect.value = monthOptions[0].value;
+        summaryDate.forEach((e) => (e.textContent = monthOptions[0].text));
+        document.querySelectorAll(fromModal ? ".booking-modal-date-btn" : ".tour-booking-date-item").forEach((btn, idx) => {
+          btn.classList.toggle("active", idx === 0);
+        });
+        if (fromModal && document.getElementById("selectedDate")) {
+          document.getElementById("selectedDate").value = monthOptions[0].value;
+        } else if (!fromModal && document.getElementById("modalSelectedDate")) {
+          document.getElementById("modalSelectedDate").value = monthOptions[0].value;
+        }
+      }
+      isUpdating = false;
       if (fromModal) validateModalForm();
       else validateMainForm();
-    };
-    dateSelector.appendChild(button);
-  });
-  if (!dateSelect.value && monthOptions.length > 0) {
-    dateSelect.value = monthOptions[0].value;
-    summaryDate.forEach((e) => (e.textContent = monthOptions[0].text));
-    document.querySelectorAll(fromModal ? ".booking-modal-date-btn" : ".tour-booking-date-item").forEach((btn, idx) => {
-      btn.classList.toggle("active", idx === 0);
-    });
-    if (fromModal && document.getElementById("selectedDate")) {
-      document.getElementById("selectedDate").value = monthOptions[0].value;
-    } else if (!fromModal && document.getElementById("modalSelectedDate")) {
-      document.getElementById("modalSelectedDate").value = monthOptions[0].value;
     }
-  }
-  isUpdating = false;
-  if (fromModal) validateModalForm();
-  else validateMainForm();
-}
 
   // Update modal city summary
   function updateModalCitySummary() {
@@ -2120,6 +1495,54 @@ a { text-decoration: none; }
     document.querySelector(`input[name="paymentOptionRadio"][value="${paymentOption}"]`).checked = true;
     form.submit();
   }
+  function bookingCardTitle(val){
+    return val ? `Booking Details <i class="bi bi-chevron-up"></i>`: `Booking Details <i class="bi bi-chevron-down"></i>`;
+  }
+  function bookingCardShadow(val){return val ? '0 -1rem 3rem rgba(0, 0, 0, 0.75)': '0 -0.5rem 1rem rgba(0, 0, 0, 0.15), 0 -8px 16px #00000026';}
+  function bookingResCard(){
+    const bookingForm = document.getElementById("proceedToBook");
+    const title = bookingForm.querySelector('.card-header');
+    bookingForm.classList.toggle('expanded', window.innerWidth >= 992)
+    title.classList.toggle('bg-primary-subtle', window.innerWidth >= 992)
+    if(window.innerWidth < 992){
+      title.innerHTML = bookingCardTitle(bookingForm.classList.contains('expanded'));
+      // bookingForm.style.boxShadow = bookingCardShadow(false);
+      title.addEventListener('click', ()=>{
+        bookingForm.classList.toggle('expanded');
+        title.innerHTML = bookingCardTitle(bookingForm.classList.contains('expanded'));
+        bookingForm.style.boxShadow = bookingCardShadow(bookingForm.classList.contains('expanded')&&!bookingForm.classList.contains('stop-sticky'));
+      });
+    } else{
+      title.innerHTML = `Book Now`;
+    }
+  }
+  function handleMobileStickyForm() {
+    const bookingForm = document.getElementById("proceedToBook");
+    const detailSec = document.querySelector(".detailSec");
+
+    if (window.innerWidth >= 992) {
+      bookingForm.classList.remove('stop-sticky');
+      bookingForm.style.position = '';
+      return;
+    }
+
+    const detailRect = detailSec.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+
+    // If detail section's bottom is within or above viewport, stop sticky
+    if (detailRect.bottom <= viewportHeight) {
+      bookingForm.classList.add('stop-sticky');
+      bookingForm.style.boxShadow = 'var(--bs-box-shadow-sm)';
+    } else {
+      bookingForm.classList.remove('stop-sticky');
+      bookingForm.style.boxShadow = bookingCardShadow(bookingForm.classList.contains('expanded'));
+    }
+  }
+  document.addEventListener('DOMContentLoaded', ()=>{
+    bookingResCard();
+    window.addEventListener('resize', bookingResCard);
+    window.addEventListener('scroll', handleMobileStickyForm);
+  });
 
   // Proceed with booking
   async function proceedWithBooking() {
