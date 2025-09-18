@@ -3,124 +3,188 @@
 
 <head>
   <%- include('../partials/headtag', {isNiceSelect: true}); %>
-  <title>Dream Trip Form</title>
-  <style>
-    .dream-trip-page {
-      font-family: "Arial", sans-serif;
-      background-color: #f8f9fa;
-      min-height: 100vh;
-      padding: 2rem 1rem;
-    }
+    <title>Dream Trip Form</title>
+    <style>
+      :root {
+        --primary-blue: #1a4b8e;
+        --light-gray: #f8f9fa;
+        --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        --transition: 0.3s ease;
+        --error-red: #dc3545;
+        --premium-gold: #FFD700;
+        --dark-gray: #333333;
+      }
 
-    .dream-trip-page .header-title {
-      font-size: clamp(1.75rem, 5vw, 2.5rem);
-      font-weight: bold;
-      color: #002f75;
-    }
-
-    .dream-trip-page .header-title span {
-      color: #dc3545;
-    }
-
-    .dream-trip-page .header-subtitle {
-      font-size: clamp(0.875rem, 2.5vw, 1rem);
-      color: #6c757d;
-    }
-
-    .dream-trip-page .form-container {
-      background-color: #fff;
-      border-radius: 1rem;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      padding: 2rem;
-      max-width: 700px;
-      margin: 0 auto;
-    }
-
-    .dream-trip-page .form-label {
-      font-weight: 500;
-      color: #343a40;
-      font-size: 0.95rem;
-    }
-
-    .dream-trip-page .form-control,
-    .dream-trip-page .form-select {
-      border-radius: 0.5rem;
-      border: 1px solid #ced4da;
-      font-size: 0.95rem;
-      padding: 0.5rem 0.75rem;
-    }
-
-    .dream-trip-page .submit-btn {
-      background-color: #1a3c6c;
-      border: none;
-      border-radius: 0.5rem;
-      padding: 0.75rem 2rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      color: #fff;
-      font-size: 1rem;
-      width: 100%;
-    }
-
-    .dream-trip-page .contact-info {
-      text-align: right;
-      font-size: 0.875rem;
-      color: #343a40;
-    }
-
-    .dream-trip-page .contact-info .logo {
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-
-    .dream-trip-page .contact-info .logo span {
-      color: #af2734;
-    }
-
-    .dream-trip-page .social-icons img {
-      width: 24px;
-      margin-left: 0.5rem;
-    }
-
-    .dream-trip-page ::placeholder {
-      color: #ccc;
-      /* light gray */
-      opacity: 1;
-      /* optional: ensures full visibility */
-    }
-
-    @media (max-width: 576px) {
       .dream-trip-page {
-        padding: 1rem 0.5rem;
+        font-family: "Arial", sans-serif;
+        background-color: #f8f9fa;
+        min-height: 100vh;
+        padding: 2rem 1rem;
+      }
+
+      .dream-trip-page .header-title {
+        font-size: clamp(1.75rem, 5vw, 2.5rem);
+        font-weight: bold;
+        color: #002f75;
+      }
+
+      .dream-trip-page .header-title span {
+        color: #dc3545;
+      }
+
+      .dream-trip-page .header-subtitle {
+        font-size: clamp(0.875rem, 2.5vw, 1rem);
+        color: #6c757d;
       }
 
       .dream-trip-page .form-container {
-        padding: 1.25rem;
+        background-color: #fff;
+        border-radius: 1rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        max-width: 700px;
+        margin: 0 auto;
+      }
+
+      .dream-trip-page .form-label {
+        font-weight: 500;
+        color: #343a40;
+        font-size: 0.95rem;
+      }
+
+      .dream-trip-page .form-control,
+      .dream-trip-page .form-select {
+        border-radius: 0.5rem;
+        border: 1px solid #ced4da;
+        font-size: 0.95rem;
+        padding: 0.5rem 0.75rem;
+      }
+
+      .dream-trip-page .submit-btn {
+        background-color: #1a3c6c;
+        border: none;
+        border-radius: 0.5rem;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        color: #fff;
+        font-size: 1rem;
+        width: 100%;
       }
 
       .dream-trip-page .contact-info {
-        text-align: center;
-        margin-top: 1rem;
+        text-align: right;
+        font-size: 0.875rem;
+        color: #343a40;
       }
 
-      .dream-trip-page .form-label,
-      .dream-trip-page .form-control {
-        font-size: 0.9rem;
+      .dream-trip-page .contact-info .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
       }
-    }
-  </style>
+
+      .dream-trip-page .contact-info .logo span {
+        color: #af2734;
+      }
+
+      .dream-trip-page .social-icons img {
+        width: 24px;
+        margin-left: 0.5rem;
+      }
+
+      .dream-trip-page ::placeholder {
+        color: #ccc;
+        opacity: 1;
+      }
+
+      .toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1055;
+      }
+
+      .toast {
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .toast-success {
+        background-color: #d4edda;
+        color: #155724;
+      }
+
+      .toast-error {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+
+      .notes {
+        margin-top: 16px;
+      }
+
+      .notes .note-icon {
+        color: var(--primary-blue);
+        margin-right: 8px;
+        font-size: 1rem;
+      }
+
+      .notes span {
+        font-size: 0.8rem;
+        color: #6b7280;
+      }
+
+      @media (max-width: 576px) {
+        .dream-trip-page {
+          padding: 1rem 0.5rem;
+        }
+
+        .dream-trip-page .form-container {
+          padding: 1.25rem;
+        }
+
+        .dream-trip-page .contact-info {
+          text-align: center;
+          margin-top: 1rem;
+        }
+
+        .dream-trip-page .form-label,
+        .dream-trip-page .form-control {
+          font-size: 0.9rem;
+        }
+
+        .toast-container {
+          top: 10px;
+          right: 10px;
+          left: 10px;
+          margin: 0 auto;
+          max-width: 90%;
+        }
+      }
+    </style>
 </head>
 
 <body>
   <%- include('../partials/header', {isSearch: false}); %>
 
-  <div class="dream-trip-page">
-    <div class="text-center mb-4">
-      <h1 class="header-title">Let’s Make Your <span>Dream Trip</span></h1>
-      <p class="header-subtitle">
-        Send us your requirements and we’ll respond as soon as possible
-      </p>
-    </div>
+    <div class="dream-trip-page">
+      <!-- Toast Container -->
+      <div class="toast-container">
+        <div class="toast" id="formToast" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="toast-header">
+            <strong class="me-auto" id="toastTitle"></strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div class="toast-body" id="toastMessage"></div>
+        </div>
+      </div>
+
+      <div class="text-center mb-4">
+        <h1 class="header-title">Let’s Make Your <span>Dream Trip</span></h1>
+        <p class="header-subtitle">
+          Send us your requirements and we’ll respond as soon as possible
+        </p>
+      </div>
 
       <div class="container-xl">
         <div class="row g-3">
@@ -133,7 +197,7 @@
                 <!-- Name -->
                 <div class="col-12">
                   <label for="name" class="form-label">Name</label>
-                  <input type="text" class="form-control" id="name" placeholder="Type Your Name Here"/>
+                  <input type="text" class="form-control" id="name" placeholder="Type Your Name Here" />
                 </div>
 
                 <!-- Mobile + Place -->
@@ -141,12 +205,13 @@
                   <label for="mobile" class="form-label">Mobile</label>
                   <div class="input-group">
                     <span class="input-group-text">+91</span>
-                    <input type="tel" class="form-control" id="mobile" placeholder="00000 00000"/>
+                    <input type="tel" class="form-control" id="mobile" placeholder="00000 00000" />
                   </div>
                 </div>
                 <div class="col-12 col-sm-6">
                   <label for="place" class="form-label">Place of Resident</label>
-                  <input type="text" class="form-control" id="place" placeholder="Type city and state of your resident"/>
+                  <input type="text" class="form-control" id="place"
+                    placeholder="Type city and state of your resident" />
                 </div>
 
                 <!-- Email -->
@@ -154,51 +219,57 @@
                   <label for="email" class="form-label">Email ID</label>
                   <div class="input-group">
                     <span class="input-group-text">@</span>
-                    <input type="email" class="form-control" id="email" placeholder="mail"/>
+                    <input type="email" class="form-control" id="email" placeholder="mail" />
                   </div>
                 </div>
 
                 <!-- Destination -->
                 <div class="col-12">
                   <label for="destination" class="form-label">Travel Destination</label>
-                  <input type="text" class="form-control" id="destination" placeholder="Let Us Know Where Do You Want To Travel.."/>
+                  <input type="text" class="form-control" id="destination"
+                    placeholder="Let Us Know Where Do You Want To Travel.." />
                 </div>
 
                 <!-- Days + Persons -->
                 <div class="col-12 col-sm-6">
                   <label for="days" class="form-label">No. of Days</label>
-                  <input type="number" class="form-control" id="days" placeholder="00" min="0"/>
+                  <input type="number" class="form-control" id="days" placeholder="00" min="0" />
                 </div>
                 <div class="col-12 col-sm-6">
                   <label for="persons" class="form-label">No. of Person</label>
-                  <input type="number" class="form-control" id="persons" placeholder="00" min="0"/>
+                  <input type="number" class="form-control" id="persons" placeholder="00" min="0" />
                 </div>
 
                 <!-- More Details -->
                 <div class="col-12">
                   <label for="details" class="form-label">More Detail</label>
-                  <textarea class="form-control" id="details" rows="3" placeholder="Let Us know anything in your mind about your plan other than mentioned above.."></textarea>
+                  <textarea class="form-control" id="details" rows="3"
+                    placeholder="Let Us know anything in your mind about your plan other than mentioned above.."></textarea>
+                </div>
+                <div class="notes d-flex flex-column gap-2">
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-shield-lock-fill note-icon"></i>
+                    <span>We assure the privacy of your contact data.</span>
+                  </div>
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-telephone-x-fill note-icon"></i>
+                    <span>No annoying spam calls.</span>
+                  </div>
                 </div>
 
-              <!-- Submit -->
-              <div class="text-center">
-                <button type="submit" class="btn submit-btn">Submit</button>
-              </div>
-            </form>
+                <!-- Submit -->
+                <div class="text-center">
+                  <button type="submit" class="btn submit-btn">Submit</button>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
 
           <!-- Contact Info -->
           <div class="col-12 col-md-4 col-lg-3 d-none d-md-block contact-info">
             <a class="navbar-brand me-auto" href="/">
-              <img
-                src="/img/logo_2x.png"
-                alt="Deja Vu"
-                height="50"
-                class="d-inline-block align-text-top object-fit-contain"
-                fetchpriority="high"
-                loading="eager"
-              />
+              <img src="/img/logo_2x.png" alt="Deja Vu" height="50"
+                class="d-inline-block align-text-top object-fit-contain" fetchpriority="high" loading="eager" />
             </a>
             <p class="mt-2">+91 85111 77891</p>
             <p>Dejavuoutdoors@Gmail.Com</p>
@@ -209,44 +280,64 @@
     </div>
 
     <%- include('../partials/footer'); %>
-    <%- include('../partials/scripttag', {isNiceSelect: true}); %>
-    <script>
-      document
-        .querySelector("#customTripDetailForm")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const formData = {
-            name: document.getElementById("name").value,
-            mobile: document.getElementById("mobile").value,
-            email: document.getElementById("email").value,
-            place: document.getElementById("place").value,
-            destination: document.getElementById("destination").value,
-            days: document.getElementById("days").value,
-            persons: document.getElementById("persons").value,
-            details: document.getElementById("details").value,
-          };
-          const csrfToken = document.querySelector('input[name="_csrf"]').value;
-          try {
-            const response = await fetch("/customTrip", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-Token": csrfToken,
-              },
-              body: JSON.stringify(formData),
+      <%- include('../partials/scripttag', {isNiceSelect: true}); %>
+        <script>
+          document
+            .querySelector("#customTripDetailForm")
+            .addEventListener("submit", async (e) => {
+              e.preventDefault();
+              const formData = {
+                name: document.getElementById("name").value,
+                mobile: document.getElementById("mobile").value,
+                email: document.getElementById("email").value,
+                place: document.getElementById("place").value,
+                destination: document.getElementById("destination").value,
+                days: document.getElementById("days").value || 0,
+                persons: document.getElementById("persons").value || 0,
+                details: document.getElementById("details").value,
+              };
+              const csrfToken = document.querySelector('input[name="_csrf"]').value;
+              const toastEl = document.getElementById("formToast");
+              const toastTitle = document.getElementById("toastTitle");
+              const toastMessage = document.getElementById("toastMessage");
+              const toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+
+              try {
+                const response = await fetch("/customTrip", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken,
+                  },
+                  body: JSON.stringify(formData),
+                });
+                const result = await response.json();
+                if (result.success) {
+                  toastEl.classList.remove("toast-error");
+                  toastEl.classList.add("toast-success");
+                  toastTitle.textContent = "Success";
+                  toastMessage.textContent = "Trip details submitted successfully!";
+                  document.querySelector("form").reset();
+                  toast.show();
+                  setTimeout(() => {
+                    window.location.href = "/";
+                  }, 2000);
+                } else {
+                  toastEl.classList.remove("toast-success");
+                  toastEl.classList.add("toast-error");
+                  toastTitle.textContent = "Error";
+                  toastMessage.textContent = result.message;
+                  toast.show();
+                }
+              } catch (error) {
+                toastEl.classList.remove("toast-success");
+                toastEl.classList.add("toast-error");
+                toastTitle.textContent = "Error";
+                toastMessage.textContent = "Failed to submit form. Please try again.";
+                toast.show();
+              }
             });
-            const result = await response.json();
-            if (result.success) {
-              alert("Trip details submitted successfully!");
-              document.querySelector("form").reset();
-              window.location.href = "/";
-            } else {
-              alert("Error: " + result.message);
-            }
-          } catch (error) {
-            alert("Failed to submit form. Please try again.");
-          }
-        });
-    </script>
-  </body>
+        </script>
+</body>
+
 </html>
