@@ -1871,8 +1871,8 @@ a { text-decoration: none; }
     </section>
   </div>
   <!-- Mobile Floating Booking Section -->
+  <div class="tour-booking-floating-backdrop" id="mobileBookingBackdrop"></div>
   <div class="tour-booking-floating-sec d-lg-none" id="mobileBookingSection">
-    <div class="tour-booking-floating-backdrop" id="mobileBookingBackdrop"></div>
     <div class="tour-booking-floating-panel d-flex flex-column" id="mobileBookingPanel">
       <div class="mobile-booking-header d-flex align-items-center justify-content-between p-3 border-bottom">
         <h5 class="mb-0">Book Your Trip</h5>
@@ -3329,12 +3329,15 @@ a { text-decoration: none; }
   // Mobile Booking Functions
   function toggleMobileBooking() {
     const mobileSection = document.getElementById('mobileBookingSection');
+    const backdrop = document.getElementById('mobileBookingBackdrop');
     const fab = document.getElementById('mobileBookingFab');
     
     if (mobileSection.classList.contains('active')) {
       mobileSection.classList.remove('active');
+      backdrop.classList.remove('active');
       fab.style.display = 'flex';
     } else {
+      backdrop.classList.add('active');
       mobileSection.classList.add('active');
       fab.style.display = 'none';
       // Initialize mobile booking if not already done
