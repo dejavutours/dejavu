@@ -82,7 +82,22 @@ var router = express.Router();
  * Once Google has completed their interaction with the user, the user will be
  * redirected back to the app at `GET /oauth2/redirect/accounts.google.com`.
  */
-router.get('/login/federated/google', passport.authenticate('google'));
+router.get('/login/federated/google', (req, res, next) => {
+  // Store the original URL in session before redirecting to Google
+  const returnTo = req.query.returnTo || req.get('Referer') || '/';
+  req.session.returnTo = returnTo;
+  // console.log('Storing returnTo URL:', returnTo);
+  // console.log('Session before Google auth:', req.session);
+  
+  // Also store in a cookie as backup
+  res.cookie('returnTo', returnTo, { 
+    maxAge: 5 * 60 * 1000, // 5 minutes
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production'
+  });
+  
+  passport.authenticate('google')(req, res, next);
+});
 
 /*
     This route completes the authentication sequence when Google redirects the
@@ -90,10 +105,30 @@ router.get('/login/federated/google', passport.authenticate('google'));
     automatically created and their Google account is linked.  When an existing
     user returns, they are signed in to their linked account.
 */
-router.get('/oauth2/redirect/google', passport.authenticate('google', {
-  successReturnToOrRedirect: '/',
-  failureRedirect: '/'
-}));
+router.get('/oauth2/redirect/google', (req, res, next) => {
+  console.log('OAuth callback - Session:', req.session);
+  console.log('OAuth callback - returnTo from session:', req.session.returnTo);
+  console.log('OAuth callback - returnTo from cookie:', req.cookies.returnTo);
+  
+  passport.authenticate('google', {
+    failureRedirect: '/'
+  })(req, res, (err) => {
+    if (err) {
+      console.error('Google OAuth error:', err);
+      return res.redirect('/');
+    }
+    
+    // Get the stored returnTo URL from session or cookie
+    const returnTo = req.session.returnTo || req.cookies.returnTo || '/';
+    console.log('Redirecting to stored returnTo URL:', returnTo);
+    console.log('Full session after auth:', req.session);
+    
+    // Clear the stored URL and cookie
+    delete req.session.returnTo;
+    res.clearCookie('returnTo');
+    res.redirect(returnTo);
+  });
+});
 
 /* POST /logout
  *
@@ -140,35 +175,5 @@ router.post("/logout", (req, res) => {
   }
 })
 
-// router.get("/check-auth", (req, res) => {
-//   try {
-//     // Check JWT-based authentication (mobile login)
-//     const accessToken = req.cookies.accessToken;
-//     if (accessToken) {
-//       jwt.verify(accessToken, process.env.JWT_TOKEN, (err, verifiedPhoneNumber) => {
-//         if (!err) {
-//           return res.status(200).json({ authenticated: true, type: 'mobile' });
-//         }
-//         // If token is invalid, clear the cookie
-//         res.clearCookie("accessToken", {
-//           path: "/",
-//           sameSite: "lax",
-//           secure: process.env.NODE_ENV === "production"
-//         });
-//       });
-//     }
-
-//     // Check session-based authentication (Google login)
-//     if (req.user) {
-//       return res.status(200).json({ authenticated: true, type: 'google' });
-//     }
-
-//     // Not authenticated
-//     res.status(401).json({ authenticated: false });
-//   } catch (error) {
-//     console.error("Error in check-auth:", error);
-//     res.status(500).json({ authenticated: false, error: "Server error" });
-//   }
-// });
 
 module.exports = router;
