@@ -316,66 +316,6 @@ header .subtitle { color: #6c757d; font-size: 0.875rem; }
 .tour-booking-proceed-btn:hover { background: #143c73;  color: #fff;}
 .tour-booking-proceed-btn:disabled { background: #6c757d; cursor: not-allowed;  color: #fff;}
 
-/* Floating book now section for mobile */
-.tour-booking-floating-sec {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  transition: transform var(--transition);
-  transform: translateY(100%);
-}
-
-.tour-booking-floating-sec.active {
-  transform: translateY(0);
-}
-
-.tour-booking-floating-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 999;
-  display: none;
-}
-
-.tour-booking-floating-backdrop.active { display: block; }
-
-.tour-booking-floating-panel {
-  background: #fff;
-  border-radius: 16px 16px 0 0;
-  padding: 16px;
-  max-height: 60vh;
-  overflow-y: auto;
-  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.tour-booking-floating-btn {
-  position: fixed;
-  bottom: 1rem;
-  right: 1rem;
-  background: var(--primary-blue);
-  color: #fff;
-  border-radius: 50%;
-  width: 56px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow);
-  transition: background var(--transition), transform var(--transition);
-}
-
-.tour-booking-floating-btn:hover {
-  background: #143c73;
-  transform: scale(1.05);
-}
-
-.tour-booking-floating-btn i { font-size: 1.2rem; }
-
 /* Modal and form styling */
 .trip-details-form-select,
 .booking-modal-select {
@@ -701,87 +641,52 @@ a { text-decoration: none; }
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background: var(--primary-blue);
-  color: white;
-  border-radius: 50px;
-  padding: 12px 20px;
   box-shadow: 0 4px 12px rgba(26, 75, 142, 0.3);
-  cursor: pointer;
   z-index: 1000;
-  display: flex;
-  align-items: center;
-  gap: 8px;
   transition: all var(--transition);
-  font-weight: 500;
 }
 
 .mobile-booking-fab:hover {
-  background: #143c73;
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(26, 75, 142, 0.4);
 }
 
-.mobile-fab-text {
-  font-size: 0.9rem;
-  white-space: nowrap;
-}
+  /* Floating book now section for mobile */
+  .tour-booking-floating-sec {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: transform var(--transition),  all var(--transition);
+    transform: translateY(100%);
+  }
 
-.tour-booking-floating-sec {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1050;
-  display: flex;
-  align-items: flex-end;
-  opacity: 0;
-  visibility: hidden;
-  transition: all var(--transition);
-}
+  .tour-booking-floating-sec.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
 
-.tour-booking-floating-sec.active {
-  opacity: 1;
-  visibility: visible;
-}
+  .tour-booking-floating-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 999;
+  }
+  .tour-booking-floating-backdrop:not(.active) { display: none; }
 
-.tour-booking-floating-backdrop {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(2px);
-}
-
-.tour-booking-floating-panel {
-  background: white;
-  border-radius: 20px 20px 0 0;
-  max-height: 85vh;
-  overflow-y: auto;
-  width: 100%;
-  position: relative;
-  z-index: 1;
-  transform: translateY(100%);
-  transition: transform var(--transition);
-}
-
-.tour-booking-floating-sec.active .tour-booking-floating-panel {
-  transform: translateY(0);
-}
-
-.mobile-booking-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 20px 15px;
-  border-bottom: 1px solid #e9ecef;
-  position: sticky;
-  top: 0;
-  background: white;
-  z-index: 10;
-}
+  .tour-booking-floating-panel {
+    background: #fff;
+    border-radius: 16px 16px 0 0;
+    max-height: 60vh;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+  }
 
 .mobile-booking-summary {
   padding: 15px 20px;
@@ -1043,39 +948,17 @@ a { text-decoration: none; }
 }
 
 .mobile-booking-actions {
-  padding: 20px;
-  display: flex;
-  gap: 8px;
   background: #f8f9fa;
-  position: sticky;
-  bottom: 0;
   border-top: 1px solid #e9ecef;
 }
 
-.mobile-booking-btn {
-  flex: 1;
-  padding: 10px 8px;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.8rem;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
+.mobile-booking-actions .btn {
+  --bs-btn-border-radius: 0.5rem;
 }
 
 .mobile-booking-proceed {
-  flex: 2;
-  padding: 12px;
-  border-radius: 8px;
+  flex: 1;
   font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.mobile-booking-proceed:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 /* Hide desktop booking section on mobile */
@@ -1083,20 +966,12 @@ a { text-decoration: none; }
   .stickySec {
     display: none !important;
   }
-  
-  .mobile-booking-fab {
-    display: flex !important;
-  }
 }
 
 /* Show desktop booking section on large screens */
-@media (min-width: 992px) {
-  .mobile-booking-fab {
-    display: none !important;
-  }
-  
+@media (min-width: 992px) {  
   .tour-booking-floating-sec {
-    display: none !important;
+    display: none;
   }
 }
 
@@ -1121,9 +996,6 @@ a { text-decoration: none; }
   .tour-booking-summary-card { max-height: 300px; padding: 10px; }
   .tour-booking-payment-options { padding: 10px; }
   .tour-booking-payment-option { font-size: 0.85rem; }
-  .tour-booking-floating-panel { max-height: 50vh; }
-  .tour-booking-floating-btn { width: 48px; height: 48px; }
-  .tour-booking-floating-btn i { font-size: 1rem; }
 }
 
 @media (max-width: 576px) {
@@ -1165,23 +1037,7 @@ a { text-decoration: none; }
   .quick-call-modal-body .notes .note-icon { font-size: 0.85rem; margin-right: 5px; }
   .quick-call-modal-body .notes span { font-size: 0.7rem; }
   .quick-call-modal-footer { padding: 10px 16px; }
-  .quick-call-modal-btn { font-size: 0.8rem; padding: 8px 16px; }
-  
-  /* Mobile booking actions on very small screens */
-  .mobile-booking-actions {
-    padding: 15px;
-    gap: 6px;
-  }
-  
-  .mobile-booking-btn {
-    font-size: 0.75rem;
-    padding: 8px 6px;
-  }
-  
-  .mobile-booking-proceed {
-    font-size: 0.8rem;
-    padding: 10px;
-  }
+  .quick-call-modal-btn { font-size: 0.8rem; padding: 8px 16px; } 
 }
 
 /* Recommended Trips Section Styles */
@@ -1403,36 +1259,18 @@ a { text-decoration: none; }
 }
 
 .recommended-trips-prev {
-  left: -25px;
+  left: -10px;
 }
 
 .recommended-trips-next {
-  right: -25px;
+  right: -10px;
 }
 
 .recommended-view-more {
-  padding: 1rem 2rem;
-  border-radius: 50px;
+  --bs-btn-padding-y: 1rem;
+  --bs-btn-padding-x: 2rem;
   font-weight: 600;
-  text-decoration: none;
   transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.recommended-view-more::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.recommended-view-more:hover::before {
-  left: 100%;
 }
 
 .recommended-view-more:hover {
@@ -1623,14 +1461,6 @@ a { text-decoration: none; }
     width: 40px;
     height: 40px;
     font-size: 1rem;
-  }
-  
-  .recommended-trips-prev {
-    left: -20px;
-  }
-  
-  .recommended-trips-next {
-    right: -20px;
   }
   
   /* Plan Next Trip Mobile */
@@ -2043,145 +1873,146 @@ a { text-decoration: none; }
   <!-- Mobile Floating Booking Section -->
   <div class="tour-booking-floating-sec d-lg-none" id="mobileBookingSection">
     <div class="tour-booking-floating-backdrop" id="mobileBookingBackdrop"></div>
-    <div class="tour-booking-floating-panel" id="mobileBookingPanel">
-      <div class="mobile-booking-header">
+    <div class="tour-booking-floating-panel d-flex flex-column" id="mobileBookingPanel">
+      <div class="mobile-booking-header d-flex align-items-center justify-content-between p-3 border-bottom">
         <h5 class="mb-0">Book Your Trip</h5>
         <button type="button" class="btn-close" onclick="toggleMobileBooking()"></button>
       </div>
-      
-      <!-- Mobile Booking Summary -->
-      <div class="mobile-booking-summary">
-        <div class="booking-summary-item">
-          <span class="text-muted">Departure City:</span>
-          <span class="booking-summary-city fw-semibold">Not selected</span>
-        </div>
-        <div class="booking-summary-item">
-          <span class="text-muted">Tour Date:</span>
-          <span class="booking-summary-date fw-semibold">Not selected</span>
-        </div>
-        <div class="booking-summary-item">
-          <span class="text-muted">Duration:</span>
-          <span class="booking-summary-duration fw-semibold">Not selected</span>
-        </div>
-        <div class="booking-summary-item">
-          <span class="text-muted">Price:</span>
-          <span class="booking-summary-price fw-semibold text-primary">Not selected</span>
-        </div>
-        <div class="booking-summary-item">
-          <span class="text-muted">Transport:</span>
-          <span class="booking-summary-transport fw-semibold">Not selected</span>
-        </div>
-        <% if(trips.seats){ %>
-        <div class="booking-summary-item">
-          <span class="text-muted">Seats Available:</span>
-          <span class="booking-summary-seats text-success fw-semibold"><%= trips.seats %> left!</span>
-        </div>
-        <% } %>
-      </div>
-
-      <!-- Mobile City Selection -->
-      <div class="mobile-booking-section">
-        <h6 class="fw-bold mb-2">Select Departure City</h6>
-        <div class="mobile-city-carousel">
-          <div class="mobile-city-track" id="mobileCityTrack">
-            <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].City !== 'Unknown') { %>
-              <% trips.deptcities.forEach((city, index) => { %>
-              <div class="mobile-city-card <%= index === 0 ? 'active' : '' %>" 
-                   data-city="<%= city.City %>" 
-                   data-state="<%= city.State %>" 
-                   data-price="<%= city.price && city.price[0] ? city.price[0].adultPrice : 0 %>" 
-                   data-duration="<%= city.tripDuration %>" 
-                   data-cutoff="<%= city.bookingCutoffDays || '0' %>"
-                   data-partial="<%= city.partialPayment || '0' %>"
-                   onclick="selectMobileCity(this)">
-                <img src="<%= city.image %>" alt="<%= city.City %>" loading="lazy" onerror="this.onerror=null; this.src='/images/placeholder.jpg';" />
-                <div class="mobile-city-info">
-                  <h6><%= city.City %></h6>
-                  <small><%= city.tripDuration %></small>
-                  <div class="mobile-city-price">₹<%= city.price && city.price[0] ? city.price[0].adultPrice : 'N/A' %></div>
-                </div>
-              </div>
-              <% }); %>
-            <% } else { %>
-              <div class="text-center text-muted p-3">No departure cities available</div>
-            <% } %>
+      <div class="flex-grow-1 overflow-auto">
+        <!-- Mobile Booking Summary -->
+        <div class="mobile-booking-summary">
+          <div class="booking-summary-item">
+            <span class="text-muted">Departure City:</span>
+            <span class="booking-summary-city fw-semibold">Not selected</span>
           </div>
-          <button class="mobile-carousel-btn mobile-carousel-prev" onclick="slideMobileLeft()">
-            <i class="bi bi-chevron-left"></i>
-          </button>
-          <button class="mobile-carousel-btn mobile-carousel-next" onclick="slideMobileRight()">
-            <i class="bi bi-chevron-right"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Mobile Transport Selection -->
-      <div class="mobile-booking-section" id="mobileTransportSection" style="display: none;">
-        <h6 class="fw-bold mb-2">Transport Type</h6>
-        <div class="mobile-transport-options" id="mobileTransportOptions"></div>
-      </div>
-
-      <!-- Mobile Date Selection -->
-      <div class="mobile-booking-section" id="mobileDateSection" style="display: none;">
-        <h6 class="fw-bold mb-2">Select Date</h6>
-        <div class="mobile-date-tabs" id="mobileYearTabs"></div>
-        <div class="mobile-date-tabs" id="mobileMonthTabs"></div>
-        <div class="mobile-date-grid" id="mobileDateGrid"></div>
-      </div>
-
-      <!-- Mobile Payment Options -->
-      <div class="mobile-booking-section" id="mobilePaymentSection" style="display: none;">
-        <h6 class="fw-bold mb-2">Payment Options</h6>
-        <div class="mobile-payment-options">
-          <div class="mobile-payment-option">
-            <input type="radio" id="mobilePayFull" name="mobilePaymentOption" value="full" checked>
-            <label for="mobilePayFull">
-              <span class="payment-label">Pay Full Amount</span>
-              <span class="payment-price booking-summary-price-full">Not selected</span>
-            </label>
+          <div class="booking-summary-item">
+            <span class="text-muted">Tour Date:</span>
+            <span class="booking-summary-date fw-semibold">Not selected</span>
           </div>
-          <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].partialPayment && parseFloat(trips.deptcities[0].partialPayment) > 0) { %>
-          <div class="mobile-payment-option">
-            <input type="radio" id="mobilePayPartial" name="mobilePaymentOption" value="partial">
-            <label for="mobilePayPartial">
-              <span class="payment-label">Pay Partial</span>
-              <span class="payment-price booking-summary-price-partial">₹<%= trips.deptcities[0].partialPayment %></span>
-            </label>
+          <div class="booking-summary-item">
+            <span class="text-muted">Duration:</span>
+            <span class="booking-summary-duration fw-semibold">Not selected</span>
+          </div>
+          <div class="booking-summary-item">
+            <span class="text-muted">Price:</span>
+            <span class="booking-summary-price fw-semibold text-primary">Not selected</span>
+          </div>
+          <div class="booking-summary-item">
+            <span class="text-muted">Transport:</span>
+            <span class="booking-summary-transport fw-semibold">Not selected</span>
+          </div>
+          <% if(trips.seats){ %>
+          <div class="booking-summary-item">
+            <span class="text-muted">Seats Available:</span>
+            <span class="booking-summary-seats text-success fw-semibold"><%= trips.seats %> left!</span>
           </div>
           <% } %>
-          <div class="mobile-payment-option">
-            <input type="radio" id="mobilePayLater" name="mobilePaymentOption" value="bnpl">
-            <label for="mobilePayLater">
-              <span class="payment-label">Book Now, Pay Later</span>
-              <span class="payment-price text-success">(No payment now)</span>
-            </label>
+        </div>
+  
+        <!-- Mobile City Selection -->
+        <div class="mobile-booking-section">
+          <h6 class="fw-bold mb-2">Select Departure City</h6>
+          <div class="mobile-city-carousel">
+            <div class="mobile-city-track" id="mobileCityTrack">
+              <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].City !== 'Unknown') { %>
+                <% trips.deptcities.forEach((city, index) => { %>
+                <div class="mobile-city-card <%= index === 0 ? 'active' : '' %>" 
+                     data-city="<%= city.City %>" 
+                     data-state="<%= city.State %>" 
+                     data-price="<%= city.price && city.price[0] ? city.price[0].adultPrice : 0 %>" 
+                     data-duration="<%= city.tripDuration %>" 
+                     data-cutoff="<%= city.bookingCutoffDays || '0' %>"
+                     data-partial="<%= city.partialPayment || '0' %>"
+                     onclick="selectMobileCity(this)">
+                  <img src="<%= city.image %>" alt="<%= city.City %>" loading="lazy" onerror="this.onerror=null; this.src='/images/placeholder.jpg';" />
+                  <div class="mobile-city-info">
+                    <h6><%= city.City %></h6>
+                    <small><%= city.tripDuration %></small>
+                    <div class="mobile-city-price">₹<%= city.price && city.price[0] ? city.price[0].adultPrice : 'N/A' %></div>
+                  </div>
+                </div>
+                <% }); %>
+              <% } else { %>
+                <div class="text-center text-muted p-3">No departure cities available</div>
+              <% } %>
+            </div>
+            <button class="mobile-carousel-btn mobile-carousel-prev" onclick="slideMobileLeft()">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+            <button class="mobile-carousel-btn mobile-carousel-next" onclick="slideMobileRight()">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+  
+        <!-- Mobile Transport Selection -->
+        <div class="mobile-booking-section" id="mobileTransportSection" style="display: none;">
+          <h6 class="fw-bold mb-2">Transport Type</h6>
+          <div class="mobile-transport-options" id="mobileTransportOptions"></div>
+        </div>
+  
+        <!-- Mobile Date Selection -->
+        <div class="mobile-booking-section" id="mobileDateSection" style="display: none;">
+          <h6 class="fw-bold mb-2">Select Date</h6>
+          <div class="mobile-date-tabs" id="mobileYearTabs"></div>
+          <div class="mobile-date-tabs" id="mobileMonthTabs"></div>
+          <div class="mobile-date-grid" id="mobileDateGrid"></div>
+        </div>
+  
+        <!-- Mobile Payment Options -->
+        <div class="mobile-booking-section" id="mobilePaymentSection" style="display: none;">
+          <h6 class="fw-bold mb-2">Payment Options</h6>
+          <div class="mobile-payment-options">
+            <div class="mobile-payment-option">
+              <input type="radio" id="mobilePayFull" name="mobilePaymentOption" value="full" checked>
+              <label for="mobilePayFull">
+                <span class="payment-label">Pay Full Amount</span>
+                <span class="payment-price booking-summary-price-full">Not selected</span>
+              </label>
+            </div>
+            <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].partialPayment && parseFloat(trips.deptcities[0].partialPayment) > 0) { %>
+            <div class="mobile-payment-option">
+              <input type="radio" id="mobilePayPartial" name="mobilePaymentOption" value="partial">
+              <label for="mobilePayPartial">
+                <span class="payment-label">Pay Partial</span>
+                <span class="payment-price booking-summary-price-partial">₹<%= trips.deptcities[0].partialPayment %></span>
+              </label>
+            </div>
+            <% } %>
+            <div class="mobile-payment-option">
+              <input type="radio" id="mobilePayLater" name="mobilePaymentOption" value="bnpl">
+              <label for="mobilePayLater">
+                <span class="payment-label">Book Now, Pay Later</span>
+                <span class="payment-price text-success">(No payment now)</span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Mobile Action Buttons -->
-      <div class="mobile-booking-actions">
-        <button class="btn btn-outline-secondary mobile-booking-btn" data-bs-toggle="modal" data-bs-target="#quickCallModal">
-          <i class="bi bi-telephone-fill"></i> Call Back
+      <div class="mobile-booking-actions d-flex align-items-center gap-2 p-3">
+        <button class="btn btn-app-stroked-primary" aria-label="Call Back" data-bs-toggle="modal" data-bs-target="#quickCallModal">
+          <i class="bi bi-telephone-fill"></i>
         </button>
-        <a class="btn btn-outline-success mobile-booking-btn" 
+        <a class="btn btn-outline-success" aria-label="WhatsApp" 
            href="https://wa.me/+918511117891?text=Hello%20I%20am%20interested%20in%20the%20following%20trip%20<%= encodeURIComponent(trips.name) %>%20tour.%20could%20you%20please%20share%20more%20details." 
            target="_blank" 
            aria-label="Contact via WhatsApp for <%= trips.name %>">
-          <i class="bi bi-whatsapp"></i> WhatsApp
+          <i class="bi bi-whatsapp"></i>
         </a>
-        <button class="btn btn-primary mobile-booking-proceed" onclick="proceedMobileBooking()" disabled>
-          <i class="bi bi-arrow-right"></i> Book Now
+        <button class="btn btn-app-primary mobile-booking-proceed" onclick="proceedMobileBooking()" disabled>
+          <i class="bi bi-arrow-right me-1"></i> Book Now
         </button>
       </div>
     </div>
   </div>
 
   <!-- Mobile Floating Button -->
-  <div class="mobile-booking-fab d-lg-none" id="mobileBookingFab" onclick="toggleMobileBooking()">
-    <i class="bi bi-bookmark-check-fill"></i>
-    <span class="mobile-fab-text">Book Now</span>
-  </div>
+  <button class="btn btn-lg btn-app-primary rounded-pill mobile-booking-fab d-lg-none" id="mobileBookingFab" onclick="toggleMobileBooking()">
+    <i class="bi bi-bookmark-check-fill me-2"></i>
+    Book Now
+  </button>
   <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content cutoff-modal-content">
@@ -2408,90 +2239,86 @@ a { text-decoration: none; }
   <% if (recommendedTrips && recommendedTrips.length > 0) { %>
   <section class="recommended-trips-section py-5 bg-light">
     <div class="container-xl">
-      <div class="row">
-        <div class="col-12">
-          <div class="recommended-trips-header text-center mb-4">
-            <h2 class="recommended-trips-title">Recommended Trips</h2>
-            <p class="recommended-trips-subtitle text-muted">Discover more amazing adventures</p>
-          </div>
-          
-          <div class="recommended-trips-slider">
-            <div class="recommended-trips-track" id="recommendedTripsTrack">
-              <% recommendedTrips.forEach((trip, index) => { %>
-              <div class="recommended-trip-card" onclick="window.location.href='/tripdetail/<%= encodeURIComponent(trip.name) %>'">
-                <div class="trip-card-image">
-                  <img src="<%= trip.imageurl || '/images/placholderbanner.jpg' %>" 
-                       alt="<%= trip.name %>" 
-                       loading="lazy"
-                       onerror="this.onerror=null; this.src='/images/placholderbanner.jpg';" />
-                  <div class="trip-card-group-label">
-                    <i class="bi bi-people-fill"></i>
-                    Group Trip
-                  </div>
-                  <div class="trip-card-price-badge">
-                    <span class="price-currency">₹</span>
-                    <span class="price-amount"><%= trip.price || 'Contact' %></span>
-                  </div>
-                </div>
-                <div class="trip-card-content">
-                  <h3 class="trip-card-title" title="<%= trip.name %>">
-                    <%= trip.name %>
-                  </h3>
-                  <div class="trip-card-meta">
-                    <span class="trip-card-duration">
-                      <i class="bi bi-calendar-event"></i>
-                      <%= trip.days || 'Multi-day' %>
-                    </span>
-                    <span class="trip-card-state">
-                      <i class="bi bi-geo-alt"></i>
-                      <%= trip.state || 'India' %>
-                    </span>
-                  </div>
-                </div>
+      <div class="recommended-trips-header text-center mb-4">
+        <h2 class="recommended-trips-title">Recommended Trips</h2>
+        <p class="recommended-trips-subtitle text-muted">Discover more amazing adventures</p>
+      </div>
+      
+      <div class="recommended-trips-slider">
+        <div class="recommended-trips-track" id="recommendedTripsTrack">
+          <% recommendedTrips.forEach((trip, index) => { %>
+          <div class="recommended-trip-card" onclick="window.location.href='/tripdetail/<%= encodeURIComponent(trip.name) %>'">
+            <div class="trip-card-image">
+              <img src="<%= trip.imageurl || '/images/placholderbanner.jpg' %>" 
+                   alt="<%= trip.name %>" 
+                   loading="lazy"
+                   onerror="this.onerror=null; this.src='/images/placholderbanner.jpg';" />
+              <div class="trip-card-group-label">
+                <i class="bi bi-people-fill"></i>
+                Group Trip
               </div>
-              <% }); %>
+              <div class="trip-card-price-badge">
+                <span class="price-currency">₹</span>
+                <span class="price-amount"><%= trip.price || 'Contact' %></span>
+              </div>
             </div>
-            
-            <!-- Navigation Buttons -->
-            <button class="recommended-trips-nav recommended-trips-prev" onclick="slideRecommendedLeft()">
-              <i class="bi bi-chevron-left"></i>
-            </button>
-            <button class="recommended-trips-nav recommended-trips-next" onclick="slideRecommendedRight()">
-              <i class="bi bi-chevron-right"></i>
-            </button>
-          </div>
-          
-          <!-- View More Button -->
-          <div class="text-center mt-4">
-            <a href="/triplist" class="btn btn-outline-primary btn-lg recommended-view-more">
-              <i class="bi bi-grid-3x3-gap-fill me-2"></i>
-              View All Trips
-            </a>
-          </div>
-          
-          <!-- Let's Plan Your Next Trip Section -->
-          <div class="plan-next-trip-section mt-5">
-            <div class="plan-next-trip-card">
-              <div class="plan-next-trip-content">
-                <div class="plan-next-trip-icon">
-                  <i class="bi bi-compass"></i>
-                </div>
-                <div class="plan-next-trip-text">
-                  <h3 class="plan-next-trip-title">Let's Plan Your Next Adventure</h3>
-                  <p class="plan-next-trip-subtitle">Ready to explore more? Our travel experts are here to help you discover your perfect getaway.</p>
-                </div>
-                <div class="plan-next-trip-actions">
-                  <a href="/dreamtrip" class="btn btn-primary plan-next-trip-btn" target="_blank">
-                    <i class="bi bi-magic me-2"></i>
-                    Plan Custom Trip
-                  </a>
-                  <a href="https://wa.me/+918511117891?text=Hello%20I%20want%20to%20plan%20my%20next%20trip.%20Can%20you%20help%20me%20with%20recommendations?" 
-                     class="btn btn-outline-success plan-next-trip-btn" target="_blank">
-                    <i class="bi bi-whatsapp me-2"></i>
-                    Chat with Expert
-                  </a>
-                </div>
+            <div class="trip-card-content">
+              <h3 class="trip-card-title" title="<%= trip.name %>">
+                <%= trip.name %>
+              </h3>
+              <div class="trip-card-meta">
+                <span class="trip-card-duration">
+                  <i class="bi bi-calendar-event"></i>
+                  <%= trip.days || 'Multi-day' %>
+                </span>
+                <span class="trip-card-state">
+                  <i class="bi bi-geo-alt"></i>
+                  <%= trip.state || 'India' %>
+                </span>
               </div>
+            </div>
+          </div>
+          <% }); %>
+        </div>
+        
+        <!-- Navigation Buttons -->
+        <button class="recommended-trips-nav recommended-trips-prev" onclick="slideRecommendedLeft()">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        <button class="recommended-trips-nav recommended-trips-next" onclick="slideRecommendedRight()">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+      
+      <!-- View More Button -->
+      <div class="text-center mt-4">
+        <a href="/triplist" class="btn btn-app-stroked-primary btn-lg rounded-pill recommended-view-more">
+          <i class="bi bi-grid-3x3-gap-fill me-2"></i>
+          View All Trips
+        </a>
+      </div>
+      
+      <!-- Let's Plan Your Next Trip Section -->
+      <div class="plan-next-trip-section mt-5">
+        <div class="plan-next-trip-card">
+          <div class="plan-next-trip-content">
+            <div class="plan-next-trip-icon">
+              <i class="bi bi-compass"></i>
+            </div>
+            <div class="plan-next-trip-text">
+              <h3 class="plan-next-trip-title text-light">Let's Plan Your Next Adventure</h3>
+              <p class="plan-next-trip-subtitle">Ready to explore more? Our travel experts are here to help you discover your perfect getaway.</p>
+            </div>
+            <div class="plan-next-trip-actions">
+              <a href="/dreamtrip" class="btn btn-primary plan-next-trip-btn" target="_blank">
+                <i class="bi bi-magic me-2"></i>
+                Plan Custom Trip
+              </a>
+              <a href="https://wa.me/+918511117891?text=Hello%20I%20want%20to%20plan%20my%20next%20trip.%20Can%20you%20help%20me%20with%20recommendations?" 
+                 class="btn btn-outline-success plan-next-trip-btn" target="_blank">
+                <i class="bi bi-whatsapp me-2"></i>
+                Chat with Expert
+              </a>
             </div>
           </div>
         </div>
