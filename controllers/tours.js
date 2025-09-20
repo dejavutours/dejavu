@@ -2149,6 +2149,44 @@ exports.getTripDetialbyName = async (req, res, next) => {
     if (req.user) {
       loggedGmailUser = req.user;
     }
+
+    // Fetch recommended trips based on categories
+    let recommendedTrips = [];
+    try {
+      // Get current trip's categories
+      const currentTripCategories = tripdetails.tripCategories || [];
+      
+      if (currentTripCategories.length > 0) {
+        // Find trips with matching categories, excluding current trip
+        recommendedTrips = await NewTours.find({
+          _id: { $ne: tripdetails._id }, // Exclude current trip
+          isActive: true,
+          isDeleted: false,
+          tripCategories: { $in: currentTripCategories }
+        })
+        .select('name state imageurl destinations days price tripCategories')
+        .sort({ displayOrder: 1, createdAt: -1 })
+        .limit(6); // Limit to 6 recommended trips
+      }
+      
+      // If no category-based recommendations or not enough trips, get general recommendations
+      if (recommendedTrips.length < 3) {
+        const additionalTrips = await NewTours.find({
+          _id: { $nin: [tripdetails._id, ...recommendedTrips.map(t => t._id)] },
+          isActive: true,
+          isDeleted: false
+        })
+        .select('name state imageurl destinations days price tripCategories')
+        .sort({ displayOrder: 1, createdAt: -1 })
+        .limit(6 - recommendedTrips.length);
+        
+        recommendedTrips = [...recommendedTrips, ...additionalTrips];
+      }
+    } catch (error) {
+      console.error("Error fetching recommended trips:", error);
+      // Continue without recommended trips if there's an error
+    }
+
     res.render("pages/TripDetail", {
       trips: {
         ...tripdetails._doc,
@@ -2157,6 +2195,7 @@ exports.getTripDetialbyName = async (req, res, next) => {
         loggedGmailUser,
         csrfToken: req.csrfToken() // Pass the CSRF token to the EJS template
       },
+      recommendedTrips: recommendedTrips || []
     });
   } catch (error) {
     console.error("Error fetching trip details:", error);

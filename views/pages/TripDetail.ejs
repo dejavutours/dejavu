@@ -1182,6 +1182,542 @@ a { text-decoration: none; }
     padding: 10px;
   }
 }
+
+/* Recommended Trips Section Styles */
+.recommended-trips-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.recommended-trips-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="%23ffffff" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="%23ffffff" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  pointer-events: none;
+}
+
+.recommended-trips-header {
+  position: relative;
+  z-index: 2;
+}
+
+.recommended-trips-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.recommended-trips-subtitle {
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: #6c757d;
+}
+
+.recommended-trips-slider {
+  position: relative;
+  margin: 2rem 0;
+}
+
+.recommended-trips-track {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 1rem 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.recommended-trips-track::-webkit-scrollbar {
+  display: none;
+}
+
+.recommended-trip-card {
+  min-width: 280px;
+  max-width: 280px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  position: relative;
+  border: 1px solid #e9ecef;
+  cursor: pointer;
+}
+
+.recommended-trip-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  border-color: var(--primary-blue);
+}
+
+.trip-card-image {
+  position: relative;
+  height: 160px;
+  overflow: hidden;
+}
+
+.trip-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.recommended-trip-card:hover .trip-card-image img {
+  transform: scale(1.03);
+}
+
+.trip-card-group-label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(26, 75, 142, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.trip-card-group-label i {
+  font-size: 0.7rem;
+}
+
+.trip-card-price-badge {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  color: var(--primary-blue);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.price-currency {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.price-amount {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.trip-card-content {
+  padding: 1rem;
+}
+
+.trip-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+  height: 2.8rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+.trip-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #6c757d;
+  gap: 0.5rem;
+}
+
+.trip-card-duration,
+.trip-card-state {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.trip-card-duration i,
+.trip-card-state i {
+  color: var(--primary-blue);
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.trip-card-duration span,
+.trip-card-state span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recommended-trips-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  border: 2px solid var(--primary-blue);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  color: var(--primary-blue);
+  font-size: 1.2rem;
+}
+
+.recommended-trips-nav:hover {
+  background: var(--primary-blue);
+  color: white;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.recommended-trips-prev {
+  left: -25px;
+}
+
+.recommended-trips-next {
+  right: -25px;
+}
+
+.recommended-view-more {
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.recommended-view-more::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.recommended-view-more:hover::before {
+  left: 100%;
+}
+
+.recommended-view-more:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(26, 75, 142, 0.3);
+}
+
+/* Let's Plan Your Next Trip Section */
+.plan-next-trip-section {
+  margin-top: 3rem;
+}
+
+.plan-next-trip-card {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, #143c73 100%);
+  border-radius: 20px;
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(26, 75, 142, 0.3);
+}
+
+.plan-next-trip-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 200px;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.plan-next-trip-card::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -10%;
+  width: 150px;
+  height: 150px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  animation: float 8s ease-in-out infinite reverse;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+.plan-next-trip-content {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.plan-next-trip-icon {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.plan-next-trip-icon i {
+  font-size: 2rem;
+  color: white;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.plan-next-trip-text {
+  flex: 1;
+  color: white;
+}
+
+.plan-next-trip-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.plan-next-trip-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+.plan-next-trip-actions {
+  display: flex;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.plan-next-trip-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid transparent;
+}
+
+.plan-next-trip-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.plan-next-trip-btn:hover::before {
+  left: 100%;
+}
+
+.plan-next-trip-btn.btn-primary {
+  background: white;
+  color: var(--primary-blue);
+  border-color: white;
+}
+
+.plan-next-trip-btn.btn-primary:hover {
+  background: #f8f9fa;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+}
+
+.plan-next-trip-btn.btn-outline-success {
+  background: transparent;
+  color: white;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.plan-next-trip-btn.btn-outline-success:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive Design for Recommended Trips */
+@media (max-width: 768px) {
+  .recommended-trips-title {
+    font-size: 2rem;
+  }
+  
+  .recommended-trip-card {
+    min-width: 260px;
+    max-width: 260px;
+  }
+  
+  .trip-card-image {
+    height: 140px;
+  }
+  
+  .trip-card-content {
+    padding: 0.875rem;
+  }
+  
+  .trip-card-title {
+    font-size: 0.95rem;
+    height: 2.6rem;
+  }
+  
+  .trip-card-meta {
+    font-size: 0.75rem;
+  }
+  
+  .recommended-trips-nav {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .recommended-trips-prev {
+    left: -20px;
+  }
+  
+  .recommended-trips-next {
+    right: -20px;
+  }
+  
+  /* Plan Next Trip Mobile */
+  .plan-next-trip-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  
+  .plan-next-trip-title {
+    font-size: 1.5rem;
+  }
+  
+  .plan-next-trip-subtitle {
+    font-size: 1rem;
+  }
+  
+  .plan-next-trip-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .plan-next-trip-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .recommended-trips-title {
+    font-size: 1.75rem;
+  }
+  
+  .recommended-trip-card {
+    min-width: 240px;
+    max-width: 240px;
+  }
+  
+  .trip-card-image {
+    height: 120px;
+  }
+  
+  .trip-card-content {
+    padding: 0.75rem;
+  }
+  
+  .trip-card-title {
+    font-size: 0.9rem;
+    height: 2.4rem;
+  }
+  
+  .trip-card-meta {
+    font-size: 0.7rem;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-start;
+  }
+  
+  .recommended-trips-nav {
+    display: none;
+  }
+  
+  .recommended-trips-track {
+    padding: 0.5rem 0;
+  }
+  
+  /* Plan Next Trip Small Mobile */
+  .plan-next-trip-card {
+    padding: 1.5rem;
+  }
+  
+  .plan-next-trip-icon {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .plan-next-trip-icon i {
+    font-size: 1.5rem;
+  }
+  
+  .plan-next-trip-title {
+    font-size: 1.25rem;
+  }
+  
+  .plan-next-trip-subtitle {
+    font-size: 0.9rem;
+  }
+}
   </style>
 </head>
 <body>
@@ -1868,6 +2404,123 @@ a { text-decoration: none; }
       </div>
     </div>
   </div>
+  <!-- Recommended Trips Section -->
+  <% if (recommendedTrips && recommendedTrips.length > 0) { %>
+  <section class="recommended-trips-section py-5 bg-light">
+    <div class="container-xl">
+      <div class="row">
+        <div class="col-12">
+          <div class="recommended-trips-header text-center mb-4">
+            <h2 class="recommended-trips-title">Recommended Trips</h2>
+            <p class="recommended-trips-subtitle text-muted">Discover more amazing adventures</p>
+          </div>
+          
+          <div class="recommended-trips-slider">
+            <div class="recommended-trips-track" id="recommendedTripsTrack">
+              <% recommendedTrips.forEach((trip, index) => { %>
+              <div class="recommended-trip-card" onclick="window.location.href='/tripdetail/<%= encodeURIComponent(trip.name) %>'">
+                <div class="trip-card-image">
+                  <img src="<%= trip.imageurl || '/images/placholderbanner.jpg' %>" 
+                       alt="<%= trip.name %>" 
+                       loading="lazy"
+                       onerror="this.onerror=null; this.src='/images/placholderbanner.jpg';" />
+                  <div class="trip-card-group-label">
+                    <i class="bi bi-people-fill"></i>
+                    Group Trip
+                  </div>
+                  <div class="trip-card-price-badge">
+                    <span class="price-currency">₹</span>
+                    <span class="price-amount"><%= trip.price || 'Contact' %></span>
+                  </div>
+                </div>
+                <div class="trip-card-content">
+                  <h3 class="trip-card-title" title="<%= trip.name %>">
+                    <%= trip.name %>
+                  </h3>
+                  <div class="trip-card-meta">
+                    <span class="trip-card-duration">
+                      <i class="bi bi-calendar-event"></i>
+                      <%= trip.days || 'Multi-day' %>
+                    </span>
+                    <span class="trip-card-state">
+                      <i class="bi bi-geo-alt"></i>
+                      <%= trip.state || 'India' %>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <% }); %>
+            </div>
+            
+            <!-- Navigation Buttons -->
+            <button class="recommended-trips-nav recommended-trips-prev" onclick="slideRecommendedLeft()">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+            <button class="recommended-trips-nav recommended-trips-next" onclick="slideRecommendedRight()">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </div>
+          
+          <!-- View More Button -->
+          <div class="text-center mt-4">
+            <a href="/triplist" class="btn btn-outline-primary btn-lg recommended-view-more">
+              <i class="bi bi-grid-3x3-gap-fill me-2"></i>
+              View All Trips
+            </a>
+          </div>
+          
+          <!-- Let's Plan Your Next Trip Section -->
+          <div class="plan-next-trip-section mt-5">
+            <div class="plan-next-trip-card">
+              <div class="plan-next-trip-content">
+                <div class="plan-next-trip-icon">
+                  <i class="bi bi-compass"></i>
+                </div>
+                <div class="plan-next-trip-text">
+                  <h3 class="plan-next-trip-title">Let's Plan Your Next Adventure</h3>
+                  <p class="plan-next-trip-subtitle">Ready to explore more? Our travel experts are here to help you discover your perfect getaway.</p>
+                </div>
+                <div class="plan-next-trip-actions">
+                  <a href="/dreamtrip" class="btn btn-primary plan-next-trip-btn" target="_blank">
+                    <i class="bi bi-magic me-2"></i>
+                    Plan Custom Trip
+                  </a>
+                  <a href="https://wa.me/+918511117891?text=Hello%20I%20want%20to%20plan%20my%20next%20trip.%20Can%20you%20help%20me%20with%20recommendations?" 
+                     class="btn btn-outline-success plan-next-trip-btn" target="_blank">
+                    <i class="bi bi-whatsapp me-2"></i>
+                    Chat with Expert
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <% } else { %>
+  <!-- Fallback when no recommended trips -->
+  <section class="recommended-trips-section py-5 bg-light">
+    <div class="container-xl">
+      <div class="row">
+        <div class="col-12">
+          <div class="recommended-trips-header text-center mb-4">
+            <h2 class="recommended-trips-title">Explore More Adventures</h2>
+            <p class="recommended-trips-subtitle text-muted">Discover our amazing collection of trips</p>
+          </div>
+          
+          <div class="text-center">
+            <a href="/triplist" class="btn btn-primary btn-lg recommended-view-more">
+              <i class="bi bi-grid-3x3-gap-fill me-2"></i>
+              Browse All Trips
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <% } %>
+
   <%- include('../partials/footer'); %>
   <%- include('../partials/scripttag', {isNiceSelect: false}); %>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -1881,6 +2534,7 @@ a { text-decoration: none; }
     const csrfToken = "<%= csrfToken %>";
     const deptCities = <%- JSON.stringify(trips.deptcities) %>;
     const trip = <%- JSON.stringify(trips) %>;
+    const recommendedTrips = <%- JSON.stringify(recommendedTrips || []) %>;
     let isUpdating = false;
     let transportTypes = [];
 
@@ -3331,7 +3985,48 @@ a { text-decoration: none; }
     if (track) {
       track.addEventListener('scroll', checkMobileCarouselButtons);
     }
+    
+    // Initialize recommended trips slider
+    initializeRecommendedTripsSlider();
   });
+
+  // Recommended Trips Slider Functions
+  function initializeRecommendedTripsSlider() {
+    const track = document.getElementById('recommendedTripsTrack');
+    if (!track) return;
+    
+    checkRecommendedTripsButtons();
+    track.addEventListener('scroll', checkRecommendedTripsButtons);
+  }
+
+  function slideRecommendedLeft() {
+    const track = document.getElementById('recommendedTripsTrack');
+    if (track) {
+      track.scrollBy({ left: -340, behavior: 'smooth' });
+    }
+  }
+
+  function slideRecommendedRight() {
+    const track = document.getElementById('recommendedTripsTrack');
+    if (track) {
+      track.scrollBy({ left: 340, behavior: 'smooth' });
+    }
+  }
+
+  function checkRecommendedTripsButtons() {
+    const track = document.getElementById('recommendedTripsTrack');
+    const prevBtn = document.querySelector('.recommended-trips-prev');
+    const nextBtn = document.querySelector('.recommended-trips-next');
+    
+    if (!track || !prevBtn || !nextBtn) return;
+    
+    const isOverflowing = track.scrollWidth > track.clientWidth;
+    const canScrollLeft = track.scrollLeft > 0;
+    const canScrollRight = track.scrollLeft < track.scrollWidth - track.clientWidth - 1;
+    
+    prevBtn.style.display = isOverflowing && canScrollLeft ? 'flex' : 'none';
+    nextBtn.style.display = isOverflowing && canScrollRight ? 'flex' : 'none';
+  }
 
 </script>
 </body>
