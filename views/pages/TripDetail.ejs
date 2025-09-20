@@ -657,7 +657,7 @@ a { text-decoration: none; }
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 1000;
+    z-index: 1021;
     opacity: 0;
     visibility: hidden;
     transition: transform var(--transition),  all var(--transition);
@@ -677,7 +677,7 @@ a { text-decoration: none; }
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.3);
-    z-index: 999;
+    z-index: 1020;
   }
   .tour-booking-floating-backdrop:not(.active) { display: none; }
 
@@ -965,13 +965,6 @@ a { text-decoration: none; }
 @media (max-width: 991.98px) {
   .stickySec {
     display: none !important;
-  }
-}
-
-/* Show desktop booking section on large screens */
-@media (min-width: 992px) {  
-  .tour-booking-floating-sec {
-    display: none;
   }
 }
 
