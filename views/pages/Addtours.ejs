@@ -743,14 +743,15 @@
   <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
   <script>
     $(document).ready(function() {
-      $(".select2").select2(); // Initializes state, bestSession, tripCategories, bestMonthToVisit
+      // Initialize Select2 for all elements except tripCategories (which will be initialized after data is loaded)
+      $(".select2:not(#tripCategories)").select2();
       $("#imageModal").on("hidden.bs.modal", function() {
         $(".modal-backdrop").remove();
         $("body").removeClass("modal-open");
       });
 
       $(document).ready(function() {
-  $(".select2").select2();
+  // Select2 initialization is handled above
 
   // Cleanup for imageModal
   $("#imageModal").on("hidden.bs.modal", function() {
@@ -777,8 +778,8 @@
     try {
       $(".modal-backdrop").remove();
       $("body").removeClass("modal-open").css({ overflow: '', paddingRight: '' });
-      // Ensure Select2 dropdowns are interactive
-      $(".select2").select2();
+      // Ensure Select2 dropdowns are interactive (except tripCategories which is handled separately)
+      $(".select2:not(#tripCategories)").select2();
     } catch (error) {
       console.error('Error in messageModal hidden.bs.modal:', error);
     }
@@ -897,18 +898,37 @@
     // Populate the category dropdown
     function populateCategoryDropdown(categories) {
       const select = document.getElementById('tripCategories');
-      const existingSelections = Array.from(select.selectedOptions).map(opt => opt.value);
+      // Get the saved trip categories from the server-side data
+      const tripCategories = <%- JSON.stringify(trips.tripCategories || []) %>;
+      
+      console.log('Populating trip categories dropdown with:', tripCategories);
+      
       select.innerHTML = ''; // Clear existing options
       categories.forEach(category => {
         const option = document.createElement('option');
         option.value = category.name;
         option.textContent = category.name;
-        if (existingSelections.includes(category.name)) {
+        // Check if this category should be selected based on saved trip data
+        if (tripCategories.includes(category.name)) {
           option.selected = true;
+          console.log('Selected category:', category.name);
         }
         select.appendChild(option);
       });
-      $(select).select2(); // Reinitialize Select2
+      
+      // Destroy existing Select2 instance if it exists
+      if ($(select).hasClass('select2-hidden-accessible')) {
+        $(select).select2('destroy');
+      }
+      
+      // Initialize Select2 with proper configuration
+      $(select).select2({
+        placeholder: 'Select Trip Categories',
+        allowClear: true,
+        width: '100%'
+      });
+      
+      console.log('Trip categories dropdown populated and initialized');
     }
 
     // Check for categories in trips.tripCategories that don't exist in master data

@@ -695,6 +695,410 @@ a { text-decoration: none; }
 
 .cutoff-modal-btn:hover { transform: translateY(-2px); }
 
+/* Mobile Booking Styles */
+.mobile-booking-fab {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--primary-blue);
+  color: white;
+  border-radius: 50px;
+  padding: 12px 20px;
+  box-shadow: 0 4px 12px rgba(26, 75, 142, 0.3);
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--transition);
+  font-weight: 500;
+}
+
+.mobile-booking-fab:hover {
+  background: #143c73;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(26, 75, 142, 0.4);
+}
+
+.mobile-fab-text {
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.tour-booking-floating-sec {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1050;
+  display: flex;
+  align-items: flex-end;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition);
+}
+
+.tour-booking-floating-sec.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.tour-booking-floating-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+.tour-booking-floating-panel {
+  background: white;
+  border-radius: 20px 20px 0 0;
+  max-height: 85vh;
+  overflow-y: auto;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  transform: translateY(100%);
+  transition: transform var(--transition);
+}
+
+.tour-booking-floating-sec.active .tour-booking-floating-panel {
+  transform: translateY(0);
+}
+
+.mobile-booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 20px 15px;
+  border-bottom: 1px solid #e9ecef;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+}
+
+.mobile-booking-summary {
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.mobile-booking-section {
+  padding: 20px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.mobile-booking-section:last-of-type {
+  border-bottom: none;
+}
+
+.mobile-city-carousel {
+  position: relative;
+  overflow: hidden;
+}
+
+.mobile-city-track {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 5px 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.mobile-city-track::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-city-card {
+  min-width: 120px;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.mobile-city-card:hover {
+  border-color: var(--primary-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-city-card.active {
+  border-color: var(--primary-blue);
+  background: #f8f9ff;
+  box-shadow: 0 4px 8px rgba(26, 75, 142, 0.2);
+}
+
+.mobile-city-card img {
+  width: 100%;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.mobile-city-info h6 {
+  font-size: 0.85rem;
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.mobile-city-info small {
+  font-size: 0.75rem;
+  color: #6c757d;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.mobile-city-price {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--primary-blue);
+}
+
+.mobile-carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all var(--transition);
+}
+
+.mobile-carousel-btn:hover {
+  background: var(--primary-blue);
+  color: white;
+  border-color: var(--primary-blue);
+}
+
+.mobile-carousel-prev {
+  left: -16px;
+}
+
+.mobile-carousel-next {
+  right: -16px;
+}
+
+.mobile-transport-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mobile-transport-option {
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.mobile-transport-option:hover {
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+}
+
+.mobile-transport-option.active {
+  background: var(--primary-blue);
+  color: white;
+  border-color: var(--primary-blue);
+}
+
+.mobile-date-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.mobile-date-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-date-tab {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all var(--transition);
+}
+
+.mobile-date-tab:hover {
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+}
+
+.mobile-date-tab.active {
+  background: var(--primary-blue);
+  color: white;
+  border-color: var(--primary-blue);
+}
+
+.mobile-date-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.mobile-date-item {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all var(--transition);
+}
+
+.mobile-date-item:hover {
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+}
+
+.mobile-date-item.active {
+  background: var(--primary-blue);
+  color: white;
+  border-color: var(--primary-blue);
+}
+
+.mobile-payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobile-payment-option {
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.mobile-payment-option:hover {
+  border-color: var(--primary-blue);
+}
+
+.mobile-payment-option.active {
+  border-color: var(--primary-blue);
+  background: #f8f9ff;
+}
+
+.mobile-payment-option input[type="radio"] {
+  display: none;
+}
+
+.mobile-payment-option label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  margin: 0;
+  width: 100%;
+}
+
+.payment-label {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.payment-price {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.mobile-booking-actions {
+  padding: 20px;
+  display: flex;
+  gap: 8px;
+  background: #f8f9fa;
+  position: sticky;
+  bottom: 0;
+  border-top: 1px solid #e9ecef;
+}
+
+.mobile-booking-btn {
+  flex: 1;
+  padding: 10px 8px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.8rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.mobile-booking-proceed {
+  flex: 2;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.mobile-booking-proceed:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Hide desktop booking section on mobile */
+@media (max-width: 991.98px) {
+  .stickySec {
+    display: none !important;
+  }
+  
+  .mobile-booking-fab {
+    display: flex !important;
+  }
+}
+
+/* Show desktop booking section on large screens */
+@media (min-width: 992px) {
+  .mobile-booking-fab {
+    display: none !important;
+  }
+  
+  .tour-booking-floating-sec {
+    display: none !important;
+  }
+}
+
 /* Media Queries */
 @media screen and (min-width: 992px) {
   body { background-color: #f3f3f6; }
@@ -761,6 +1165,22 @@ a { text-decoration: none; }
   .quick-call-modal-body .notes span { font-size: 0.7rem; }
   .quick-call-modal-footer { padding: 10px 16px; }
   .quick-call-modal-btn { font-size: 0.8rem; padding: 8px 16px; }
+  
+  /* Mobile booking actions on very small screens */
+  .mobile-booking-actions {
+    padding: 15px;
+    gap: 6px;
+  }
+  
+  .mobile-booking-btn {
+    font-size: 0.75rem;
+    padding: 8px 6px;
+  }
+  
+  .mobile-booking-proceed {
+    font-size: 0.8rem;
+    padding: 10px;
+  }
 }
   </style>
 </head>
@@ -1084,10 +1504,147 @@ a { text-decoration: none; }
       </aside>
     </section>
   </div>
-  <div class="tour-booking-floating-sec d-none justify-content-end">
-    <button class="tour-booking-floating-btn" onclick="toggleFloatingPanel()">
-      <i class="bi bi-bookmark-check-fill"></i>
-    </button>
+  <!-- Mobile Floating Booking Section -->
+  <div class="tour-booking-floating-sec d-lg-none" id="mobileBookingSection">
+    <div class="tour-booking-floating-backdrop" id="mobileBookingBackdrop"></div>
+    <div class="tour-booking-floating-panel" id="mobileBookingPanel">
+      <div class="mobile-booking-header">
+        <h5 class="mb-0">Book Your Trip</h5>
+        <button type="button" class="btn-close" onclick="toggleMobileBooking()"></button>
+      </div>
+      
+      <!-- Mobile Booking Summary -->
+      <div class="mobile-booking-summary">
+        <div class="booking-summary-item">
+          <span class="text-muted">Departure City:</span>
+          <span class="booking-summary-city fw-semibold">Not selected</span>
+        </div>
+        <div class="booking-summary-item">
+          <span class="text-muted">Tour Date:</span>
+          <span class="booking-summary-date fw-semibold">Not selected</span>
+        </div>
+        <div class="booking-summary-item">
+          <span class="text-muted">Duration:</span>
+          <span class="booking-summary-duration fw-semibold">Not selected</span>
+        </div>
+        <div class="booking-summary-item">
+          <span class="text-muted">Price:</span>
+          <span class="booking-summary-price fw-semibold text-primary">Not selected</span>
+        </div>
+        <div class="booking-summary-item">
+          <span class="text-muted">Transport:</span>
+          <span class="booking-summary-transport fw-semibold">Not selected</span>
+        </div>
+        <% if(trips.seats){ %>
+        <div class="booking-summary-item">
+          <span class="text-muted">Seats Available:</span>
+          <span class="booking-summary-seats text-success fw-semibold"><%= trips.seats %> left!</span>
+        </div>
+        <% } %>
+      </div>
+
+      <!-- Mobile City Selection -->
+      <div class="mobile-booking-section">
+        <h6 class="fw-bold mb-2">Select Departure City</h6>
+        <div class="mobile-city-carousel">
+          <div class="mobile-city-track" id="mobileCityTrack">
+            <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].City !== 'Unknown') { %>
+              <% trips.deptcities.forEach((city, index) => { %>
+              <div class="mobile-city-card <%= index === 0 ? 'active' : '' %>" 
+                   data-city="<%= city.City %>" 
+                   data-state="<%= city.State %>" 
+                   data-price="<%= city.price && city.price[0] ? city.price[0].adultPrice : 0 %>" 
+                   data-duration="<%= city.tripDuration %>" 
+                   data-cutoff="<%= city.bookingCutoffDays || '0' %>"
+                   data-partial="<%= city.partialPayment || '0' %>"
+                   onclick="selectMobileCity(this)">
+                <img src="<%= city.image %>" alt="<%= city.City %>" loading="lazy" onerror="this.onerror=null; this.src='/images/placeholder.jpg';" />
+                <div class="mobile-city-info">
+                  <h6><%= city.City %></h6>
+                  <small><%= city.tripDuration %></small>
+                  <div class="mobile-city-price">₹<%= city.price && city.price[0] ? city.price[0].adultPrice : 'N/A' %></div>
+                </div>
+              </div>
+              <% }); %>
+            <% } else { %>
+              <div class="text-center text-muted p-3">No departure cities available</div>
+            <% } %>
+          </div>
+          <button class="mobile-carousel-btn mobile-carousel-prev" onclick="slideMobileLeft()">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          <button class="mobile-carousel-btn mobile-carousel-next" onclick="slideMobileRight()">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Transport Selection -->
+      <div class="mobile-booking-section" id="mobileTransportSection" style="display: none;">
+        <h6 class="fw-bold mb-2">Transport Type</h6>
+        <div class="mobile-transport-options" id="mobileTransportOptions"></div>
+      </div>
+
+      <!-- Mobile Date Selection -->
+      <div class="mobile-booking-section" id="mobileDateSection" style="display: none;">
+        <h6 class="fw-bold mb-2">Select Date</h6>
+        <div class="mobile-date-tabs" id="mobileYearTabs"></div>
+        <div class="mobile-date-tabs" id="mobileMonthTabs"></div>
+        <div class="mobile-date-grid" id="mobileDateGrid"></div>
+      </div>
+
+      <!-- Mobile Payment Options -->
+      <div class="mobile-booking-section" id="mobilePaymentSection" style="display: none;">
+        <h6 class="fw-bold mb-2">Payment Options</h6>
+        <div class="mobile-payment-options">
+          <div class="mobile-payment-option">
+            <input type="radio" id="mobilePayFull" name="mobilePaymentOption" value="full" checked>
+            <label for="mobilePayFull">
+              <span class="payment-label">Pay Full Amount</span>
+              <span class="payment-price booking-summary-price-full">Not selected</span>
+            </label>
+          </div>
+          <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].partialPayment && parseFloat(trips.deptcities[0].partialPayment) > 0) { %>
+          <div class="mobile-payment-option">
+            <input type="radio" id="mobilePayPartial" name="mobilePaymentOption" value="partial">
+            <label for="mobilePayPartial">
+              <span class="payment-label">Pay Partial</span>
+              <span class="payment-price booking-summary-price-partial">₹<%= trips.deptcities[0].partialPayment %></span>
+            </label>
+          </div>
+          <% } %>
+          <div class="mobile-payment-option">
+            <input type="radio" id="mobilePayLater" name="mobilePaymentOption" value="bnpl">
+            <label for="mobilePayLater">
+              <span class="payment-label">Book Now, Pay Later</span>
+              <span class="payment-price text-success">(No payment now)</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Action Buttons -->
+      <div class="mobile-booking-actions">
+        <button class="btn btn-outline-secondary mobile-booking-btn" data-bs-toggle="modal" data-bs-target="#quickCallModal">
+          <i class="bi bi-telephone-fill"></i> Call Back
+        </button>
+        <a class="btn btn-outline-success mobile-booking-btn" 
+           href="https://wa.me/+918511117891?text=Hello%20I%20am%20interested%20in%20the%20following%20trip%20<%= encodeURIComponent(trips.name) %>%20tour.%20could%20you%20please%20share%20more%20details." 
+           target="_blank" 
+           aria-label="Contact via WhatsApp for <%= trips.name %>">
+          <i class="bi bi-whatsapp"></i> WhatsApp
+        </a>
+        <button class="btn btn-primary mobile-booking-proceed" onclick="proceedMobileBooking()" disabled>
+          <i class="bi bi-arrow-right"></i> Book Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Floating Button -->
+  <div class="mobile-booking-fab d-lg-none" id="mobileBookingFab" onclick="toggleMobileBooking()">
+    <i class="bi bi-bookmark-check-fill"></i>
+    <span class="mobile-fab-text">Book Now</span>
   </div>
   <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -1463,6 +2020,9 @@ a { text-decoration: none; }
 
       // Sync payment options
       syncPaymentOptions();
+
+      // Initialize mobile booking functionality
+      initializeMobileBookingFeatures();
     });
 
     // Carousel navigation
@@ -2242,6 +2802,536 @@ a { text-decoration: none; }
     const selectedContent = document.getElementById(tabId);
     if (selectedContent) selectedContent.classList.add("active");
   }
+
+  // Initialize mobile booking features
+  function initializeMobileBookingFeatures() {
+    // Setup mobile carousel scroll listener
+    const track = document.getElementById('mobileCityTrack');
+    if (track) {
+      track.addEventListener('scroll', checkMobileCarouselButtons);
+    }
+    
+    // Setup mobile payment option listeners
+    const mobilePaymentOptions = document.querySelectorAll('input[name="mobilePaymentOption"]');
+    mobilePaymentOptions.forEach(option => {
+      option.addEventListener('change', function() {
+        // Update corresponding desktop payment option
+        const desktopOption = document.querySelector(`input[name="paymentOptionRadio"][value="${this.value}"]`);
+        if (desktopOption) {
+          desktopOption.checked = true;
+        }
+        
+        // Update main form payment option
+        const mainPaymentSelect = document.getElementById('paymentOption');
+        if (mainPaymentSelect) {
+          mainPaymentSelect.value = this.value;
+        }
+      });
+    });
+    
+    // Setup mobile payment option visual feedback
+    const mobilePaymentContainers = document.querySelectorAll('.mobile-payment-option');
+    mobilePaymentContainers.forEach(container => {
+      const radio = container.querySelector('input[type="radio"]');
+      const label = container.querySelector('label');
+      
+      if (radio && label) {
+        label.addEventListener('click', function() {
+          // Remove active class from all payment options
+          mobilePaymentContainers.forEach(c => c.classList.remove('active'));
+          // Add active class to clicked option
+          container.classList.add('active');
+        });
+        
+        // Set initial active state
+        if (radio.checked) {
+          container.classList.add('active');
+        }
+      }
+    });
+  }
+
+  // Mobile Booking Functions
+  function toggleMobileBooking() {
+    const mobileSection = document.getElementById('mobileBookingSection');
+    const fab = document.getElementById('mobileBookingFab');
+    
+    if (mobileSection.classList.contains('active')) {
+      mobileSection.classList.remove('active');
+      fab.style.display = 'flex';
+    } else {
+      mobileSection.classList.add('active');
+      fab.style.display = 'none';
+      // Initialize mobile booking if not already done
+      if (!mobileSection.dataset.initialized) {
+        initializeMobileBooking();
+        mobileSection.dataset.initialized = 'true';
+      }
+    }
+  }
+
+  function initializeMobileBooking() {
+    // Select first city by default
+    const firstCityCard = document.querySelector('.mobile-city-card');
+    if (firstCityCard) {
+      selectMobileCity(firstCityCard);
+    }
+    
+    // Setup carousel navigation
+    checkMobileCarouselButtons();
+  }
+
+  function selectMobileCity(element) {
+    // Remove active class from all city cards
+    document.querySelectorAll('.mobile-city-card').forEach(card => card.classList.remove('active'));
+    
+    // Add active class to selected card
+    element.classList.add('active');
+    
+    // Get city data
+    const city = element.getAttribute('data-city');
+    const state = element.getAttribute('data-state');
+    const price = element.getAttribute('data-price');
+    const duration = element.getAttribute('data-duration');
+    const cutoff = element.getAttribute('data-cutoff');
+    const partial = element.getAttribute('data-partial');
+    
+    // Update mobile summary
+    updateMobileBookingSummary(city, state, price, duration);
+    
+    // Update main form selections
+    const mainCitySelect = document.getElementById('selectedCity');
+    if (mainCitySelect) mainCitySelect.value = city;
+    
+    // Update desktop city cards
+    const desktopCityCard = document.querySelector(`.tour-booking-city-card[data-city="${city}"]`);
+    if (desktopCityCard) {
+      document.querySelectorAll('.tour-booking-city-card').forEach(card => card.classList.remove('active'));
+      desktopCityCard.classList.add('active');
+    }
+    
+    // Show transport section and load transport options
+    showMobileSection('mobileTransportSection');
+    buildMobileTransport(city);
+    
+    // Show date section and load dates
+    showMobileSection('mobileDateSection');
+    updateMobileDates(city);
+    
+    // Show payment section
+    showMobileSection('mobilePaymentSection');
+    updateMobilePaymentOptions(city, price);
+    
+    // Validate mobile form
+    validateMobileForm();
+    
+    // Also validate main form to keep them in sync
+    validateMainForm();
+  }
+
+  function updateMobileBookingSummary(city, state, price, duration) {
+    const summaryElements = {
+      city: document.querySelectorAll('.mobile-booking-summary .booking-summary-city'),
+      date: document.querySelectorAll('.mobile-booking-summary .booking-summary-date'),
+      duration: document.querySelectorAll('.mobile-booking-summary .booking-summary-duration'),
+      price: document.querySelectorAll('.mobile-booking-summary .booking-summary-price'),
+      transport: document.querySelectorAll('.mobile-booking-summary .booking-summary-transport')
+    };
+    
+    if (city && city !== 'Unknown') {
+      summaryElements.city.forEach(el => el.textContent = `${city}, ${state}`);
+      summaryElements.duration.forEach(el => el.textContent = duration || 'N/A');
+      summaryElements.price.forEach(el => el.textContent = `₹${price}/person`);
+    } else {
+      summaryElements.city.forEach(el => el.textContent = 'Not selected');
+      summaryElements.duration.forEach(el => el.textContent = 'Not selected');
+      summaryElements.price.forEach(el => el.textContent = 'Not selected');
+    }
+  }
+
+  function showMobileSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.style.display = 'block';
+    }
+  }
+
+  function buildMobileTransport(selectedCity) {
+    const transportOptions = document.getElementById('mobileTransportOptions');
+    const cityData = deptCities.find(city => city.City === selectedCity);
+    
+    if (!transportOptions || !cityData || !cityData.price) {
+      return;
+    }
+    
+    transportOptions.innerHTML = '';
+    
+    cityData.price.forEach((item, index) => {
+      if (item.transferType && item.transferType.trim() !== '') {
+        const option = document.createElement('div');
+        option.className = `mobile-transport-option ${index === 0 ? 'active' : ''}`;
+        option.textContent = item.transferType.charAt(0).toUpperCase() + item.transferType.slice(1);
+        option.onclick = () => selectMobileTransport(index, item);
+        transportOptions.appendChild(option);
+      }
+    });
+    
+    if (cityData.price.length > 0) {
+      selectMobileTransport(0, cityData.price[0]);
+    }
+  }
+
+  function selectMobileTransport(index, transportData) {
+    // Remove active class from all transport options
+    document.querySelectorAll('.mobile-transport-option').forEach(option => option.classList.remove('active'));
+    
+    // Add active class to selected option
+    const selectedOption = document.querySelectorAll('.mobile-transport-option')[index];
+    if (selectedOption) {
+      selectedOption.classList.add('active');
+    }
+    
+    // Update summary
+    const transportElements = document.querySelectorAll('.mobile-booking-summary .booking-summary-transport');
+    transportElements.forEach(el => el.textContent = transportData.transferType || 'Not available');
+    
+    // Update price
+    const priceElements = document.querySelectorAll('.mobile-booking-summary .booking-summary-price');
+    priceElements.forEach(el => el.textContent = `₹${transportData.adultPrice}/person`);
+    
+    // Update payment options
+    const fullPriceElements = document.querySelectorAll('.mobile-booking-summary .booking-summary-price-full');
+    fullPriceElements.forEach(el => el.textContent = `₹${transportData.adultPrice}`);
+    
+    // Update main form transport selection
+    const mainTransportSelect = document.getElementById('selectedTransport');
+    if (mainTransportSelect) mainTransportSelect.value = transportData.transferType;
+    
+    validateMobileForm();
+    validateMainForm();
+  }
+
+  function updateMobileDates(selectedCity) {
+    const cityData = deptCities.find(city => city.City === selectedCity);
+    if (!cityData || !cityData.dates || cityData.dates.length === 0) {
+      return;
+    }
+    
+    const yearTabs = document.getElementById('mobileYearTabs');
+    const monthTabs = document.getElementById('mobileMonthTabs');
+    const dateGrid = document.getElementById('mobileDateGrid');
+    
+    if (!yearTabs || !monthTabs || !dateGrid) return;
+    
+    // Clear existing content
+    yearTabs.innerHTML = '';
+    monthTabs.innerHTML = '';
+    dateGrid.innerHTML = '';
+    
+    const cutoffDays = parseInt(cityData.bookingCutoffDays || '0', 10);
+    const dateOptions = generateDateRanges(cityData.dates, cityData.tripDuration, cutoffDays);
+    
+    if (dateOptions.length === 0) {
+      dateGrid.innerHTML = '<div class="text-center text-muted p-3">No dates available</div>';
+      return;
+    }
+    
+    // Group dates by year and month
+    const datesByYear = {};
+    dateOptions.forEach(option => {
+      const year = option.startDate.getUTCFullYear().toString();
+      const month = option.startDate.toLocaleString('en-US', { month: 'long', timeZone: 'UTC' });
+      
+      if (!datesByYear[year]) datesByYear[year] = {};
+      if (!datesByYear[year][month]) datesByYear[year][month] = [];
+      datesByYear[year][month].push(option);
+    });
+    
+    // Create year tabs
+    const years = Object.keys(datesByYear).sort();
+    years.forEach((year, index) => {
+      const tab = document.createElement('button');
+      tab.className = `mobile-date-tab ${index === 0 ? 'active' : ''}`;
+      tab.textContent = year;
+      tab.onclick = () => showMobileYear(year);
+      yearTabs.appendChild(tab);
+    });
+    
+    // Show first year
+    if (years.length > 0) {
+      showMobileYear(years[0]);
+    }
+  }
+
+  function showMobileYear(year) {
+    const selectedCity = document.querySelector('.mobile-city-card.active')?.getAttribute('data-city');
+    const cityData = deptCities.find(city => city.City === selectedCity);
+    
+    if (!cityData || !cityData.dates) return;
+    
+    const monthTabs = document.getElementById('mobileMonthTabs');
+    const dateGrid = document.getElementById('mobileDateGrid');
+    
+    if (!monthTabs || !dateGrid) return;
+    
+    // Update active year tab
+    document.querySelectorAll('.mobile-date-tab').forEach(tab => tab.classList.remove('active'));
+    const yearTab = Array.from(document.querySelectorAll('.mobile-date-tab')).find(tab => tab.textContent === year);
+    if (yearTab) yearTab.classList.add('active');
+    
+    // Clear month tabs and date grid
+    monthTabs.innerHTML = '';
+    dateGrid.innerHTML = '';
+    
+    const cutoffDays = parseInt(cityData.bookingCutoffDays || '0', 10);
+    const dateOptions = generateDateRanges(cityData.dates, cityData.tripDuration, cutoffDays);
+    
+    // Filter dates for selected year
+    const yearDates = dateOptions.filter(option => 
+      option.startDate.getUTCFullYear().toString() === year
+    );
+    
+    // Group by month
+    const datesByMonth = {};
+    yearDates.forEach(option => {
+      const month = option.startDate.toLocaleString('en-US', { month: 'long', timeZone: 'UTC' });
+      if (!datesByMonth[month]) datesByMonth[month] = [];
+      datesByMonth[month].push(option);
+    });
+    
+    // Create month tabs
+    const months = Object.keys(datesByMonth).sort((a, b) => {
+      const monthOrder = ['January', 'February', 'March', 'April', 'May', 'June', 
+                         'July', 'August', 'September', 'October', 'November', 'December'];
+      return monthOrder.indexOf(a) - monthOrder.indexOf(b);
+    });
+    
+    months.forEach((month, index) => {
+      const tab = document.createElement('button');
+      tab.className = `mobile-date-tab ${index === 0 ? 'active' : ''}`;
+      tab.textContent = month;
+      tab.onclick = () => showMobileMonth(year, month);
+      monthTabs.appendChild(tab);
+    });
+    
+    // Show first month
+    if (months.length > 0) {
+      showMobileMonth(year, months[0]);
+    }
+  }
+
+  function showMobileMonth(year, month) {
+    const selectedCity = document.querySelector('.mobile-city-card.active')?.getAttribute('data-city');
+    const cityData = deptCities.find(city => city.City === selectedCity);
+    
+    if (!cityData || !cityData.dates) return;
+    
+    const dateGrid = document.getElementById('mobileDateGrid');
+    if (!dateGrid) return;
+    
+    // Update active month tab
+    document.querySelectorAll('.mobile-date-tab').forEach(tab => tab.classList.remove('active'));
+    const monthTab = Array.from(document.querySelectorAll('.mobile-date-tab')).find(tab => tab.textContent === month);
+    if (monthTab) monthTab.classList.add('active');
+    
+    // Clear date grid
+    dateGrid.innerHTML = '';
+    
+    const cutoffDays = parseInt(cityData.bookingCutoffDays || '0', 10);
+    const dateOptions = generateDateRanges(cityData.dates, cityData.tripDuration, cutoffDays);
+    
+    // Filter dates for selected year and month
+    const monthDates = dateOptions.filter(option => 
+      option.startDate.getUTCFullYear().toString() === year &&
+      option.startDate.toLocaleString('en-US', { month: 'long', timeZone: 'UTC' }) === month
+    );
+    
+    if (monthDates.length === 0) {
+      dateGrid.innerHTML = '<div class="text-center text-muted p-3">No dates available for this month</div>';
+      return;
+    }
+    
+    // Create date items
+    monthDates.forEach((option, index) => {
+      const dateItem = document.createElement('div');
+      dateItem.className = `mobile-date-item ${index === 0 ? 'active' : ''}`;
+      dateItem.textContent = option.startDate.getUTCDate();
+      dateItem.setAttribute('data-value', option.value);
+      dateItem.onclick = () => selectMobileDate(option, dateItem);
+      dateGrid.appendChild(dateItem);
+    });
+    
+    // Select first date by default
+    if (monthDates.length > 0) {
+      selectMobileDate(monthDates[0], dateGrid.querySelector('.mobile-date-item'));
+    }
+  }
+
+  function selectMobileDate(option, element) {
+    // Remove active class from all date items
+    document.querySelectorAll('.mobile-date-item').forEach(item => item.classList.remove('active'));
+    
+    // Add active class to selected item
+    element.classList.add('active');
+    
+    // Update summary
+    const dateElements = document.querySelectorAll('.mobile-booking-summary .booking-summary-date');
+    dateElements.forEach(el => el.textContent = option.text);
+    
+    // Update main form
+    const mainDateSelect = document.getElementById('selectedDate');
+    if (mainDateSelect) mainDateSelect.value = option.value;
+    
+    validateMobileForm();
+    validateMainForm();
+  }
+
+  function updateMobilePaymentOptions(city, price) {
+    const cityData = deptCities.find(c => c.City === city);
+    if (!cityData) return;
+    
+    // Update full payment price
+    const fullPriceElements = document.querySelectorAll('.mobile-booking-summary .booking-summary-price-full');
+    fullPriceElements.forEach(el => el.textContent = `₹${price}`);
+    
+    // Update partial payment price
+    const partialAmount = parseFloat(cityData.partialPayment || '0');
+    const partialPriceElements = document.querySelectorAll('.mobile-booking-summary .booking-summary-price-partial');
+    if (partialAmount > 0) {
+      partialPriceElements.forEach(el => el.textContent = `₹${partialAmount}`);
+    }
+  }
+
+  function validateMobileForm() {
+    const citySelected = document.querySelector('.mobile-city-card.active') !== null;
+    const dateSelected = document.querySelector('.mobile-date-item.active') !== null;
+    const transportSelected = document.querySelector('.mobile-transport-option.active') !== null;
+    const proceedBtn = document.querySelector('.mobile-booking-proceed');
+    
+    // Additional validation checks to match desktop validation
+    const selectedCity = document.querySelector('.mobile-city-card.active')?.getAttribute('data-city');
+    const selectedDate = document.querySelector('.mobile-date-item.active')?.getAttribute('data-value');
+    
+    let isValid = citySelected && dateSelected && transportSelected;
+    
+    // Check if city is valid (not Unknown)
+    if (selectedCity === 'Unknown' || !selectedCity) {
+      isValid = false;
+    }
+    
+    // Check if date is valid
+    if (!selectedDate || selectedDate === 'Select a date') {
+      isValid = false;
+    }
+    
+    // Check cutoff date validation
+    if (isValid && selectedCity && selectedDate) {
+      const cityData = deptCities.find(city => city.City === selectedCity);
+      if (cityData) {
+        const cutoffDays = parseInt(cityData.bookingCutoffDays || '0', 10);
+        const selectedDateObj = new Date(selectedDate);
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        const cutoffDate = new Date(now);
+        cutoffDate.setDate(now.getDate() + cutoffDays);
+        
+        if (selectedDateObj <= cutoffDate) {
+          isValid = false;
+        }
+      }
+    }
+    
+    if (proceedBtn) {
+      proceedBtn.disabled = !isValid;
+    }
+  }
+
+  function proceedMobileBooking() {
+    if (!isLoggedIn) {
+      $('#signinModal').modal('show');
+      return;
+    }
+    
+    const selectedCity = document.querySelector('.mobile-city-card.active')?.getAttribute('data-city');
+    const selectedDate = document.querySelector('.mobile-date-item.active')?.getAttribute('data-value');
+    const selectedTransport = document.querySelector('.mobile-transport-option.active')?.textContent;
+    const selectedPayment = document.querySelector('input[name="mobilePaymentOption"]:checked')?.value;
+    
+    if (!selectedCity || !selectedDate || !selectedTransport) {
+      return;
+    }
+    
+    // Check cutoff date
+    const cityData = deptCities.find(city => city.City === selectedCity);
+    const cutoffDays = parseInt(cityData?.bookingCutoffDays || '0', 10);
+    const selectedDateObj = new Date(selectedDate);
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const cutoffDate = new Date(now);
+    cutoffDate.setDate(now.getDate() + cutoffDays);
+    
+    if (selectedDateObj <= cutoffDate) {
+      showContactModal(`The selected date is within the ${cutoffDays}-day booking cutoff period. Please contact our team to proceed.`);
+      return;
+    }
+    
+    // Update main form and submit
+    const form = document.getElementById('proceedToBook');
+    const mainCitySelect = document.getElementById('selectedCity');
+    const mainDateSelect = document.getElementById('selectedDate');
+    const mainTransportSelect = document.getElementById('selectedTransport');
+    const mainPaymentSelect = document.getElementById('paymentOption');
+    
+    if (mainCitySelect) mainCitySelect.value = selectedCity;
+    if (mainDateSelect) mainDateSelect.value = selectedDate;
+    if (mainTransportSelect) mainTransportSelect.value = selectedTransport;
+    if (mainPaymentSelect) mainPaymentSelect.value = selectedPayment;
+    
+    // Update payment radio buttons
+    const paymentRadio = document.querySelector(`input[name="paymentOptionRadio"][value="${selectedPayment}"]`);
+    if (paymentRadio) paymentRadio.checked = true;
+    
+    form.submit();
+  }
+
+
+  // Mobile carousel functions
+  function slideMobileLeft() {
+    const track = document.getElementById('mobileCityTrack');
+    if (track) {
+      track.scrollBy({ left: -120, behavior: 'smooth' });
+    }
+  }
+
+  function slideMobileRight() {
+    const track = document.getElementById('mobileCityTrack');
+    if (track) {
+      track.scrollBy({ left: 120, behavior: 'smooth' });
+    }
+  }
+
+  function checkMobileCarouselButtons() {
+    const track = document.getElementById('mobileCityTrack');
+    const prevBtn = document.querySelector('.mobile-carousel-prev');
+    const nextBtn = document.querySelector('.mobile-carousel-next');
+    
+    if (!track || !prevBtn || !nextBtn) return;
+    
+    const isOverflowing = track.scrollWidth > track.clientWidth;
+    const canScrollLeft = track.scrollLeft > 0;
+    const canScrollRight = track.scrollLeft < track.scrollWidth - track.clientWidth - 1;
+    
+    prevBtn.style.display = isOverflowing && canScrollLeft ? 'flex' : 'none';
+    nextBtn.style.display = isOverflowing && canScrollRight ? 'flex' : 'none';
+  }
+
+  // Update mobile carousel buttons on scroll
+  document.addEventListener('DOMContentLoaded', function() {
+    const track = document.getElementById('mobileCityTrack');
+    if (track) {
+      track.addEventListener('scroll', checkMobileCarouselButtons);
+    }
+  });
 
 </script>
 </body>
