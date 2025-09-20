@@ -470,6 +470,7 @@ header .subtitle { color: #6c757d; font-size: 0.875rem; }
   justify-content: center;
 }
 
+.btn{--bs-btn-line-height: 1.55;}
 .quick-call-modal-header .btn-close-white {
   position: absolute;
   top: 12px;
@@ -1213,8 +1214,8 @@ a { text-decoration: none; }
           <h1 class="trek-title"><%= trips.name %></h1>
           <article class="subtitle"><%- trips.destinations %></article>
           <div class="d-flex flex-wrap d-lg-none gap-2 align-items-center pt-2">
-            <a href="/dreamtrip" class="btn btn-outline-secondary rounded-pill" target="_blank">Inquire Now</a>
-            <button class="btn btn-outline-secondary rounded-pill" data-bs-toggle="modal" data-bs-target="#quickCallModal">Request Call Back</button>
+            <a href="/dreamtrip" class="btn btn-app-primary rounded-pill" target="_blank">Inquire Now</a>
+            <button class="btn btn-app-stroked-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#quickCallModal">Request Call Back</button>
           </div>
         </div>
         <article class="custom-card p-lg-3">
@@ -1492,14 +1493,13 @@ a { text-decoration: none; }
         <div class="actionCard card border-0 p-3 flex-row flex-wrap gap-2 align-items-start mt-3">
           <h5 class="w-100">Still Got Queries?</h5>
           <!-- <a href="https://wa.me/+918511117891" class="btn btn-outline-secondary rounded-pill" target="_blank">WhatsApp Us</a> -->
-          <a class="btn whatsapp-btn btn-outline-secondary rounded-pill"
+          <a class="btn btn-outline-success rounded-pill btn-sm flex-grow-1"
           href="https://wa.me/+918511117891?text=Hello%20I%20am%20interested%20in%20the%20following%20trip%20<%= encodeURIComponent(trips.name) %>%20tour.%20could%20you%20please%20share%20more%20details." 
-          target="_blank" 
-          aria-label="Contact via WhatsApp for <%= trips.name %>">
-         <i class="bi bi-whatsapp me-1"></i> WhatsApp
-       </a>
-          <button class="btn btn-outline-secondary rounded-pill" data-bs-toggle="modal" data-bs-target="#quickCallModal">Request Call Back</button>
-          <a class="btn btn-outline-secondary rounded-pill text-start" href="/dreamtrip" target="_blank" title="Plan your dream trip">Plan your dream trip</a>
+          target="_blank" aria-label="Contact via WhatsApp for <%= trips.name %>">
+            <i class="bi bi-whatsapp me-1"></i> WhatsApp
+          </a>
+          <button class="btn btn-app-stroked-primary rounded-pill btn-sm flex-grow-1" data-bs-toggle="modal" data-bs-target="#quickCallModal"><i class="bi bi-telephone-forward me-1"></i> Call Back</button>
+          <a class="btn btn-app-primary rounded-pill btn-sm flex-grow-1" href="/dreamtrip" target="_blank" title="Plan your dream trip"><i class="bi bi-calendar-check me-1"></i> Plan trip</a>
         </div>
       </aside>
     </section>
@@ -1845,7 +1845,7 @@ a { text-decoration: none; }
           </form>
         </div>
         <div class="modal-footer quick-call-modal-footer">
-          <button type="button" class="btn quick-call-modal-btn" id="submitQuickCall" disabled>
+          <button type="submit" form="quickCallForm" class="btn quick-call-modal-btn" id="submitQuickCall" disabled>
             <i class="bi bi-telephone-fill me-2"></i> Request Call Back
           </button>
         </div>
@@ -1970,6 +1970,8 @@ a { text-decoration: none; }
             const mask = document.createElement('div');
             mask.className = 'about-mask position-absolute bottom-0 end-0 w-100';
             aboutSec.appendChild(mask);
+            const existingBtn = aboutSec.parentElement.parentElement.querySelector('.about-read-more-btn');
+            if (existingBtn) existingBtn.remove();
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'about-read-more-btn btn btn-link p-0 mt-2';
@@ -1981,7 +1983,7 @@ a { text-decoration: none; }
               btn.textContent = expanded ? 'Read less' : 'Read more';
               mask.classList.toggle('d-none', expanded);
             };
-            aboutSec.parentElement.appendChild(btn);
+            aboutSec.parentElement.parentElement.appendChild(btn);
           }
         }
         addReadMoreIfNeeded();
@@ -2738,7 +2740,7 @@ a { text-decoration: none; }
     if (!isValid) return;
     submitBtn.disabled = true;
     try {
-      const response = await fetch("/api/submitQuickCall", {
+      const response = await fetch("/quick-call/request", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
