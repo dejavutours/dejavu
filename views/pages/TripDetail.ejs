@@ -2236,9 +2236,9 @@ a { text-decoration: none; }
     </div>
   </div>
   <!-- Recommended Trips Section -->
-  <% if (recommendedTrips && recommendedTrips.length > 0) { %>
   <section class="recommended-trips-section py-5 bg-light">
     <div class="container-xl">
+      <% if (recommendedTrips && recommendedTrips.length > 0) { %>
       <div class="recommended-trips-header text-center mb-4">
         <h2 class="recommended-trips-title">Recommended Trips</h2>
         <p class="recommended-trips-subtitle text-muted">Discover more amazing adventures</p>
@@ -2323,30 +2323,22 @@ a { text-decoration: none; }
           </div>
         </div>
       </div>
-    </div>
-  </section>
-  <% } else { %>
-  <!-- Fallback when no recommended trips -->
-  <section class="recommended-trips-section py-5 bg-light">
-    <div class="container-xl">
-      <div class="row">
-        <div class="col-12">
-          <div class="recommended-trips-header text-center mb-4">
-            <h2 class="recommended-trips-title">Explore More Adventures</h2>
-            <p class="recommended-trips-subtitle text-muted">Discover our amazing collection of trips</p>
-          </div>
-          
-          <div class="text-center">
-            <a href="/triplist" class="btn btn-primary btn-lg recommended-view-more">
-              <i class="bi bi-grid-3x3-gap-fill me-2"></i>
-              Browse All Trips
-            </a>
-          </div>
-        </div>
+      <% } else { %>
+      <!-- Fallback when no recommended trips -->
+      <div class="recommended-trips-header text-center mb-4">
+        <h2 class="recommended-trips-title">Explore More Adventures</h2>
+        <p class="recommended-trips-subtitle text-muted">Discover our amazing collection of trips</p>
       </div>
+      
+      <div class="text-center">
+        <a href="/triplist" class="btn btn-primary btn-lg recommended-view-more">
+          <i class="bi bi-grid-3x3-gap-fill me-2"></i>
+          Browse All Trips
+        </a>
+      </div>
+      <% } %>
     </div>
   </section>
-  <% } %>
 
   <%- include('../partials/footer'); %>
   <%- include('../partials/scripttag', {isNiceSelect: false}); %>
