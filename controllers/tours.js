@@ -49,6 +49,7 @@ const City = require("../models/citymst");
 const Statemst = require("../models/statemst");
 const bannerImg = require("../models/bannerImg");
 const Category = require("../models/categorymst");
+const DisplayOrder = require('../models/DisplayOrder');
 
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_SMS,
@@ -334,6 +335,86 @@ exports.getIndexPage = async (req, res, next) => {
       return departureCities;
     }
 
+    // Function to get homepage-featured category-wise trips (only isShowOnHomePage = true)
+    async function getHomepageCategoryTrips() {
+      // Step 1: Get only categories that are active + marked to show on homepage
+      const homepageCategories = await Category.find({
+        isActive: true,
+        isDeleted: false,
+        isShowOnHomePage: true
+      })
+        .select("name image displayOrder")
+        .sort({ displayOrder: 1 })
+        .lean();
+
+      if (homepageCategories.length === 0) return [];
+
+      // Step 2: Get custom trip order from DisplayOrder model (if exists)
+      const displayOrders = await DisplayOrder.find({
+        type: 'category_trips',
+        parentId: { $in: homepageCategories.map(c => c._id) }
+      }).lean();
+
+      const orderMap = new Map();
+      displayOrders.forEach(doc => {
+        orderMap.set(doc.parentId.toString(), doc.tripIds || []);
+      });
+
+      // Step 3: Fetch all active trips
+      const allTrips = await NewTours.find({
+        isActive: true,
+        isDeleted: false
+      })
+        .select("name imageurl bannerimages destinations days price adultPrice tripDuration state tripCategories displayOrder")
+        .lean();
+
+      // Step 4: Group trips by category and apply custom order
+      const result = homepageCategories.map(category => {
+        const categoryName = category.name;
+        const customTripIds = orderMap.get(category._id.toString()) || [];
+
+        // Filter trips belonging to this category
+        let categoryTrips = allTrips.filter(trip =>
+          trip.tripCategories &&
+          trip.tripCategories.map(c => c.trim()).includes(categoryName)
+        );
+
+        // Apply custom display order if exists
+        if (customTripIds.length > 0) {
+          const ordered = [];
+          const remaining = [];
+
+          customTripIds.forEach(id => {
+            const trip = categoryTrips.find(t => t._id.toString() === id.toString());
+            if (trip) ordered.push(trip);
+          });
+
+          // Add remaining trips (not in custom order) at the end
+          categoryTrips.forEach(trip => {
+            if (!customTripIds.some(id => id.toString() === trip._id.toString())) {
+              remaining.push(trip);
+            }
+          });
+
+          // Sort remaining by displayOrder or name
+          remaining.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0) || a.name.localeCompare(b.name));
+
+          categoryTrips = [...ordered, ...remaining];
+        } else {
+          // Default sort by displayOrder field in trip
+          categoryTrips.sort((a, b) => (a.displayOrder || 99999) - (b.displayOrder || 99999));
+        }
+
+        return {
+          ...category,
+          trips: categoryTrips.slice(0, 20), // limit if needed
+          count: categoryTrips.length
+        };
+      });
+
+      return result;
+    }
+
     // Fetch banner images
     async function getBannerImages() {
       // Fetch active, non-deleted banners from bannerImg
@@ -374,7 +455,7 @@ exports.getIndexPage = async (req, res, next) => {
     const categoryItems = await getCategoryWiseTrips();
     const departureCities = await getDepartureCityTrips();
     const bannerImages = await getBannerImages();
-
+    const homepageCategoryRows = await getHomepageCategoryTrips();
     // Render the index page
     res.render("pages/index", {
       tourPackages: response.tours,
@@ -383,6 +464,7 @@ exports.getIndexPage = async (req, res, next) => {
       placeItems,
       bannerImages,
       categoryItems,
+      homepageCategoryRows,
       departureCities,
     });
   } catch (error) {
@@ -1581,7 +1663,7 @@ exports.getAddTours = async (req, res, next) => {
   try {
     // Fetch active, non-deleted states from Statemst model
     const states = await Statemst.find({ isActive: true, isDeleted: false }).select('name countryCode').lean();
-    
+
     // Check if request body contains a trip ID (for editing an existing tour)
     const tripid = req.query.tripid;
     if (tripid) {
@@ -1735,7 +1817,7 @@ exports.getFiltertourAPIUseOnly = async (req, res, sortByLatestUpdate) => {
     // Sort by recently updated records only if flag is passed
     if (sortByLatestUpdate) {
       tourQuery = tourQuery.sort({ updatedAt: -1 });
-    }else{
+    } else {
       tourQuery = tourQuery.sort({ displayOrder: 1 })
     }
     const tourList = await tourQuery;
@@ -1849,7 +1931,7 @@ exports.postNewAddTours = async (req, res) => {
     } = req.body;
 
     // Check if the tour name already exists
-    const existingTour = await NewTours.findOne({ name,isActive:true, isDeleted:false });
+    const existingTour = await NewTours.findOne({ name, isActive: true, isDeleted: false });
     if (
       existingTour &&
       (!tripId || existingTour._id.toString() !== tripId.toString())
@@ -1881,23 +1963,23 @@ exports.postNewAddTours = async (req, res) => {
     const parsedBestSession = Array.isArray(bestSession)
       ? bestSession
       : typeof bestSession === "string"
-      ? bestSession.split(",")
-      : [];
+        ? bestSession.split(",")
+        : [];
     const parsedTripCategories = Array.isArray(tripCategories)
       ? tripCategories
       : typeof tripCategories === "string"
-      ? tripCategories.split(",")
-      : [];
+        ? tripCategories.split(",")
+        : [];
     const parsedBestMonthToVisit = Array.isArray(bestMonthToVisit)
       ? bestMonthToVisit
       : typeof bestMonthToVisit === "string"
-      ? bestMonthToVisit.split(",")
-      : [];
+        ? bestMonthToVisit.split(",")
+        : [];
     const parsedTravelerType = Array.isArray(travelerType)
       ? travelerType
       : typeof travelerType === "string"
-      ? travelerType.split(",")
-      : [];
+        ? travelerType.split(",")
+        : [];
 
     // Validate required fields
     const requiredFields = ["name", "state"];
@@ -2155,7 +2237,7 @@ exports.getTripDetialbyName = async (req, res, next) => {
     try {
       // Get current trip's categories
       const currentTripCategories = tripdetails.tripCategories || [];
-      
+
       if (currentTripCategories.length > 0) {
         // Find trips with matching categories, excluding current trip
         recommendedTrips = await NewTours.find({
@@ -2164,11 +2246,11 @@ exports.getTripDetialbyName = async (req, res, next) => {
           isDeleted: false,
           tripCategories: { $in: currentTripCategories }
         })
-        .select('name state imageurl destinations days price tripCategories')
-        .sort({ displayOrder: 1, createdAt: -1 })
-        .limit(6); // Limit to 6 recommended trips
+          .select('name state imageurl destinations days price tripCategories')
+          .sort({ displayOrder: 1, createdAt: -1 })
+          .limit(6); // Limit to 6 recommended trips
       }
-      
+
       // If no category-based recommendations or not enough trips, get general recommendations
       if (recommendedTrips.length < 3) {
         const additionalTrips = await NewTours.find({
@@ -2176,10 +2258,10 @@ exports.getTripDetialbyName = async (req, res, next) => {
           isActive: true,
           isDeleted: false
         })
-        .select('name state imageurl destinations days price tripCategories')
-        .sort({ displayOrder: 1, createdAt: -1 })
-        .limit(6 - recommendedTrips.length);
-        
+          .select('name state imageurl destinations days price tripCategories')
+          .sort({ displayOrder: 1, createdAt: -1 })
+          .limit(6 - recommendedTrips.length);
+
         recommendedTrips = [...recommendedTrips, ...additionalTrips];
       }
     } catch (error) {

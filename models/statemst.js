@@ -18,7 +18,7 @@ const stateSchema = new Schema(
 // Auto-increment plugin
 stateSchema.plugin(AutoIncrement, { inc_field: 'stateId' });
 
-// ✅ Compound unique index on countryCode + name, only for non-deleted records
+// Compound unique index on countryCode + name, only for non-deleted records
 stateSchema.index(
   { countryCode: 1, name: 1 },
   {

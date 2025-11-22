@@ -5,1216 +5,440 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard - Category Management</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+
+  <!-- Bootstrap 5 + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Select2, Toastify, Cropper -->
   <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
   <style>
-    /* Scoped styles for Category Management with cm- prefix */
-    :root {
-      --transition: all 0.3s ease;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      --gradient-blue: linear-gradient(to right, #1d4ed8, #3b82f6);
-      --gradient-green: linear-gradient(to right, #10b981, #34d399);
-      --gradient-red: linear-gradient(to right, #ef4444, #dc2626);
+    body {
+      background: #f8fafc;
+      font-family: 'Inter', sans-serif;
     }
-
     .cm-container {
-      max-width: 1280px;
+      max-width: 1400px;
       margin: 0 auto;
-      padding: 2rem 1.5rem;
-      font-family: "Inter", sans-serif;
-      background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
-      min-height: 100vh;
+      padding: 1.5rem 1rem;
     }
-
-    .cm-tabs {
-      display: flex;
-      border-bottom: 3px solid #e5e7eb;
-      margin-bottom: 1.5rem;
-      background: #ffffff;
-      border-radius: 0.75rem;
-      padding: 0.5rem;
-      box-shadow: var(--shadow);
-    }
-
-    .cm-tab {
+    .cm-tabs .nav-link {
+      color: #555;
+      font-weight: 600;
       padding: 0.75rem 1.5rem;
-      color: #4b5563;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-      border-radius: 0.5rem;
     }
-
-    .cm-tab:hover {
-      background: #f3f4f6;
-      color: #1d4ed8;
+    .cm-tabs .nav-link.active {
+      color: #0d6efd;
+      border-bottom: 3px solid #0d6efd;
     }
-
-    .cm-tab.active {
-      background: var(--gradient-blue);
-      color: white;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .cm-form-container {
-      background: #ffffff;
-      border-radius: 0.75rem;
-      box-shadow: var(--shadow);
-      margin-bottom: 2rem;
-      transition: var(--transition);
-      overflow: hidden;
-    }
-
-    .cm-form-container.collapsed {
-      height: 3rem;
-    }
-
-    .cm-form-toggle {
-      cursor: pointer;
-      padding: 0.75rem 1.5rem;
-      background: var(--gradient-blue);
-      color: white;
-      font-weight: 600;
-      border-radius: 0.75rem 0.75rem 0 0;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      transition: var(--transition);
-    }
-
-    .cm-form-toggle:hover {
-      background: linear-gradient(to right, #1e40af, #2563eb);
-    }
-
-    .cm-form {
-      padding: 1.5rem;
-      display: grid;
-      gap: 1rem;
-    }
-
-    .cm-form-label {
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: #374151;
-    }
-
-    .cm-form-input,
-    .cm-form-select {
-      width: 100%;
-      padding: 0.5rem 0.75rem;
-      border: 1px solid #d1d5db;
-      border-radius: 0.375rem;
-      font-size: 0.875rem;
-      transition: var(--transition);
-    }
-
-    .cm-form-input:focus,
-    .cm-form-select:focus {
-      outline: none;
-      border-color: #1d4ed8;
-      box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
-    }
-
-    .cm-image-preview-container {
-      position: relative;
-      width: 200px;
-      height: 200px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 0.375rem;
-      border: 1px solid #e5e7eb;
-      background: #f9fafb;
-    }
-
-    .cm-image-preview {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 0.375rem;
-      transition: var(--transition);
-      cursor: pointer;
-    }
-
-    .cm-image-preview:hover {
-      transform: scale(1.02);
-      box-shadow: var(--shadow);
-    }
-
-    .cm-image-preview.error {
-      border: 2px solid #ef4444;
-      background: #fef2f2;
-    }
-
-    .cm-remove-image {
-      position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      background: var(--gradient-red);
-      color: white;
+    .card {
       border: none;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .card-header {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
       cursor: pointer;
-      transition: var(--transition);
     }
-
-    .cm-remove-image:hover {
-      background: linear-gradient(to right, #dc2626, #b91c1c);
-    }
-
-    .cm-card {
-      background: #ffffff;
-      border-radius: 0.75rem;
-      box-shadow: var(--shadow);
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    .cm-card-grid .card {
+      transition: all 0.3s ease;
       cursor: move;
-      transition: var(--transition);
-      position: relative;
-      animation: cm-fadeIn 0.3s ease;
+      border-radius: 10px;
     }
-
-    .cm-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    .cm-card-grid .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.12) !important;
     }
-
-    .cm-card img {
-      width: 140px;
-      height: 140px;
+    .cm-card-grid img {
+      width: 100%;
+      height: 120px;
       object-fit: cover;
-      border-radius: 0.5rem;
-      margin-bottom: 0.75rem;
-      border: 1px solid #e5e7eb;
+      border-radius: 8px;
     }
-
-    .cm-card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1.5rem;
-      max-height: 70vh;
-      overflow-y: auto;
-      padding: 1rem;
-      background: #f9fafb;
-      border-radius: 0.75rem;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    .cm-card-grid .card-body {
+      padding: 0.9rem;
     }
-
-    .cm-actions {
-      position: absolute;
-      top: 2.5rem;
-      right: 0.75rem;
-      opacity: 0;
-      transition: var(--transition);
-      display: flex;
-      flex-direction: row;
-      gap: 0.1rem;
-      z-index: 10;
-    }
-
-    .cm-card:hover .cm-actions {
-      opacity: 1;
-    }
-
-    .cm-action-btn {
-      padding: 0.5rem 1rem;
-      font-size: 0.75rem;
+    .cm-card-grid h6 {
+      font-size: 0.95rem;
       font-weight: 600;
-      border-radius: 0.375rem;
-      transition: var(--transition);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-bottom: 0.4rem;
     }
-
-    .cm-action-btn.edit {
-      background: linear-gradient(to right, #f59e0b, #d97706);
-      color: white;
+    .cm-card-grid .badge {
+      font-size: 0.7rem;
     }
-
-    .cm-action-btn.edit:hover {
-      background: linear-gradient(to right, #d97706, #b45309);
+    .cm-order-input {
+      width: 60px !important;
+      font-size: 0.8rem;
     }
-
-    .cm-action-btn.delete {
-      background: var(--gradient-red);
-      color: white;
-    }
-
-    .cm-action-btn.delete:hover {
-      background: linear-gradient(to right, #dc2626, #b91c1c);
-    }
-
-    .select2-container--default .select2-selection--single {
-      border: 1px solid #d1d5db;
-      border-radius: 0.375rem;
-      padding: 0.25rem;
-      background: #ffffff;
-      height: 2.5rem;
-      display: flex;
-      align-items: center;
-    }
-
-    .cm-toast {
-      z-index: 10000 !important;
-      border-radius: 0.5rem;
-      box-shadow: var(--shadow);
-    }
-
-    .cm-filter-bar {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      align-items: center;
-      flex-wrap: wrap;
-      background: #ffffff;
-      padding: 1rem;
-      border-radius: 0.75rem;
-      box-shadow: var(--shadow);
-    }
-
-    .cm-filter-bar .filter-item {
-      flex: 1;
-      min-width: 200px;
-      max-width: 300px;
-    }
-
-    .cm-loading {
+    #cmLoadingOverlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.75);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 9999;
     }
-
-    .cm-loading-spinner {
-      border: 6px solid #f3f3f3;
-      border-top: 6px solid #1d4ed8;
-      border-radius: 50%;
-      width: 48px;
-      height: 48px;
-      animation: cm-spin 0.8s linear infinite;
-    }
-
-    .cm-crop-modal .modal-content {
-      border-radius: 0.75rem;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-
-    .cm-crop-modal select#cmCropRatio {
-      width: 100%;
-      max-width: 250px;
-      margin: 0 auto 1rem;
-      padding: 0.5rem;
-      border-radius: 0.375rem;
-      border: 1px solid #d1d5db;
-    }
-
-    .cm-crop-image {
-      max-width: 100%;
-      max-height: 60vh;
-      border-radius: 0.5rem;
-    }
-
-    .cm-order-input {
-      width: 60px;
-      padding: 0.25rem;
-      border: 1px solid #d1d5db;
-      border-radius: 0.375rem;
-      font-size: 0.75rem;
-      text-align: center;
-    }
-
-    .cm-order-input.error {
-      border-color: #ef4444;
-      background-color: #fef2f2;
-    }
-
-    .cm-no-records {
-      text-align: center;
-      padding: 3rem;
+    .form-help {
+      font-size: 0.85rem;
       color: #6b7280;
-      font-size: 1.125rem;
+      margin-top: 0.35rem;
+    }
+    .drag-hint {
+      font-size: 0.9rem;
+      color: #4b5563;
+      text-align: center;
+      margin: 1rem 0;
       font-weight: 500;
-      background: #ffffff;
-      border-radius: 0.75rem;
-      box-shadow: var(--shadow);
-    }
-
-    .cm-checkbox {
-      width: 16px;
-      height: 16px;
-      border: 2px solid #d1d5db;
-      border-radius: 0.25rem;
-      cursor: pointer;
-      position: relative;
-      z-index: 20;
-    }
-
-    @keyframes cm-spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    @keyframes cm-fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 768px) {
-      .cm-card-grid {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      }
-
-      .cm-filter-bar {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .cm-tabs {
-        flex-wrap: wrap;
-        gap: 0.5rem;
-      }
-
-      .cm-tab {
-        flex: 1 1 100%;
-        text-align: center;
-        padding: 0.5rem;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .cm-container {
-        padding: 1rem;
-      }
-
-      .cm-card-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .cm-form {
-        grid-template-columns: 1fr;
-      }
     }
   </style>
+
   <%- include('../../partials/headtag', {isNiceSelect: true}); %>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-light">
   <%- include('../../partials/header', {isSearch: false}); %>
+
   <div class="cm-container">
-    <div class="cm-loading" id="cmLoadingOverlay">
-      <div class="cm-loading-spinner"></div>
+    <!-- Loading Overlay -->
+    <div id="cmLoadingOverlay" class="d-none">
+      <div class="spinner-border text-primary" style="width: 3.5rem; height: 3.5rem;">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     </div>
 
-    <div class="cm-tabs">
-      <div class="cm-tab" data-tab="cities" data-redirect="/cities">City Master</div>
-      <div class="cm-tab" data-tab="states" data-redirect="/states">State Master</div>
-      <div class="cm-tab active" data-tab="category" data-redirect="/categories">Category Master</div>
-      <div class="cm-tab" data-tab="banners" data-redirect="/banner">Banner Master</div>
-      <div class="cm-tab" data-tab="trips" data-redirect="/trips">Trip Master</div>
-      <div class="cm-tab" data-tab="customTrip" data-redirect="/customTrip">Custom Trip</div>
-    </div>
+    <!-- Tabs -->
+    <ul class="nav nav-tabs cm-tabs mb-4">
+      <li class="nav-item"><a class="nav-link" href="/cities">City Master</a></li>
+      <li class="nav-item"><a class="nav-link" href="/states">State Master</a></li>
+      <li class="nav-item"><a class="nav-link active" href="/categories">Category Master</a></li>
+      <li class="nav-item"><a class="nav-link" href="/banner">Banner Master</a></li>
+      <li class="nav-item"><a class="nav-link" href="/trips">Trip Master</a></li>
+      <li class="nav-item"><a class="nav-link" href="/customTrip">Custom Trip</a></li>
+    </ul>
 
-    <div id="category-tab" class="cm-tab-content">
-      <div class="cm-form-container collapsed" id="cmCategoryFormContainer">
-        <div class="cm-form-toggle" id="cmFormToggle">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          Show Form
+    <!-- Add/Edit Form -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h6 class="mb-0">
+          <i class="fas fa-tags me-2"></i>
+          <span>Add / Edit Category</span>
+        </h6>
+        <div class="d-flex align-items-center gap-2">
+          <button type="button" class="btn btn-light"><a class="dropdown-item" href="/admin/category-trip-order" target="_blank">Trips Ord.</a></button>
+          <button type="button" id="cmCancelBtn" class="btn btn-outline-secondary btn-sm d-none">Cancel</button>
+          <button type="submit" form="cmCategoryForm" id="cmSubmitBtn" class="btn btn-primary position-relative">
+            <span class="submit-text">Save</span>
+            <span class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
+          </button>
+          <button class="btn btn-link text-white p-0" data-bs-toggle="collapse" data-bs-target="#categoryFormCollapse">
+            <i class="fas fa-chevron-down" id="toggleIcon"></i>
+          </button>
         </div>
-        <form id="cmCategoryForm" action="/categories" method="POST" enctype="multipart/form-data" class="cm-form">
+      </div>
+
+      <div class="collapse show" id="categoryFormCollapse">
+        <form id="cmCategoryForm" action="/categories" method="POST" enctype="multipart/form-data" class="card-body">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <input type="hidden" id="cmCategoryId" name="id" />
           <input type="hidden" id="cmOldImage" name="oldImage" />
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label for="cmCategoryName" class="cm-form-label">Category Name</label>
-              <input type="text" id="cmCategoryName" name="name" class="cm-form-input" required />
+          <div class="row g-4 align-items-start">
+            <!-- Category Name -->
+            <div class="col-lg-5">
+              <label for="cmCategoryName" class="form-label fw-semibold">Category Name <span class="text-danger">*</span></label>
+              <input type="text" id="cmCategoryName" name="name" class="form-control form-control-lg" required placeholder="e.g. Adventure, Beach, Hill Station" />
             </div>
-            <div>
-              <label for="cmIsActive" class="cm-form-label">Active Status</label>
-              <label class="inline-flex items-center">
-                <input type="checkbox" id="cmIsActive" name="isActive" checked class="cm-checkbox" />
-                <span class="ml-2 text-sm text-gray-600">Active</span>
-              </label>
+
+            <!-- Image Upload -->
+            <div class="col-lg-4">
+              <label for="cmImage" class="form-label fw-semibold">Category Image (Recommended: 400x300)</label>
+              <input type="file" id="cmImage" name="image" accept="image/*" class="form-control" />
+              <div class="mt-3" id="cmImagePreviewContainer" style="display: none;">
+                <div class="position-relative d-inline-block">
+                  <img id="cmImagePreview" src="" alt="Preview" class="img-thumbnail rounded" style="max-height: 140px;" data-bs-toggle="modal" data-bs-target="#cmPreviewModal" />
+                  <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 rounded-circle" id="cmRemoveImage">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
             </div>
-            <div class="md:col-span-2">
-              <label for="cmImage" class="cm-form-label">Category Image</label>
-              <input type="file" id="cmImage" name="image" accept="image/*" class="cm-form-input" />
-              <div class="cm-image-preview-container mt-2" id="cmImagePreviewContainer" style="display: none;">
-                <img id="cmImagePreview" src="" alt="Preview" class="cm-image-preview" data-bs-toggle="modal" data-bs-target="#cmPreviewModal" />
-                <button type="button" class="cm-remove-image" id="cmRemoveImage" style="display: none;">
-                  <i class="fas fa-times"></i>
-                </button>
+
+            <!-- Switches -->
+            <div class="col-lg-3">
+              <div class="mb-4">
+                <label class="form-label fw-semibold">Active Status</label>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="cmIsActive" name="isActive" checked>
+                  <label class="form-check-label" for="cmIsActive">Active</label>
+                </div>
+              </div>
+
+              <div>
+                <label class="form-label fw-semibold">Show on Homepage</label>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="cmIsShowOnHomePage" name="isShowOnHomePage">
+                  <label class="form-check-label" for="cmIsShowOnHomePage">Visible</label>
+                </div>
+                <div class="form-help">
+                  If enabled, this category and its trips will appear on the homepage.
+                </div>
               </div>
             </div>
           </div>
-
-          <div class="flex justify-end space-x-3 mt-4">
-            <button type="button" id="cmCancelBtn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm font-medium transition-colors hidden">
-              Cancel
-            </button>
-            <button type="submit" id="cmSubmitBtn" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 text-sm font-medium transition-colors">
-              Add Category
-            </button>
-          </div>
         </form>
       </div>
+    </div>
 
-      <div class="cm-filter-bar">
-        <div class="filter-item">
-          <div class="relative">
-            <input type="text" id="cmSearchInput" class="cm-form-input pl-10" placeholder="Search categories..." />
-            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+    <!-- Filters + Hint -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <div class="row g-3 align-items-end mb-3">
+          <div class="col-lg-5">
+            <input type="text" id="cmSearchInput" class="form-control" placeholder="Search categories..." />
           </div>
-        </div>
-        <div class="filter-item">
-          <select class="select2 cm-form-select" id="cmActiveFilter">
-            <option value="">All Statuses</option>
-            <option value="true">Active</option>
-            <option value="false">Inactive</option>
-          </select>
-        </div>
-        <button id="cmClearFiltersBtn" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-sm font-medium transition-colors">
-          Clear Filters
-        </button>
-        <button id="cmBulkDeleteBtn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium transition-colors hidden">
-          Delete Selected
-        </button>
-      </div>
-
-      <div class="cm-card-grid" id="cmCategoryGrid"></div>
-      <div class="flex justify-end mt-4">
-        <button id="cmSaveOrderBtn" class="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-md hover:from-green-700 hover:to-green-800 text-sm font-medium transition-colors hidden">
-          Save Order
-        </button>
-      </div>
-    </div>
-
-    <div id="cities-tab" class="cm-tab-content hidden">
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">City Management</h2>
-      <p class="text-gray-600">City management functionality coming soon...</p>
-    </div>
-    <div id="states-tab" class="cm-tab-content hidden">
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">State Management</h2>
-      <p class="text-gray-600">State management functionality coming soon...</p>
-    </div>
-    <div id="banners-tab" class="cm-tab-content hidden">
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">Banner Management</h2>
-      <p class="text-gray-600">Banner management functionality coming soon...</p>
-    </div>
-    <div id="trips-tab" class="cm-tab-content hidden">
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">Trip Management</h2>
-      <p class="text-gray-600">Trip management functionality coming soon...</p>
-    </div>
-  </div>
-
-  <div class="modal fade" id="cmPreviewModal" tabindex="-1" aria-labelledby="cmPreviewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-header bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-          <h5 class="modal-title text-base font-semibold">Image Preview</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body text-center bg-gray-50">
-          <img id="cmPreviewModalImg" src="#" class="max-h-[60vh] w-auto mx-auto rounded-lg shadow-lg transform transition-transform duration-200 hover:scale-105" />
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" id="cmDeleteConfirmModal" tabindex="-1" aria-labelledby="cmDeleteConfirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header bg-gradient-to-r from-red-600 to-red-700 text-white">
-          <h5 class="modal-title text-base font-semibold">Confirm Delete</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body text-sm bg-gray-50" id="cmDeleteModalBody">
-          Are you sure you want to delete the selected category(s)?
-        </div>
-        <div class="modal-footer bg-gray-50">
-          <button type="button" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm transition-colors" data-bs-dismiss="modal">
-            Cancel
-          </button>
-          <button type="button" id="cmConfirmDeleteBtn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm transition-colors">
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade cm-crop-modal" id="cmCropModal" tabindex="-1" aria-labelledby="cmCropModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-header bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-          <h5 class="modal-title text-base font-semibold" id="cmCropModalLabel">Crop Image</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body text-center bg-gray-50">
-          <div class="mt-2 mb-4">
-            <label for="cmCropRatio" class="cm-form-label">Crop Ratio</label>
-            <select id="cmCropRatio" name="cropMode" class="cm-form-select">
-              <option value="1" selected>1:1 (Square)</option>
-              <option value="1.333">4:3</option>
-              <option value="1.777">16:9</option>
-              <option value="free">Free Crop</option>
+          <div class="col-lg-3">
+            <select class="form-select select2" id="cmActiveFilter">
+              <option value="">All Status</option>
+              <option value="true">Active Only</option>
+              <option value="false">Inactive Only</option>
             </select>
           </div>
-          <img id="cmCropImage" class="cm-crop-image" />
+          <div class="col-lg-4 d-flex gap-2">
+            <button id="cmClearFiltersBtn" class="btn btn-outline-secondary flex-grow-1">Clear Filters</button>
+            <button id="cmBulkDeleteBtn" class="btn btn-danger d-none flex-grow-1">Delete Selected</button>
+          </div>
         </div>
-        <div class="modal-footer bg-gray-50">
-          <button type="button" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm transition-colors" data-bs-dismiss="modal">
-            Cancel
-          </button>
-          <button type="button" id="cmCropConfirmBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm transition-colors">
-            Crop & Save
-          </button>
+        <div class="drag-hint">
+          <i class="fas fa-arrows-alt me-2"></i>
+          Drag & drop cards to reorder categories. Lower number = appears first on homepage.
+        </div>
+      </div>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 row-cols-xl-6 g-4 cm-card-grid" id="cmCategoryGrid"></div>
+
+    <div class="text-end mt-4">
+      <button id="cmSaveOrderBtn" class="btn btn-success btn-lg d-none">
+        <i class="fas fa-save me-2"></i> Save New Order
+      </button>
+    </div>
+  </div>
+
+  <!-- Image Preview Modal -->
+  <div class="modal fade" id="cmPreviewModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Image Preview</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center bg-light p-4">
+          <img id="cmPreviewModalImg" src="" class="img-fluid rounded shadow" style="max-height: 70vh;" />
         </div>
       </div>
     </div>
   </div>
 
   <%- include('../../partials/footer'); %>
-  <script type="text/javascript">
-    var gk_isXlsx = false;
-    var gk_xlsxFileLookup = {};
-    var gk_fileData = {};
-    function filledCell(cell) {
-      return cell !== '' && cell != null;
-    }
-    function loadFileData(filename) {
-      if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-        try {
-          var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-          var firstSheetName = workbook.SheetNames[0];
-          var worksheet = workbook.Sheets[firstSheetName];
-          var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-          var filteredData = jsonData.filter(row => row.some(filledCell));
-          var headerRowIndex = filteredData.findIndex((row, index) =>
-            row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-          );
-          if (headerRowIndex === -1 || headerRowIndex > 25) {
-            headerRowIndex = 0;
-          }
-          var csv = XLSX.utils.sheet_to_json(filteredData.slice(headerRowIndex));
-          csv = XLSX.utils.sheet_to_csv(csv);
-          return csv;
-        } catch (e) {
-          console.error(e);
-          return "";
-        }
-      }
-      return gk_fileData[filename] || "";
-    }
-  </script>
+
+  <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
   <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
+
   <script>
-    let categories = <%- JSON.stringify(categories) %>;
+    let categories = <%- JSON.stringify(categories || []) %>;
     let filteredCategories = [...categories];
     let selectedCategories = [];
-    let cropper = null;
+    let formModified = false;
+    let sortable = null;
 
-    $(document).ready(function() {
-      $(".select2").select2({
-        placeholder: "Select an option",
-        allowClear: true,
-        width: '100%'
+    $(document).ready(function () {
+      $(".select2").select2({ width: '100%' });
+
+      function initSortable() {
+        const el = document.getElementById('cmCategoryGrid');
+        if (sortable) sortable.destroy();
+        sortable = Sortable.create(el, {
+          animation: 180,
+          ghostClass: 'bg-light',
+          onEnd: () => $('#cmSaveOrderBtn').removeClass('d-none')
+        });
+      }
+
+      function renderCategories() {
+        const $grid = $('#cmCategoryGrid');
+        $grid.empty();
+
+        if (filteredCategories.length === 0) {
+          $grid.append(`<div class="col-12 text-center py-5"><p class="text-muted fs-4">No categories found</p></div>`);
+          return;
+        }
+
+        filteredCategories.forEach(cat => {
+          const card = `
+            <div class="col" data-id="${cat._id}">
+              <div class="card h-100 shadow-sm position-relative overflow-hidden">
+                <div class="position-absolute top-0 start-0 p-2 z-3">
+                  <input type="checkbox" class="form-check-input cm-checkbox" data-id="${cat._id}">
+                </div>
+                <img src="${cat.image || '/images/default-category.jpg'}" alt="${cat.name}" class="card-img-top">
+                <div class="card-body text-center d-flex flex-column">
+                  <h6 class="card-title">${cat.name}</h6>
+                  <div class="mb-2">
+                    ${cat.isActive ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Inactive</span>'}
+                    ${cat.isShowOnHomePage ? ' <span class="badge bg-info">Homepage</span>' : ''}
+                  </div>
+                  <input type="number" class="form-control form-control-sm mx-auto cm-order-input" value="${cat.displayOrder || 0}" min="0" data-id="${cat._id}" title="Display Order">
+                  <div class="mt-3 d-flex gap-1 justify-content-center">
+                    <button class="btn btn-sm btn-warning text-white" onclick="editCategory('${cat._id}')">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <form action="/categories/delete/${cat._id}" method="POST" class="d-inline">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button type="submit" class="btn btn-sm btn-danger">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>`;
+          $grid.append(card);
+        });
+
+        $('.cm-checkbox').on('change', function() {
+          const id = $(this).data('id');
+          if ($(this).is(':checked')) selectedCategories.push(id);
+          else selectedCategories = selectedCategories.filter(x => x !== id);
+          $('#cmBulkDeleteBtn').toggleClass('d-none', selectedCategories.length === 0);
+        });
+
+        initSortable();
+      }
+
+      window.editCategory = function(id) {
+        const cat = categories.find(c => c._id === id);
+        if (!cat) return;
+
+        $('#cmCategoryId').val(id);
+        $('#cmCategoryName').val(cat.name);
+        $('#cmIsActive').prop('checked', !!cat.isActive);
+        $('#cmIsShowOnHomePage').prop('checked', !!cat.isShowOnHomePage);
+
+        if (cat.image) {
+          $('#cmImagePreview').attr('src', cat.image);
+          $('#cmPreviewModalImg').attr('src', cat.image);
+          $('#cmImagePreviewContainer, #cmRemoveImage').show();
+          $('#cmOldImage').val(cat.image);
+        } else {
+          $('#cmImagePreviewContainer, #cmRemoveImage').hide();
+          $('#cmOldImage').val('');
+        }
+
+        $('#cmSubmitBtn').removeClass('btn-primary').addClass('btn-danger').find('.submit-text').text('Update Category');
+        $('#cmCancelBtn').removeClass('d-none');
+        formModified = true;
+        $('#categoryFormCollapse').collapse('show');
+      };
+
+      $('#cmCancelBtn').click(function() {
+        $('#cmCategoryForm')[0].reset();
+        $('#cmCategoryId, #cmOldImage').val('');
+        $('#cmImagePreviewContainer, #cmRemoveImage').hide();
+        $('#cmSubmitBtn').removeClass('btn-danger').addClass('btn-primary').find('.submit-text').text('Add Category');
+        $('#cmCancelBtn').addClass('d-none');
+        formModified = false;
       });
 
-      $('#cmClearFiltersBtn').on('click', function() {
-        $('#cmSearchInput').val('');
-        $('#cmActiveFilter').val('').trigger('change');
-        filteredCategories = [...categories];
-        renderCategories();
+      $('#cmCategoryForm :input').on('input change', () => {
+        if (!formModified) {
+          formModified = true;
+          $('#cmSubmitBtn').removeClass('btn-primary').addClass('btn-danger').find('.submit-text').text('Update Category');
+        }
       });
 
       $('#cmCategoryForm').on('submit', function(e) {
         e.preventDefault();
-        $('#cmLoadingOverlay').show();
-        const formData = new FormData(this);
+        $('#cmLoadingOverlay').removeClass('d-none');
+        $('#cmSubmitBtn .spinner-border').removeClass('d-none');
 
-        if ($('#cmImage')[0].files.length > 0) {
-          formData.set('image', $('#cmImage')[0].files[0]);
-        } else if ($('#cmOldImage').val() && $('#cmCategoryId').val()) {
-          formData.set('image', $('#cmOldImage').val());
-        }
-
-        formData.set('isActive', $('#cmIsActive').is(':checked') ? 'true' : 'false');
+        const fd = new FormData(this);
+        fd.set('isActive', $('#cmIsActive').is(':checked'));
+        fd.set('isShowOnHomePage', $('#cmIsShowOnHomePage').is(':checked'));
 
         $.ajax({
-          url: '/categories',
-          method: 'POST',
-          data: formData,
-          processData: false,
-          contentType: false,
-          success: function(response) {
-            $('#cmLoadingOverlay').hide();
-            if (response.success) {
-              Toastify({
-                text: response.message,
-                className: 'cm-toast',
-                duration: 3000,
-                style: { background: '#10B981' }
-              }).showToast();
-              setTimeout(() => location.reload(), 600);
-            } else {
-              Toastify({
-                text: response.error || 'Failed to process category.',
-                className: 'cm-toast',
-                style: { background: '#EF4444' },
-                duration: 3000
-              }).showToast();
-            }
+          url: '/categories', method: 'POST', data: fd,
+          processData: false, contentType: false,
+          success: res => {
+            $('#cmLoadingOverlay').addClass('d-none');
+            Toastify({ text: res.message, style: { background: res.success ? "#10B981" : "#EF4444" } }).showToast();
+            if (res.success) location.reload();
           },
-          error: function(xhr) {
-            $('#cmLoadingOverlay').hide();
-            const message = xhr.responseJSON?.error || 'Error processing request.';
-            Toastify({
-              text: message,
-              className: 'cm-toast',
-              style: { background: '#EF4444' },
-              duration: 3000
-            }).showToast();
+          error: () => {
+            $('#cmLoadingOverlay').addClass('d-none');
+            Toastify({ text: "Server error", style: { background: "#EF4444" } }).showToast();
           }
         });
       });
 
-      async function checkActiveTrips(categoryName) {
-        try {
-          const response = await $.ajax({
-            url: '/categories/check-trips',
-            method: 'POST',
-            data: JSON.stringify({ categoryName, _csrf: '<%= csrfToken %>' }),
-            contentType: 'application/json'
-          });
-          return response;
-        } catch (error) {
-          console.error(error);
-          Toastify({
-            text: 'Error checking active trips.',
-            className: 'cm-toast',
-            style: { background: '#EF4444' },
-            duration: 6000
-          }).showToast();
-          return { success: false };
-        }
-      }
+      $('#cmSaveOrderBtn').click(function() {
+       const order = Array.from($('#cmCategoryGrid > .col')).map(el => el.dataset.id);
+        $('#cmLoadingOverlay').removeClass('d-none');
 
-      $(document).on('submit', '.cm-delete-form', async function(e) {
-        e.preventDefault();
-        const form = $(this);
-        const categoryName = form.find('input[name="categoryName"]').val();
-
-        const tripCheck = await checkActiveTrips(categoryName);
-        if (!tripCheck.success) {
-          $('#cmDeleteModalBody').html(`Cannot delete category due to active trips:<br>${tripCheck.trips.map(trip => `<strong>${trip.name}</strong>`).join('<br>')}`);
-          $('#cmDeleteConfirmModal').modal('show');
-          $('#cmConfirmDeleteBtn').addClass('hidden');
-          return;
-        }
-
-        $('#cmDeleteModalBody').html('Are you sure you want to delete the selected category?');
-        $('#cmConfirmDeleteBtn').removeClass('hidden');
-        $('#cmDeleteConfirmModal').modal('show');
-        $('#cmConfirmDeleteBtn').off('click').on('click', function() {
-          $('#cmLoadingOverlay').show();
-          $.ajax({
-            url: form.attr('action'),
-            method: 'POST',
-            data: form.serialize(),
-            success: function(response) {
-              $('#cmLoadingOverlay').hide();
-              $('#cmDeleteConfirmModal').modal('hide');
-              if (response.success) {
-                Toastify({
-                  text: response.message,
-                  className: 'cm-toast',
-                  style: { background: '#10B981' },
-                  duration: 3000
-                }).showToast();
-                setTimeout(() => location.reload(), 600);
-              } else {
-                Toastify({
-                  text: response.message || 'Failed to delete category.',
-                  className: 'cm-toast',
-                  style: { background: '#EF4444' },
-                  duration: 3000
-                }).showToast();
-              }
-            },
-            error: function() {
-              $('#cmLoadingOverlay').hide();
-              $('#cmDeleteConfirmModal').modal('hide');
-              Toastify({
-                text: 'Error deleting category.',
-                className: 'cm-toast',
-                style: { background: '#EF4444' },
-                duration: 3000
-              }).showToast();
-            }
-          });
+        $.post('/categories/update-order', {
+          _csrf: '<%= csrfToken %>',
+          order: order
+        }, res => {
+          $('#cmLoadingOverlay').addClass('d-none');
+          Toastify({ text: res.message || "Order saved!", style: { background: res.success ? "#10B981" : "#EF4444" } }).showToast();
+          if (res.success) {
+            $('#cmSaveOrderBtn').addClass('d-none');
+            categories = order.map(id => categories.find(c => c._id === id)).filter(Boolean);
+            filteredCategories = [...categories];
+            renderCategories();
+          }
+        }).fail(() => {
+          $('#cmLoadingOverlay').addClass('d-none');
+          Toastify({ text: "Failed to save order", style: { background: "#EF4444" } }).showToast();
         });
       });
 
-      $('#cmBulkDeleteBtn').on('click', async function() {
-        if (selectedCategories.length === 0) {
-          Toastify({
-            text: 'No categories selected.',
-            className: 'cm-toast',
-            style: { background: '#F59E0B' },
-            duration: 3000
-          }).showToast();
-          return;
-        }
-        const categoryNames = categories.filter(c => selectedCategories.includes(c._id)).map(c => c.name);
-        for (const categoryName of categoryNames) {
-          const tripCheck = await checkActiveTrips(categoryName);
-          if (!tripCheck.success) {
-            $('#cmDeleteModalBody').html(`Cannot delete categories due to active trips in ${categoryName}:<br>${tripCheck.trips.map(trip => `<strong>${trip.name}</strong>`).join('<br>')}`);
-            $('#cmDeleteConfirmModal').modal('show');
-            $('#cmConfirmDeleteBtn').addClass('hidden');
-            return;
-          }
-        }
-        $('#cmDeleteModalBody').html('Are you sure you want to delete the selected categories?');
-        $('#cmConfirmDeleteBtn').removeClass('hidden');
-        $('#cmDeleteConfirmModal').modal('show');
-        $('#cmConfirmDeleteBtn').off('click').on('click', function() {
-          $('#cmLoadingOverlay').show();
-          const promises = selectedCategories.map(id =>
-            $.ajax({
-              url: `/categories/delete/${id}`,
-              method: 'POST',
-              data: { _csrf: '<%= csrfToken %>' }
-            })
+      // Search & Filter
+      let st;
+      $('#cmSearchInput').on('input', () => {
+        clearTimeout(st);
+        st = setTimeout(() => {
+          const term = $('#cmSearchInput').val().toLowerCase().trim();
+          const status = $('#cmActiveFilter').val();
+          filteredCategories = categories.filter(c =>
+            c.name.toLowerCase().includes(term) &&
+            (status === '' || String(c.isActive) === status)
           );
-          Promise.all(promises)
-            .then(responses => {
-              $('#cmLoadingOverlay').hide();
-              $('#cmDeleteConfirmModal').modal('hide');
-              if (responses.every(res => res.success)) {
-                Toastify({
-                  text: 'Selected categories deleted successfully.',
-                  className: 'cm-toast',
-                  style: { background: '#10B981' },
-                  duration: 3000
-                }).showToast();
-                setTimeout(() => location.reload(), 600);
-              } else {
-                Toastify({
-                  text: 'Failed to delete some categories.',
-                  className: 'cm-toast',
-                  style: { background: '#EF4444' },
-                  duration: 3000
-                }).showToast();
-              }
-            })
-            .catch(() => {
-              $('#cmLoadingOverlay').hide();
-              $('#cmDeleteConfirmModal fiction-btn');
-              Toastify({
-                text: 'Error deleting categories.',
-                className: 'cm-toast',
-                style: { background: '#EF4444' },
-                duration: 3000
-              }).showToast();
-            });
-        });
+          renderCategories();
+        }, 300);
       });
 
-      const categoryGrid = document.getElementById('cmCategoryGrid');
-      let orderChanged = false;
-      Sortable.create(categoryGrid, {
-        animation: 150,
-        handle: '.cm-card',
-        touchStartThreshold: 5,
-        onEnd: function(evt) {
-          orderChanged = true;
-          $('#cmSaveOrderBtn').removeClass('hidden');
-          updateOrderInputs();
-        }
+      $('#cmActiveFilter').on('change', () => $('#cmSearchInput').trigger('input'));
+      $('#cmClearFiltersBtn').click(() => {
+        $('#cmSearchInput').val('');
+        $('#cmActiveFilter').val('').trigger('change');
       });
 
-      $('#cmSaveOrderBtn').on('click', function() {
-        if (checkDuplicateOrders()) {
-          Toastify({
-            text: 'Duplicate display orders detected. Please fix before saving.',
-            className: 'cm-toast',
-            style: { background: '#F59E0B' },
-            duration: 3000
-          }).showToast();
-          return;
-        }
-        const newOrder = Array.from(categoryGrid.children).map(card => card.dataset.id);
-        $('#cmLoadingOverlay').show();
-        $.ajax({
-          url: '/categories/update-order',
-          method: 'POST',
-          contentType: 'application/json',
-          data: JSON.stringify({
-            _csrf: '<%= csrfToken %>',
-            order: newOrder
-          }),
-          success: function(response) {
-            $('#cmLoadingOverlay').hide();
-            if (response.success) {
-              Toastify({
-                text: response.message,
-                className: 'cm-toast',
-                duration: 3000,
-                style: { background: '#10B981' }
-              }).showToast();
-              orderChanged = false;
-              $('#cmSaveOrderBtn').addClass('hidden');
-              const orderedCategories = [];
-              newOrder.forEach(id => {
-                const category = categories.find(c => c._id === id);
-                if (category) orderedCategories.push(category);
-              });
-              categories = orderedCategories;
-              filteredCategories = [...categories];
-              renderCategories();
-            } else {
-              Toastify({
-                text: response.message || 'Failed to update category order.',
-                className: 'cm-toast',
-                style: { background: '#EF444' },
-                duration: 3000
-              }).showToast();
-            }
-          },
-          error: function(xhr) {
-            $('#cmLoadingOverlay').hide();
-            const message = xhr.responseJSON?.error || 'Error updating category order.';
-            Toastify({
-              text: message,
-              className: 'cm-toast',
-              style: { background: '#EF4444' },
-              duration: 3000
-            }).showToast();
-          }
-        });
-      });
-
-      let searchTimeout;
-
-      function applyFilters() {
-        const searchTerm = $('#cmSearchInput').val().toLowerCase().trim();
-        const selectedStatus = $('#cmActiveFilter').val();
-        filteredCategories = categories.filter(category => {
-          const matchesSearch = category.name.toLowerCase().includes(searchTerm);
-          const matchesStatus = !selectedStatus || category.isActive.toString() === selectedStatus;
-          return matchesSearch && matchesStatus;
-        });
-        renderCategories();
-      }
-
-      $('#cmSearchInput').on('input', function() {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(applyFilters, 300);
-      });
-
-      $('#cmActiveFilter').on('change', applyFilters);
-
-      function renderCategories() {
-        const categoryGrid = $('#cmCategoryGrid');
-        categoryGrid.empty();
-        if (filteredCategories.length === 0) {
-          categoryGrid.append('<p class="cm-no-records">No records found.</p>');
-        } else {
-          filteredCategories.forEach(category => {
-            const card = `
-              <div class="cm-card" data-id="${category._id}">
-                <input type="checkbox" class="cm-checkbox absolute top-2 left-2" data-id="${category._id}" />
-                <img src="${category.image}" alt="${category.name}" class="cm-card-img" data-src="${category.image}" />
-                <h4 class="text-base font-semibold text-gray-800">${category.name}</h4>
-                <p class="text-sm text-gray-600">${category.isActive ? 'Active' : 'Inactive'}</p>
-                <div class="cm-actions">
-                  <input type="number" class="cm-order-input" value="${category.displayOrder || 0}" min="0" data-id="${category._id}" />
-                  <button class="cm-action-btn edit" onclick="editCategory('${category._id}')">Edit</button>
-                  <form action="/categories/delete/${category._id}" method="POST" class="d-inline cm-delete-form">
-                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                    <input type="hidden" name="categoryName" value="${category.name}" />
-                    <button type="submit" class="cm-action-btn delete">Delete</button>
-                  </form>
-                </div>
-              </div>
-            `;
-            categoryGrid.append(card);
-          });
-        }
-
-        $('.lazy-img').each(function() {
-          const img = $(this);
-          if (img[0].getBoundingClientRect().top < window.innerHeight) {
-            img.attr('src', img.data('src')).removeClass('lazy-img');
-          }
-        });
-
-        $('#cmBulkDeleteBtn').toggle(selectedCategories.length > 0);
-        checkDuplicateOrders();
-
-        selectedCategories.forEach(id => {
-          $(`.cm-checkbox[data-id="${id}"]`).prop('checked', true);
-        });
-      }
-
-      function checkDuplicateOrders() {
-        const orderInputs = Array.from($('.cm-order-input'));
-        const orderValues = {};
-        let hasDuplicates = false;
-        orderInputs.forEach(input => {
-          const value = parseInt(input.value) || 0;
-          if (orderValues[value]) {
-            input.classList.add('error');
-            hasDuplicates = true;
-          } else {
-            input.classList.remove('error');
-            orderValues[value] = true;
-          }
-        });
-        return hasDuplicates;
-      }
-
-      function updateOrderInputs() {
-        const cards = Array.from(categoryGrid.children);
-        cards.forEach((card, index) => {
-          const id = card.dataset.id;
-          const input = $(card).find('.cm-order-input');
-          input.val(index);
-          const category = categories.find(c => c._id === id);
-          if (category) category.displayOrder = index;
-        });
-        checkDuplicateOrders();
-      }
-
-      $(document).on('change', '.cm-checkbox', function() {
-        const id = $(this).data('id');
-        if ($(this).is(':checked')) {
-          selectedCategories.push(id);
-        } else {
-          selectedCategories = selectedCategories.filter(cid => cid !== id);
-        }
-        $('#cmBulkDeleteBtn').toggle(selectedCategories.length > 0);
-      });
-
-      $(document).on('change', '.cm-order-input', function() {
-        const id = $(this).data('id');
-        const newOrder = parseInt($(this).val()) || 0;
-        orderChanged = true;
-        $('#cmSaveOrderBtn').removeClass('hidden');
-        const category = categories.find(c => c._id === id);
-        if (category) category.displayOrder = newOrder;
-        renderCategories();
-      });
-
-      window.editCategory = function(id) {
-        const category = categories.find(c => c._id === id);
-        if (!category) {
-          Toastify({
-            text: 'Category data not found.',
-            className: 'cm-toast',
-            style: { background: '#EF4444' },
-            duration: 3000
-          }).showToast();
-          return;
-        }
-
-        $('#cmCategoryId').val(id);
-        $('#cmCategoryName').val(category.name);
-        const imgPreview = $('#cmImagePreview');
-        imgPreview.removeClass('error');
-        imgPreview.attr('src', category.image || '/images/default-image.jpg');
-        $('#cmPreviewModalImg').attr('src', category.image || '/images/default-image.jpg');
-        $('#cmImagePreviewContainer').show();
-        $('#cmRemoveImage').show();
-        $('#cmOldImage').val(category.image);
-        $('#cmIsActive').prop('checked', category.isActive === true || category.isActive === 'true' || category.isActive === 'on');
-        $('#cmSubmitBtn').text('Update Category').removeClass('from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800').addClass('from-green-600 to-green-700 hover:from-green-700 hover:to-green-800');
-        $('#cmCancelBtn').removeClass('hidden');
-        $('#cmCategoryFormContainer').removeClass('collapsed');
-        $('#cmFormToggle').text('Hide Form');
-
-        imgPreview.on('error', function() {
-          $(this).addClass('error').attr('src', '');
-          $('#cmPreviewModalImg').attr('src', '');
-        });
-      };
-
-      $('#cmCancelBtn').on('click', function() {
-        $('#cmCategoryForm')[0].reset();
-        $('#cmCategoryId').val('');
-        $('#cmOldImage').val('');
-        $('#cmImagePreview').removeClass('error').attr('src', '');
-        $('#cmImagePreviewContainer').hide();
-        $('#cmRemoveImage').hide();
-        $('#cmIsActive').prop('checked', true);
-        $('#cmSubmitBtn').text('Add Category').removeClass('from-green-600 to-green-700 hover:from-green-700 hover:to-green-800').addClass('from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800');
-        $('#cmCancelBtn').addClass('hidden');
-        $('#cmCategoryFormContainer').addClass('collapsed');
-        $('#cmFormToggle').text('Show Form');
-      });
-
-      $('#cmImage').on('change', function(event) {
-        const file = event.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            $('#cmCropImage').attr('src', e.target.result);
-            $('#cmImagePreview').removeClass('error');
-            $('#cmCropModal').modal('show');
-            setTimeout(() => {
-              if (cropper) cropper.destroy();
-              const cropMode = $('#cmCropRatio').val() || '1';
-              const aspectRatio = cropMode === 'free' ? NaN : parseFloat(cropMode);
-              cropper = new Cropper(document.getElementById('cmCropImage'), {
-                aspectRatio: aspectRatio,
-                viewMode: 1,
-                autoCropArea: 0.8,
-                responsive: true
-              });
-            }, 200);
-          };
-          reader.onerror = function() {
-            Toastify({
-              text: 'Error reading image file.',
-              className: 'cm-toast',
-              style: { background: '#EF4444' },
-              duration: 3000
-            }).showToast();
-          };
-          reader.readAsDataURL(file);
-        }
-      });
-
-      $('#cmCropRatio').on('change', function() {
-        if (cropper) {
-          cropper.destroy();
-          const cropMode = $(this).val();
-          const aspectRatio = cropMode === 'free' ? NaN : parseFloat(cropMode);
-          cropper = new Cropper(document.getElementById('cmCropImage'), {
-            aspectRatio: aspectRatio,
-            viewMode: 1,
-            autoCropArea: 0.8,
-            responsive: true
-          });
-        }
-      });
-
-      $('#cmCropConfirmBtn').on('click', function() {
-        if (cropper) {
-          cropper.getCroppedCanvas({
-            width: 300,
-            height: 300
-          }).toBlob(blob => {
-            if (!blob) {
-              Toastify({
-                text: 'Error processing cropped image.',
-                className: 'cm-toast',
-                style: { background: '#EF4444' },
-                duration: 3000
-              }).showToast();
-              return;
-            }
-            const url = URL.createObjectURL(blob);
-            const imgPreview = $('#cmImagePreview');
-            imgPreview.removeClass('error').attr('src', url).show();
-            $('#cmPreviewModalImg').attr('src', url);
-            $('#cmImagePreviewContainer').show();
-            $('#cmRemoveImage').show();
-            const file = new File([blob], `cropped-image-${Date.now()}.jpg`, { type: 'image/jpeg' });
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            $('#cmImage')[0].files = dataTransfer.files;
-            $('#cmOldImage').val('');
-            $('#cmCropModal').modal('hide');
-            cropper.destroy();
-            cropper = null;
-          }, 'image/jpeg', 0.9);
-        }
-      });
-
-      $('#cmCropModal').on('hidden.bs.modal', function() {
-        if (cropper) {
-          cropper.destroy();
-          cropper = null;
-        }
-      });
-
-      $('#cmRemoveImage').on('click', function() {
-        $('#cmImage').val('');
-        $('#cmImagePreview').removeClass('error').attr('src', '');
-        $('#cmImagePreviewContainer').hide();
-        $('#cmRemoveImage').hide();
-        $('#cmOldImage').val('');
-      });
-
-      $('#cmFormToggle').on('click', function() {
-        $('#cmCategoryFormContainer').toggleClass('collapsed');
-        $(this).text($('#cmCategoryFormContainer').hasClass('collapsed') ? 'Show Form' : 'Hide Form');
-      });
-
-      $('.cm-tab').on('click', function() {
-        const redirectUrl = $(this).data('redirect');
-        if (redirectUrl) {
-          window.location.href = redirectUrl;
-        } else {
-          $('.cm-tab').removeClass('active');
-          $(this).addClass('active');
-          $('.cm-tab-content').addClass('hidden');
-          $(`#${$(this).data('tab')}-tab`).removeClass('hidden');
-        }
-      });
-
-      $(window).on('scroll', function() {
-        $('.lazy-img').each(function() {
-          const img = $(this);
-          if (img[0].getBoundingClientRect().top < window.innerHeight) {
-            img.attr('src', img.data('src')).removeClass('lazy-img');
-          }
-        });
-      });
-
-      $('#cmImagePreview').on('click', function() {
-        const src = $(this).attr('src');
-        if (src && !$(this).hasClass('error')) {
-          $('#cmPreviewModalImg').attr('src', src);
-        } else {
-          $('#cmPreviewModalImg').attr('src', '/images/default-image.jpg');
-        }
-      });
+      // Collapse icon
+      $('#categoryFormCollapse').on('show.bs.collapse', () => $('#toggleIcon').removeClass('fa-chevron-down').addClass('fa-chevron-up'));
+      $('#categoryFormCollapse').on('hide.bs.collapse', () => $('#toggleIcon').removeClass('fa-chevron-up').addClass('fa-chevron-down'));
 
       renderCategories();
     });
   </script>
 </body>
-
 </html>
