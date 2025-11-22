@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="csrf-token" content="<%= csrfToken %>">
+  <%- include('../../partials/headtag', { title: 'Manage Trip Order' , isNiceSelect: false }) %>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+      body {
+        background: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .page-header {
+        background: white;
+        border-bottom: 1px solid #dee2e6;
+        padding: 16px 0;
+        margin-bottom: 20px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      .header-content {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .header-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 10px;
+        align-items: center;
+      }
+
+      @media (max-width: 768px) {
+        .header-controls {
+          grid-template-columns: 1fr;
+        }
+
+        .header-controls>div:last-child {
+          justify-self: stretch;
+        }
+      }
+
+      .trip-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 18px;
+        padding: 16px 8px;
+      }
+
+      @media (max-width: 1400px) {
+        .trip-grid {
+          grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        }
+      }
+
+      @media (max-width: 992px) {
+        .trip-grid {
+          grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        }
+      }
+
+      @media (max-width: 768px) {
+        .trip-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 16px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .trip-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 14px;
+          padding: 12px 6px;
+        }
+      }
+
+      .trip-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        cursor: grab;
+        user-select: none;
+        border: 2px solid transparent;
+      }
+
+      .trip-card:active {
+        cursor: grabbing;
+      }
+
+      .trip-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+      }
+
+      .trip-card.ghost {
+        opacity: 0.4;
+        background: #fff8e1;
+        border: 2px dashed #ffb300;
+        transform: rotate(5deg);
+      }
+
+      .trip-image {
+        width: 100%;
+        height: 170px;
+        object-fit: cover;
+        background: #f0f0f0;
+      }
+
+      .trip-info {
+        padding: 16px;
+      }
+
+      .trip-name {
+        font-weight: 600;
+        font-size: 1.05rem;
+        line-height: 1.3;
+        margin-bottom: 8px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        color: #212529;
+      }
+
+      .trip-meta {
+        color: #555;
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+
+      .counter-badge {
+        background: #0d6efd;
+        color: white;
+        font-weight: 600;
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 0.9rem;
+      }
+
+      /* Save Button - Large & Mobile Friendly */
+      #saveOrder {
+        min-height: 48px;
+        padding: 0 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 12px;
+      }
+
+      .save-btn.unsaved {
+        background: #dc3545 !important;
+        border-color: #dc3545 !important;
+        animation: pulse 2s infinite;
+        box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.2);
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4);
+        }
+
+        70% {
+          box-shadow: 0 0 0 12px rgba(220, 53, 69, 0);
+        }
+
+        100% {
+          box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+        }
+      }
+
+      /* Mobile Improvements */
+      @media (max-width: 768px) {
+        .page-header {
+          padding: 12px 0;
+        }
+
+        h5.fw-semibold {
+          font-size: 1.3rem;
+        }
+
+        .form-select,
+        .form-control {
+          font-size: 1rem;
+          padding: 10px 12px;
+        }
+      }
+    </style>
+</head>
+
+<body>
+  <%- include('../../partials/header', {isSearch: false}) %>
+
+    <!-- Mobile-Friendly Sticky Header -->
+    <div class="page-header">
+      <div class="container-fluid px-3 px-xxl-4">
+        <div class="header-content">
+          <div>
+            <h5 class="fw-semibold text-dark mb-1">
+              Set Display Order for Homepage Categories
+            </h5>
+            <p class="text-muted small mb-2">
+              Drag cards to reorder • Changes auto-highlight Save button
+            </p>
+          </div>
+          <a href="/categories" target="_blank" rel="noopener"
+            class="btn btn-outline-primary d-flex align-items-center gap-2 shadow-sm hover-lift">
+            <i class="bi bi-tags"></i>
+            <span class="d-none d-sm-inline">Manage Categories</span>
+            <span class="d-inline d-sm-none">Categories</span>
+            <i class="bi bi-box-arrow-up-right small"></i>
+          </a>
+
+          <div class="header-controls">
+            <div>
+              <select id="categorySelect" class="form-select form-select-lg shadow-sm">
+                <option value="">Choose a category to reorder</option>
+                <% categories.forEach(cat=> { %>
+                  <option value="<%= cat.name %>">
+                    <%= cat.name %> (<%= cat.tripCount || 0 %> trips)
+                  </option>
+                  <% }) %>
+              </select>
+            </div>
+
+            <div>
+              <input type="text" id="searchTrips" class="form-control form-control-lg shadow-sm"
+                placeholder="Search trips..." disabled>
+            </div>
+
+            <div class="d-flex align-items-center gap-3 justify-content-end">
+              <span class="counter-badge" id="tripCounter">0</span>
+              <button id="saveOrder" class="btn btn-success btn-lg save-btn shadow">
+                Save Order
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid px-3 px-xxl-4">
+      <div id="loading" class="text-center py-5" style="display:none;">
+        <div class="spinner-border text-primary" style="width:4rem;height:4rem;"></div>
+        <p class="mt-3 fs-5">Loading trips...</p>
+      </div>
+
+      <div id="tripsContainer" style="display:none;">
+        <div class="trip-grid" id="tripList"></div>
+      </div>
+
+      <div id="noTrips" class="text-center py-5" style="display:none;">
+        <i class="fas fa-images fa-5x text-muted mb-4"></i>
+        <h5 class="text-muted">No trips found in this category</h5>
+        <p class="text-muted">Try selecting another category</p>
+      </div>
+    </div>
+
+    <%- include('../../partials/footer') %>
+
+      <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+      <script>
+        // Your existing JS remains 100% the same — only small UX improvements below
+        let currentCategoryId = null;
+        let sortable = null;
+        let allTrips = [];
+        let hasChanges = false;
+
+        const els = {
+          list: document.getElementById('tripList'),
+          select: document.getElementById('categorySelect'),
+          search: document.getElementById('searchTrips'),
+          counter: document.getElementById('tripCounter'),
+          saveBtn: document.getElementById('saveOrder'),
+          container: document.getElementById('tripsContainer'),
+          loading: document.getElementById('loading'),
+          noTrips: document.getElementById('noTrips')
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlCategory = urlParams.get('category');
+
+        function renderTrips(trips) {
+          els.list.innerHTML = '';
+          els.counter.textContent = trips.length;
+
+          if (trips.length === 0) {
+            els.container.style.display = 'none';
+            els.noTrips.style.display = 'block';
+            return;
+          }
+
+          els.noTrips.style.display = 'none';
+          els.container.style.display = 'block';
+
+          trips.forEach(trip => {
+            const card = document.createElement('div');
+            card.className = 'trip-card';
+            card.dataset.id = trip._id;
+
+            card.innerHTML = `
+          <img src="${trip.imageurl || '/images/placeholder.jpg'}" 
+               class="trip-image" 
+               onerror="this.src='/images/placeholder.jpg'" 
+               alt="${trip.name}"
+               loading="lazy">
+          <div class="trip-info">
+            <div class="trip-name">${trip.name}</div>
+            <div class="trip-meta">
+              ₹${trip.price || 'N/A'} • ${trip.days || '?'} days
+              ${trip.location ? `<br><small class="text-primary">${trip.location}</small>` : ''}
+            </div>
+          </div>
+        `;
+            els.list.appendChild(card);
+          });
+
+          if (sortable) sortable.destroy();
+          sortable = new Sortable(els.list, {
+            animation: 250,
+            ghostClass: 'ghost',
+            onEnd: () => {
+              hasChanges = true;
+              els.saveBtn.classList.add('unsaved');
+              els.saveBtn.innerHTML = 'Save Changes';
+            }
+          });
+        }
+
+        async function loadCategory(categoryName) {
+          if (!categoryName) return;
+
+          els.loading.style.display = 'block';
+          try {
+            const res = await fetch(`/api/category-trips?categoryName=${encodeURIComponent(categoryName)}`);
+            const data = await res.json();
+
+            if (!data.success || data.trips.length === 0) {
+              els.loading.style.display = 'none';
+              els.noTrips.style.display = 'block';
+              return;
+            }
+
+            currentCategoryId = data.categoryId;
+            allTrips = data.trips;
+            renderTrips(allTrips);
+            els.search.disabled = false;
+            els.search.focus();
+          } catch (err) {
+            alert('Error loading trips');
+          } finally {
+            els.loading.style.display = 'none';
+          }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+          if (urlCategory) {
+            const option = Array.from(els.select.options).find(opt =>
+              opt.value.toLowerCase() === decodeURIComponent(urlCategory).toLowerCase()
+            );
+            if (option) {
+              els.select.value = option.value;
+              loadCategory(option.value);
+            }
+          }
+        });
+
+        els.select.addEventListener('change', function () {
+          const name = this.value;
+          els.search.disabled = !name;
+          els.search.value = '';
+          hasChanges = false;
+          els.saveBtn.classList.remove('unsaved');
+          els.saveBtn.innerHTML = 'Save Order';
+
+          if (!name) {
+            els.container.style.display = 'none';
+            return;
+          }
+          loadCategory(name);
+        });
+
+        els.search.addEventListener('input', function () {
+          const term = this.value.toLowerCase();
+          const filtered = allTrips.filter(t =>
+            t.name.toLowerCase().includes(term) ||
+            (t.location && t.location.toLowerCase().includes(term))
+          );
+          renderTrips(filtered);
+        });
+
+        els.saveBtn.addEventListener('click', async function () {
+          if (!hasChanges || !currentCategoryId) return;
+
+          const ids = Array.from(els.list.children).map(c => c.dataset.id);
+          this.disabled = true;
+          this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+          try {
+            const res = await fetch('/api/save-category-trip-order', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+              },
+              body: JSON.stringify({ categoryId: currentCategoryId, tripIds: ids })
+            });
+
+            const result = await res.json();
+            if (result.success) {
+              hasChanges = false;
+              this.classList.remove('unsaved');
+              this.innerHTML = 'Saved!';
+              setTimeout(() => this.innerHTML = 'Save Order', 2000);
+            } else {
+              alert('Save failed: ' + (result.message || 'Unknown error'));
+            }
+          } catch (err) {
+            alert('Network error. Please try again.');
+          } finally {
+            this.disabled = false;
+          }
+        });
+      </script>
+</body>
+
+</html>

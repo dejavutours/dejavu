@@ -8,6 +8,7 @@ const categorySchema = new Schema(
     name: { type: String, required: true, trim: true }, // Category display name
     image: { type: String, required: true }, // Path or URL to category image
     isActive: { type: Boolean, default: true },
+    isShowOnHomePage: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
     displayOrder: { type: Number, default: 0 } // Added for homepage ordering
   },

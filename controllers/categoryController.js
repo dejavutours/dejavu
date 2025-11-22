@@ -39,7 +39,7 @@ exports.checkActiveTrips = async (req, res) => {
       'tripCategories': categoryName,
       isActive: true
     }).select('name');
-    
+
     if (activeTrips.length > 0) {
       return res.json({
         success: false,
@@ -47,7 +47,7 @@ exports.checkActiveTrips = async (req, res) => {
         trips: activeTrips
       });
     }
-    
+
     res.json({ success: true, message: 'No active trips found.' });
   } catch (error) {
     console.error('Error checking active trips:', error);
@@ -58,7 +58,7 @@ exports.checkActiveTrips = async (req, res) => {
 // Upsert category
 exports.upsertCategory = async (req, res) => {
   try {
-    const { id, name, isActive, oldImage } = req.body;
+    const { id, name, isActive, oldImage, isShowOnHomePage } = req.body;
     let imagePath = oldImage || '';
 
     // Handle image upload
@@ -100,8 +100,13 @@ exports.upsertCategory = async (req, res) => {
     }
 
     // Normalize isActive to boolean
-    const isActiveBoolean = isActive === 'true' || isActive === 'on';
+const isActiveBoolean = isActive === 'true' || isActive === 'on';
+    let showOnHomePageBoolean = isShowOnHomePage === 'true' || isShowOnHomePage === 'on';
 
+    // CRITICAL BUSINESS RULE: Cannot show on homepage if not active
+    if (!isActiveBoolean) {
+      showOnHomePageBoolean = false;
+    }
     if (id) {
       // Update existing category
       const category = await Category.findById(id);
@@ -126,6 +131,7 @@ exports.upsertCategory = async (req, res) => {
 
       category.name = name;
       category.isActive = isActiveBoolean;
+      category.isShowOnHomePage = showOnHomePageBoolean;
       if (imagePath) category.image = imagePath;
       await category.save();
       return res.json({
@@ -145,14 +151,15 @@ exports.upsertCategory = async (req, res) => {
         });
       }
 
-      const maxOrder = await Category.find({isDeleted:false}).sort({ displayOrder: -1 }).limit(1);
+      const maxOrder = await Category.find({ isDeleted: false }).sort({ displayOrder: -1 }).limit(1);
       const newOrder = maxOrder.length > 0 ? maxOrder[0].displayOrder + 1 : 0;
 
       const newCategory = new Category({
         name,
         image: imagePath,
         displayOrder: newOrder,
-        isActive: isActiveBoolean
+        isActive: isActiveBoolean,
+        isShowOnHomePage: showOnHomePageBoolean
       });
       await newCategory.save();
       return res.json({
@@ -228,33 +235,66 @@ exports.deleteCategory = async (req, res) => {
 };
 
 // Update category order
+// Update category order – works with $.post() / form-urlencoded
 exports.updateCategoryOrder = async (req, res) => {
   try {
-    const { order } = req.body;
+    // jQuery sends array as order[]=id1&order[]=id2 → Express puts it in req.body.order as array
+    let order = req.body.order;
+
+    // If for any reason it's still a string (very rare), split case)
+    if (typeof order === 'string') {
+      order = order.split(',');
+    }
+
+    // Convert order[]=[] format to real array if needed (safety)
     if (!Array.isArray(order)) {
+      if (req.body['order[]']) {
+        order = req.body['order[]'];
+        if (typeof order === 'string') order = [order];
+      } else {
+        order = [];
+      }
+    }
+
+    console.log("Received order:", order); // ← you will now see real array
+
+    if (!order || !Array.isArray(order) || order.length === 0) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid order data.'
+        message: 'Invalid or empty order array.'
       });
     }
 
-    for (let i = 0; i < order.length; i++) {
-      await Category.findByIdAndUpdate(
-        order[i],
-        { displayOrder: i },
-        { new: true }
-      );
+    // Validate ObjectIds
+    const validObjectIdRegex = /^[0-9a-fA-F]{24}$/;
+    for (const id of order) {
+      if (!validObjectIdRegex.test(id)) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid category ID: ${id}`
+        });
+      }
     }
+
+    const updates = order.map((id, index) => ({
+      updateOne: {
+        filter: { _id: id, isDeleted: false },
+        update: { displayOrder: index }
+      }
+    }));
+
+    await Category.bulkWrite(updates);
 
     res.json({
       success: true,
       message: 'Category order updated successfully.'
     });
+
   } catch (error) {
     console.error('Error updating category order:', error);
     res.status(500).json({
       success: false,
-      message: 'Error updating category order.'
+      message: 'Server error while updating order.'
     });
   }
 };
