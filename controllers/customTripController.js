@@ -6,7 +6,7 @@ const path = require("path");
 const nodemailer = require("nodemailer");
 
 exports.getCustomezedTripForm = async (req, res, next) => {
-  res.render("pages/customizedTripForm", {
+  res.render("pages/CustomToursReq", {
     csrfToken: req.csrfToken(),
   });
 };

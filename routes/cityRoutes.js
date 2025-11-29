@@ -2,7 +2,6 @@ const express = require('express');
 const ensureLogIn = require('connect-ensure-login').ensureLoggedIn;
 const isAuth = require('../middleware/is-auth');
 const cityController = require('../controllers/cityController');
-const stateController = require('../controllers/stateController');
 
 const ensureLoggedIn = ensureLogIn();
 const router = express.Router();

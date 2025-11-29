@@ -6,10 +6,7 @@ const envFile =
 process.env.NODE_ENV === 'production' ? '.env.production' : '.env';
 // Load the appropriate .env file
 dotenv.config({ path: path.resolve(__dirname, envFile) });
-console.log(`Loaded environment variables from ${envFile}`);
 
-// if(process.env.NODE_ENV !== 'production'){
-// require('dotenv').config()// }
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
@@ -44,11 +41,7 @@ const ALLOWED_FILE_TYPES = ["image/png", "image/jpg", "image/jpeg", "application
 
 const fileStorage = multer.diskStorage({
 destination: (req, file, cb) => {
-if (req.url === "/booktrip") {
-    cb(null, "images/proofs");
-} else if (req.url === "/admin/addblog" || req.url === "/admin/addEditedblog") {
-    cb(null, "images/blog");
-} else if (
+if (
     req.url === "/admin/postNewAddTours" ||
     req.url === "/admin/updateImageUrl" ||
     req.url === "/admin/updateBannerImages"
@@ -107,7 +100,6 @@ app.use(
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-const tourRoutes = require('./routes/tours');
 const profileRoutes = require('./routes/profileRoutes');
 const authRoutes = require('./routes/auth');
 const paymentRoutes = require('./routes/payments');
@@ -159,7 +151,7 @@ app.use((req, res, next) => {
     if (req.files !== undefined) {
         req.file = req.files[0];
     }
-next();
+    next();
 });
 
 app.use((req, res, next) => {
@@ -179,7 +171,6 @@ app.use((req, res, next) => {
         });
 });
 
-app.use(tourRoutes);
 app.use(profileRoutes);
 app.use(authRoutes);
 app.use('/payment', paymentRoutes);
@@ -190,7 +181,6 @@ app.use(categoryRoutes);
 app.use(bannerRoutes);
 app.use(customTripRoutes);
 app.use(tripRoutes);
-// Mount Quick Call routes
 app.use(quickCallRoutes);
 app.use(displayOrderRoutes);
 
@@ -201,9 +191,15 @@ mongoose
     useFindAndModify: false,
     })
     .then((result) => {
-    console.log('connected to DB at port 5000');
     app.listen(PORT);
+    console.log('-------------------------------------------');
+    console.log(`Server running successfully!`);
+    console.log(`Access your app here: http://localhost:${PORT}`);
+    console.log('-------------------------------------------');
     })
     .catch((err) => {
-    console.log(err);
+    console.log('-------------------------------------------');
+    console.error('MongoDB Connection FAILED!');
+    console.error('Error Details:', err.message);
+    console.log('-------------------------------------------');
     });
