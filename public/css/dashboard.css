@@ -252,15 +252,8 @@
 .departure_city_section a { text-decoration: none; color: inherit; --bg-image: linear-gradient(to right, #243949 0%, #517fa4 100%);}
 .departure_city_section .cover_div { width: 150px; height: 150px; background-color: #f2f2f2; background-image: var(--bg-image); background-size: cover; background-position: center;}
 
-/* Accomodation section styles */
-.accomodation_section{display: grid; grid-template-rows: 200px 1fr; background-color: #ECF6FF;}
-.accomodation_section .cover_sec{--bg-image: linear-gradient(to right, #434343 0%, black 100%); background-image: var(--bg-image); background-size: cover; background-position: center;}
-
-.custom_section .cover_sec{background-color: #f2f2f2; background-image: var(--bg-image); background-size: cover; background-position: center;}
-.custom_section .content_sec {background: linear-gradient(90deg, rgba(34, 34, 34, 0.6) 0%, rgba(34, 34, 34, 0) 100%);}
 
 .custom_section_2 svg{inset: 0;}
-.custom_section_2 .content_sec {position: relative; z-index: 1; display: grid; grid-template-rows: 200px 1fr; gap: 1rem; padding-block-start: 5rem;}
 .custom_section_2 aside{background: linear-gradient(180deg, rgba(0, 9, 23, 0) 0%, #000917 100%); background-size: contain; background-position: left top; background-image: url('../img/dashboard/Vector_14.png'); background-repeat: no-repeat; max-width: 310px}
 .custom_section_2 .content{column-count: 2; column-gap: 1rem; margin-block: 1rem;}
 .custom_section_2 article {--bg-imaage: background-image: linear-gradient(to right, #243949 0%, #517fa4 100%); height: 240px; background-image: var(--bg-image); background-size: cover; background-position: center; margin-block-end: 1rem;}
@@ -292,16 +285,9 @@
   .trending_section .item_card img {height: 270px;}
   .trending_section .shadow_content{font-size: 1.2rem;}
   .cat_section .item_card {min-width: 200px;}
-  .accomodation_section{display: grid; grid-template-rows: unset; grid-template-columns: 1fr 1fr;}
 }
 
 @media screen and (min-width: 992px){
   /* .hero_section .container{min-height: 350px;} */
   .departure_city_section a + a { margin-inline-start: 1rem;}
-  .accomodation_section .cover_sec{min-height: 400px}
-  .custom_section .content_sec{min-height: 300px;}
-  .custom_section_2 .content_sec{grid-template-columns: 330px 1fr; grid-template-rows: 1fr;}
-}
-@media screen and (min-width: 1200px){
-  .accomodation_section .cover_sec{min-height: 500px}
 }

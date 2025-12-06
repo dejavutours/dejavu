@@ -417,839 +417,802 @@
       <% displayedPackages.forEach(function(tour, index) { %>
       <a href="/tripdetail/<%= tour.name %>" title="<%= tour.name %>" class="rounded-4 item_card overflow-hidden">
         <div class="cover position-relative">
-          <img src="<%= tour.imageurl %>" alt="Tour package - <%= tour.name %> in <%= tour.state %>, India" class="w-100 object-fit-cover" height="220" width="300" loading="lazy" onerror="this.onerror=null; this.src='
-                    /images/placeholder.jpg';">
-                    <p
-                      class="px-3 py-2 mb-0 d-flex flex-column text-light position-absolute bottom-0 w-100 shadow_content">
-                      <strong>
-                        <%= tour.name %>
-                      </strong>
-                      <small>
-                        <%= tour.state %>, India
-                      </small>
-                    </p>
-            </div>
-            <p class="bg-white px-3 py-2 mb-0 d-flex justify-content-between gap-3 position-relative">
-              <span class="text-muted">From<br /><strong class="text-dark">₹<%- tour.price %></strong>/person</span>
-              <span class="text-end"><i class="bi bi-calendar"></i> <strong><%- tour.days %></strong></span>
-            </p>
-            </a>
-            <% }); %>
-              </aside>
-    </section>
-
-    <!-- Trending state section -->
-    <section class="trending_state_section container-xl py-4 pb-lg-5">
-      <p class="pb-md-3">
-        <small class="text-dejavu-secondary-light">Explore trips by</small><br>
-        <span class="h3">Trending State</span>
-      </p>
-      <aside class="overflow-auto d-flex position-relative">
-        <% for (let item of placeItems ) { %>
-          <a href="/triplist?filterValue=<%= encodeURIComponent(JSON.stringify({ 'States': [item?.name] })) %>"
-            style="--bg-image: url('<%= item.thumb %>'); background-image: var(--bg-image); background-position: center; background-repeat: no-repeat;"
-            class="rounded-4 item_card overflow-hidden">
-            <p class="p-3 mb-0 text-light text-center shadow_content">
-              <span class="fs-5">
-                <%= item.name %>
-              </span><br>
-              <small>
-                <%= item.place %> Place
-              </small>
-            </p>
-          </a>
-          <% } %>
-      </aside>
-    </section>
-
-    <!-- Category section -->
-    <section class="cat_section container-xl pb-4 pb-lg-5">
-      <p class="pb-md-3">
-        <small class="text-dejavu-secondary-light">Explore trips by</small><br>
-        <span class="h3">Categories</span>
-      </p>
-      <aside class="overflow-auto text-nowrap">
-        <% categoryItems.forEach(category=> { %>
-          <a href="/triplist?filterValue=<%= encodeURIComponent(JSON.stringify({ 'Tour category': [category.name] })) %>"
-            class="rounded-4 item_card position-relative d-inline-flex align-items-center">
-            <img src="<%= category.thumb %>" alt="<%= category.name %>" class="rounded-4 w-100 object-fit-cover h-100"
-              width="200" height="230" loading="lazy">
-            <span class="px-3 py-1 bg-white text-center mx-auto rounded content">
-              <strong class="text-truncate">
-                <%= category.name %>
-              </strong><br>
-              <small class="small text-secondary">
-                <%= category.count %> Tour<%= category.count> 1 ? 's' : '' %>
-              </small>
-            </span>
-          </a>
-          <% }) %>
-      </aside>
-    </section>
-
-    <!-- Departure city section -->
-    <section class="departure_city_section container-xl py-4 pb-lg-5">
-      <p class="pb-md-3">
-        <small class="text-dejavu-secondary-light">Departing from your nearby location</small><br>
-        <span class="h3">Tour packages available from</span>
-      </p>
-
-      <!-- Tabs for Departure Cities -->
-      <ul class="nav nav-tabs departure-city-tabs mb-4 flex-nowrap overflow-x-auto pb-1 gap-2" id="departureCityTabs"
-        role="tablist">
-        <% departureCities.forEach((city, index)=> { %>
-          <li class="nav-item" role="presentation">
-            <a href="#" class="nav-link text-nowrap <%= index === 0 ? 'active' : '' %>"
-              id="tab-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" data-bs-toggle="tab"
-              data-bs-target="#pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" type="button" role="tab"
-              aria-controls="pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>"
-              aria-selected="<%= index === 0 ? 'true' : 'false' %>">
-              <%= city.name %>
-            </a>
-          </li>
-          <% }); %>
-      </ul>
-
-      <!-- Tab Content -->
-      <div class="tab-content" id="departureCityTabContent">
-        <% departureCities.forEach((city, index)=> { %>
-          <div class="tab-pane fade <%= index === 0 ? 'show active' : '' %>"
-            id="pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" role="tabpanel"
-            aria-labelledby="tab-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>">
-            <!-- Trip Cards Container with Navigation -->
-            <div class="position-relative">
-              <div class="trip-cards-container">
-                <div class="trip-cards-row">
-                  <% city.trips.forEach((trip, tripIndex)=> { %>
-                    <a class="trip-card" data-card-index="<%= tripIndex %>" href="/tripdetail/<%= trip.name %>"
-                      title="<%= trip.name %>">
-                      <!-- Swiper Slider for Banner Images -->
-                      <div class="trip-image-slider swiper">
-                        <div class="swiper-wrapper">
-                          <% if (trip.bannerimages && trip.bannerimages.length> 0) { %>
-                            <% trip.bannerimages.forEach((img, imgIndex)=> { %>
-                              <div class="swiper-slide">
-                                <img src="<%= img %>" alt="Trip Image <%= imgIndex + 1 %>"
-                                  class="w-100 h-100 object-fit-cover"
-                                  onerror="this.onerror=null; this.src='/images/placeholder.jpg';" />
-                              </div>
-                              <% }); %>
-                                <% } else { %>
-                                  <div class="swiper-slide">
-                                    <img src="<%= trip.imageurl %>" alt="Trip Image"
-                                      class="w-100 h-100 object-fit-cover"
-                                      onerror="this.onerror=null; this.src='/images/placeholder.jpg';" />
-                                  </div>
-                                  <% } %>
-                        </div>
-                        <!-- Navigation Buttons for Slider -->
-                        <% if (trip.bannerimages && trip.bannerimages.length> 1) { %>
-                          <div class="swiper-button-prev swiper-button-white-black" aria-label="Previous slide"></div>
-                          <div class="swiper-button-next swiper-button-white-black" aria-label="Next slide"></div>
-                          <% } %>
-                      </div>
-                      <!-- Trip Details -->
-                      <div class="p-3">
-                        <h5 class="mb-1">
-                          <%= trip.name %>
-                        </h5>
-                        <p class="text-muted small mb-2">
-                          <%= trip.destinations %>
-                        </p>
-                        <p class="d-flex justify-content-between align-items-center mb-0">
-                          <span><strong>₹<%= trip.adultPrice || trip.price %></strong>/person</span>
-                          <span class="">
-                            <i class="text-muted bi bi-calendar"></i>
-                            <%= trip.tripDuration || '2 Days - 3 Nights' %>
-                          </span>
-                        </p>
-                      </div>
-                    </a>
-                    <% }); %>
-                </div>
-              </div>
-              <!-- Navigation Buttons for Row -->
-              <button class="row-nav-btn row-nav-prev btn btn-light rounded-circle shadow-sm"
-                aria-label="Previous cards">
-                <i class="bi bi-chevron-left"></i>
-              </button>
-              <button class="row-nav-btn row-nav-next btn btn-light rounded-circle shadow-sm" aria-label="Next cards">
-                <i class="bi bi-chevron-right"></i>
-              </button>
-            </div>
-          </div>
-          <% }); %>
-      </div>
-    </section>
-
-    <!-- Accomodation section -->
-    <section class="accomodation_section my-4 my-lg-5 px-3 px-md-0">
-      <div class="cover_sec" style="--bg-image: url('../img/dashboard/accomodation_bg.jpg');"></div>
-      <aside class="content_sec py-3 p-md-4 p-xl-5 d-flex flex-column align-items-start justify-content-center">
-        <p class="text-dejavu-secondary-light mb-2">Deja-vu stays</p>
-        <h3><strong>Looking for accommodation?</strong></h3>
-        <p class="col-md-10">Discover our specially curated local accommodations with delicious food to fulfill your
-          travel desires! Whether you prefer driving on your own or exploring places using local transportation, we will
-          help you find beautiful and unique accommodations.</p>
-        <button class="btn btn-dark rounded-pill">Book now</button>
-      </aside>
-    </section>
-
-    <!-- Homepage Category Rows – Only isShowOnHomePage = true -->
-    <% if (homepageCategoryRows && homepageCategoryRows.length> 0) { %>
-      <section class="category_tours_section container-xl py-4 py-lg-5">
-        <p class="pb-md-3">
-          <small class="text-dejavu-secondary-light">Discover trips by</small><br>
-          <span class="h3">Popular Categories</span>
-        </p>
-
-        <% homepageCategoryRows.forEach((category, catIndex)=> { %>
-          <% const sortedTrips=category.trips || []; %>
-            <% if (sortedTrips.length===0) return; %>
-
-              <div class="category-row-wrapper mb-5">
-                <!-- Header: Title + View All -->
-                <div
-                  class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4">
-                  <div class="d-flex align-items-center gap-3 flex-wrap">
-                    <img src="<%= category.image %>" alt="<%= category.name %>" class="rounded-3" width="50" height="50"
-                      style="object-fit:cover" onerror="this.src='/images/placeholder.jpg'">
-                    <div>
-                      <h4 class="mb-0 fw-bold">
-                        <%= category.name %> Tours
-                      </h4>
-                      <span class="text-muted small">(<%= sortedTrips.length %> trips)</span>
-                    </div>
-                  </div>
-                  <a href="/triplist?filterValue=<%= encodeURIComponent(JSON.stringify({'Tour category': [category.name]})) %>"
-                    class="btn btn-outline-dark btn-sm rounded-pill px-4 py-2 d-flex align-items-center gap-2 flex-shrink-0">
-                    View All <i class="bi bi-arrow-right"></i>
-                  </a>
-                </div>
-
-                <!-- Scrollable Trip Cards -->
-                <div class="position-relative">
-                  <div class="trip-cards-container category-scroll-container" data-index="<%= catIndex %>">
-                    <div class="trip-cards-row">
-                      <% sortedTrips.forEach(trip=> { %>
-                        <!-- Removed <a> wrapper → now uses div + onclick for no underline -->
-                        <div class="trip-card clickable-card" onclick="window.location='/tripdetail/<%= trip.name %>'"
-                          role="button" tabindex="0" title="<%= trip.name %>">
-                          <div class="trip-image-slider swiper">
-                            <div class="swiper-wrapper">
-                              <% if (trip.bannerimages && trip.bannerimages.length> 0) { %>
-                                <% trip.bannerimages.forEach(img=> { %>
-                                  <div class="swiper-slide">
-                                    <img src="<%= img %>" alt="<%= trip.name %>" class="w-100 h-100 object-fit-cover"
-                                      onerror="this.onerror=null;this.src='/images/placeholder.jpg';" loading="lazy">
-                                  </div>
-                                  <% }) %>
-                                    <% } else { %>
-                                      <div class="swiper-slide">
-                                        <img src="<%= trip.imageurl %>" alt="<%= trip.name %>"
-                                          class="w-100 h-100 object-fit-cover"
-                                          onerror="this.onerror=null;this.src='/images/placeholder.jpg';"
-                                          loading="lazy">
-                                      </div>
-                                      <% } %>
-                            </div>
-                            <% if ((trip.bannerimages || []).length> 1) { %>
-                              <div class="swiper-button-prev swiper-button-white-black"></div>
-                              <div class="swiper-button-next swiper-button-white-black"></div>
-                              <% } %>
-                          </div>
-                          <div class="p-3">
-                            <h5 class="mb-1 text-truncate">
-                              <%= trip.name %>
-                            </h5>
-                            <p class="text-muted small mb-2 text-truncate">
-                              <%= trip.destinations || trip.state || 'India' %>
-                            </p>
-                            <div class="d-flex justify-content-between align-items-center">
-                              <span><strong>₹<%= trip.adultPrice || trip.price || '9,999' %></strong>/person</span>
-                              <span class="text-end small">
-                                <i class="bi bi-calendar"></i>
-                                <%= trip.days || trip.tripDuration || '3D/2N' %>
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <% }) %>
-                    </div>
-                  </div>
-
-                  <!-- Navigation Arrows (Hidden on Mobile if not needed) -->
-                  <button class="row-nav-btn row-nav-prev btn btn-light rounded-circle shadow d-none d-lg-flex"
-                    data-target="<%= catIndex %>">
-                    <i class="bi bi-chevron-left"></i>
-                  </button>
-                  <button class="row-nav-btn row-nav-next btn btn-light rounded-circle shadow d-none d-lg-flex"
-                    data-target="<%= catIndex %>">
-                    <i class="bi bi-chevron-right"></i>
-                  </button>
-                </div>
-              </div>
-              <% }) %>
-      </section>
-      <% } %>
-
-
-        <!-- Customization section -->
-        <section class="custom_section container-xl pt-md-3 pb-lg-5">
-          <div class="rounded-4 overflow-hidden position-relative" style="min-height: 300px;">
-            <div class="position-absolute top-0 start-0 w-100 h-100" style="
-          background-image: url('../img/dashboard/dream_trip.png');
-          background-size: cover;
-          background-position: center;
-          background-repeat: no-repeat;
-        ">
-            </div>
-            <div
-              class="d-flex flex-column align-items-start justify-content-center h-100 p-3 p-md-4 p-xl-5 text-light position-relative z-1">
-              <small>We're Crafting the Perfect Getaway You'll Love</small>
-              <h4>Let's Make Your Dream Trip</h4>
-              <p class="small col-xl-6">Customized trip is your gateway to personalized travel. Tell us your
-                interests,
-                and
-                we'll curate an itinerary that you'll love.</p>
-              <button class="btn btn-light rounded-pill" onclick="window.location.href='/dreamtrip'">Customize
-                Trip</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- International Gateways Section -->
-        <section class="international_section container-xl py-4 pb-lg-5 position-relative overflow-hidden">
-          <p class="pb-md-3">
-            <small class="text-dejavu-secondary-light">Dejavu global</small><br>
-            <span class="h3">Experience International Gateways!</span>
+          <img src="<%= tour.imageurl %>" alt="Tour package - <%= tour.name %> in <%= tour.state %>, India" class="w-100 object-fit-cover" height="220" width="300" loading="lazy" onerror="this.onerror=null; this.src='/images/placeholder.jpg'">
+          <p class="px-3 py-2 mb-0 d-flex flex-column text-light position-absolute bottom-0 w-100 shadow_content">
+            <strong><%= tour.name %></strong>
+            <small><%= tour.state %>, India</small>
           </p>
-          <div class="row g-2 international-cards-row">
-            <!-- Dubai -->
-            <div class="col-12 col-sm-6 col-lg-3">
-              <a href="#"
-                class="international-card rounded-4 overflow-hidden d-block position-relative text-decoration-none"
-                style="background-image: url('/img/dashboard/dubai.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; max-height: 450px; height: 450px;">
-                <p class="text-light p-3 m-0 fs-3 position-absolute top-50 start-50 translate-middle text-center"
-                  style="background: linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent); width: 100%;">
-                  <strong>Dubai</strong>
-                </p>
-              </a>
+        </div>
+        <p class="bg-white px-3 py-2 mb-0 d-flex justify-content-between gap-3 position-relative">
+          <span class="text-muted">From<br /><strong class="text-dark">₹<%- tour.price %></strong>/person</span>
+          <span class="text-end"><i class="bi bi-calendar"></i> <strong><%- tour.days %></strong></span>
+        </p>
+      </a>
+      <% }); %>
+    </aside>
+  </section>
+
+  <!-- Trending state section -->
+  <section class="trending_state_section container-xl py-4 pb-lg-5">
+    <p class="pb-md-3">
+      <small class="text-dejavu-secondary-light">Explore trips by</small><br>
+      <span class="h3">Trending State</span>
+    </p>
+    <aside class="overflow-auto d-flex position-relative">
+      <% for (let item of placeItems ) { %>
+        <a href="/triplist?filterValue=<%= encodeURIComponent(JSON.stringify({ 'States': [item?.name] })) %>"
+          style="--bg-image: url('<%= item.thumb %>'); background-image: var(--bg-image); background-position: center; background-repeat: no-repeat;"
+          class="rounded-4 item_card overflow-hidden">
+          <p class="p-3 mb-0 text-light text-center shadow_content">
+            <span class="fs-5">
+              <%= item.name %>
+            </span><br>
+            <small>
+              <%= item.place %> Place
+            </small>
+          </p>
+        </a>
+        <% } %>
+    </aside>
+  </section>
+
+  <!-- Category section -->
+  <section class="cat_section container-xl pb-4 pb-lg-5">
+    <p class="pb-md-3">
+      <small class="text-dejavu-secondary-light">Explore trips by</small><br>
+      <span class="h3">Categories</span>
+    </p>
+    <aside class="overflow-auto text-nowrap">
+      <% categoryItems.forEach(category=> { %>
+        <a href="/triplist?filterValue=<%= encodeURIComponent(JSON.stringify({ 'Tour category': [category.name] })) %>"
+          class="rounded-4 item_card position-relative d-inline-flex align-items-center">
+          <img src="<%= category.thumb %>" alt="<%= category.name %>" class="rounded-4 w-100 object-fit-cover h-100"
+            width="200" height="230" loading="lazy">
+          <span class="px-3 py-1 bg-white text-center mx-auto rounded content">
+            <strong class="text-truncate">
+              <%= category.name %>
+            </strong><br>
+            <small class="small text-secondary">
+              <%= category.count %> Tour<%= category.count> 1 ? 's' : '' %>
+            </small>
+          </span>
+        </a>
+        <% }) %>
+    </aside>
+  </section>
+
+  <!-- Departure city section -->
+  <section class="departure_city_section container-xl py-4 pb-lg-5">
+    <p class="pb-md-3">
+      <small class="text-dejavu-secondary-light">Departing from your nearby location</small><br>
+      <span class="h3">Tour packages available from</span>
+    </p>
+
+    <!-- Tabs for Departure Cities -->
+    <ul class="nav nav-tabs departure-city-tabs mb-4 flex-nowrap overflow-x-auto pb-1 gap-2" id="departureCityTabs"
+      role="tablist">
+      <% departureCities.forEach((city, index)=> { %>
+        <li class="nav-item" role="presentation">
+          <a href="#" class="nav-link text-nowrap <%= index === 0 ? 'active' : '' %>"
+            id="tab-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" data-bs-toggle="tab"
+            data-bs-target="#pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" type="button" role="tab"
+            aria-controls="pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>"
+            aria-selected="<%= index === 0 ? 'true' : 'false' %>">
+            <%= city.name %>
+          </a>
+        </li>
+        <% }); %>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="departureCityTabContent">
+      <% departureCities.forEach((city, index)=> { %>
+        <div class="tab-pane fade <%= index === 0 ? 'show active' : '' %>"
+          id="pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" role="tabpanel"
+          aria-labelledby="tab-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>">
+          <!-- Trip Cards Container with Navigation -->
+          <div class="position-relative">
+            <div class="trip-cards-container">
+              <div class="trip-cards-row">
+                <% city.trips.forEach((trip, tripIndex)=> { %>
+                  <a class="trip-card" data-card-index="<%= tripIndex %>" href="/tripdetail/<%= trip.name %>"
+                    title="<%= trip.name %>">
+                    <!-- Swiper Slider for Banner Images -->
+                    <div class="trip-image-slider swiper">
+                      <div class="swiper-wrapper">
+                        <% if (trip.bannerimages && trip.bannerimages.length> 0) { %>
+                          <% trip.bannerimages.forEach((img, imgIndex)=> { %>
+                            <div class="swiper-slide">
+                              <img src="<%= img %>" alt="Trip Image <%= imgIndex + 1 %>"
+                                class="w-100 h-100 object-fit-cover"
+                                onerror="this.onerror=null; this.src='/images/placeholder.jpg';" />
+                            </div>
+                            <% }); %>
+                              <% } else { %>
+                                <div class="swiper-slide">
+                                  <img src="<%= trip.imageurl %>" alt="Trip Image"
+                                    class="w-100 h-100 object-fit-cover"
+                                    onerror="this.onerror=null; this.src='/images/placeholder.jpg';" />
+                                </div>
+                                <% } %>
+                      </div>
+                      <!-- Navigation Buttons for Slider -->
+                      <% if (trip.bannerimages && trip.bannerimages.length> 1) { %>
+                        <div class="swiper-button-prev swiper-button-white-black" aria-label="Previous slide"></div>
+                        <div class="swiper-button-next swiper-button-white-black" aria-label="Next slide"></div>
+                        <% } %>
+                    </div>
+                    <!-- Trip Details -->
+                    <div class="p-3">
+                      <h5 class="mb-1">
+                        <%= trip.name %>
+                      </h5>
+                      <p class="text-muted small mb-2">
+                        <%= trip.destinations %>
+                      </p>
+                      <p class="d-flex justify-content-between align-items-center mb-0">
+                        <span><strong>₹<%= trip.adultPrice || trip.price %></strong>/person</span>
+                        <span class="">
+                          <i class="text-muted bi bi-calendar"></i>
+                          <%= trip.tripDuration || '2 Days - 3 Nights' %>
+                        </span>
+                      </p>
+                    </div>
+                  </a>
+                  <% }); %>
+              </div>
             </div>
-            <!-- Thailand -->
-            <div class="col-12 col-sm-6 col-lg-3">
-              <a href="#"
-                class="international-card rounded-4 overflow-hidden d-block position-relative text-decoration-none"
-                style="background-image: url('/img/dashboard/Thailand.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; max-height: 450px; height: 450px;">
-                <p class="text-light p-3 m-0 fs-3 position-absolute top-50 start-50 translate-middle text-center"
-                  style="background: linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent); width: 100%;">
-                  <strong>Thailand</strong>
-                </p>
-              </a>
-            </div>
-            <!-- Singapore -->
-            <div class="col-12 col-sm-6 col-lg-3">
-              <a href="#"
-                class="international-card rounded-4 overflow-hidden d-block position-relative text-decoration-none"
-                style="background-image: url('/img/dashboard/Singapore.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; max-height: 450px; height: 450px;">
-                <p class="text-light p-3 m-0 fs-3 position-absolute top-50 start-50 translate-middle text-center"
-                  style="background: linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent); width: 100%;">
-                  <strong>Singapore</strong>
-                </p>
-              </a>
-            </div>
-            <!-- Vietnam -->
-            <div class="col-12 col-sm-6 col-lg-3">
-              <a href="#"
-                class="international-card rounded-4 overflow-hidden d-block position-relative text-decoration-none"
-                style="background-image: url('/img/dashboard/Vietnam.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; max-height: 450px; height: 450px;">
-                <p class="text-light p-3 m-0 fs-3 position-absolute top-50 start-50 translate-middle text-center"
-                  style="background: linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent); width: 100%;">
-                  <strong>Vietnam</strong>
-                </p>
-              </a>
+            <!-- Navigation Buttons for Row -->
+            <button class="row-nav-btn row-nav-prev btn btn-light rounded-circle shadow-sm"
+              aria-label="Previous cards">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+            <button class="row-nav-btn row-nav-next btn btn-light rounded-circle shadow-sm" aria-label="Next cards">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+        <% }); %>
+    </div>
+  </section>
+
+  <!-- Homepage Category Rows – Only isShowOnHomePage = true -->
+  <% if (homepageCategoryRows && homepageCategoryRows.length> 0) { %>
+  <section class="category_tours_section container-xl py-4 py-lg-5">
+    <p class="pb-md-3">
+      <small class="text-dejavu-secondary-light">Discover trips by</small><br>
+      <span class="h3">Popular Categories</span>
+    </p>
+
+    <% homepageCategoryRows.forEach((category, catIndex)=> { %>
+      <% const sortedTrips=category.trips || []; %>
+      <% if (sortedTrips.length===0) return; %>
+
+      <div class="category-row-wrapper mb-5">
+        <!-- Header: Title + View All -->
+        <div
+          class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4">
+          <div class="d-flex align-items-center gap-3 flex-wrap">
+            <img src="<%= category.image %>" alt="<%= category.name %>" class="rounded-3" width="50" height="50"
+              style="object-fit:cover" onerror="this.src='/images/placeholder.jpg'">
+            <div>
+              <h4 class="mb-0 fw-bold">
+                <%= category.name %> Tours
+              </h4>
+              <span class="text-muted small">(<%= sortedTrips.length %> trips)</span>
             </div>
           </div>
-        </section>
+          <a href="/triplist?filterValue=<%= encodeURIComponent(JSON.stringify({'Tour category': [category.name]})) %>"
+            class="btn btn-outline-dark btn-sm rounded-pill px-4 py-2 d-flex align-items-center gap-2 flex-shrink-0">
+            View All <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
 
-        <%- include('../partials/footer'); %>
-          <%- include('../partials/scripttag', {isNiceSelect: false}); %>
-            <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-            <script>
-              document.addEventListener("DOMContentLoaded", function () {
-                // Banner slider initialization
-                const swiper = new Swiper(".banner_section .image-slider", {
-                  loop: true,
-                  autoplay: {
-                    delay: 3000,
-                    disableOnInteraction: false,
-                  },
-                  pagination: {
-                    el: ".banner_section .swiper-pagination",
-                    clickable: true,
-                  },
-                  navigation: {
-                    nextEl: ".banner_section .swiper-button-next",
-                    prevEl: ".banner_section .swiper-button-prev",
-                  },
-                  breakpoints: {
-                    320: {
-                      slidesPerView: 1,
-                      spaceBetween: 0
-                    },
-                    768: {
-                      slidesPerView: 1,
-                      spaceBetween: 0
-                    },
-                    992: {
-                      slidesPerView: 1,
-                      spaceBetween: 0
-                    },
-                  },
-                });
+        <!-- Scrollable Trip Cards -->
+        <div class="position-relative">
+          <div class="trip-cards-container category-scroll-container" data-index="<%= catIndex %>">
+            <div class="trip-cards-row">
+              <% sortedTrips.forEach(trip=> { %>
+                <!-- Removed <a> wrapper → now uses div + onclick for no underline -->
+                <div class="trip-card clickable-card" onclick="window.location='/tripdetail/<%= trip.name %>'"
+                  role="button" tabindex="0" title="<%= trip.name %>">
+                  <div class="trip-image-slider swiper">
+                    <div class="swiper-wrapper">
+                      <% if (trip.bannerimages && trip.bannerimages.length> 0) { %>
+                        <% trip.bannerimages.forEach(img=> { %>
+                          <div class="swiper-slide">
+                            <img src="<%= img %>" alt="<%= trip.name %>" class="w-100 h-100 object-fit-cover"
+                              onerror="this.onerror=null;this.src='/images/placeholder.jpg';" loading="lazy">
+                          </div>
+                          <% }) %>
+                            <% } else { %>
+                              <div class="swiper-slide">
+                                <img src="<%= trip.imageurl %>" alt="<%= trip.name %>"
+                                  class="w-100 h-100 object-fit-cover"
+                                  onerror="this.onerror=null;this.src='/images/placeholder.jpg';"
+                                  loading="lazy">
+                              </div>
+                              <% } %>
+                    </div>
+                    <% if ((trip.bannerimages || []).length> 1) { %>
+                      <div class="swiper-button-prev swiper-button-white-black"></div>
+                      <div class="swiper-button-next swiper-button-white-black"></div>
+                      <% } %>
+                  </div>
+                  <div class="p-3">
+                    <h5 class="mb-1 text-truncate">
+                      <%= trip.name %>
+                    </h5>
+                    <p class="text-muted small mb-2 text-truncate">
+                      <%= trip.destinations || trip.state || 'India' %>
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span><strong>₹<%= trip.adultPrice || trip.price || '9,999' %></strong>/person</span>
+                      <span class="text-end small">
+                        <i class="bi bi-calendar"></i>
+                        <%= trip.days || trip.tripDuration || '3D/2N' %>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <% }) %>
+            </div>
+          </div>
+
+          <!-- Navigation Arrows (Hidden on Mobile if not needed) -->
+          <button class="row-nav-btn row-nav-prev btn btn-light rounded-circle shadow d-none d-lg-flex"
+            data-target="<%= catIndex %>">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          <button class="row-nav-btn row-nav-next btn btn-light rounded-circle shadow d-none d-lg-flex"
+            data-target="<%= catIndex %>">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    <% }) %>
+  </section>
+  <% } %>
+
+
+  <!-- Customization section -->
+  <section class="custom_section container-xl pt-md-3 pb-lg-5">
+    <div class="rounded-4 overflow-hidden position-relative" style="min-height: 300px;">
+      <div class="position-absolute top-0 start-0 w-100 h-100" style="
+    background-image: url('../img/dashboard/dream_trip.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  ">
+      </div>
+      <div
+        class="d-flex flex-column align-items-start justify-content-center h-100 p-3 p-md-4 p-xl-5 text-light position-relative z-1">
+        <small>We're Crafting the Perfect Getaway You'll Love</small>
+        <h4>Let's Make Your Dream Trip</h4>
+        <p class="small col-xl-6">Customized trip is your gateway to personalized travel. Tell us your
+          interests,
+          and
+          we'll curate an itinerary that you'll love.</p>
+        <button class="btn btn-light rounded-pill" onclick="window.location.href='/dreamtrip'">Customize
+          Trip</button>
+      </div>
+    </div>
+  </section>
+
+  <%- include('../partials/footer'); %>
+  <%- include('../partials/scripttag', {isNiceSelect: false}); %>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Banner slider initialization
+        const swiper = new Swiper(".banner_section .image-slider", {
+          loop: true,
+          autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+          },
+          pagination: {
+            el: ".banner_section .swiper-pagination",
+            clickable: true,
+          },
+          navigation: {
+            nextEl: ".banner_section .swiper-button-next",
+            prevEl: ".banner_section .swiper-button-prev",
+          },
+          breakpoints: {
+            320: {
+              slidesPerView: 1,
+              spaceBetween: 0
+            },
+            768: {
+              slidesPerView: 1,
+              spaceBetween: 0
+            },
+            992: {
+              slidesPerView: 1,
+              spaceBetween: 0
+            },
+          },
+        });
+      });
+    </script>
+    <script>
+      // Initialize Swiper sliders for each trip card and row navigation
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize Swiper for each trip card slider
+        document.querySelectorAll(".trip-image-slider").forEach((slider) => {
+          const slides = slider.querySelectorAll(".swiper-slide");
+          if (slides.length === 1) {
+            slider.classList.add("single-slide");
+            return; // Skip Swiper initialization for single slides
+          }
+
+          new Swiper(slider, {
+            loop: true,
+            navigation: {
+              nextEl: slider.querySelector(".swiper-button-next"),
+              prevEl: slider.querySelector(".swiper-button-prev"),
+            },
+            slidesPerView: 1,
+            spaceBetween: 0,
+          });
+        });
+
+        // Row Navigation for Trip Cards
+        document.querySelectorAll(".trip-cards-container").forEach((container) => {
+          const row = container.querySelector(".trip-cards-row");
+          const prevBtn = container.parentElement.querySelector(".row-nav-prev");
+          const nextBtn = container.parentElement.querySelector(".row-nav-next");
+
+          // Initialize scroll position
+          container.scrollLeft = 0;
+
+          // Function to update button states
+          function updateNavButtons() {
+            const scrollLeft = container.scrollLeft;
+            const maxScroll = container.scrollWidth - container.clientWidth;
+            if (scrollLeft <= 0) {
+              prevBtn.classList.add('d-none');
+              nextBtn.classList.remove('d-none');
+            } else {
+              prevBtn.classList.remove('d-none');
+            }
+            if (scrollLeft >= maxScroll - 1) {
+              prevBtn.classList.remove('d-none');
+              nextBtn.classList.add('d-none');
+            } else {
+              nextBtn.classList.remove('d-none');
+            }
+
+            // Update visual cue for scrollability
+            container.classList.toggle("scrolled-to-start", scrollLeft <= 0);
+          }
+
+          // Initial button state
+          updateNavButtons();
+
+          // Update button states on scroll
+          container.addEventListener("scroll", updateNavButtons);
+
+          // Calculate scroll distance dynamically
+          function getScrollDistance() {
+            const card = container.querySelector(".trip-card");
+            if (!card) return 0;
+            const style = window.getComputedStyle(card);
+            const cardWidth = parseFloat(style.width);
+            const gap = parseFloat(window.getComputedStyle(row).gap) || 16; // Default to 1rem (16px)
+            return cardWidth + gap;
+          }
+
+          // Handle previous button click
+          prevBtn.addEventListener("click", () => {
+            const scrollDistance = getScrollDistance();
+            container.scrollBy({
+              left: -scrollDistance,
+              behavior: "smooth",
+            });
+          });
+
+          // Handle next button click
+          nextBtn.addEventListener("click", () => {
+            const scrollDistance = getScrollDistance();
+            const maxScroll = container.scrollWidth - container.clientWidth;
+            const currentScroll = container.scrollLeft;
+            const remainingScroll = maxScroll - currentScroll;
+
+            // If remaining scroll is less than a full card, scroll to the end
+            if (remainingScroll <= scrollDistance) {
+              container.scrollTo({
+                left: maxScroll,
+                behavior: "smooth",
               });
-            </script>
-            <script>
-              // Initialize Swiper sliders for each trip card and row navigation
-              document.addEventListener("DOMContentLoaded", function () {
-                // Initialize Swiper for each trip card slider
-                document.querySelectorAll(".trip-image-slider").forEach((slider) => {
-                  const slides = slider.querySelectorAll(".swiper-slide");
-                  if (slides.length === 1) {
-                    slider.classList.add("single-slide");
-                    return; // Skip Swiper initialization for single slides
-                  }
-
-                  new Swiper(slider, {
-                    loop: true,
-                    navigation: {
-                      nextEl: slider.querySelector(".swiper-button-next"),
-                      prevEl: slider.querySelector(".swiper-button-prev"),
-                    },
-                    slidesPerView: 1,
-                    spaceBetween: 0,
-                  });
-                });
-
-                // Row Navigation for Trip Cards
-                document.querySelectorAll(".trip-cards-container").forEach((container) => {
-                  const row = container.querySelector(".trip-cards-row");
-                  const prevBtn = container.parentElement.querySelector(".row-nav-prev");
-                  const nextBtn = container.parentElement.querySelector(".row-nav-next");
-
-                  // Initialize scroll position
-                  container.scrollLeft = 0;
-
-                  // Function to update button states
-                  function updateNavButtons() {
-                    const scrollLeft = container.scrollLeft;
-                    const maxScroll = container.scrollWidth - container.clientWidth;
-                    if (scrollLeft <= 0) {
-                      prevBtn.classList.add('d-none');
-                      nextBtn.classList.remove('d-none');
-                    } else {
-                      prevBtn.classList.remove('d-none');
-                    }
-                    if (scrollLeft >= maxScroll - 1) {
-                      prevBtn.classList.remove('d-none');
-                      nextBtn.classList.add('d-none');
-                    } else {
-                      nextBtn.classList.remove('d-none');
-                    }
-
-                    // Update visual cue for scrollability
-                    container.classList.toggle("scrolled-to-start", scrollLeft <= 0);
-                  }
-
-                  // Initial button state
-                  updateNavButtons();
-
-                  // Update button states on scroll
-                  container.addEventListener("scroll", updateNavButtons);
-
-                  // Calculate scroll distance dynamically
-                  function getScrollDistance() {
-                    const card = container.querySelector(".trip-card");
-                    if (!card) return 0;
-                    const style = window.getComputedStyle(card);
-                    const cardWidth = parseFloat(style.width);
-                    const gap = parseFloat(window.getComputedStyle(row).gap) || 16; // Default to 1rem (16px)
-                    return cardWidth + gap;
-                  }
-
-                  // Handle previous button click
-                  prevBtn.addEventListener("click", () => {
-                    const scrollDistance = getScrollDistance();
-                    container.scrollBy({
-                      left: -scrollDistance,
-                      behavior: "smooth",
-                    });
-                  });
-
-                  // Handle next button click
-                  nextBtn.addEventListener("click", () => {
-                    const scrollDistance = getScrollDistance();
-                    const maxScroll = container.scrollWidth - container.clientWidth;
-                    const currentScroll = container.scrollLeft;
-                    const remainingScroll = maxScroll - currentScroll;
-
-                    // If remaining scroll is less than a full card, scroll to the end
-                    if (remainingScroll <= scrollDistance) {
-                      container.scrollTo({
-                        left: maxScroll,
-                        behavior: "smooth",
-                      });
-                    } else {
-                      container.scrollBy({
-                        left: scrollDistance,
-                        behavior: "smooth",
-                      });
-                    }
-                  });
-
-                  // Ensure keyboard navigation
-                  prevBtn.addEventListener("keydown", (e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      prevBtn.click();
-                    }
-                  });
-
-                  nextBtn.addEventListener("keydown", (e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      nextBtn.click();
-                    }
-                  });
-
-                  // Check for overflow and show/hide navigation buttons
-                  const checkOverflow = () => {
-                    const isOverflowing = container.scrollWidth > container.clientWidth;
-                    prevBtn.style.display = isOverflowing ? 'flex' : 'none';
-                    nextBtn.style.display = isOverflowing ? 'flex' : 'none';
-                    updateNavButtons();
-                  };
-
-                  new ResizeObserver(checkOverflow).observe(container);
-                  window.addEventListener('resize', checkOverflow);
-                  checkOverflow(); // initial check
-                });
+            } else {
+              container.scrollBy({
+                left: scrollDistance,
+                behavior: "smooth",
               });
+            }
+          });
 
-              function displayall() {
-                var showmorebtn = document.getElementById("btntag");
-                if (showmorebtn.innerText == "Show More") {
-                  showmorebtn.innerText = "Show Less";
-                } else {
-                  showmorebtn.innerText = "Show More";
-                }
-                var x = document.getElementsByName("showmore");
-                var i;
-                for (i = 0; i < x.length; i++) {
-                  if (x[i].style.display === "none") {
-                    x[i].style.display = "flex";
-                  } else {
-                    x[i].style.display = "none";
-                  }
-                }
+          // Ensure keyboard navigation
+          prevBtn.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              prevBtn.click();
+            }
+          });
+
+          nextBtn.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              nextBtn.click();
+            }
+          });
+
+          // Check for overflow and show/hide navigation buttons
+          const checkOverflow = () => {
+            const isOverflowing = container.scrollWidth > container.clientWidth;
+            prevBtn.style.display = isOverflowing ? 'flex' : 'none';
+            nextBtn.style.display = isOverflowing ? 'flex' : 'none';
+            updateNavButtons();
+          };
+
+          new ResizeObserver(checkOverflow).observe(container);
+          window.addEventListener('resize', checkOverflow);
+          checkOverflow(); // initial check
+        });
+      });
+
+      function displayall() {
+        var showmorebtn = document.getElementById("btntag");
+        if (showmorebtn.innerText == "Show More") {
+          showmorebtn.innerText = "Show Less";
+        } else {
+          showmorebtn.innerText = "Show More";
+        }
+        var x = document.getElementsByName("showmore");
+        var i;
+        for (i = 0; i < x.length; i++) {
+          if (x[i].style.display === "none") {
+            x[i].style.display = "flex";
+          } else {
+            x[i].style.display = "none";
+          }
+        }
+      }
+
+      function displayallaccods() {
+        var showmorebtn = document.getElementById("btntagaccods");
+        if (showmorebtn.innerText == "Show More") {
+          showmorebtn.innerText = "Show Less";
+        } else {
+          showmorebtn.innerText = "Show More";
+        }
+        var x = document.getElementsByName("showmoreaccods");
+        var i;
+        for (i = 0; i < x.length; i++) {
+          if (x[i].style.display === "none") {
+            x[i].style.display = "flex";
+          } else {
+            x[i].style.display = "none";
+          }
+        }
+      }
+
+      // Define Shared State Object for filter and search
+      const filterState = {
+        search: '',
+        category: '',
+        destination: '',
+        tourType: '',
+      };
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const dropdownBtn = document.querySelector(".hero_section .dropdownBtn");
+        const dropdownItems = document.querySelectorAll(".hero_section .dropdown-menu .dropdown-item");
+        const filter_row = document.querySelector(".hero_section .filter_row");
+        const filterContainer = document.querySelector(".hero_section .form");
+        const filters = document.querySelector(".hero_section .filters");
+        // Initialize dropdown with "All" selected
+        dropdownBtn.innerHTML = 'All <i class="bi bi-chevron-down ms-auto"></i>';
+        // Show filtersContainer when any element in filter_row is focused
+        document.addEventListener('click', function (e) {
+          const isModalOpen = document.querySelector('#filterModal.show');
+          if (isModalOpen) return;
+          const isClickInside = filterContainer.contains(e.target);
+          if (isClickInside) {
+            filters.classList.remove('d-none');
+            filter_row.classList.add('shadow-sm');
+          } else {
+            filters.classList.add('d-none');
+            filter_row.classList.remove('shadow-sm');
+          }
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') {
+            filters.classList.add('d-none');
+            filter_row.classList.remove('shadow-sm');
+          }
+        });
+
+        window.addEventListener('resize', (e) => {
+          if (window.innerWidth < 768 && !filters.classList.contains('d-none')) {
+            filters.classList.add('d-none');
+            filter_row.classList.remove('shadow-sm');
+          }
+        });
+        const allSections = [{
+          key: "categories",
+          section: filters.querySelector(".categories_filter")
+        },
+        {
+          key: "destinations",
+          section: filters.querySelector(".destinations_filter")
+        },
+        {
+          key: "tourType",
+          section: filters.querySelector(".tourtype_filter")
+        }
+        ];
+
+        function showSections(selected) {
+          if (selected === "All") {
+            allSections.forEach(obj => obj.section.style.display = "");
+          } else {
+            allSections.forEach(obj => {
+              if (
+                (selected === "Categories" && obj.key === "categories") ||
+                (selected === "Destinations" && obj.key === "destinations") ||
+                (selected === "Tour type" && obj.key === "tourType")
+              ) {
+                obj.section.style.display = "";
+              } else {
+                obj.section.style.display = "none";
               }
+            });
+          }
+        }
 
-              function displayallaccods() {
-                var showmorebtn = document.getElementById("btntagaccods");
-                if (showmorebtn.innerText == "Show More") {
-                  showmorebtn.innerText = "Show Less";
-                } else {
-                  showmorebtn.innerText = "Show More";
+        dropdownItems.forEach(item => {
+          item.addEventListener("click", function (e) {
+            e.preventDefault();
+            dropdownBtn.innerHTML = item.textContent + ' <i class="bi bi-chevron-down ms-auto"></i>';
+            showSections(item.textContent.trim());
+          });
+        });
+
+        // Show all sections by default
+        showSections("All");
+
+        const input2 = filter_row?.querySelector('input');
+        const heroSearchBtn = filter_row?.querySelector('#search_btn');
+
+        // Modal filter logic
+        const modal = document.getElementById('filterModal');
+        modal?.addEventListener('shown.bs.modal', () => {
+          const searchInput = document.getElementById('modalSearchInput');
+          const categorySelect = document.getElementById('modalCategorySelect');
+          const destinationSelect = document.getElementById('modalDestinationSelect');
+          const tourTypeSelect = document.getElementById('modalTourTypeSelect');
+          const resetBtn = document.getElementById('modalResetBtn');
+          const applyBtn = document.getElementById('modalApplyBtn');
+
+          // Delay patching inputs and focusing to avoid interfering with global click listener
+          setTimeout(() => {
+            searchInput.value = filterState['search'] || '';
+            categorySelect.value = filterState['category'] || '';
+            destinationSelect.value = filterState['destination'] || '';
+            tourTypeSelect.value = filterState['tourType'] || '';
+            searchInput.focus();
+          }, 50);
+
+          searchInput?.addEventListener('input', function (e) {
+            filterState['search'] = e.target.value;
+            input2.value = e.target.value;
+          });
+          categorySelect?.addEventListener('change', function (e) {
+            filterState['category'] = e.target.value;
+            syncInputs('category');
+          });
+          destinationSelect?.addEventListener('change', (e) => {
+            filterState['destination'] = e.target.value;
+            syncInputs('destination');
+          });
+          tourTypeSelect?.addEventListener('change', (e) => {
+            filterState['tourType'] = e.target.value;
+            syncInputs('tourType');
+          });
+
+          applyBtn?.addEventListener('click', () => {
+            const modalInstance = bootstrap.Modal.getInstance(modal);
+            modalInstance?.hide();
+            redirectWithFilters();
+          });
+          resetBtn?.addEventListener('click', function () {
+            for (const key in filterState) {
+              filterState[key] = '';
+              syncInputs(key);
+            }
+          });
+
+          // Call redirectWithFilters when user hits Enter in modal search input
+          searchInput?.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              redirectWithFilters();
+            }
+          });
+        });
+
+        input2?.addEventListener('input', (e) => {
+          filterState['search'] = e.target.value;
+        });
+
+        // Call redirectWithFilters when user hits Enter in modal search input
+        input2?.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            redirectWithFilters();
+          }
+        });
+
+        function syncInputs(key) {
+          const filterLists = document.querySelectorAll(`.filter_list[data-filter-key="${key}"]`);
+          filterLists.forEach(list => {
+            const listItems = list.querySelectorAll("li");
+            listItems.forEach(li => {
+              li.classList.toggle("text-bg-secondary", li.getAttribute("data-item") === filterState[key]);
+            });
+          });
+        }
+
+        // Setup filter list click handlers
+        setupFilterList((key, value) => {
+          filterState[key] = value || '';
+          syncInputs(key);
+        });
+
+        // Redirect with filters
+        function redirectWithFilters() {
+          const filters = {};
+          if (filterState.category) {
+            filters['Tour category'] = [filterState.category.toLocaleLowerCase()];
+          }
+          if (filterState.destination) {
+            filters['States'] = [filterState.destination.toLocaleLowerCase()];
+          }
+          if (filterState.tourType) {
+            filters['Tour type'] = [filterState.tourType.toLocaleLowerCase()];
+          }
+          const queryParams = new URLSearchParams();
+          queryParams.append('filterValue', JSON.stringify(filters));
+          if (filterState.search) {
+            queryParams.append('searchValue', filterState.search);
+          }
+          window.location.href = `/triplist?${queryParams.toString()}`;
+        }
+
+        heroSearchBtn?.addEventListener('click', redirectWithFilters);
+
+
+        // Stop navigation on next or prev button click of the swiper
+        document.querySelectorAll('.swiper-button-next, .swiper-button-prev').forEach(button => {
+          button.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          });
+        });
+      });
+
+      const filterLists = document.querySelectorAll(".filter_list");
+      filterLists.forEach(list => {
+        list.querySelectorAll('li').forEach(li => {
+          li.addEventListener('mouseenter', (e) => {
+            let isActive = li.classList.contains('text-bg-secondary');
+            li.classList.add(isActive ? 'bg-dark' : 'bg-light');
+          });
+          li.addEventListener('mouseleave', (e) => {
+            let isActive = li.classList.contains('text-bg-secondary');
+            li.classList.remove('bg-light');
+            li.classList.remove('bg-dark');
+          });
+        });
+      });
+
+      function setupFilterList(onSelect) {
+        filterLists.forEach(list => {
+          list.addEventListener("click", function (e) {
+            if (e.target.tagName !== "LI") return;
+            const clickedItem = e.target;
+            const key = list.getAttribute("data-filter-key");
+            const selectedValue = clickedItem.getAttribute("data-item");
+            const listItems = list.querySelectorAll("li");
+            if (clickedItem.classList.contains("text-bg-secondary")) {
+              clickedItem.classList.remove("text-bg-secondary");
+              onSelect(key, null);
+            } else {
+              listItems.forEach(li => li.classList.remove("text-bg-secondary"));
+              clickedItem.classList.add("text-bg-secondary");
+              onSelect(key, selectedValue);
+            }
+          });
+        });
+      }
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.category-scroll-container').forEach(container => {
+          const wrapper = container.closest('.position-relative');
+          const prevBtn = wrapper.querySelector('.row-nav-prev');
+          const nextBtn = wrapper.querySelector('.row-nav-next');
+
+          const updateButtons = () => {
+            const atStart = container.scrollLeft <= 10;
+            const atEnd = container.scrollLeft >= (container.scrollWidth - container.clientWidth - 10);
+            prevBtn.classList.toggle('d-none', atStart);
+            nextBtn.classList.toggle('d-none', atEnd);
+          };
+
+          container.scrollLeft = 0;
+          updateButtons();
+          container.addEventListener('scroll', updateButtons);
+
+          prevBtn.onclick = () => container.scrollBy({ left: -360, behavior: 'smooth' });
+          nextBtn.onclick = () => container.scrollBy({ left: 360, behavior: 'smooth' });
+
+          // Re-init Swiper
+          container.querySelectorAll('.trip-image-slider').forEach(slider => {
+            if (slider.querySelectorAll('.swiper-slide').length > 1) {
+              new Swiper(slider, {
+                loop: true,
+                navigation: {
+                  nextEl: slider.querySelector('.swiper-button-next'),
+                  prevEl: slider.querySelector('.swiper-button-prev')
                 }
-                var x = document.getElementsByName("showmoreaccods");
-                var i;
-                for (i = 0; i < x.length; i++) {
-                  if (x[i].style.display === "none") {
-                    x[i].style.display = "flex";
-                  } else {
-                    x[i].style.display = "none";
-                  }
-                }
-              }
-
-              // Define Shared State Object for filter and search
-              const filterState = {
-                search: '',
-                category: '',
-                destination: '',
-                tourType: '',
-              };
-
-              document.addEventListener("DOMContentLoaded", function () {
-                const dropdownBtn = document.querySelector(".hero_section .dropdownBtn");
-                const dropdownItems = document.querySelectorAll(".hero_section .dropdown-menu .dropdown-item");
-                const filter_row = document.querySelector(".hero_section .filter_row");
-                const filterContainer = document.querySelector(".hero_section .form");
-                const filters = document.querySelector(".hero_section .filters");
-                // Initialize dropdown with "All" selected
-                dropdownBtn.innerHTML = 'All <i class="bi bi-chevron-down ms-auto"></i>';
-                // Show filtersContainer when any element in filter_row is focused
-                document.addEventListener('click', function (e) {
-                  const isModalOpen = document.querySelector('#filterModal.show');
-                  if (isModalOpen) return;
-                  const isClickInside = filterContainer.contains(e.target);
-                  if (isClickInside) {
-                    filters.classList.remove('d-none');
-                    filter_row.classList.add('shadow-sm');
-                  } else {
-                    filters.classList.add('d-none');
-                    filter_row.classList.remove('shadow-sm');
-                  }
-                });
-                document.addEventListener('keydown', function (e) {
-                  if (e.key === 'Escape') {
-                    filters.classList.add('d-none');
-                    filter_row.classList.remove('shadow-sm');
-                  }
-                });
-
-                window.addEventListener('resize', (e) => {
-                  if (window.innerWidth < 768 && !filters.classList.contains('d-none')) {
-                    filters.classList.add('d-none');
-                    filter_row.classList.remove('shadow-sm');
-                  }
-                });
-                const allSections = [{
-                  key: "categories",
-                  section: filters.querySelector(".categories_filter")
-                },
-                {
-                  key: "destinations",
-                  section: filters.querySelector(".destinations_filter")
-                },
-                {
-                  key: "tourType",
-                  section: filters.querySelector(".tourtype_filter")
-                }
-                ];
-
-                function showSections(selected) {
-                  if (selected === "All") {
-                    allSections.forEach(obj => obj.section.style.display = "");
-                  } else {
-                    allSections.forEach(obj => {
-                      if (
-                        (selected === "Categories" && obj.key === "categories") ||
-                        (selected === "Destinations" && obj.key === "destinations") ||
-                        (selected === "Tour type" && obj.key === "tourType")
-                      ) {
-                        obj.section.style.display = "";
-                      } else {
-                        obj.section.style.display = "none";
-                      }
-                    });
-                  }
-                }
-
-                dropdownItems.forEach(item => {
-                  item.addEventListener("click", function (e) {
-                    e.preventDefault();
-                    dropdownBtn.innerHTML = item.textContent + ' <i class="bi bi-chevron-down ms-auto"></i>';
-                    showSections(item.textContent.trim());
-                  });
-                });
-
-                // Show all sections by default
-                showSections("All");
-
-                const input2 = filter_row?.querySelector('input');
-                const heroSearchBtn = filter_row?.querySelector('#search_btn');
-
-                // Modal filter logic
-                const modal = document.getElementById('filterModal');
-                modal?.addEventListener('shown.bs.modal', () => {
-                  const searchInput = document.getElementById('modalSearchInput');
-                  const categorySelect = document.getElementById('modalCategorySelect');
-                  const destinationSelect = document.getElementById('modalDestinationSelect');
-                  const tourTypeSelect = document.getElementById('modalTourTypeSelect');
-                  const resetBtn = document.getElementById('modalResetBtn');
-                  const applyBtn = document.getElementById('modalApplyBtn');
-
-                  // Delay patching inputs and focusing to avoid interfering with global click listener
-                  setTimeout(() => {
-                    searchInput.value = filterState['search'] || '';
-                    categorySelect.value = filterState['category'] || '';
-                    destinationSelect.value = filterState['destination'] || '';
-                    tourTypeSelect.value = filterState['tourType'] || '';
-                    searchInput.focus();
-                  }, 50);
-
-                  searchInput?.addEventListener('input', function (e) {
-                    filterState['search'] = e.target.value;
-                    input2.value = e.target.value;
-                  });
-                  categorySelect?.addEventListener('change', function (e) {
-                    filterState['category'] = e.target.value;
-                    syncInputs('category');
-                  });
-                  destinationSelect?.addEventListener('change', (e) => {
-                    filterState['destination'] = e.target.value;
-                    syncInputs('destination');
-                  });
-                  tourTypeSelect?.addEventListener('change', (e) => {
-                    filterState['tourType'] = e.target.value;
-                    syncInputs('tourType');
-                  });
-
-                  applyBtn?.addEventListener('click', () => {
-                    const modalInstance = bootstrap.Modal.getInstance(modal);
-                    modalInstance?.hide();
-                    redirectWithFilters();
-                  });
-                  resetBtn?.addEventListener('click', function () {
-                    for (const key in filterState) {
-                      filterState[key] = '';
-                      syncInputs(key);
-                    }
-                  });
-
-                  // Call redirectWithFilters when user hits Enter in modal search input
-                  searchInput?.addEventListener('keydown', function (e) {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      redirectWithFilters();
-                    }
-                  });
-                });
-
-                input2?.addEventListener('input', (e) => {
-                  filterState['search'] = e.target.value;
-                });
-
-                // Call redirectWithFilters when user hits Enter in modal search input
-                input2?.addEventListener('keydown', function (e) {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    redirectWithFilters();
-                  }
-                });
-
-                function syncInputs(key) {
-                  const filterLists = document.querySelectorAll(`.filter_list[data-filter-key="${key}"]`);
-                  filterLists.forEach(list => {
-                    const listItems = list.querySelectorAll("li");
-                    listItems.forEach(li => {
-                      li.classList.toggle("text-bg-secondary", li.getAttribute("data-item") === filterState[key]);
-                    });
-                  });
-                }
-
-                // Setup filter list click handlers
-                setupFilterList((key, value) => {
-                  filterState[key] = value || '';
-                  syncInputs(key);
-                });
-
-                // Redirect with filters
-                function redirectWithFilters() {
-                  const filters = {};
-                  if (filterState.category) {
-                    filters['Tour category'] = [filterState.category.toLocaleLowerCase()];
-                  }
-                  if (filterState.destination) {
-                    filters['States'] = [filterState.destination.toLocaleLowerCase()];
-                  }
-                  if (filterState.tourType) {
-                    filters['Tour type'] = [filterState.tourType.toLocaleLowerCase()];
-                  }
-                  const queryParams = new URLSearchParams();
-                  queryParams.append('filterValue', JSON.stringify(filters));
-                  if (filterState.search) {
-                    queryParams.append('searchValue', filterState.search);
-                  }
-                  window.location.href = `/triplist?${queryParams.toString()}`;
-                }
-
-                heroSearchBtn?.addEventListener('click', redirectWithFilters);
-
-
-                // Stop navigation on next or prev button click of the swiper
-                document.querySelectorAll('.swiper-button-next, .swiper-button-prev').forEach(button => {
-                  button.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                  });
-                });
               });
+            }
+          });
+        });
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const scrollStep = 350;
+        document.querySelectorAll(".category-scroll-container").forEach((container) => {
+          const index = container.dataset.index;
 
-              const filterLists = document.querySelectorAll(".filter_list");
-              filterLists.forEach(list => {
-                list.querySelectorAll('li').forEach(li => {
-                  li.addEventListener('mouseenter', (e) => {
-                    let isActive = li.classList.contains('text-bg-secondary');
-                    li.classList.add(isActive ? 'bg-dark' : 'bg-light');
-                  });
-                  li.addEventListener('mouseleave', (e) => {
-                    let isActive = li.classList.contains('text-bg-secondary');
-                    li.classList.remove('bg-light');
-                    li.classList.remove('bg-dark');
-                  });
-                });
-              });
+          const btnLeft = document.querySelector(`.row-nav-prev[data-target="${index}"]`);
+          const btnRight = document.querySelector(`.row-nav-next[data-target="${index}"]`);
 
-              function setupFilterList(onSelect) {
-                filterLists.forEach(list => {
-                  list.addEventListener("click", function (e) {
-                    if (e.target.tagName !== "LI") return;
-                    const clickedItem = e.target;
-                    const key = list.getAttribute("data-filter-key");
-                    const selectedValue = clickedItem.getAttribute("data-item");
-                    const listItems = list.querySelectorAll("li");
-                    if (clickedItem.classList.contains("text-bg-secondary")) {
-                      clickedItem.classList.remove("text-bg-secondary");
-                      onSelect(key, null);
-                    } else {
-                      listItems.forEach(li => li.classList.remove("text-bg-secondary"));
-                      clickedItem.classList.add("text-bg-secondary");
-                      onSelect(key, selectedValue);
-                    }
-                  });
-                });
-              }
-            </script>
-            <script>
-              document.addEventListener("DOMContentLoaded", function () {
-                document.querySelectorAll('.category-scroll-container').forEach(container => {
-                  const wrapper = container.closest('.position-relative');
-                  const prevBtn = wrapper.querySelector('.row-nav-prev');
-                  const nextBtn = wrapper.querySelector('.row-nav-next');
+          if (!btnLeft || !btnRight) return;
 
-                  const updateButtons = () => {
-                    const atStart = container.scrollLeft <= 10;
-                    const atEnd = container.scrollLeft >= (container.scrollWidth - container.clientWidth - 10);
-                    prevBtn.classList.toggle('d-none', atStart);
-                    nextBtn.classList.toggle('d-none', atEnd);
-                  };
+          function updateButtons() {
+            const maxScroll = container.scrollWidth - container.clientWidth;
 
-                  container.scrollLeft = 0;
-                  updateButtons();
-                  container.addEventListener('scroll', updateButtons);
+            btnLeft.disabled = container.scrollLeft <= 0;
+            btnRight.disabled = container.scrollLeft >= maxScroll - 2;
 
-                  prevBtn.onclick = () => container.scrollBy({ left: -360, behavior: 'smooth' });
-                  nextBtn.onclick = () => container.scrollBy({ left: 360, behavior: 'smooth' });
+            btnLeft.style.opacity = btnLeft.disabled ? "0" : "1";
+            btnRight.style.opacity = btnRight.disabled ? "0" : "1";
+          }
 
-                  // Re-init Swiper
-                  container.querySelectorAll('.trip-image-slider').forEach(slider => {
-                    if (slider.querySelectorAll('.swiper-slide').length > 1) {
-                      new Swiper(slider, {
-                        loop: true,
-                        navigation: {
-                          nextEl: slider.querySelector('.swiper-button-next'),
-                          prevEl: slider.querySelector('.swiper-button-prev')
-                        }
-                      });
-                    }
-                  });
-                });
-              });
-            </script>
-            <!-- SEO Schema Markup -->
-            <script type="application/ld+json">
+          btnLeft.addEventListener("click", () => {
+            container.scrollBy({ left: -scrollStep, behavior: "smooth" });
+            setTimeout(updateButtons, 350);
+          });
+
+          btnRight.addEventListener("click", () => {
+            container.scrollBy({ left: scrollStep, behavior: "smooth" });
+            setTimeout(updateButtons, 350);
+          });
+
+          container.addEventListener("scroll", updateButtons);
+          updateButtons();
+        });
+      });
+    </script>
+    <!-- SEO Schema Markup -->
+    <script type="application/ld+json">
     {
       "@context": "http://schema.org",
       "@type": "TravelAgency",
