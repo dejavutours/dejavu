@@ -8,6 +8,7 @@
   <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     .sm-container {
       max-width: 1280px;
@@ -181,6 +182,38 @@
       background: linear-gradient(to right, #128c7e, #0a6d5e);
     }
 
+    .sm-copy-btn {
+      background: none;
+      border: none;
+      color: #3b82f6;
+      cursor: pointer;
+      font-size: 0.75rem;
+      padding: 0;
+      margin-left: 0.25rem;
+      text-decoration: underline;
+      transition: color 0.2s ease;
+    }
+
+    .sm-copy-btn:hover {
+      color: #1d4ed8;
+    }
+
+    .sm-export-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: 0.375rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      background: linear-gradient(to right, #3b82f6, #1d4ed8);
+      color: white;
+    }
+
+    .sm-export-btn:hover {
+      background: linear-gradient(to right, #1d4ed8, #1e40af);
+      transform: translateY(-1px);
+    }
+
     @keyframes sm-spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
@@ -249,6 +282,9 @@
         </button>
         <button id="smBulkDeleteBtn" class="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium hidden">
           Delete Selected
+        </button>
+        <button id="smExportBtn" class="sm-export-btn text-sm font-medium">
+          📊 Export to Excel
         </button>
       </div>
 
@@ -319,11 +355,108 @@
         width: '100%'
       });
 
+      // Copy to clipboard function (production-ready with fallback)
+      window.copyToClipboard = function(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(() => {
+            Toastify({
+              text: '📋 Mobile number copied!',
+              className: 'sm-toast',
+              style: { background: '#10B981' },
+              duration: 2000
+            }).showToast();
+          }).catch(() => {
+            fallbackCopyTextToClipboard(text);
+          });
+        } else {
+          fallbackCopyTextToClipboard(text);
+        }
+      };
+
+      function fallbackCopyTextToClipboard(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+          const successful = document.execCommand('copy');
+          if (successful) {
+            Toastify({
+              text: '📋 Mobile number copied!',
+              className: 'sm-toast',
+              style: { background: '#10B981' },
+              duration: 2000
+            }).showToast();
+          } else {
+            Toastify({
+              text: 'Failed to copy number.',
+              className: 'sm-toast',
+              style: { background: '#EF4444' },
+              duration: 2000
+            }).showToast();
+          }
+        } catch (err) {
+          Toastify({
+            text: 'Failed to copy number.',
+            className: 'sm-toast',
+            style: { background: '#EF4444' },
+            duration: 2000
+          }).showToast();
+        }
+        document.body.removeChild(textArea);
+      }
+
+      // Export to Excel function (production-ready with SheetJS)
+      window.exportToExcel = function() {
+        if (filteredTrips.length === 0) {
+          Toastify({
+            text: 'No data to export.',
+            className: 'sm-toast',
+            style: { background: '#EF4444' },
+            duration: 3000
+          }).showToast();
+          return;
+        }
+
+        const exportData = filteredTrips.map(trip => ({
+          'Name': trip.name || '',
+          'Email': trip.email || '',
+          'Mobile': trip.mobile || '',
+          'Destination': trip.destination || '',
+          'Place': trip.place || 'N/A',
+          'Days': trip.days || 'N/A',
+          'Persons': trip.persons || 'N/A',
+          'Details': trip.details || 'N/A',
+          'Submitted': new Date(trip.createdAt).toLocaleString()
+        }));
+
+        const ws = XLSX.utils.json_to_sheet(exportData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Custom Trip Users');
+        XLSX.writeFile(wb, 'custom_trip_user_sheet.xlsx');
+        
+        Toastify({
+          text: '✅ Exported to Excel successfully!',
+          className: 'sm-toast',
+          style: { background: '#10B981' },
+          duration: 3000
+        }).showToast();
+      };
+
       // Clear filters
       $('#smClearFiltersBtn').on('click', function() {
         $('#smSearchInput').val('');
         filteredTrips = [...customTrips];
         renderTrips();
+      });
+
+      // Export button handler
+      $('#smExportBtn').on('click', function() {
+        exportToExcel();
       });
 
       // Client-side search
@@ -341,7 +474,7 @@
         }, 300);
       });
 
-      // Render custom trips
+      // Render custom trips (ADDED MOBILE WITH COPY)
       function renderTrips() {
         const tripGrid = $('#smCustomTripGrid');
         tripGrid.empty();
@@ -355,6 +488,7 @@
                 <h4 class="text-base font-semibold text-gray-800">${trip.name}</h4>
                 <p class="text-xs text-gray-600">Destination: ${trip.destination}</p>
                 <p class="text-xs text-gray-600">Email: ${trip.email}</p>
+                <p class="text-xs text-gray-600">Mobile: ${trip.mobile} <button class="sm-copy-btn" onclick="copyToClipboard('${trip.mobile}')">Copy</button></p>
                 <p class="text-xs text-gray-600">Submitted: ${new Date(trip.createdAt).toLocaleDateString()}</p>
                 <div class="sm-actions">
                   <button class="sm-action-btn view" onclick="viewDetails('${trip._id}')">View Details</button>
@@ -371,7 +505,7 @@
         $('#smBulkDeleteBtn').toggle(selectedTrips.length > 0);
       }
 
-      // View details
+      // View details (ADDED MOBILE COPY BUTTON IN MODAL TOO)
       window.viewDetails = function(id) {
         const trip = customTrips.find(t => t._id === id);
         if (!trip) {
@@ -387,7 +521,7 @@
           <div class="space-y-2">
             <p><strong>Name:</strong> ${trip.name}</p>
             <p><strong>Email:</strong> ${trip.email}</p>
-            <p><strong>Mobile:</strong> ${trip.mobile}</p>
+            <p><strong>Mobile:</strong> ${trip.mobile} <button class="sm-copy-btn" onclick="copyToClipboard('${trip.mobile}')">Copy</button></p>
             <div class="flex space-x-2">
               <a href="tel:${trip.mobile}" class="sm-contact-btn phone">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -526,7 +660,7 @@
         $('#smBulkDeleteBtn').toggle(selectedTrips.length > 0);
       });
 
-      // Tab switching
+      // Tab switching (FIXED redirect path consistency)
       $('.sm-tab').on('click', function() {
         const redirectUrl = $(this).data('redirect');
         if (redirectUrl) {

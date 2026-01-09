@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -53,7 +54,8 @@
     }
 
     .sm-card.spam {
-      background: #fee2e2; /* Light red for spam */
+      background: #fee2e2;
+      /* Light red for spam */
     }
 
     .sm-card:hover {
@@ -180,8 +182,13 @@
     }
 
     @keyframes sm-spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
     }
 
     @media (max-width: 640px) {
@@ -216,166 +223,190 @@
     }
 
     @keyframes sm-fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
   <%- include('../../partials/headtag', {isNiceSelect: true}); %>
 </head>
+
 <body class="bg-gray-100">
   <%- include('../../partials/header', {isSearch: false}); %>
-  <div class="sm-container">
-    <!-- Loading Overlay -->
-    <div class="sm-loading" id="smLoadingOverlay">
-      <div class="sm-loading-spinner"></div>
-    </div>
-
-    <!-- Tab Navigation -->
-    <div class="sm-tabs">
-      <div class="sm-tab" data-tab="cities" data-redirect="/cities">City Master</div>
-      <div class="sm-tab" data-tab="states" data-redirect="/states">State Master</div>
-      <div class="sm-tab" data-tab="category" data-redirect="/categories">Category Master</div>
-      <div class="sm-tab" data-tab="banners" data-redirect="/banner">Banner Master</div>
-      <div class="sm-tab" data-tab="trips" data-redirect="/trips">Trip Master</div>
-      <div class="sm-tab" data-tab="customTrip" data-redirect="/customTrip">Custom Trip</div>
-      <div class="sm-tab active" data-tab="quickcall" data-redirect="/quickcall">Quick Call</div>
-    </div>
-
-    <!-- Quick Call Requests Tab Content -->
-    <div id="quickcall-tab" class="sm-tab-content">
-      <!-- Filter and Group Bar -->
-      <div class="sm-filter-bar">
-        <div class="filter-item">
-          <div class="relative">
-            <input type="text" id="smSearchInput" class="w-full border border-gray-300 rounded-md pl-8 pr-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search by name..." />
-            <svg class="absolute left-2.5 top-2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-        </div>
-        <div class="filter-item">
-          <select id="smTripFilter" class="w-full border border-gray-300 rounded-md py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="all">All Trips</option>
-            <% uniqueTrips.forEach(trip => { %>
-              <option value="<%= trip %>"><%= trip %></option>
-            <% }); %>
-          </select>
-        </div>
-        <div class="filter-item">
-          <select id="smRespondedFilter" class="w-full border border-gray-300 rounded-md py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="all">All Responded</option>
-            <option value="true">Responded</option>
-            <option value="false">Not Responded</option>
-          </select>
-        </div>
-        <div class="filter-item">
-          <select id="smSpamFilter" class="w-full border border-gray-300 rounded-md py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="all">All Spam</option>
-            <option value="true">Marked as Spam</option>
-            <option value="false">Not Spam</option>
-          </select>
-        </div>
-        <div class="filter-item">
-          <select id="smTimeRangeFilter" class="w-full border border-gray-300 rounded-md py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="all">All Time</option>
-            <option value="day">Today</option>
-            <option value="week">This Week</option>
-            <option value="month">This Month</option>
-          </select>
-        </div>
-        <div class="filter-item">
-          <select id="smGroupBySelect" class="w-full border border-gray-300 rounded-md py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">No Grouping</option>
-            <option value="mobileNo">Group by Mobile Number</option>
-            <option value="tripId">Group by Trip</option>
-          </select>
-        </div>
-        <button id="smClearFiltersBtn" class="px-3 py-1.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-sm font-medium">
-          Clear Filters
-        </button>
+    <div class="sm-container">
+      <!-- Loading Overlay -->
+      <div class="sm-loading" id="smLoadingOverlay">
+        <div class="sm-loading-spinner"></div>
       </div>
 
-      <!-- Quick Call Request Cards -->
-      <div class="sm-card-grid" id="smQuickCallGrid"></div>
+      <!-- Tab Navigation -->
+      <div class="sm-tabs">
+        <div class="sm-tab" data-tab="cities" data-redirect="/cities">City Master</div>
+        <div class="sm-tab" data-tab="states" data-redirect="/states">State Master</div>
+        <div class="sm-tab" data-tab="category" data-redirect="/categories">Category Master</div>
+        <div class="sm-tab" data-tab="banners" data-redirect="/banner">Banner Master</div>
+        <div class="sm-tab" data-tab="trips" data-redirect="/trips">Trip Master</div>
+        <div class="sm-tab" data-tab="customTrip" data-redirect="/customTrip">Custom Trip</div>
+        <div class="sm-tab active" data-tab="quickcall" data-redirect="/quickcall">Quick Call</div>
+      </div>
+
+      <!-- Quick Call Requests Tab Content -->
+      <div id="quickcall-tab" class="sm-tab-content">
+        <!-- Filter and Group Bar -->
+        <div class="sm-filter-bar">
+          <div class="filter-item">
+            <div class="relative">
+              <input type="text" id="smSearchInput"
+                class="w-full border border-gray-300 rounded-md pl-8 pr-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Search by name..." />
+              <svg class="absolute left-2.5 top-2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          </div>
+          <div class="filter-item">
+            <select id="smTripFilter"
+              class="w-full border border-gray-300 rounded-md py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="all">All Trips</option>
+              <% uniqueTrips.forEach(trip=> { %>
+                <option value="<%= trip %>">
+                  <%= trip %>
+                </option>
+                <% }); %>
+            </select>
+          </div>
+          <div class="filter-item">
+            <select id="smRespondedFilter"
+              class="w-full border border-gray-300 rounded-md py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="all">All Responded</option>
+              <option value="true">Responded</option>
+              <option value="false">Not Responded</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <select id="smSpamFilter"
+              class="w-full border border-gray-300 rounded-md py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="all">All Spam</option>
+              <option value="true">Marked as Spam</option>
+              <option value="false">Not Spam</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <select id="smTimeRangeFilter"
+              class="w-full border border-gray-300 rounded-md py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="all">All Time</option>
+              <option value="day">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <select id="smGroupBySelect"
+              class="w-full border border-gray-300 rounded-md py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">No Grouping</option>
+              <option value="mobileNo">Group by Mobile Number</option>
+              <option value="tripId">Group by Trip</option>
+            </select>
+          </div>
+          <button id="smClearFiltersBtn"
+            class="px-3 py-1.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-sm font-medium">
+            Clear Filters
+          </button>
+          <button id="smExportBtn"
+            class="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium">
+            Export to CSV
+          </button>
+        </div>
+
+        <!-- Quick Call Request Cards -->
+        <div class="sm-card-grid" id="smQuickCallGrid"></div>
+      </div>
     </div>
-  </div>
 
-  <%- include('../../partials/footer'); %>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Initialize state with data passed from the server
-    let quickCallRequests = <%- JSON.stringify(quickCallRequests) %>;
-    let filteredRequests = [...quickCallRequests];
-    let groupBy = '';
+    <%- include('../../partials/footer'); %>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      <script>
+        // Initialize state with data passed from the server
+        let quickCallRequests = <%- JSON.stringify(quickCallRequests) %>;
+        let filteredRequests = [...quickCallRequests];
+        let groupBy = '';
 
-    $(document).ready(function() {
-      // Initialize Select2 for dropdowns
-      $(".select2").select2({
-        placeholder: "Select an option",
-        allowClear: true,
-        width: '100%'
-      });
+        $(document).ready(function () {
+          // Initialize Select2 for dropdowns
+          $(".select2").select2({
+            placeholder: "Select an option",
+            allowClear: true,
+            width: '100%'
+          });
 
-      // Fetch Quick Call requests with filters
-      function fetchRequests() {
-        const search = $('#smSearchInput').val();
-        const trip = $('#smTripFilter').val();
-        const responded = $('#smRespondedFilter').val();
-        const markAsSpam = $('#smSpamFilter').val();
-        const timeRange = $('#smTimeRangeFilter').val();
-        const groupBy = $('#smGroupBySelect').val();
+          // Fetch Quick Call requests with filters
+          function fetchRequests() {
+            const search = $('#smSearchInput').val();
+            const trip = $('#smTripFilter').val();
+            const responded = $('#smRespondedFilter').val();
+            const markAsSpam = $('#smSpamFilter').val();
+            const timeRange = $('#smTimeRangeFilter').val();
+            groupBy = $('#smGroupBySelect').val(); // Updated to use let groupBy from outer scope
 
-        $('#smLoadingOverlay').show();
-        $.ajax({
-          url: `/quick-call/requests?search=${encodeURIComponent(search)}&trip=${encodeURIComponent(trip)}&responded=${responded}&markAsSpam=${markAsSpam}&timeRange=${timeRange}&groupBy=${groupBy}`,
-          method: 'GET',
-          data: {
-            _csrf: '<%= csrfToken %>' // Include CSRF token if required
-          },
-          success: function(response) {
-            $('#smLoadingOverlay').hide();
-            if (response.success) {
-              quickCallRequests = response.requests;
-              filteredRequests = [...quickCallRequests];
-              renderRequests();
-            } else {
-              Toastify({
-                text: response.message || 'Failed to fetch requests.',
-                className: 'sm-toast',
-                style: { background: '#EF4444' },
-                duration: 3000
-              }).showToast();
-            }
-          },
-          error: function() {
-            $('#smLoadingOverlay').hide();
-            Toastify({
-              text: 'Error fetching requests.',
-              className: 'sm-toast',
-              style: { background: '#EF4444' },
-              duration: 3000
-            }).showToast();
+            $('#smLoadingOverlay').show();
+            $.ajax({
+              url: `/quick-call/requests?search=${encodeURIComponent(search)}&trip=${encodeURIComponent(trip)}&responded=${responded}&markAsSpam=${markAsSpam}&timeRange=${timeRange}&groupBy=${groupBy}`,
+              method: 'GET',
+              data: {
+                _csrf: '<%= csrfToken %>' // Include CSRF token if required
+              },
+              success: function (response) {
+                $('#smLoadingOverlay').hide();
+                if (response.success) {
+                  quickCallRequests = response.requests;
+                  filteredRequests = [...quickCallRequests];
+                  renderRequests();
+                } else {
+                  Toastify({
+                    text: response.message || 'Failed to fetch requests.',
+                    className: 'sm-toast',
+                    style: { background: '#EF4444' },
+                    duration: 3000
+                  }).showToast();
+                }
+              },
+              error: function () {
+                $('#smLoadingOverlay').hide();
+                Toastify({
+                  text: 'Error fetching requests.',
+                  className: 'sm-toast',
+                  style: { background: '#EF4444' },
+                  duration: 3000
+                }).showToast();
+              }
+            });
           }
-        });
-      }
-      // Render Quick Call requests
-      function renderRequests() {
-        const requestGrid = $('#smQuickCallGrid');
-        requestGrid.empty();
+          // Render Quick Call requests
+          function renderRequests() {
+            const requestGrid = $('#smQuickCallGrid');
+            requestGrid.empty();
 
-        if (filteredRequests.length === 0) {
-          requestGrid.append('<p class="sm-no-records">No records found.</p>');
-          return;
-        }
+            if (filteredRequests.length === 0) {
+              requestGrid.append('<p class="sm-no-records">No records found.</p>');
+              return;
+            }
 
-        if (groupBy === 'mobileNo' || groupBy === 'tripId') {
-          // Render grouped requests
-          filteredRequests.forEach(group => {
-            const groupTitle = groupBy === 'mobileNo' ? group._id : (group.trip ? group.trip.name : 'Unknown Trip');
-            const groupCard = `
+            if (groupBy === 'mobileNo' || groupBy === 'tripId') {
+              // Render grouped requests
+              filteredRequests.forEach(group => {
+                const groupTitle = groupBy === 'mobileNo' ? group._id : (group.trip ? group.trip.name : 'Unknown Trip');
+                const groupCard = `
               <div class="sm-card">
                 <h4 class="text-base font-semibold text-gray-800">${groupTitle}</h4>
                 <div class="w-full mt-2">
@@ -384,11 +415,9 @@
                       <h4 class="text-sm font-semibold text-gray-800">${request.guestName}</h4>
                       <p class="text-xs text-gray-600">Trip: ${request.trip ? request.trip.name : 'N/A'}</p>
                       <p class="text-xs text-gray-600">Requested: ${new Date(request.requestedDate).toLocaleDateString()}</p>
+                      <p class="text-xs text-gray-600">Mobile: ${request.mobileNo} <button class="ml-2 text-blue-500 hover:underline text-xs" onclick="copyToClipboard('${request.mobileNo}')">Copy</button></p>
                       <div class="sm-actions">
                         <a href="tel:${request.mobileNo}" class="sm-action-btn call">
-                          <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                          </svg>
                           Call
                         </a>
                         <button class="sm-toggle-btn responded ${request.responded ? 'active' : ''}" onclick="toggleResponded('${request._id}', ${!request.responded})">
@@ -403,21 +432,19 @@
                 </div>
               </div>
             `;
-            requestGrid.append(groupCard);
-          });
-        } else {
-          // Render individual requests
-          filteredRequests.forEach(request => {
-            const card = `
+                requestGrid.append(groupCard);
+              });
+            } else {
+              // Render individual requests
+              filteredRequests.forEach(request => {
+                const card = `
               <div class="sm-card ${request.markAsSpam ? 'spam' : ''}">
                 <h4 class="text-base font-semibold text-gray-800">${request.guestName}</h4>
                 <p class="text-xs text-gray-600">Trip: ${request.tripId ? request.tripId.name : 'N/A'}</p>
                 <p class="text-xs text-gray-600">Requested: ${new Date(request.requestedDate).toLocaleDateString()}</p>
+                <p class="text-xs text-gray-600">Mobile: ${request.mobileNo} <button class="ml-2 text-blue-500 hover:underline text-xs" onclick="copyToClipboard('${request.mobileNo}')">Copy</button></p>
                 <div class="sm-actions">
                   <a href="tel:${request.mobileNo}" class="sm-action-btn call">
-                    <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
                     Call
                   </a>
                   <button class="sm-toggle-btn responded ${request.responded ? 'active' : ''}" onclick="toggleResponded('${request._id}', ${!request.responded})">
@@ -429,153 +456,206 @@
                 </div>
               </div>
             `;
-            requestGrid.append(card);
+                requestGrid.append(card);
+              });
+            }
+          }
+
+          // Toggle Responded status
+          window.toggleResponded = function (id, responded) {
+            $('#smLoadingOverlay').show();
+            $.ajax({
+              url: `/quick-call/${id}`,
+              method: 'PUT',
+              contentType: 'application/json',
+              data: JSON.stringify({
+                _csrf: '<%= csrfToken %>',
+                responded
+              }),
+              success: function (response) {
+                $('#smLoadingOverlay').hide();
+                if (response.success) {
+                  Toastify({
+                    text: response.message,
+                    className: 'sm-toast',
+                    style: { background: '#10B981' },
+                    duration: 3000
+                  }).showToast();
+                  fetchRequests();
+                } else {
+                  Toastify({
+                    text: response.message || 'Failed to update request.',
+                    className: 'sm-toast',
+                    style: { background: '#EF4444' },
+                    duration: 3000
+                  }).showToast();
+                }
+              },
+              error: function () {
+                $('#smLoadingOverlay').hide();
+                Toastify({
+                  text: 'Error updating request.',
+                  className: 'sm-toast',
+                  style: { background: '#EF4444' },
+                  duration: 3000
+                }).showToast();
+              }
+            });
+          };
+
+          // Toggle Spam status
+          window.toggleSpam = function (id, markAsSpam) {
+            $('#smLoadingOverlay').show();
+            $.ajax({
+              url: `/quick-call/${id}`,
+              method: 'PUT',
+              contentType: 'application/json',
+              data: JSON.stringify({
+                _csrf: '<%= csrfToken %>',
+                markAsSpam
+              }),
+              success: function (response) {
+                $('#smLoadingOverlay').hide();
+                if (response.success) {
+                  Toastify({
+                    text: response.message,
+                    className: 'sm-toast',
+                    style: { background: '#10B981' },
+                    duration: 3000
+                  }).showToast();
+                  fetchRequests();
+                } else {
+                  Toastify({
+                    text: response.message || 'Failed to update request.',
+                    className: 'sm-toast',
+                    style: { background: '#EF4444' },
+                    duration: 3000
+                  }).showToast();
+                }
+              },
+              error: function () {
+                $('#smLoadingOverlay').hide();
+                Toastify({
+                  text: 'Error updating request.',
+                  className: 'sm-toast',
+                  style: { background: '#EF4444' },
+                  duration: 3000
+                }).showToast();
+              }
+            });
+          };
+
+          // Copy to clipboard function
+          window.copyToClipboard = function (text) {
+            navigator.clipboard.writeText(text).then(() => {
+              Toastify({
+                text: 'Copied to clipboard!',
+                className: 'sm-toast',
+                style: { background: '#10B981' },
+                duration: 2000
+              }).showToast();
+            }).catch(() => {
+              Toastify({
+                text: 'Failed to copy.',
+                className: 'sm-toast',
+                style: { background: '#EF4444' },
+                duration: 2000
+              }).showToast();
+            });
+          };
+
+          // Export to CSV function
+          function exportToCSV() {
+            if (filteredRequests.length === 0) {
+              Toastify({
+                text: 'No data to export.',
+                className: 'sm-toast',
+                style: { background: '#EF4444' },
+                duration: 3000
+              }).showToast();
+              return;
+            }
+
+            let requests = groupBy ? filteredRequests.flatMap(g => g.requests) : filteredRequests;
+            let csv = 'Guest Name,Mobile No,Trip,Requested Date,Responded,Spam\n';
+            requests.forEach(request => {
+              const tripName = groupBy === 'tripId' ? (request.trip ? request.trip.name : 'N/A') : (request.tripId ? request.tripId.name : 'N/A');
+              csv += `"${request.guestName || ''}","${request.mobileNo || ''}","${tripName}","${new Date(request.requestedDate).toLocaleString()}","${request.responded}","${request.markAsSpam}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'quick_call_user_sheet.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+          }
+
+          // Search filter
+          let searchTimeout;
+          $('#smSearchInput').on('input', function () {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+              fetchRequests();
+            }, 300);
           });
-        }
-      }
 
-      // Toggle Responded status
-      window.toggleResponded = function(id, responded) {
-        $('#smLoadingOverlay').show();
-        $.ajax({
-          url: `/quick-call/${id}`,
-          method: 'PUT',
-          contentType: 'application/json',
-          data: JSON.stringify({
-            _csrf: '<%= csrfToken %>',
-            responded
-          }),
-          success: function(response) {
-            $('#smLoadingOverlay').hide();
-            if (response.success) {
-              Toastify({
-                text: response.message,
-                className: 'sm-toast',
-                style: { background: '#10B981' },
-                duration: 3000
-              }).showToast();
-              fetchRequests();
-            } else {
-              Toastify({
-                text: response.message || 'Failed to update request.',
-                className: 'sm-toast',
-                style: { background: '#EF4444' },
-                duration: 3000
-              }).showToast();
+          // Trip filter
+          $('#smTripFilter').on('change', function () {
+            fetchRequests();
+          });
+
+          // Responded filter
+          $('#smRespondedFilter').on('change', function () {
+            fetchRequests();
+          });
+
+          // Spam filter
+          $('#smSpamFilter').on('change', function () {
+            fetchRequests();
+          });
+
+          // Time range filter
+          $('#smTimeRangeFilter').on('change', function () {
+            fetchRequests();
+          });
+
+          // Group by selection
+          $('#smGroupBySelect').on('change', function () {
+            groupBy = $(this).val();
+            fetchRequests();
+          });
+
+          // Clear filters
+          $('#smClearFiltersBtn').on('click', function () {
+            $('#smSearchInput').val('');
+            $('#smTripFilter').val('all');
+            $('#smRespondedFilter').val('all');
+            $('#smSpamFilter').val('all');
+            $('#smTimeRangeFilter').val('all');
+            $('#smGroupBySelect').val('');
+            groupBy = '';
+            fetchRequests();
+          });
+
+          // Export button
+          $('#smExportBtn').on('click', function () {
+            exportToCSV();
+          });
+
+          // Tab switching
+          $('.sm-tab').on('click', function () {
+            const redirectUrl = $(this).data('redirect');
+            if (redirectUrl) {
+              window.location.href = redirectUrl;
             }
-          },
-          error: function() {
-            $('#smLoadingOverlay').hide();
-            Toastify({
-              text: 'Error updating request.',
-              className: 'sm-toast',
-              style: { background: '#EF4444' },
-              duration: 3000
-            }).showToast();
-          }
+          });
+
+          // Initial render
+          renderRequests();
         });
-      };
-
-      // Toggle Spam status
-      window.toggleSpam = function(id, markAsSpam) {
-        $('#smLoadingOverlay').show();
-        $.ajax({
-          url: `/quick-call/${id}`,
-          method: 'PUT',
-          contentType: 'application/json',
-          data: JSON.stringify({
-            _csrf: '<%= csrfToken %>',
-            markAsSpam
-          }),
-          success: function(response) {
-            $('#smLoadingOverlay').hide();
-            if (response.success) {
-              Toastify({
-                text: response.message,
-                className: 'sm-toast',
-                style: { background: '#10B981' },
-                duration: 3000
-              }).showToast();
-              fetchRequests();
-            } else {
-              Toastify({
-                text: response.message || 'Failed to update request.',
-                className: 'sm-toast',
-                style: { background: '#EF4444' },
-                duration: 3000
-              }).showToast();
-            }
-          },
-          error: function() {
-            $('#smLoadingOverlay').hide();
-            Toastify({
-              text: 'Error updating request.',
-              className: 'sm-toast',
-              style: { background: '#EF4444' },
-              duration: 3000
-            }).showToast();
-          }
-        });
-      };
-
-      // Search filter
-      let searchTimeout;
-      $('#smSearchInput').on('input', function() {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-          fetchRequests();
-        }, 300);
-      });
-
-      // Trip filter
-      $('#smTripFilter').on('change', function() {
-        fetchRequests();
-      });
-
-      // Responded filter
-      $('#smRespondedFilter').on('change', function() {
-        fetchRequests();
-      });
-
-      // Spam filter
-      $('#smSpamFilter').on('change', function() {
-        fetchRequests();
-      });
-
-      // Time range filter
-      $('#smTimeRangeFilter').on('change', function() {
-        fetchRequests();
-      });
-
-      // Group by selection
-      $('#smGroupBySelect').on('change', function() {
-        groupBy = $(this).val();
-        fetchRequests();
-      });
-
-      // Clear filters
-      $('#smClearFiltersBtn').on('click', function() {
-        $('#smSearchInput').val('');
-        $('#smTripFilter').val('all');
-        $('#smRespondedFilter').val('all');
-        $('#smSpamFilter').val('all');
-        $('#smTimeRangeFilter').val('all');
-        $('#smGroupBySelect').val('');
-        groupBy = '';
-        fetchRequests();
-      });
-
-      // Tab switching
-      $('.sm-tab').on('click', function() {
-        const redirectUrl = $(this).data('redirect');
-        if (redirectUrl) {
-          window.location.href = redirectUrl;
-        }
-      });
-
-      // Initial render
-      renderRequests();
-    });
-  </script>
+      </script>
 </body>
+
 </html>

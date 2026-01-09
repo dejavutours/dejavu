@@ -66,8 +66,11 @@ exports.getQuickCallRequests = async (req, res) => {
     let query = {};
 
     // Apply search filter (guestName or mobileNo)
-    if (search) {
-      const searchRegex = new RegExp(search, 'i');
+    if (search && search.trim()) {
+      // Escape regex special characters
+      const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const searchRegex = new RegExp(escapedSearch, 'i');
+
       query.$or = [
         { guestName: searchRegex },
         { mobileNo: searchRegex }
