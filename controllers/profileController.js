@@ -152,7 +152,7 @@ exports.getMyTrips = async (req, res, next) => {
       birthDate: formattedBirthDate,
     };
 
-    res.render('pages/profile/Profile', {
+    res.render('pages/profile/profile', {
       profileFormData: details,
       myTrips: [],
     });

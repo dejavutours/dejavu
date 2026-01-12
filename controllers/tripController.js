@@ -543,7 +543,7 @@ exports.getAddTours = async (req, res, next) => {
         }
 
         // Render Update Tours page with fetched trip details
-        return res.render("pages/Addtours", {
+        return res.render("pages/addtours", {
           message: null,
           trips: tripdetails,
           states, // Pass states instead of states_arr
@@ -556,7 +556,7 @@ exports.getAddTours = async (req, res, next) => {
     }
 
     // If no trip ID is provided, render Add Tours page
-    return res.render("pages/Addtours", {
+    return res.render("pages/addtours", {
       message: null,
       trips: [],
       states, // Pass states instead of states_arr
@@ -1107,7 +1107,7 @@ exports.getTripDetialbyName = async (req, res, next) => {
       // Continue without recommended trips if there's an error
     }
 
-    res.render("pages/TripDetail", {
+    res.render("pages/tripdetail", {
       trips: {
         ...tripdetails._doc,
         deptcities: deptCitiesWithImages,
@@ -1433,7 +1433,7 @@ exports.renderBookingTourPage = async (req, res) => {
       }
     }
 
-    res.render("pages/BookTour", {
+    res.render("pages/booktour", {
       tourDetails: existingTrip,
       userData,
       csrfToken: req.csrfToken(),
