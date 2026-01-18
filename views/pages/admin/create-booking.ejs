@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../../partials/headtag', {isNiceSelect: true}); %>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Create Booking</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    body { background-color: #f3f4f6; }
+    .form-section { background: white; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .section-title { font-size: 1.1rem; font-weight: 600; color: #1e3a8a; margin-bottom: 0.75rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.5rem; }
+    .form-label { font-size: 0.875rem; font-weight: 500; margin-bottom: 0.375rem; }
+    .form-control, .form-select { font-size: 0.875rem; padding: 0.5rem 0.75rem; }
+    .mb-3 { margin-bottom: 0.75rem !important; }
+    .card { margin-bottom: 0.75rem !important; }
+    .card-header { padding: 0.5rem 0.75rem; font-size: 0.875rem; }
+    .card-body { padding: 0.75rem; }
+    .required-field::after { content: " *"; color: #dc3545; }
+    .field-error { border-color: #dc3545; }
+    .error-message { color: #dc3545; font-size: 0.75rem; margin-top: 0.25rem; }
+    .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: none; align-items: center; justify-content: center; }
+    .loading-spinner { color: white; }
+    .user-selected-info { background: #e7f3ff; border: 1px solid #b3d9ff; border-radius: 0.25rem; padding: 0.5rem; margin-top: 0.5rem; font-size: 0.875rem; }
+    .date-warning { background: #fff3cd; border: 1px solid #ffc107; border-radius: 0.25rem; padding: 0.5rem; margin-top: 0.5rem; font-size: 0.875rem; color: #856404; }
+  </style>
+</head>
+<body>
+  <%- include('../../partials/header', {isSearch: false}); %>
+  <div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1>Create New Booking</h1>
+      <a href="/admin/bookings" class="btn btn-secondary"><i class="bi bi-arrow-left me-2"></i>Back to Bookings</a>
+    </div>
+
+    <form id="createBookingForm">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      
+      <!-- User Section -->
+      <div class="form-section">
+        <h3 class="section-title">User Information</h3>
+        <div class="row mb-3">
+          <div class="col-md-8">
+            <label class="form-label required-field">Select User</label>
+            <select class="form-select" id="userSelect" name="userId" required style="width: 100%;">
+              <option value="">Search and select user...</option>
+            </select>
+            <div class="error-message" id="userSelectError" style="display: none;">Please select a user or create a new one</div>
+            <div id="userSelectedInfo" class="user-selected-info" style="display: none;">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <strong>Selected User:</strong>
+                  <div id="selectedUserDisplay" class="mt-1"></div>
+                  <div class="mt-2">
+                    <small class="text-muted">
+                      <span id="selectedUserEmail"></span>
+                      <span id="selectedUserPhone"></span>
+                    </small>
+                  </div>
+                </div>
+                <div>
+                  <button type="button" class="btn btn-sm btn-outline-primary me-1" id="editUserContactBtn" onclick="showEditUserContactModal()">
+                    <i class="bi bi-pencil"></i> Edit Contact
+                  </button>
+                  <button type="button" class="btn btn-sm btn-link p-0" onclick="clearUserSelection()">Change</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">User Type Filter</label>
+            <select class="form-select" id="userTypeFilter">
+              <option value="">All Types</option>
+              <option value="mobile">Mobile</option>
+              <option value="gmail">Gmail</option>
+            </select>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-12">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="createNewUser">
+              <label class="form-check-label" for="createNewUser">Create new user instead</label>
+            </div>
+            <div id="newUserForm" style="display: none; margin-top: 0.75rem;">
+              <div class="row">
+                <div class="col-md-3">
+                  <label class="form-label small">User Type *</label>
+                  <select class="form-select mb-2" id="newUserType">
+                    <option value="mobile">Mobile User</option>
+                    <option value="gmail">Gmail User</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label small">Phone Number *</label>
+                  <input type="text" class="form-control mb-2" id="newUserPhone" placeholder="Phone number">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label small">Email *</label>
+                  <input type="email" class="form-control mb-2" id="newUserEmail" placeholder="Email">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label small">Name *</label>
+                  <div class="row">
+                    <div class="col-6">
+                      <input type="text" class="form-control mb-2" id="newUserFirstName" placeholder="First Name">
+                    </div>
+                    <div class="col-6">
+                      <input type="text" class="form-control mb-2" id="newUserLastName" placeholder="Last Name">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-3">
+                <div class="col-12">
+                  <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-primary btn-lg" id="saveNewUserBtn" onclick="saveNewUser()">
+                      <span id="saveUserSpinner" class="spinner-border spinner-border-sm d-none me-1" role="status" aria-hidden="true"></span>
+                      <i class="bi bi-save"></i> <strong>Save User Information</strong>
+                    </button>
+                    <small class="text-muted">
+                      <i class="bi bi-info-circle"></i> <strong>Important:</strong> Save user first, then proceed with booking details below
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <div class="alert alert-info mt-2" role="alert">
+                <small>
+                  <i class="bi bi-exclamation-circle"></i> <strong>Note:</strong> Both email and phone number are required for new users. 
+                  The system will check for duplicates across all user types before creating the account.
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" id="selectedUserId" name="userId">
+        <input type="hidden" id="selectedUserType" name="userType">
+        <input type="hidden" id="createNewUserFlag" name="createNewUser" value="false">
+      </div>
+
+      <!-- Booking Details Section -->
+      <div class="form-section">
+        <h3 class="section-title">Booking Details</h3>
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label class="form-label required-field">Trip</label>
+            <select class="form-select" id="tourId" name="tourId" required onchange="loadTourDetails()">
+              <option value="">Select Trip</option>
+              <% tours.forEach(tour => { %>
+              <option value="<%= tour._id %>"><%= tour.name %> - <%= tour.state %></option>
+              <% }); %>
+            </select>
+            <div class="error-message" id="tourIdError" style="display: none;">Please select a trip</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label required-field">Joining From</label>
+            <select class="form-select" id="joiningFrom" name="joiningFrom" required onchange="updateDatesAndPrices()" disabled>
+              <option value="">Select city first</option>
+            </select>
+            <div class="error-message" id="joiningFromError" style="display: none;">Please select a city</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label required-field">Transport Type</label>
+            <select class="form-select" id="transportType" name="transportType" required disabled>
+              <option value="">Select transport</option>
+            </select>
+            <div class="error-message" id="transportTypeError" style="display: none;">Please select transport type</div>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label class="form-label required-field">Travel Date</label>
+            <select class="form-select" id="travelDate" name="travelDate" required disabled>
+              <option value="">Select date</option>
+            </select>
+            <div class="error-message" id="travelDateError" style="display: none;">Please select a travel date</div>
+            <div id="dateWarning" class="date-warning" style="display: none;"></div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label required-field">Adults</label>
+            <input type="number" class="form-control" id="adults" name="adults" min="1" value="1" required onchange="updatePersonDetails()">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Children</label>
+            <input type="number" class="form-control" id="children" name="children" min="0" value="0" onchange="updatePersonDetails()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Person Details Section -->
+      <div class="form-section">
+        <h3 class="section-title">Traveler Information (Required for Booking)</h3>
+        <p class="text-muted small mb-3"><i class="bi bi-info-circle"></i> Each person traveling must provide their details for booking confirmation. This information is required by the booking system.</p>
+        <div class="mb-3" id="sameContactCheckboxContainer" style="display: none;">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="sameContactForAll" checked onchange="toggleSameContact()">
+            <label class="form-check-label" for="sameContactForAll">
+              Use same contact number for all travelers (from selected user)
+            </label>
+          </div>
+        </div>
+        <div id="personDetailsContainer"></div>
+      </div>
+
+      <!-- Pricing Section -->
+      <div class="form-section">
+        <h3 class="section-title">Pricing</h3>
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label class="form-label">Original Price (with GST)</label>
+            <input type="text" class="form-control" id="originalPrice" readonly>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Final Amount *</label>
+            <input type="number" class="form-control" id="adminFinalAmount" name="adminFinalAmount" step="0.01" required onchange="calculateDiscount()" placeholder="Enter final amount">
+            <small class="form-text text-muted">
+              <i class="bi bi-info-circle" data-bs-toggle="tooltip" data-bs-placement="top" title="Enter the final amount to charge the customer. You can set this higher or lower than the original price. Discount will be calculated automatically."></i>
+              Admin can set final amount (higher or lower than original price)
+            </small>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Discount Amount</label>
+            <input type="text" class="form-control" id="discountAmount" readonly style="background-color: #e9ecef; color: #6c757d;">
+            <small class="form-text text-muted" id="discountInfo">Auto-calculated</small>
+            <div id="discountWarning" class="alert alert-warning mt-2" style="display: none;">
+              <i class="bi bi-exclamation-triangle"></i> <strong>Warning:</strong> Discount exceeds 50% of original price
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Section -->
+      <div class="form-section">
+        <h3 class="section-title">Status</h3>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Booking Status</label>
+            <select class="form-select" id="bookingStatus" name="bookingStatus">
+              <option value="Pending">Pending</option>
+              <option value="Confirmed">Confirmed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Payment Status</label>
+            <select class="form-select" id="paymentStatus" name="paymentStatus">
+              <option value="Pending">Pending</option>
+              <option value="Partial">Partial</option>
+              <option value="Paid">Paid</option>
+            </select>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Admin Notes</label>
+          <textarea class="form-control" id="adminNotes" name="adminNotes" rows="3"></textarea>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-outline-secondary" onclick="resetForm()">Reset Form</button>
+        <a href="/admin/bookings" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary" id="submitBtn">
+          <span class="spinner-border spinner-border-sm d-none" id="submitSpinner" role="status" aria-hidden="true"></span>
+          <span id="submitText">Create Booking</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit User Contact Modal -->
+  <div class="modal fade" id="editUserContactModal" tabindex="-1" aria-labelledby="editUserContactModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editUserContactModalLabel">Update Contact Information</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editUserContactForm">
+            <input type="hidden" id="editUserId" name="userId">
+            <input type="hidden" id="editUserType" name="userType">
+            <div class="mb-3">
+              <label class="form-label" id="editContactLabel">Contact</label>
+              <input type="text" class="form-control" id="editContactInput" name="contact" required>
+              <small class="form-text text-muted" id="editContactNote"></small>
+            </div>
+            <div class="alert alert-warning">
+              <small><i class="bi bi-info-circle"></i> Note: This information may be incorrect. Please verify with the user before updating.</small>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="saveUserContact()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+    <div id="toastNotification" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <strong class="me-auto" id="toastTitle">Notification</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body" id="toastMessage"></div>
+    </div>
+  </div>
+
+  <!-- jQuery (required for Select2) -->
+  <script src="/js/vendor/jquery-1.12.4.min.js"></script>
+  <!-- Select2 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  
+  <script>
+    // Toast notification function
+    function showToast(title, message, type = 'success') {
+      const toastEl = document.getElementById('toastNotification');
+      const toastTitle = document.getElementById('toastTitle');
+      const toastMessage = document.getElementById('toastMessage');
+      
+      toastTitle.textContent = title;
+      toastMessage.textContent = message;
+      
+      toastEl.className = 'toast';
+      if (type === 'error') {
+        toastEl.classList.add('text-bg-danger');
+      } else if (type === 'warning') {
+        toastEl.classList.add('text-bg-warning');
+      } else {
+        toastEl.classList.add('text-bg-success');
+      }
+      
+      const toast = new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 });
+      toast.show();
+    }
+
+    // Loading overlay functions
+    function showLoading() {
+      document.getElementById('loadingOverlay').style.display = 'flex';
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingOverlay').style.display = 'none';
+    }
+
+    function setFormLoading(loading) {
+      const form = document.getElementById('createBookingForm');
+      const inputs = form.querySelectorAll('input, select, textarea, button');
+      inputs.forEach(input => {
+        if (input.type !== 'hidden' && input.id !== 'submitBtn') {
+          input.disabled = loading;
+        }
+      });
+      const submitBtn = document.getElementById('submitBtn');
+      const submitSpinner = document.getElementById('submitSpinner');
+      const submitText = document.getElementById('submitText');
+      if (loading) {
+        submitBtn.disabled = true;
+        submitSpinner.classList.remove('d-none');
+        submitText.textContent = 'Creating...';
+      } else {
+        submitBtn.disabled = false;
+        submitSpinner.classList.add('d-none');
+        submitText.textContent = 'Create Booking';
+      }
+    }
+
+    let tourData = null;
+    let selectedCity = null;
+
+    // Initialize Select2 for user search
+    $(document).ready(function() {
+      $('#userSelect').select2({
+        placeholder: 'Type at least 3 characters to search...',
+        allowClear: true,
+        minimumInputLength: 3,
+        ajax: {
+          url: '/admin/users/search',
+          dataType: 'json',
+          delay: 250,
+          data: function (params) {
+            return {
+              query: params.term,
+              userType: $('#userTypeFilter').val() || ''
+            };
+          },
+          processResults: function (data) {
+            return {
+              results: data.map(user => {
+                const name = user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'No Name';
+                const email = user.email || 'No Email';
+                const phone = user.phone || 'No Phone';
+                const displayText = `${name} (${email} | ${phone}) - ${user.type}`;
+                return {
+                  id: user.id,
+                  text: displayText,
+                  user: user
+                };
+              })
+            };
+          },
+          cache: true
+        }
+      });
+
+      $('#userSelect').on('select2:select', function (e) {
+        const data = e.params.data;
+        const user = data.user;
+        selectedUserData = user; // Store globally
+        
+        document.getElementById('selectedUserId').value = user.id;
+        document.getElementById('selectedUserType').value = user.type;
+        document.getElementById('userSelectedInfo').style.display = 'block';
+        
+        const name = user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'No Name';
+        const email = user.email || 'Not provided';
+        const phone = user.phone || 'Not provided';
+        
+        document.getElementById('selectedUserDisplay').innerHTML = `<strong>${name}</strong> (${user.type})`;
+        document.getElementById('selectedUserEmail').innerHTML = email !== 'Not provided' ? `<i class="bi bi-envelope"></i> ${email}` : '<span class="text-warning"><i class="bi bi-exclamation-triangle"></i> Email missing</span>';
+        document.getElementById('selectedUserPhone').innerHTML = phone !== 'Not provided' ? `<br><i class="bi bi-phone"></i> ${phone}` : '<br><span class="text-warning"><i class="bi bi-exclamation-triangle"></i> Phone missing</span>';
+        
+        // Show/hide edit button based on missing info
+        const editBtn = document.getElementById('editUserContactBtn');
+        if ((user.type === 'mobile' && !user.email) || (user.type === 'gmail' && !user.phone)) {
+          editBtn.style.display = 'inline-block';
+        } else {
+          editBtn.style.display = 'none';
+        }
+        
+        document.getElementById('userSelectError').style.display = 'none';
+        $('#userSelect').removeClass('field-error');
+        
+        // Enable booking form after user selection
+        enableBookingForm();
+      });
+
+      $('#userSelect').on('select2:clear', function () {
+        clearUserSelection();
+      });
+
+      $('#userTypeFilter').on('change', function() {
+        $('#userSelect').val(null).trigger('change');
+      });
+      
+      // Initialize Select2 for trip search
+      $('#tourId').select2({
+        placeholder: 'Search and select trip...',
+        allowClear: true,
+        width: '100%'
+      });
+      
+      $('#tourId').on('select2:select', function() {
+        loadTourDetails();
+        updateFormState();
+      });
+      
+      $('#tourId').on('select2:clear', function() {
+        disableBookingForm();
+        updateFormState();
+      });
+    });
+    
+    // Progressive form enablement
+    function updateFormState() {
+      const userId = document.getElementById('selectedUserId').value;
+      const tourId = document.getElementById('tourId').value;
+      const citySelected = document.getElementById('joiningFrom').value;
+      const transportSelected = document.getElementById('transportType').value;
+      const dateSelected = document.getElementById('travelDate').value;
+      const adults = parseInt(document.getElementById('adults').value) || 0;
+      
+      // Enable/disable based on selections
+      document.getElementById('joiningFrom').disabled = !userId || !tourId;
+      document.getElementById('transportType').disabled = !userId || !tourId || !citySelected;
+      document.getElementById('travelDate').disabled = !userId || !tourId || !citySelected || !transportSelected;
+      document.getElementById('adults').disabled = !userId || !tourId || !citySelected || !transportSelected || !dateSelected;
+      document.getElementById('children').disabled = !userId || !tourId || !citySelected || !transportSelected || !dateSelected || adults < 1;
+      
+      // Update helper text
+      if (!userId) {
+        document.getElementById('joiningFrom').title = 'Please select a user first';
+      } else if (!tourId) {
+        document.getElementById('joiningFrom').title = 'Please select a trip first';
+      } else {
+        document.getElementById('joiningFrom').title = '';
+      }
+    }
+
+    function clearUserSelection() {
+      document.getElementById('selectedUserId').value = '';
+      document.getElementById('selectedUserType').value = '';
+      document.getElementById('userSelectedInfo').style.display = 'none';
+      $('#userSelect').val(null).trigger('change');
+      disableBookingForm();
+    }
+    
+    // Store selected user data globally
+    let selectedUserData = null;
+    
+    function showEditUserContactModal() {
+      if (!selectedUserData) return;
+      
+      const modal = new bootstrap.Modal(document.getElementById('editUserContactModal'));
+      const user = selectedUserData;
+      
+      if (user.type === 'mobile') {
+        document.getElementById('editContactLabel').textContent = 'Email Address';
+        document.getElementById('editContactInput').type = 'email';
+        document.getElementById('editContactInput').value = user.email || '';
+        document.getElementById('editContactInput').placeholder = 'Enter email address';
+      } else {
+        document.getElementById('editContactLabel').textContent = 'Phone Number';
+        document.getElementById('editContactInput').type = 'tel';
+        document.getElementById('editContactInput').value = user.phone || '';
+        document.getElementById('editContactInput').placeholder = 'Enter phone number';
+      }
+      
+      document.getElementById('editUserId').value = user.id;
+      document.getElementById('editUserType').value = user.type;
+      modal.show();
+    }
+    
+    async function saveUserContact() {
+      const userId = document.getElementById('editUserId').value;
+      const userType = document.getElementById('editUserType').value;
+      const contact = document.getElementById('editContactInput').value.trim();
+      
+      // Validation
+      if (!userId) {
+        showToast('Error', 'User ID is missing', 'error');
+        return;
+      }
+      
+      if (!userType) {
+        showToast('Error', 'User type is missing', 'error');
+        return;
+      }
+      
+      if (!contact) {
+        showToast('Error', 'Please enter contact information', 'error');
+        return;
+      }
+      
+      // Validate contact format
+      if (userType === 'mobile') {
+        // Validating email for mobile user
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(contact)) {
+          showToast('Error', 'Please enter a valid email address', 'error');
+          return;
+        }
+      } else if (userType === 'gmail') {
+        // Validating phone for gmail user
+        const phoneRegex = /^\d{10}$/;
+        if (!phoneRegex.test(contact)) {
+          showToast('Error', 'Please enter a valid 10-digit phone number', 'error');
+          return;
+        }
+      }
+      
+      const csrfToken = document.querySelector('input[name="_csrf"]')?.value;
+      if (!csrfToken) {
+        showToast('Error', 'CSRF token is missing. Please refresh the page.', 'error');
+        return;
+      }
+      
+      const payload = {
+        userType: userType,
+        contact: contact
+      };
+      
+      console.log('Update User Contact Payload:', { userId, ...payload });
+      
+      showLoading();
+      try {
+        const response = await fetch(`/admin/users/${userId}/update-contact`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken,
+          },
+          body: JSON.stringify(payload),
+        });
+        
+        const result = await response.json();
+        if (result.success) {
+          bootstrap.Modal.getInstance(document.getElementById('editUserContactModal')).hide();
+          showToast('Success', 'Contact information updated successfully', 'success');
+          // Refresh user selection to show updated info
+          if (selectedUserData) {
+            if (userType === 'mobile') {
+              selectedUserData.email = contact;
+            } else {
+              selectedUserData.phone = contact;
+            }
+            // Trigger select2 update to refresh display
+            $('#userSelect').trigger('select2:select');
+          }
+        } else {
+          showToast('Error', result.message || 'Failed to update contact information', 'error');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showToast('Error', 'An error occurred while updating contact information', 'error');
+      } finally {
+        hideLoading();
+      }
+    }
+    
+    async function saveNewUser() {
+      const userType = document.getElementById('newUserType').value;
+      const phone = document.getElementById('newUserPhone').value.trim();
+      const email = document.getElementById('newUserEmail').value.trim();
+      const firstName = document.getElementById('newUserFirstName').value.trim();
+      const lastName = document.getElementById('newUserLastName').value.trim();
+      
+      // Validation
+      if (!phone || !email || !firstName || !lastName) {
+        showToast('Error', 'All fields are required for new user', 'error');
+        return;
+      }
+      
+      if (!/^\+?\d{10,15}$/.test(phone)) {
+        showToast('Error', 'Please enter a valid phone number', 'error');
+        return;
+      }
+      
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showToast('Error', 'Please enter a valid email address', 'error');
+        return;
+      }
+      
+      const csrfToken = document.querySelector('input[name="_csrf"]')?.value;
+      if (!csrfToken) {
+        showToast('Error', 'CSRF token is missing. Please refresh the page.', 'error');
+        return;
+      }
+      
+      const saveBtn = document.getElementById('saveNewUserBtn');
+      const spinner = document.getElementById('saveUserSpinner');
+      saveBtn.disabled = true;
+      spinner.classList.remove('d-none');
+      setFormLoading(true);
+      
+      // Construct payload matching backend expectations exactly
+      const payload = {
+        type: userType,
+        phoneNumber: phone,
+        email: email,
+        name: `${firstName} ${lastName}`,
+        details: {
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          mobileNumber: phone
+        }
+      };
+      
+      console.log('Create User Payload:', payload);
+      
+      try {
+        const response = await fetch('/admin/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken,
+          },
+          body: JSON.stringify(payload),
+        });
+        
+        const result = await response.json();
+        if (result.success && result.user) {
+          showToast('Success', 'User created successfully. You can now proceed with booking.', 'success');
+          
+          // Load the created user into Select2
+          const userId = result.user._id || result.user.id;
+          const newUser = {
+            id: userId.toString(),
+            type: userType,
+            fullName: `${firstName} ${lastName}`,
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: phone
+          };
+          
+          // Add to Select2 and select it
+          const option = new Option(`${newUser.fullName} (${email} | ${phone}) - ${userType}`, newUser.id, true, true);
+          $('#userSelect').append(option).trigger('change');
+          
+          // Set selected user data
+          selectedUserData = newUser;
+          document.getElementById('selectedUserId').value = newUser.id;
+          document.getElementById('selectedUserType').value = userType;
+          
+          // Hide new user form
+          document.getElementById('createNewUser').checked = false;
+          document.getElementById('newUserForm').style.display = 'none';
+          document.getElementById('createNewUserFlag').value = 'false';
+          $('#userSelect').prop('disabled', false);
+          
+          // Clear new user form
+          document.getElementById('newUserPhone').value = '';
+          document.getElementById('newUserEmail').value = '';
+          document.getElementById('newUserFirstName').value = '';
+          document.getElementById('newUserLastName').value = '';
+          
+          // Enable booking form and pre-fill traveler info
+          enableBookingForm();
+          updatePersonDetails(); // This will pre-fill with user info
+        } else {
+          // Enhanced error message for duplicates
+          let errorMsg = result.message || 'Failed to create user.';
+          if (result.error === 'duplicate_email') {
+            errorMsg = 'This email is already registered. Please use a different email or select the existing user from the dropdown above.';
+          } else if (result.error === 'duplicate_phone') {
+            errorMsg = 'This phone number is already registered. Please use a different phone number or select the existing user from the dropdown above.';
+          } else if (result.error === 'duplicate_contact') {
+            errorMsg = 'This contact information is already associated with another user account. Please select the existing user from the dropdown above instead.';
+          }
+          showToast('Error', errorMsg, 'error');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showToast('Error', 'An error occurred while creating user. Please try again.', 'error');
+      } finally {
+        setFormLoading(false);
+        saveBtn.disabled = false;
+        spinner.classList.add('d-none');
+         hideLoading();
+      }
+    }
+    
+    // Enable/Disable booking form functions
+    function enableBookingForm() {
+      const bookingSection = document.querySelector('.form-section:nth-of-type(2)');
+      if (bookingSection) {
+        bookingSection.style.opacity = '1';
+        bookingSection.style.pointerEvents = 'auto';
+      }
+      document.getElementById('tourId').disabled = false;
+      $('#tourId').prop('disabled', false);
+      updateFormState();
+    }
+    
+    function disableBookingForm() {
+      const bookingSection = document.querySelector('.form-section:nth-of-type(2)');
+      if (bookingSection) {
+        bookingSection.style.opacity = '0.6';
+        bookingSection.style.pointerEvents = 'none';
+      }
+      // Disable all booking fields
+      document.getElementById('tourId').disabled = true;
+      $('#tourId').prop('disabled', true);
+      document.getElementById('joiningFrom').disabled = true;
+      document.getElementById('transportType').disabled = true;
+      document.getElementById('travelDate').disabled = true;
+      document.getElementById('adults').disabled = true;
+      document.getElementById('children').disabled = true;
+    }
+
+    document.getElementById('createNewUser').addEventListener('change', function() {
+      const isChecked = this.checked;
+      const newUserForm = document.getElementById('newUserForm');
+      newUserForm.style.display = isChecked ? 'block' : 'none';
+      document.getElementById('createNewUserFlag').value = isChecked ? 'true' : 'false';
+      
+      // Dynamically add/remove required attributes to prevent browser validation errors on hidden fields
+      const newUserFields = [
+        document.getElementById('newUserType'),
+        document.getElementById('newUserPhone'),
+        document.getElementById('newUserEmail'),
+        document.getElementById('newUserFirstName'),
+        document.getElementById('newUserLastName')
+      ];
+      
+      if (isChecked) {
+        // Add required when form is shown
+        newUserFields.forEach(field => {
+          if (field) field.setAttribute('required', 'required');
+        });
+        $('#userSelect').val(null).trigger('change');
+        $('#userSelect').prop('disabled', true);
+      } else {
+        // Remove required when form is hidden to prevent validation errors
+        newUserFields.forEach(field => {
+          if (field) field.removeAttribute('required');
+        });
+        $('#userSelect').prop('disabled', false);
+      }
+    });
+
+    async function loadTourDetails() {
+      const tourId = document.getElementById('tourId').value;
+      if (!tourId) {
+        updateFormState();
+        return;
+      }
+
+      const csrfToken = document.querySelector('input[name="_csrf"]')?.value;
+      if (!csrfToken) {
+        console.error('CSRF token missing');
+        showToast('Error', 'CSRF token is missing. Please refresh the page.', 'error');
+        return;
+      }
+
+      console.log('Loading tour details for tourId:', tourId);
+      
+      showLoading();
+      try {
+        const response = await fetch(`/admin/trips/${tourId}`, {
+          method: 'GET',
+          headers: {
+            'X-CSRF-Token': csrfToken,
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        tourData = await response.json();
+        
+        // Load cities
+        const joiningFromSelect = document.getElementById('joiningFrom');
+        joiningFromSelect.innerHTML = '<option value="">Select City</option>';
+        if (tourData.deptcities && tourData.deptcities.length > 0) {
+          tourData.deptcities.forEach(city => {
+            joiningFromSelect.innerHTML += `<option value="${city.City}">${city.City}</option>`;
+          });
+        } else {
+          joiningFromSelect.innerHTML = '<option value="">No cities available</option>';
+        }
+        
+        // Reset dependent fields
+        document.getElementById('transportType').innerHTML = '<option value="">Select transport</option>';
+        document.getElementById('travelDate').innerHTML = '<option value="">Select date</option>';
+        document.getElementById('dateWarning').style.display = 'none';
+        
+        updateFormState();
+      } catch (error) {
+        console.error('Error loading tour details:', error);
+        showToast('Error', 'Failed to load tour details. Please try again.', 'error');
+      } finally {
+        hideLoading();
+      }
+    }
+
+    function updateDatesAndPrices() {
+      const cityName = document.getElementById('joiningFrom').value;
+      if (!tourData || !cityName) {
+        document.getElementById('transportType').disabled = true;
+        document.getElementById('travelDate').disabled = true;
+        return;
+      }
+
+      selectedCity = tourData.deptcities.find(c => c.City === cityName);
+      if (!selectedCity) {
+        document.getElementById('transportType').disabled = true;
+        document.getElementById('travelDate').disabled = true;
+        return;
+      }
+
+      // Update transport types
+      const transportSelect = document.getElementById('transportType');
+      transportSelect.innerHTML = '<option value="">Select Transport</option>';
+      transportSelect.disabled = false;
+      if (selectedCity.price && selectedCity.price.length > 0) {
+        selectedCity.price.forEach(price => {
+          transportSelect.innerHTML += `<option value="${price.transferType}">${price.transferType}</option>`;
+        });
+      } else {
+        transportSelect.innerHTML = '<option value="">No transport options</option>';
+      }
+
+      // Update dates with availability validation
+      const dateSelect = document.getElementById('travelDate');
+      dateSelect.innerHTML = '<option value="">Select Date</option>';
+      dateSelect.disabled = false;
+      const dateWarning = document.getElementById('dateWarning');
+      dateWarning.style.display = 'none';
+
+      if (!selectedCity.dates || selectedCity.dates.length === 0) {
+        dateSelect.innerHTML = '<option value="">No dates available</option>';
+        dateSelect.disabled = true;
+        dateWarning.textContent = 'No dates available for this city.';
+        dateWarning.style.display = 'block';
+        updatePersonDetails();
+        return;
+      }
+
+      // Calculate cutoff date
+      const cutoffDays = parseInt(selectedCity.bookingCutoffDays || '0', 10);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const cutoffDate = new Date(today);
+      cutoffDate.setDate(today.getDate() + cutoffDays);
+
+      // Filter available dates
+      const availableDates = [];
+      selectedCity.dates.forEach(dateGroup => {
+        const dates = dateGroup.dates.split(', ');
+        dates.forEach(date => {
+          const dateStr = date.trim();
+          if (!dateStr) return;
+          const fullDateStr = `${dateGroup.Year}-${getMonthNumber(dateGroup.Month)}-${dateStr.padStart(2, '0')}`;
+          const fullDate = new Date(fullDateStr);
+          fullDate.setHours(0, 0, 0, 0);
+          
+          if (fullDate > cutoffDate) {
+            availableDates.push({
+              value: fullDateStr,
+              display: `${dateStr} ${dateGroup.Month} ${dateGroup.Year}`
+            });
+          }
+        });
+      });
+
+      // Sort dates chronologically
+      availableDates.sort((a, b) => new Date(a.value) - new Date(b.value));
+
+      if (availableDates.length === 0) {
+        dateSelect.innerHTML = '<option value="">No available dates</option>';
+        dateSelect.disabled = true;
+        dateWarning.textContent = `No dates available. All dates are within the ${cutoffDays}-day booking cutoff period.`;
+        dateWarning.style.display = 'block';
+      } else {
+        availableDates.forEach(date => {
+          dateSelect.innerHTML += `<option value="${date.value}">${date.display}</option>`;
+        });
+        if (cutoffDays > 0) {
+          dateWarning.textContent = `Note: Dates within ${cutoffDays} days are not available for booking.`;
+          dateWarning.style.display = 'block';
+        }
+      }
+
+      updatePersonDetails();
+      updateFormState();
+    }
+    
+    // Add event listeners for progressive enablement
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize Bootstrap tooltips
+      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+      document.getElementById('joiningFrom').addEventListener('change', updateFormState);
+      document.getElementById('transportType').addEventListener('change', updateFormState);
+      document.getElementById('travelDate').addEventListener('change', updateFormState);
+      document.getElementById('adults').addEventListener('input', updateFormState);
+      document.getElementById('adults').addEventListener('change', updateFormState);
+    });
+
+    function getMonthNumber(monthName) {
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      return String(months.indexOf(monthName) + 1).padStart(2, '0');
+    }
+
+    function updatePersonDetails() {
+      const adults = parseInt(document.getElementById('adults').value) || 0;
+      const children = parseInt(document.getElementById('children').value) || 0;
+      const container = document.getElementById('personDetailsContainer');
+      const sameContactContainer = document.getElementById('sameContactCheckboxContainer');
+      container.innerHTML = '';
+      
+      // Show same contact checkbox if user is selected
+      if (selectedUserData && selectedUserData.phone) {
+        sameContactContainer.style.display = 'block';
+      } else {
+        sameContactContainer.style.display = 'none';
+      }
+      
+      const useSameContact = document.getElementById('sameContactForAll')?.checked || false;
+      const userPhone = selectedUserData?.phone || '';
+      const userFirstName = selectedUserData?.firstName || '';
+      const userLastName = selectedUserData?.lastName || '';
+
+      for (let i = 0; i < adults + children; i++) {
+        const isAdult = i < adults;
+        const isFirstPerson = i === 0;
+        
+        // Pre-fill first person with user info if available
+        const prefillFirstName = isFirstPerson && userFirstName ? userFirstName : '';
+        const prefillSurname = isFirstPerson && userLastName ? userLastName : '';
+        const prefillPhone = (useSameContact && userPhone) ? userPhone : (isFirstPerson && userPhone ? userPhone : '');
+        
+        container.innerHTML += `
+          <div class="card mb-3">
+            <div class="card-header">Person ${i + 1} - ${isAdult ? 'Adult' : 'Child'}</div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-3">
+                  <label class="form-label">First Name *</label>
+                  <input type="text" class="form-control" name="personDetails[${i}][firstName]" value="${prefillFirstName}" required>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Surname *</label>
+                  <input type="text" class="form-control" name="personDetails[${i}][surname]" value="${prefillSurname}" required>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label">Gender *</label>
+                  <select class="form-select" name="personDetails[${i}][gender]" required>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label">Birthdate *</label>
+                  <input type="date" class="form-control" name="personDetails[${i}][birthdate]" required>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label">Phone *</label>
+                  <input type="tel" class="form-control" name="personDetails[${i}][phone]" value="${prefillPhone}" ${useSameContact && i > 0 ? 'readonly' : ''} required>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      calculateOriginalPrice();
+    }
+    
+    function toggleSameContact() {
+      const useSameContact = document.getElementById('sameContactForAll').checked;
+      const userPhone = selectedUserData?.phone || '';
+      const phoneInputs = document.querySelectorAll('[name^="personDetails"][name$="[phone]"]');
+      
+      phoneInputs.forEach((input, index) => {
+        if (index === 0) {
+          // First person always editable, but can be pre-filled
+          if (useSameContact && userPhone) {
+            input.value = userPhone;
+          }
+        } else {
+          // Other persons: readonly if same contact checked
+          if (useSameContact && userPhone) {
+            input.value = userPhone;
+            input.readOnly = true;
+            input.style.backgroundColor = '#e9ecef';
+          } else {
+            input.readOnly = false;
+            input.style.backgroundColor = '';
+            input.value = '';
+          }
+        }
+      });
+    }
+
+    function calculateOriginalPrice() {
+      if (!selectedCity) {
+        document.getElementById('originalPrice').value = '';
+        document.getElementById('discountAmount').value = '';
+        document.getElementById('discountWarning').style.display = 'none';
+        return;
+      }
+      
+      const adults = parseInt(document.getElementById('adults').value) || 0;
+      const children = parseInt(document.getElementById('children').value) || 0;
+      const transportType = document.getElementById('transportType').value;
+      
+      if (!transportType) {
+        document.getElementById('originalPrice').value = '';
+        document.getElementById('discountAmount').value = '';
+        document.getElementById('discountWarning').style.display = 'none';
+        return;
+      }
+      
+      const transport = selectedCity.price?.find(p => p.transferType === transportType);
+      if (!transport) {
+        document.getElementById('originalPrice').value = '';
+        document.getElementById('discountAmount').value = '';
+        document.getElementById('discountWarning').style.display = 'none';
+        return;
+      }
+
+      // Match trip detail page calculation exactly
+      const adultPrice = transport.adultPrice || 0;
+      const childPrice = transport.childPrice || 0;
+      const subtotal = (adults * adultPrice) + (children * childPrice);
+      const gst = subtotal * 0.05;
+      const total = subtotal + gst;
+
+      document.getElementById('originalPrice').value = `₹${total.toFixed(2)}`;
+      // Don't auto-fill final amount - let admin decide
+      // Only set if field is completely empty (not just 0)
+      const finalAmountField = document.getElementById('adminFinalAmount');
+      if (!finalAmountField.value || finalAmountField.value.trim() === '') {
+        finalAmountField.placeholder = `Suggested: ₹${total.toFixed(2)}`;
+      }
+      calculateDiscount();
+    }
+
+    function calculateDiscount() {
+      const original = parseFloat(document.getElementById('originalPrice').value.replace('₹', '').replace(/,/g, '')) || 0;
+      const final = parseFloat(document.getElementById('adminFinalAmount').value) || 0;
+      const discount = Math.max(0, original - final);
+      const discountPercentage = original > 0 ? ((discount / original) * 100).toFixed(1) : 0;
+      
+      document.getElementById('discountAmount').value = `₹${discount.toFixed(2)}`;
+      
+      // Update discount info with percentage
+      const discountInfo = document.getElementById('discountInfo');
+      if (discount > 0) {
+        discountInfo.innerHTML = `Auto-calculated: <strong>${discountPercentage}% discount</strong>`;
+        discountInfo.style.color = discountPercentage > 50 ? '#dc3545' : '#198754';
+      } else if (final > original) {
+        discountInfo.innerHTML = `Additional charge: <strong>+${((final - original) / original * 100).toFixed(1)}%</strong>`;
+        discountInfo.style.color = '#198754';
+      } else {
+        discountInfo.textContent = 'Auto-calculated';
+        discountInfo.style.color = '#6c757d';
+      }
+      
+      // Show warning if discount > 50%
+      const discountWarning = document.getElementById('discountWarning');
+      if (original > 0 && discountPercentage > 50) {
+        discountWarning.innerHTML = `<i class="bi bi-exclamation-triangle"></i> <strong>Warning:</strong> Discount of ${discountPercentage}% exceeds 50% of original price`;
+        discountWarning.style.display = 'block';
+      } else {
+        discountWarning.style.display = 'none';
+      }
+    }
+    
+    function resetForm() {
+      if (!confirm('Are you sure you want to reset the form? All entered data will be lost.')) {
+        return;
+      }
+      
+      // Clear all form fields
+      document.getElementById('createBookingForm').reset();
+      $('#userSelect').val(null).trigger('change');
+      $('#tourId').val(null).trigger('change');
+      document.getElementById('selectedUserId').value = '';
+      document.getElementById('selectedUserType').value = '';
+      document.getElementById('userSelectedInfo').style.display = 'none';
+      document.getElementById('personDetailsContainer').innerHTML = '';
+      document.getElementById('originalPrice').value = '';
+      document.getElementById('discountAmount').value = '';
+      document.getElementById('discountWarning').style.display = 'none';
+      document.getElementById('createNewUser').checked = false;
+      document.getElementById('newUserForm').style.display = 'none';
+      selectedUserData = null;
+      tourData = null;
+      selectedCity = null;
+      
+      // Reset form state
+      disableBookingForm();
+      
+      showToast('Info', 'Form has been reset', 'success');
+    }
+
+    document.getElementById('transportType').addEventListener('change', function() {
+      calculateOriginalPrice();
+      updateFormState();
+    });
+    document.getElementById('adults').addEventListener('change', function() {
+      calculateOriginalPrice();
+      updatePersonDetails();
+      updateFormState();
+    });
+    document.getElementById('children').addEventListener('change', function() {
+      calculateOriginalPrice();
+      updatePersonDetails();
+    });
+    document.getElementById('adminFinalAmount').addEventListener('input', calculateDiscount);
+    document.getElementById('adminFinalAmount').addEventListener('change', calculateDiscount);
+
+    // Form validation
+    function validateForm() {
+      let isValid = true;
+      const errors = {};
+
+      // Clear previous errors
+      document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
+
+      // Validate user selection
+      const createNewUser = document.getElementById('createNewUser').checked;
+      if (!createNewUser) {
+        const userId = document.getElementById('selectedUserId').value;
+        if (!userId) {
+          isValid = false;
+          errors.userSelect = 'Please select a user or create a new one';
+          document.getElementById('userSelectError').style.display = 'block';
+          $('#userSelect').addClass('field-error');
+        }
+      } else {
+        const newUserType = document.getElementById('newUserType').value;
+        if (newUserType === 'mobile') {
+          const phone = document.getElementById('newUserPhone').value.trim();
+          if (!phone) {
+            isValid = false;
+            errors.newUser = 'Phone number is required for mobile user';
+          }
+        } else {
+          const email = document.getElementById('newUserEmail').value.trim();
+          if (!email) {
+            isValid = false;
+            errors.newUser = 'Email is required for Gmail user';
+          }
+        }
+      }
+
+      // Validate trip selection
+      const tourId = document.getElementById('tourId').value;
+      if (!tourId) {
+        isValid = false;
+        errors.tourId = 'Please select a trip';
+        document.getElementById('tourIdError').style.display = 'block';
+        document.getElementById('tourId').classList.add('field-error');
+      }
+
+      // Validate joining from
+      const joiningFrom = document.getElementById('joiningFrom').value;
+      if (!joiningFrom) {
+        isValid = false;
+        errors.joiningFrom = 'Please select a city';
+        document.getElementById('joiningFromError').style.display = 'block';
+        document.getElementById('joiningFrom').classList.add('field-error');
+      }
+
+      // Validate transport type
+      const transportType = document.getElementById('transportType').value;
+      if (!transportType) {
+        isValid = false;
+        errors.transportType = 'Please select transport type';
+        document.getElementById('transportTypeError').style.display = 'block';
+        document.getElementById('transportType').classList.add('field-error');
+      }
+
+      // Validate travel date
+      const travelDate = document.getElementById('travelDate').value;
+      if (!travelDate) {
+        isValid = false;
+        errors.travelDate = 'Please select a travel date';
+        document.getElementById('travelDateError').style.display = 'block';
+        document.getElementById('travelDate').classList.add('field-error');
+      }
+
+      // Validate person details
+      const adults = parseInt(document.getElementById('adults').value) || 0;
+      const children = parseInt(document.getElementById('children').value) || 0;
+      if (adults === 0) {
+        isValid = false;
+        errors.adults = 'At least one adult is required';
+      }
+
+      const personDetailsInputs = document.querySelectorAll('[name^="personDetails"]');
+      const personDetailsMap = {};
+      personDetailsInputs.forEach(input => {
+        const match = input.name.match(/personDetails\[(\d+)\]\[(\w+)\]/);
+        if (match) {
+          const index = match[1];
+          const field = match[2];
+          if (!personDetailsMap[index]) personDetailsMap[index] = {};
+          personDetailsMap[index][field] = input.value.trim();
+        }
+      });
+
+      const totalPersons = adults + children;
+      for (let i = 0; i < totalPersons; i++) {
+        const person = personDetailsMap[i];
+        if (!person || !person.firstName || !person.surname || !person.phone || !person.birthdate || !person.gender) {
+          isValid = false;
+          errors.personDetails = `Person ${i + 1} details are incomplete`;
+          break;
+        }
+      }
+
+      if (!isValid) {
+        showToast('Validation Error', 'Please fill in all required fields correctly', 'error');
+      }
+
+      return isValid;
+    }
+
+    document.getElementById('createBookingForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+     
+      // Check if new user form is visible but user hasn't been saved
+      const createNewUserChecked = document.getElementById('createNewUser').checked;
+      const newUserFormVisible = document.getElementById('newUserForm').style.display !== 'none';
+      if (createNewUserChecked && newUserFormVisible) {
+        showToast('Error', 'Please save the new user information first using the "Save User Information" button before creating booking', 'error');
+        return;
+      }
+      
+      // Validate form
+      if (!validateForm()) {
+        return;
+      }
+
+      setFormLoading(true);
+      
+      // Read critical fields directly from DOM (FormData may not include disabled fields)
+      const adultsInput = document.getElementById('adults');
+      const childrenInput = document.getElementById('children');
+      const adults = parseInt(adultsInput?.value || 0) || 0;
+      const children = parseInt(childrenInput?.value || 0) || 0;
+      const totalPersons = adults + children;
+      
+      // Debug logging
+      console.log('Form Submission Debug:', {
+        adultsInputValue: adultsInput?.value,
+        adultsParsed: adults,
+        childrenInputValue: childrenInput?.value,
+        childrenParsed: children,
+        totalPersons: totalPersons,
+        adultsInputDisabled: adultsInput?.disabled,
+        childrenInputDisabled: childrenInput?.disabled
+      });
+      
+      // Validate adults count - read directly from DOM
+      if (!adultsInput || adults <= 0) {
+        showToast('Validation Error', 'At least one adult is required for booking. Please set the number of adults.', 'error');
+        setFormLoading(false);
+        updateFormState();
+        return;
+      }
+      
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData.entries());
+      
+      // Override with direct DOM values to ensure accuracy
+      data.adults = adults.toString();
+      data.children = children.toString();
+      
+      // Validate totalPersons > 0 (redundant check but safe)
+      if (totalPersons <= 0) {
+        showToast('Validation Error', 'Please set at least one adult or child for the booking', 'error');
+        setFormLoading(false);
+        updateFormState();
+        return;
+      }
+      
+      // Validate personDetailsContainer has content
+      const personDetailsContainer = document.getElementById('personDetailsContainer');
+      if (!personDetailsContainer || personDetailsContainer.children.length === 0) {
+        showToast('Validation Error', `No traveler information forms found. Expected ${totalPersons} traveler(s) but forms are missing. Please ensure adults/children count is set correctly.`, 'error');
+        setFormLoading(false);
+        updateFormState();
+        // Try to regenerate person details if missing
+        if (adults > 0 || children > 0) {
+          console.log('Regenerating person details forms...');
+          updatePersonDetails();
+        }
+        return;
+      }
+      
+      // Validate container has expected number of person forms
+      const expectedForms = totalPersons;
+      const actualForms = personDetailsContainer.children.length;
+      if (actualForms !== expectedForms) {
+        console.warn(`Form count mismatch: Expected ${expectedForms} forms, found ${actualForms}. Regenerating...`);
+        updatePersonDetails();
+        showToast('Info', `Traveler forms regenerated (${expectedForms} forms). Please fill in the details and try again.`, 'info');
+        setFormLoading(false);
+        updateFormState();
+        return;
+      }
+      
+      // Collect person details - collect ALL persons
+      data.personDetails = [];
+
+      // Collect person details using robust querySelectorAll
+      // Use more specific selector to find all inputs and selects in personDetailsContainer
+      let allInputs = document.querySelectorAll('#personDetailsContainer input, #personDetailsContainer select');
+      
+      // Fallback: if no inputs found, try alternative selector
+      if (allInputs.length === 0) {
+        allInputs = document.querySelectorAll('[name^="personDetails"]');
+        console.warn('Primary selector found no inputs, using fallback. Found:', allInputs.length);
+      }
+      
+      // Debug logging
+      console.log('PersonDetails Collection Debug:', {
+        adults: adults,
+        children: children,
+        totalPersons: totalPersons,
+        containerChildren: personDetailsContainer.children.length,
+        inputsFound: allInputs.length
+      });
+      
+      // Group inputs by person index
+      const personDetailsMap = {};
+      allInputs.forEach(input => {
+        const name = input.name;
+        if (name && name.startsWith('personDetails[')) {
+          // Extract index from name like "personDetails[0][firstName]"
+          const match = name.match(/personDetails\[(\d+)\]\[(\w+)\]/);
+          if (match) {
+            const index = parseInt(match[1]);
+            const field = match[2];
+            if (!personDetailsMap[index]) {
+              personDetailsMap[index] = {};
+            }
+            personDetailsMap[index][field] = input.value ? input.value.trim() : '';
+          }
+        }
+      });
+      
+      // Convert map to array and validate each person
+      for (let i = 0; i < totalPersons; i++) {
+        const person = personDetailsMap[i];
+        if (person && person.firstName && person.surname && person.gender && person.birthdate && person.phone) {
+          // Validate all required fields have non-empty values
+          if (person.firstName.trim() && person.surname.trim() && person.gender && person.birthdate && person.phone.trim()) {
+            data.personDetails.push({
+              firstName: person.firstName.trim(),
+              surname: person.surname.trim(),
+              gender: person.gender,
+              birthdate: person.birthdate,
+              phone: person.phone.trim(),
+              altphone: '',
+            });
+          } else {
+            console.warn(`Person ${i + 1} has incomplete data:`, person);
+          }
+        } else {
+          console.warn(`Person ${i + 1} not found in personDetailsMap or missing required fields`);
+        }
+      }
+      
+      // Debug logging
+      console.log('Collected personDetails:', {
+        expected: totalPersons,
+        collected: data.personDetails.length,
+        details: data.personDetails
+      });
+      
+      // Validate personDetails count matches totalPersons
+      if (data.personDetails.length !== totalPersons) {
+        const missingCount = totalPersons - data.personDetails.length;
+        showToast('Validation Error', `Please fill in details for all ${totalPersons} person(s). Found ${data.personDetails.length} complete entries. ${missingCount} person(s) have incomplete information.`, 'error');
+        setFormLoading(false);
+        updateFormState();
+        return;
+      }
+      
+      // Additional validation: ensure personDetails is not empty
+      if (data.personDetails.length === 0) {
+        showToast('Validation Error', 'No traveler information found. Please fill in traveler details for all persons before creating booking.', 'error');
+        setFormLoading(false);
+        updateFormState();
+        return;
+      }
+      
+      // Validate each person has all required fields
+      const incompletePersons = [];
+      data.personDetails.forEach((person, index) => {
+        if (!person.firstName || !person.surname || !person.gender || !person.birthdate || !person.phone) {
+          incompletePersons.push(index + 1);
+        }
+      });
+      
+      if (incompletePersons.length > 0) {
+        showToast('Validation Error', `Person(s) ${incompletePersons.join(', ')} have incomplete information. Please fill all required fields.`, 'error');
+        setFormLoading(false);
+        updateFormState();
+        return;
+      }
+
+      try {
+        // Explicitly collect ALL required fields from DOM to ensure nothing is missing
+        // Note: Select2 fields need to be read using jQuery or the select element directly
+        const tourIdSelect = document.getElementById('tourId');
+        const tourIdValue = $('#tourId').val() || tourIdSelect?.value || '';
+        
+        const payload = {
+          _csrf: data._csrf,
+          // User information - read directly from DOM
+          userId: document.getElementById('selectedUserId').value || '',
+          userType: document.getElementById('selectedUserType').value || '',
+          createNewUser: document.getElementById('createNewUserFlag').value || 'false',
+          // Trip information - use Select2 value if available, fallback to direct value
+          tourId: tourIdValue,
+          joiningFrom: document.getElementById('joiningFrom').value || '',
+          transportType: document.getElementById('transportType').value || '',
+          travelDate: document.getElementById('travelDate').value || '',
+          // Person counts - already validated above
+          adults: adults.toString(),
+          children: children.toString(),
+          // Person details - already collected and validated
+          personDetails: data.personDetails,
+          // Pricing
+          adminFinalAmount: document.getElementById('adminFinalAmount').value || '',
+          // Status
+          bookingStatus: document.getElementById('bookingStatus').value || 'Pending',
+          paymentStatus: document.getElementById('paymentStatus').value || 'Pending',
+          // Notes
+          adminNotes: document.getElementById('adminNotes').value || '',
+        };
+        
+        // Add new user data if creating
+        if (payload.createNewUser === 'true') {
+          payload.newUserPhone = document.getElementById('newUserPhone').value || '';
+          payload.newUserEmail = document.getElementById('newUserEmail').value || '';
+          payload.newUserDetails = {
+            firstName: document.getElementById('newUserFirstName').value || '',
+            lastName: document.getElementById('newUserLastName').value || '',
+          };
+        }
+        
+        // Final validation - ensure all critical fields are present
+        const missingFields = [];
+        if (!payload.userId && payload.createNewUser !== 'true') {
+          missingFields.push('User selection');
+        }
+        if (!payload.tourId) missingFields.push('Trip');
+        if (!payload.joiningFrom) missingFields.push('Joining From');
+        if (!payload.transportType) missingFields.push('Transport Type');
+        if (!payload.travelDate) missingFields.push('Travel Date');
+        if (!payload.adminFinalAmount) missingFields.push('Final Amount');
+        
+        if (missingFields.length > 0) {
+          showToast('Validation Error', `Missing required fields: ${missingFields.join(', ')}. Please fill all required fields.`, 'error');
+          setFormLoading(false);
+          updateFormState();
+          return;
+        }
+        
+        // Debug: Log the complete payload
+        console.log('Booking Creation Payload:', {
+          ...payload,
+          personDetailsCount: payload.personDetails.length,
+          personDetails: payload.personDetails
+        });
+
+        const response = await fetch('/admin/bookings/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': payload._csrf,
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          showToast('Success', `Booking created successfully! Booking Number: ${result.bookingNumber}`, 'success');
+          setTimeout(() => {
+            window.location.href = `/admin/bookings/${result.bookingId}`;
+          }, 1500);
+        } else {
+          showToast('Error', result.message || 'Failed to create booking. Please check all fields and try again.', 'error');
+          setFormLoading(false);
+          updateFormState();
+        }
+      } catch (error) {
+        console.error('Error creating booking:', error);
+        showToast('Error', 'An error occurred while creating the booking. Please try again.', 'error');
+        setFormLoading(false);
+        updateFormState();
+      }
+    });
+  </script>
+  
+  <!-- Bootstrap JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+</body>
+</html>
+

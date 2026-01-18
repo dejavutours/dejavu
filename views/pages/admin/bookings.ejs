@@ -91,7 +91,19 @@
   <%- include('../../partials/header', {isSearch: false}); %>
   <header class="container-fluid d-flex flex-wrap justify-content-between gap-3 py-3">
     <h1>Trip Bookings Dashboard</h1>
-    <div class="d-flex flex-grow-1 justify-content-end gap-2">
+    <div class="d-flex flex-grow-1 justify-content-end gap-2 flex-wrap">
+      <a href="/admin/booking-leads" class="btn btn-info position-relative">
+        <i class="bi bi-inbox me-2"></i>Booking Leads
+        <% if (stats.pendingLeadsCount > 0) { %>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          <%= stats.pendingLeadsCount %>
+          <span class="visually-hidden">pending leads</span>
+        </span>
+        <% } %>
+      </a>
+      <a href="/admin/bookings/create" class="btn btn-success">
+        <i class="bi bi-plus-circle me-2"></i>Create Booking
+      </a>
       <input type="text" id="searchInput" class="form-control search-bar" placeholder="Search by Trip or User" aria-label="Search bookings">
       <button id="exportCsv" class="btn btn-outline-secondary"><i class="bi bi-download"></i> Export CSV</button>
     </div>
@@ -141,6 +153,12 @@
         <div class="card p-3 h-100 border-light shadow-md" data-tippy-content="Total revenue from paid bookings this month">
           <span class="card-title">Total Revenue (Month)</span>
           <p>₹<%= stats.totalAmountThisMonth.toLocaleString('en-IN') %></p>
+        </div>
+      </aside>
+      <aside class="col-sm-6 col-md-4 col-lg-3">
+        <div class="card p-3 h-100 border-light shadow-md" data-tippy-content="Pending booking leads requiring attention" style="cursor: pointer;" onclick="window.location.href='/admin/booking-leads'">
+          <span class="card-title">Pending Leads</span>
+          <p class="<%= stats.pendingLeadsCount > 0 ? 'text-warning' : '' %>"><%= stats.pendingLeadsCount %></p>
         </div>
       </aside>
     </div>

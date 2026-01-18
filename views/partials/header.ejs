@@ -1,47 +1,58 @@
 <style>
   /* Scoped styles for header search bar */
-  .navbar-brand img{
+  .navbar-brand img {
     height: 50px !important;
   }
+
   .navbar .search-bar {
     margin-left: 0.75rem;
     margin-right: 0.75rem;
   }
-  
+
   .navbar .search-input {
     border-radius: 50rem;
     padding: 0.625rem 2.75rem 0.625rem 1.25rem;
-    height: 2.75rem; /* Larger touch target */
+    height: 2.75rem;
+    /* Larger touch target */
     line-height: 1.5;
-    font-size: 1rem; /* Improved readability */
+    font-size: 1rem;
+    /* Improved readability */
     background-color: #ffffff;
     transition: background-color 0.2s ease;
   }
-  
+
   .navbar .search-input::placeholder {
     color: #6c757d;
     font-size: 0.95rem;
   }
-  
+
   .navbar .search-input:focus {
     background-color: #ffffff;
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
   }
-  
+
   .navbar .search-icon {
     color: #6c757d;
-    font-size: 1.125rem; /* Larger icon */
+    font-size: 1.125rem;
+    /* Larger icon */
     pointer-events: none;
     z-index: 3;
   }
-  
-  .nav-link {transition: color 0.2s ease;}
-  .nav-link.contactLink{--bs-nav-link-padding-x: 1rem; --bs-nav-link-padding-y: 0.5rem}
-  
-  .navbar .nav-icon {
-    font-size: 1.25rem; /* Larger icons for contact/profile */
+
+  .nav-link {
+    transition: color 0.2s ease;
   }
-  
+
+  .nav-link.contactLink {
+    --bs-nav-link-padding-x: 1rem;
+    --bs-nav-link-padding-y: 0.5rem
+  }
+
+  .navbar .nav-icon {
+    font-size: 1.25rem;
+    /* Larger icons for contact/profile */
+  }
+
   /* Mobile adjustments */
   @media (max-width: 575.98px) {
     .navbar .search-input {
@@ -49,40 +60,43 @@
       height: 2.5rem;
       padding: 0.5rem 2.5rem 0.5rem 1rem;
     }
-  
+
     .navbar .search-input::placeholder {
       font-size: 0.9rem;
     }
-  
+
     .navbar .search-icon {
       font-size: 1rem;
     }
-  
+
     .navbar .search-bar {
       margin-left: 0.5rem;
       margin-right: 0.5rem;
     }
   }
-  
+
   /* Tablet adjustments */
   @media (min-width: 576px) and (max-width: 767.98px) {
     .navbar .search-input {
       font-size: 0.975rem;
       height: 2.625rem;
     }
-  
+
     .navbar .search-input::placeholder {
       font-size: 0.925rem;
     }
-  
+
     .navbar .search-icon {
       font-size: 1.1rem;
     }
   }
-  
+
   /* Hide search bar on larger screens */
   @media (min-width: 992px) {
-    .navbar-nav{--bs-nav-link-padding-x: 0.5rem; --bs-nav-link-padding-y: 1rem;}
+    .navbar-nav {
+      --bs-nav-link-padding-x: 0.5rem;
+      --bs-nav-link-padding-y: 1rem;
+    }
   }
 
   /*# sourceMappingURL=style.css.map */
@@ -251,92 +265,112 @@
   #verifyModal .resend-link:hover {
     text-decoration: underline;
   }
-
-  </style>
+</style>
 <!-- Bootstrap Icons already included in index.ejs -->
 <nav class="navbar navbar-expand-lg bg-light sticky-top">
   <div class="container-xl gap-2">
-    <button class="navbar-toggler px-2 border-0 outline-0" type="button" data-bs-toggle="collapse" data-bs-target="#topNavbar" aria-controls="topNavbar" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler px-2 border-0 outline-0" type="button" data-bs-toggle="collapse"
+      data-bs-target="#topNavbar" aria-controls="topNavbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <a class="navbar-brand me-auto" href="/">
-      <img src="/img/logo_2x.png" alt="Deja Vu" height="50" class="d-inline-block align-text-top object-fit-contain" fetchpriority="high" loading="eager">
+      <img src="/img/logo_2x.png" alt="Deja Vu" height="50" class="d-inline-block align-text-top object-fit-contain"
+        fetchpriority="high" loading="eager">
     </a>
     <!-- Search bar for small screens -->
     <% if(isSearch) {%>
-      <div class="search-bar d-flex d-md-none align-items-center flex-grow-1 mx-3" data-bs-toggle="modal" data-bs-target="#filterModal">
+      <div class="search-bar d-flex d-md-none align-items-center flex-grow-1 mx-3" data-bs-toggle="modal"
+        data-bs-target="#filterModal">
         <div class="position-relative w-100">
           <input type="text" class="form-control border-0 shadow-none search-input" placeholder="Search destination">
-          <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y search-icon me-3" aria-hidden="true"></i>
+          <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y search-icon me-3"
+            aria-hidden="true"></i>
         </div>
       </div>
-    <%}%>
-    <div class="collapse navbar-collapse" id="topNavbar">
-      <ul class="navbar-nav gap-lg-3 ms-auto mt-2 mt-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="/">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="/triplist">Tour packages</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="/dreamtrip">Customize trips</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="/triplist">Global trips</a>
-        </li>
-        <% if(!profile?.email || !accessToken) { %>
-        <% } %>
-        <li class="nav-item">
-          <div class="d-lg-flex gap-2 h-100">
-            <a class="nav-link rounded-pill fw-semibold contactLink mb-auto mb-lg-0" aria-current="page" href="tel:+918511117891">
-              <i class="bi bi-telephone"></i>
-              +918511117891
-              <span class="visually-hidden">Contact</span>
-            </a>
-            <% if(profile?.email || accessToken) { %>
-            <span class="dropdown">
-              <a class="nav-link userDropdown dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-person-circle nav-icon"></i>
-                <span class="visually-hidden">My Profile</span>
-              </a>
-              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-              <ul class="dropdown-menu dropdown-menu-lg-end navbaruserdropdown">
-                <li><a class="dropdown-item" href="/profile">My Profile</a></li>
-                <% if(profile?.email === process.env.GMAIL_ADMIN || profile?.email === process.env.GMAIL_ADMIN_TWO) { %>
-                <li><a class="dropdown-item" href="/admin/bookings" target="_blank">Bookings</a></li>
-                <li><a class="dropdown-item" href="/admin/users" target="_blank">User</a></li>
-                <li><a class="dropdown-item" href="/admin/addtours" target="_blank">Add Tours</a></li>
-                <li><a class="dropdown-item" href="/cities" target="_blank">Master setting</a></li>
-                 <li><a class="dropdown-item" href="/admin/category-trip-order" target="_blank">Homepage Categories</a></li>               
-                <% } %>
-                <li>
-                  <form id="my_form" action="/logout" method="post">
-                    <a class="dropdown-item" href="javascript:{}" onclick="signout()">Sign Out</a>
-                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                  </form>
-                </li>
-              </ul>
-            </span>
-            <% }else { %>
+      <%}%>
+        <div class="collapse navbar-collapse" id="topNavbar">
+          <ul class="navbar-nav gap-lg-3 ms-auto mt-2 mt-lg-0">
             <li class="nav-item">
-              <a class="nav-link" role="button" tabindex="-1" aria-current="page" data-bs-toggle="modal" data-bs-target="#signinModal">Login</a>
+              <a class="nav-link" aria-current="page" href="/">Home</a>
             </li>
-            <% } %>
-          </div>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/triplist">Tour packages</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/dreamtrip">Customize trips</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/triplist">Global trips</a>
+            </li>
+            <% if(!profile?.email || !accessToken) { %>
+              <% } %>
+                <li class="nav-item">
+                  <div class="d-lg-flex gap-2 h-100">
+                    <a class="nav-link rounded-pill fw-semibold contactLink mb-auto mb-lg-0" aria-current="page"
+                      href="tel:+918511117891">
+                      <i class="bi bi-telephone"></i>
+                      +918511117891
+                      <span class="visually-hidden">Contact</span>
+                    </a>
+                    <% if(profile?.email || accessToken) { %>
+                      <span class="dropdown">
+                        <a class="nav-link userDropdown dropdown-toggle" href="#" role="button"
+                          data-bs-toggle="dropdown" aria-expanded="false">
+                          <i class="bi bi-person-circle nav-icon"></i>
+                          <span class="visually-hidden">My Profile</span>
+                        </a>
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                        <ul class="dropdown-menu dropdown-menu-lg-end navbaruserdropdown">
+                          <li><a class="dropdown-item" href="/profile">My Profile</a></li>
+                          <% if(profile?.email===process.env.GMAIL_ADMIN ||
+                            profile?.email===process.env.GMAIL_ADMIN_TWO) { %>
+                            <li><a class="dropdown-item" href="/admin/bookings" target="_blank">Bookings</a></li>
+                            <li>
+                              <a class="dropdown-item position-relative" href="/admin/booking-leads" target="_blank">
+                                Booking Leads
+                                <span id="pendingLeadsBadge" class="position-absolute top-50 end-0 translate-middle-y badge rounded-pill bg-danger" style="display: none;">
+                                  <span id="pendingLeadsCount">0</span>
+                                </span>
+                              </a>
+                            </li>
+                            <li><a class="dropdown-item" href="/admin/bookings/create" target="_blank">Create
+                                Booking</a></li>
+                            <li><a class="dropdown-item" href="/admin/users" target="_blank">User</a></li>
+                            <li><a class="dropdown-item" href="/admin/addtours" target="_blank">Add Tours</a></li>
+                            <li><a class="dropdown-item" href="/cities" target="_blank">Master setting</a></li>
+                            <li><a class="dropdown-item" href="/admin/category-trip-order" target="_blank">Homepage
+                                Categories</a></li>
+                            <% } %>
+                              <li>
+                                <form id="my_form" action="/logout" method="post">
+                                  <a class="dropdown-item" href="javascript:{}" onclick="signout()">Sign Out</a>
+                                  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                                </form>
+                              </li>
+                        </ul>
+                      </span>
+                      <% }else { %>
+                <li class="nav-item">
+                  <a class="nav-link" role="button" tabindex="-1" aria-current="page" data-bs-toggle="modal"
+                    data-bs-target="#signinModal">Login</a>
+                </li>
+                <% } %>
+        </div>
         </li>
-      </ul>
-    </div>
+        </ul>
+  </div>
   </div>
 </nav>
 <!-- Signin Modal -->
-<div class="modal fade" id="signinModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="signinModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <form id="getotp">
         <div class="modal-header border-0 position-relative">
           <h5 class="modal-title" id="exampleModalLabel">Register</h5>
-          <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-bs-dismiss="modal"
+            aria-label="Close"></button>
         </div>
         <div class="modal-body pb-5 pt-3">
           <div class="form-group">
@@ -346,14 +380,16 @@
                 <span class="input-group-text">+91</span>
               </div>
               <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-              <input type="tel" class="form-control" id="mobileNumber" name="phone" placeholder="Enter your mobile number" pattern="^\d{10}$" required>
+              <input type="tel" class="form-control" id="mobileNumber" name="phone"
+                placeholder="Enter your mobile number" pattern="^\d{10}$" required>
             </div>
           </div>
           <p class="text-muted">We'll send you a 4-digit code to this mobile number.</p>
           <p class="text-center font-weight-bold m-3">OR</p>
           <div class="d-flex justify-content-center">
             <button class="btn btn-light w-100">
-              <a href="#" id="googleLoginLink"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=">
+              <a href="#" id="googleLoginLink"><img
+                  src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=">
                 Sign in with Google</a>
             </button>
           </div>
@@ -372,7 +408,8 @@
       <form id="verifyotp">
         <div class="modal-header border-0 position-relative">
           <h5 class="modal-title" id="verifyModalLabel">Verify code</h5>
-          <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-bs-dismiss="modal"
+            aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
@@ -385,7 +422,8 @@
             <input type="text" class="otp-input" maxlength="1" id="otp2" required>
             <input type="text" class="otp-input" maxlength="1" id="otp3" required>
             <input type="text" class="otp-input" maxlength="1" id="otp4" required>
-            <input type="hidden" class="form-control" id="mobileNumber2" name="phone2" placeholder="Enter Phone Number" />
+            <input type="hidden" class="form-control" id="mobileNumber2" name="phone2"
+              placeholder="Enter Phone Number" />
             <input type="hidden" class="form-control" id="otp" name="otp" placeholder="Enter OTP" />
           </div>
           <p class="mt-3">
@@ -400,246 +438,271 @@
   </div>
 </div>
 <script>
-// Navigation bar active link
-document.addEventListener("DOMContentLoaded", () => {
-  const currentPath = window.location.pathname;
-  document.querySelectorAll("#topNavbar .nav-link").forEach(link => {
-    if (link.getAttribute("href") === currentPath) {
-      link.classList.add("active");
-    }
-  });
-});
-
-// Autocomplete function for search input
-function autocomplete(inp, arr) {
-  var currentFocus;
-  inp.addEventListener("input", function(e) {
-    var a, b, i, val = this.value;
-    closeAllLists();
-    if (!val) {
-      return false;
-    }
-    currentFocus = -1;
-    a = document.createElement("DIV");
-    a.setAttribute("id", this.id + "autocomplete-list");
-    a.setAttribute("class", "autocomplete-items");
-    this.parentNode.appendChild(a);
-    for (i = 0; i < arr.length; i++) {
-      if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
-        b = document.createElement("DIV");
-        b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
-        b.innerHTML += arr[i].substr(val.length);
-        b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
-        b.addEventListener("click", function(e) {
-          inp.value = this.getElementsByTagName("input")[0].value;
-          closeAllLists();
-        });
-        a.appendChild(b);
+  // Navigation bar active link
+  document.addEventListener("DOMContentLoaded", () => {
+    const currentPath = window.location.pathname;
+    document.querySelectorAll("#topNavbar .nav-link").forEach(link => {
+      if (link.getAttribute("href") === currentPath) {
+        link.classList.add("active");
       }
-    }
+    });
   });
-  inp.addEventListener("keydown", function(e) {
-    var x = document.getElementById(this.id + "autocomplete-list");
-    if (x) x = x.getElementsByTagName("div");
-    if (e.keyCode == 40) {
-      currentFocus++;
-      addActive(x);
-    } else if (e.keyCode == 38) {
-      currentFocus--;
-      addActive(x);
-    } else if (e.keyCode == 13) {
-      e.preventDefault();
-      if (currentFocus > -1) {
-        if (x) x[currentFocus].click();
+
+  // Autocomplete function for search input
+  function autocomplete(inp, arr) {
+    var currentFocus;
+    inp.addEventListener("input", function (e) {
+      var a, b, i, val = this.value;
+      closeAllLists();
+      if (!val) {
+        return false;
       }
-    }
-  });
-  function addActive(x) {
-    if (!x) return false;
-    removeActive(x);
-    if (currentFocus >= x.length) currentFocus = 0;
-    if (currentFocus < 0) currentFocus = (x.length - 1);
-    x[currentFocus].classList.add("autocomplete-active");
-  }
-  function removeActive(x) {
-    for (var i = 0; i < x.length; i++) {
-      x[i].classList.remove("autocomplete-active");
-    }
-  }
-  function closeAllLists(elmnt) {
-    var x = document.getElementsByClassName("autocomplete-items");
-    for (var i = 0; i < x.length; i++) {
-      if (elmnt != x[i] && elmnt != inp) {
-        x[i].parentNode.removeChild(x[i]);
-      }
-    }
-  }
-  document.addEventListener("click", function(e) {
-    closeAllLists(e.target);
-  });
-}
-
-async function signout(accessToken) {
-  try {
-    sessionStorage.clear();
-    localStorage.clear();
-    document.cookie.split(";").forEach(cookie => {
-      const name = cookie.split("=")[0].trim();
-      document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
-    });
-    const form = document.getElementById("my_form");
-    const response = await fetch("/logout", {
-      method: "POST",
-      body: new FormData(form),
-      credentials: "include"
-    });
-    if (response.ok) {
-      window.location.href = "/";
-    } else {
-      console.error("Logout failed:", response.statusText);
-      alert("Logout failed. Please try again.");
-    }
-  } catch (error) {
-    console.error("Logout error:", error);
-    alert("An error occurred during logout. Please try again.");
-  }
-}
-
-document.getElementById("mobileNumber").addEventListener("input", function() {
-  const sendCodeBtn = document.getElementById("sendCodeBtn");
-  const isValid = /^\d{10}$/.test(this.value);
-  sendCodeBtn.disabled = !isValid;
-  sendCodeBtn.classList.toggle("btn-disabled", !isValid);
-});
-
-document.addEventListener("DOMContentLoaded", function() {
-  // Handle Google login link with current URL
-  const googleLoginLink = document.getElementById("googleLoginLink");
-  if (googleLoginLink) {
-    googleLoginLink.addEventListener("click", function(e) {
-      e.preventDefault();
-      const currentUrl = window.location.pathname + window.location.search;
-      const googleLoginUrl = `/login/federated/google?returnTo=${encodeURIComponent(currentUrl)}`;
-      window.location.href = googleLoginUrl;
-    });
-  }
-
-  const getOtpForm = document.getElementById("getotp");
-  const verifyForm = document.getElementById("verifyotp");
-  const verifyBtn = document.getElementById("verifyBtn");
-  const resendLink = document.querySelector(".resend-link");
-  const otpInputs = document.querySelectorAll(".otp-input");
-  const sendCodeBtn = document.getElementById("sendCodeBtn");
-  const timerDisplay = document.createElement("span");
-  resendLink.parentElement.appendChild(timerDisplay);
-  let resendTimer;
-  const editPhoneIcon = document.getElementById("editPhone");
-
-  editPhoneIcon.addEventListener("click", function() {
-    const phoneNumber = document.getElementById("phoneNumberDisplay").textContent.replace('+91 ', '');
-    document.getElementById("mobileNumber").value = phoneNumber;
-    $("#verifyModal").modal("hide");
-    $("#signinModal").modal("show");
-  });
-
-  function requestOTP(mobileNumber) {
-    if (!mobileNumber || !/^(\+?\d{1,3}[-\s]?)?\d{10}$/.test(mobileNumber)) {
-      return alert("Enter a valid mobile number!");
-    }
-    var formData = new FormData(getOtpForm || verifyForm);
-    formData.delete('phone');
-    formData.append('phone', mobileNumber);
-    fetch("/getotp", {
-      method: "POST",
-      body: formData
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data) {
-          document.getElementById("mobileNumber2").value = mobileNumber;
-          document.getElementById("phoneNumberDisplay").textContent = "+91 " + mobileNumber;
-          $("#signinModal").modal("hide");
-          $("#verifyModal").modal("show");
-        } else {
-          alert("Failed to send OTP. Please try again.");
+      currentFocus = -1;
+      a = document.createElement("DIV");
+      a.setAttribute("id", this.id + "autocomplete-list");
+      a.setAttribute("class", "autocomplete-items");
+      this.parentNode.appendChild(a);
+      for (i = 0; i < arr.length; i++) {
+        if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+          b = document.createElement("DIV");
+          b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+          b.innerHTML += arr[i].substr(val.length);
+          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+          b.addEventListener("click", function (e) {
+            inp.value = this.getElementsByTagName("input")[0].value;
+            closeAllLists();
+          });
+          a.appendChild(b);
         }
-      })
-      .catch((error) => console.log("Error:", error));
-  }
-
-  getOtpForm.addEventListener("submit", function(event) {
-    event.preventDefault();
-    const mobileNumber = document.getElementById("mobileNumber").value;
-    requestOTP(mobileNumber);
-  });
-
-  resendLink.addEventListener("click", function(e) {
-    e.preventDefault();
-    startResendTimer();
-    const phoneNumber = document.getElementById("mobileNumber2").value;
-    requestOTP(phoneNumber);
-  });
-
-  otpInputs.forEach((input, index) => {
-    input.addEventListener("input", function() {
-      this.value = this.value.replace(/\D/g, "");
-      if (this.value && index < otpInputs.length - 1) {
-        otpInputs[index + 1].focus();
-      }
-      validateOTP();
-    });
-    input.addEventListener("keydown", function(e) {
-      if (e.key === "Backspace" && !this.value && index > 0) {
-        otpInputs[index - 1].focus();
       }
     });
-  });
-
-  function validateOTP() {
-    const allFilled = [...otpInputs].every((input) => /^[0-9]$/.test(input.value));
-    verifyBtn.disabled = !allFilled;
-    verifyBtn.classList.toggle("btn-disabled", !allFilled);
-  }
-
-  verifyForm.addEventListener("submit", function(event) {
-    event.preventDefault();
-    verifyBtn.innerHTML = "Verifying...";
-    verifyBtn.disabled = true;
-    const fullOtp = [...otpInputs].map((input) => input.value).join("");
-    document.getElementById("otp").value = fullOtp;
-    fetch("/verifyotp", {
-      method: "POST",
-      body: new FormData(verifyForm)
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data) {
-          sessionStorage.setItem("accessToken", data.accessToken);
-          document.cookie = `accessToken=${data.accessToken}; Path=/; SameSite=Lax`;
-          window.location.reload();
-        } else {
-          alert("Verification failed. Please try again.");
+    inp.addEventListener("keydown", function (e) {
+      var x = document.getElementById(this.id + "autocomplete-list");
+      if (x) x = x.getElementsByTagName("div");
+      if (e.keyCode == 40) {
+        currentFocus++;
+        addActive(x);
+      } else if (e.keyCode == 38) {
+        currentFocus--;
+        addActive(x);
+      } else if (e.keyCode == 13) {
+        e.preventDefault();
+        if (currentFocus > -1) {
+          if (x) x[currentFocus].click();
         }
-      })
-      .catch(error => console.error("Error:", error))
-      .finally(() => {
-        verifyBtn.innerHTML = "Verify Code";
-        verifyBtn.disabled = false;
+      }
+    });
+    function addActive(x) {
+      if (!x) return false;
+      removeActive(x);
+      if (currentFocus >= x.length) currentFocus = 0;
+      if (currentFocus < 0) currentFocus = (x.length - 1);
+      x[currentFocus].classList.add("autocomplete-active");
+    }
+    function removeActive(x) {
+      for (var i = 0; i < x.length; i++) {
+        x[i].classList.remove("autocomplete-active");
+      }
+    }
+    function closeAllLists(elmnt) {
+      var x = document.getElementsByClassName("autocomplete-items");
+      for (var i = 0; i < x.length; i++) {
+        if (elmnt != x[i] && elmnt != inp) {
+          x[i].parentNode.removeChild(x[i]);
+        }
+      }
+    }
+    document.addEventListener("click", function (e) {
+      closeAllLists(e.target);
+    });
+  }
+
+  async function signout(accessToken) {
+    try {
+      sessionStorage.clear();
+      localStorage.clear();
+      document.cookie.split(";").forEach(cookie => {
+        const name = cookie.split("=")[0].trim();
+        document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
       });
+      const form = document.getElementById("my_form");
+      const response = await fetch("/logout", {
+        method: "POST",
+        body: new FormData(form),
+        credentials: "include"
+      });
+      if (response.ok) {
+        window.location.href = "/";
+      } else {
+        console.error("Logout failed:", response.statusText);
+        alert("Logout failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      alert("An error occurred during logout. Please try again.");
+    }
+  }
+
+  document.getElementById("mobileNumber").addEventListener("input", function () {
+    const sendCodeBtn = document.getElementById("sendCodeBtn");
+    const isValid = /^\d{10}$/.test(this.value);
+    sendCodeBtn.disabled = !isValid;
+    sendCodeBtn.classList.toggle("btn-disabled", !isValid);
   });
 
-  function startResendTimer() {
-    resendLink.style.pointerEvents = "none";
-    let timeLeft = 10;
-    resendTimer = setInterval(() => {
-      if (timeLeft <= 0) {
-        clearInterval(resendTimer);
-        timerDisplay.innerHTML = "";
-        resendLink.style.pointerEvents = "auto";
-      } else {
-        timerDisplay.innerHTML = ` (Wait ${timeLeft--}s)`;
+  document.addEventListener("DOMContentLoaded", function () {
+    // Handle Google login link with current URL
+    const googleLoginLink = document.getElementById("googleLoginLink");
+    if (googleLoginLink) {
+      googleLoginLink.addEventListener("click", function (e) {
+        e.preventDefault();
+        const currentUrl = window.location.pathname + window.location.search;
+        const googleLoginUrl = `/login/federated/google?returnTo=${encodeURIComponent(currentUrl)}`;
+        window.location.href = googleLoginUrl;
+      });
+    }
+
+    const getOtpForm = document.getElementById("getotp");
+    const verifyForm = document.getElementById("verifyotp");
+    const verifyBtn = document.getElementById("verifyBtn");
+    const resendLink = document.querySelector(".resend-link");
+    const otpInputs = document.querySelectorAll(".otp-input");
+    const sendCodeBtn = document.getElementById("sendCodeBtn");
+    const timerDisplay = document.createElement("span");
+    resendLink.parentElement.appendChild(timerDisplay);
+    let resendTimer;
+    const editPhoneIcon = document.getElementById("editPhone");
+
+    editPhoneIcon.addEventListener("click", function () {
+      const phoneNumber = document.getElementById("phoneNumberDisplay").textContent.replace('+91 ', '');
+      document.getElementById("mobileNumber").value = phoneNumber;
+      $("#verifyModal").modal("hide");
+      $("#signinModal").modal("show");
+    });
+
+    function requestOTP(mobileNumber) {
+      if (!mobileNumber || !/^(\+?\d{1,3}[-\s]?)?\d{10}$/.test(mobileNumber)) {
+        return alert("Enter a valid mobile number!");
       }
-    }, 1000);
-  }
-});
+      var formData = new FormData(getOtpForm || verifyForm);
+      formData.delete('phone');
+      formData.append('phone', mobileNumber);
+      fetch("/getotp", {
+        method: "POST",
+        body: formData
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data) {
+            document.getElementById("mobileNumber2").value = mobileNumber;
+            document.getElementById("phoneNumberDisplay").textContent = "+91 " + mobileNumber;
+            $("#signinModal").modal("hide");
+            $("#verifyModal").modal("show");
+          } else {
+            alert("Failed to send OTP. Please try again.");
+          }
+        })
+        .catch((error) => console.log("Error:", error));
+    }
+
+    getOtpForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const mobileNumber = document.getElementById("mobileNumber").value;
+      requestOTP(mobileNumber);
+    });
+
+    resendLink.addEventListener("click", function (e) {
+      e.preventDefault();
+      startResendTimer();
+      const phoneNumber = document.getElementById("mobileNumber2").value;
+      requestOTP(phoneNumber);
+    });
+
+    otpInputs.forEach((input, index) => {
+      input.addEventListener("input", function () {
+        this.value = this.value.replace(/\D/g, "");
+        if (this.value && index < otpInputs.length - 1) {
+          otpInputs[index + 1].focus();
+        }
+        validateOTP();
+      });
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Backspace" && !this.value && index > 0) {
+          otpInputs[index - 1].focus();
+        }
+      });
+    });
+
+    function validateOTP() {
+      const allFilled = [...otpInputs].every((input) => /^[0-9]$/.test(input.value));
+      verifyBtn.disabled = !allFilled;
+      verifyBtn.classList.toggle("btn-disabled", !allFilled);
+    }
+
+    verifyForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      verifyBtn.innerHTML = "Verifying...";
+      verifyBtn.disabled = true;
+      const fullOtp = [...otpInputs].map((input) => input.value).join("");
+      document.getElementById("otp").value = fullOtp;
+      fetch("/verifyotp", {
+        method: "POST",
+        body: new FormData(verifyForm)
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data) {
+            sessionStorage.setItem("accessToken", data.accessToken);
+            document.cookie = `accessToken=${data.accessToken}; Path=/; SameSite=Lax`;
+            window.location.reload();
+          } else {
+            alert("Verification failed. Please try again.");
+          }
+        })
+        .catch(error => console.error("Error:", error))
+        .finally(() => {
+          verifyBtn.innerHTML = "Verify Code";
+          verifyBtn.disabled = false;
+        });
+    });
+
+    function startResendTimer() {
+      resendLink.style.pointerEvents = "none";
+      let timeLeft = 10;
+      resendTimer = setInterval(() => {
+        if (timeLeft <= 0) {
+          clearInterval(resendTimer);
+          timerDisplay.innerHTML = "";
+          resendLink.style.pointerEvents = "auto";
+        } else {
+          timerDisplay.innerHTML = ` (Wait ${timeLeft--}s)`;
+        }
+      }, 1000);
+    }
+
+    // Fetch and update pending leads badge
+    <% if(profile?.email === process.env.GMAIL_ADMIN || profile?.email === process.env.GMAIL_ADMIN_TWO) { %>
+    async function updatePendingLeadsBadge() {
+      try {
+        const response = await fetch('/admin/booking-leads/stats', {
+          credentials: 'include'
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.stats.pending > 0) {
+            const badge = document.getElementById('pendingLeadsBadge');
+            const count = document.getElementById('pendingLeadsCount');
+            if (badge && count) {
+              count.textContent = data.stats.pending;
+              badge.style.display = 'inline-block';
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching pending leads count:', error);
+      }
+    }
+    updatePendingLeadsBadge();
+    <% } %>
+  });
 </script>

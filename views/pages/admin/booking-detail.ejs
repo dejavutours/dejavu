@@ -28,47 +28,49 @@
     .detail-container {
       max-width: 1800px;
       margin: 0 auto;
-      padding: 1.5rem;
+      padding: 1rem;
     }
 
     .detail-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 2rem;
+      margin-bottom: 1.25rem;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: 0.75rem;
     }
 
     .detail-header h1 {
-      font-size: 1.875rem;
+      font-size: 1.5rem;
       font-weight: 700;
       color: var(--primary-color);
+      margin: 0;
     }
 
     .detail-card {
       background: white;
-      border-radius: 0.75rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
       transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .detail-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
     }
 
     .detail-card .card-header {
       background: var(--primary-color);
       color: white;
       font-weight: 600;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.75rem 0.75rem 0 0;
+      padding: 0.625rem 1rem;
+      border-radius: 0.5rem 0.5rem 0 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
+      font-size: 0.9375rem;
     }
 
     .detail-card.collapsed .card-body {
@@ -76,11 +78,11 @@
     }
 
     .detail-card .card-body {
-      padding: 1.5rem;
+      padding: 1rem;
     }
 
     .detail-card .row > div {
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
     }
 
     .detail-table {
@@ -92,31 +94,38 @@
       background: var(--primary-color);
       color: white;
       font-weight: 600;
-      padding: 0.75rem;
+      padding: 0.5rem 0.75rem;
       text-align: left;
-      font-size: 0.875rem;
+      font-size: 0.8125rem;
       position: sticky;
       top: 0;
       z-index: 10;
     }
 
     .detail-table td {
-      padding: 0.75rem;
-      font-size: 0.875rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8125rem;
       border-bottom: 1px solid #E5E7EB;
     }
 
     .badge {
-      font-size: 0.75rem;
+      font-size: 0.6875rem;
       padding: 0.25rem 0.5rem;
-      border-radius: 1rem;
+      border-radius: 0.25rem;
+      font-weight: 500;
     }
 
     .action-btn {
-      font-size: 0.875rem;
-      padding: 0.5rem 1rem;
-      border-radius: 0.375rem;
+      font-size: 0.8125rem;
+      padding: 0.375rem 0.75rem;
+      border-radius: 0.25rem;
       transition: background-color 0.2s;
+    }
+    
+    .action-btn-group {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
     }
 
     .error-toast {
@@ -134,34 +143,36 @@
 
     .analytics-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.25rem;
     }
 
     .analytics-card {
       background: white;
-      border-radius: 0.75rem;
-      padding: 1.5rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
       transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .analytics-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
     }
 
     .analytics-card h3 {
-      font-size: 1rem;
+      font-size: 0.8125rem;
       color: #6B7280;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.375rem;
+      font-weight: 500;
     }
 
     .analytics-card p {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       font-weight: 600;
       color: var(--primary-color);
+      margin: 0;
     }
 
     .chart-container {
@@ -239,19 +250,33 @@
 <body>
   <%- include('../../partials/header', {isSearch: false}); %>
   <div class="detail-container">
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/admin/bookings">Bookings</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Booking Details</li>
+      </ol>
+    </nav>
     <!-- Header -->
     <div class="detail-header">
       <h1>Booking Details - <%= booking?.bookingNumber || 'N/A' %></h1>
-      <div class="d-flex gap-2">
+      <div class="action-btn-group">
         <% if (booking) { %>
           <button id="downloadPdf" class="btn btn-outline-secondary action-btn"><i class="bi bi-file-earmark-pdf"></i> Download PDF</button>
         <% } %>
-        <a href="/admin/bookings" class="btn btn-secondary action-btn"><i class="bi bi-arrow-left"></i> Back to Bookings</a>
+        <a href="/admin/bookings" class="btn btn-secondary action-btn"><i class="bi bi-arrow-left"></i> Back</a>
       </div>
     </div>
 
-    <!-- Error Toast -->
-    <div id="errorToast" class="error-toast"></div>
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+      <div id="toastNotification" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <strong class="me-auto" id="toastTitle">Notification</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastMessage"></div>
+      </div>
+    </div>
 
     <% if (error) { %>
       <div class="alert-error"><%= error %></div>
@@ -293,10 +318,19 @@
               <p><strong>Trip Name:</strong> <%= booking.tourDetails?.name || 'N/A' %></p>
               <p><strong>Joining From:</strong> <%= booking.joiningFrom || 'N/A' %></p>
               <p><strong>Total Persons:</strong> Adults: <%= booking.totalPerson.adult %>, Children: <%= booking.totalPerson.child %></p>
-              <p data-tippy-content="Total cost including all fees"><strong>Total Cost:</strong> ₹<%= booking.totalTripCost.toLocaleString('en-IN') %></p>
+              <p data-tippy-content="Total cost including all fees"><strong>Total Cost (Original):</strong> ₹<%= (booking.totalTripCostWithGST || booking.totalTripCost).toLocaleString('en-IN') %></p>
+              <% if (booking.adminFinalAmount) { %>
+              <p><strong>Final Amount:</strong> ₹<%= booking.adminFinalAmount.toLocaleString('en-IN') %></p>
+              <p><strong>Discount:</strong> ₹<%= (booking.discountAmount || 0).toLocaleString('en-IN') %></p>
+              <% } %>
               <p data-tippy-content="Amount paid so far"><strong>Paid Amount:</strong> ₹<%= booking.paidAmount.toLocaleString('en-IN') %></p>
+              <p><strong>Due Payment:</strong> ₹<%= (booking.duePayment || ((booking.adminFinalAmount || booking.totalTripCostWithGST) - booking.paidAmount)).toLocaleString('en-IN') %></p>
             </div>
             <div class="col-md-6">
+              <p><strong>Created By:</strong> <%= booking.createdBy === 'admin' ? 'Admin' : booking.createdBy === 'lead_conversion' ? 'Lead Conversion' : 'User' %></p>
+              <% if (booking.sourceLeadId) { %>
+              <p><strong>Source:</strong> Converted from Lead</p>
+              <% } %>
               <p><strong>Booking Status:</strong> 
                 <span class="badge <%= booking.bookingStatus === 'Confirmed' ? 'bg-success' : booking.bookingStatus === 'Pending' ? 'bg-warning text-dark' : 'bg-danger' %>">
                   <%= booking.bookingStatus %>
@@ -312,6 +346,83 @@
               <p><strong>Transport Type:</strong> <%= booking.transportType || 'N/A' %></p>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Edit Amount Section -->
+      <div class="detail-card" id="editAmount">
+        <div class="card-header">
+          <h5>Edit Amount & Discount</h5>
+          <i class="bi bi-chevron-down toggle-icon"></i>
+        </div>
+        <div class="card-body">
+          <form id="updateAmountForm">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label class="form-label">Original Price (with GST)</label>
+                <input type="text" class="form-control" value="₹<%= (booking.totalTripCostWithGST || booking.totalTripCost).toFixed(2) %>" readonly>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Final Amount *</label>
+                <input type="number" class="form-control" id="editFinalAmount" name="adminFinalAmount" 
+                       value="<%= booking.adminFinalAmount || booking.totalTripCostWithGST || booking.totalTripCost %>" 
+                       step="0.01" required onchange="calculateEditDiscount()">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Discount Amount</label>
+                <input type="text" class="form-control" id="editDiscountAmount" readonly>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Admin Notes</label>
+              <textarea class="form-control" id="editAdminNotes" name="adminNotes" rows="2"><%= booking.adminNotes || '' %></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary action-btn">
+              <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+              Update Amount
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Record Payment Section -->
+      <div class="detail-card" id="recordPayment">
+        <div class="card-header">
+          <h5>Record Payment</h5>
+          <i class="bi bi-chevron-down toggle-icon"></i>
+        </div>
+        <div class="card-body">
+          <form id="recordPaymentForm">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label class="form-label">Amount *</label>
+                <input type="number" class="form-control" id="paymentAmount" name="amount" step="0.01" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Payment Method *</label>
+                <select class="form-select" id="paymentMethod" name="paymentMethod" required>
+                  <option value="cash">Cash</option>
+                  <option value="bank_transfer">Bank Transfer</option>
+                  <option value="razorpay">Razorpay</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Reference ID</label>
+                <input type="text" class="form-control" id="paymentReferenceId" name="referenceId" placeholder="Transaction ID, UTR, etc.">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Notes</label>
+              <textarea class="form-control" id="paymentNotes" name="notes" rows="2" placeholder="Additional payment details"></textarea>
+            </div>
+            <button type="submit" class="btn btn-success action-btn">
+              <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+              Record Payment
+            </button>
+          </form>
         </div>
       </div>
 
@@ -391,35 +502,55 @@
       </div>
 
       <!-- Actions -->
-      <div class="d-flex gap-2 mt-4">
+      <div class="action-btn-group mt-3">
         <button class="btn btn-warning action-btn update-status" 
                 data-id="<%= booking._id %>" 
                 data-status="Confirmed"
                 aria-label="Confirm booking">
-          <i class="bi bi-check-circle"></i> Confirm Booking
+          <i class="bi bi-check-circle"></i> Confirm
         </button>
         <button class="btn btn-danger action-btn update-status" 
                 data-id="<%= booking._id %>" 
                 data-status="Cancelled"
                 aria-label="Cancel booking">
-          <i class="bi bi-x-circle"></i> Cancel Booking
+          <i class="bi bi-x-circle"></i> Cancel
         </button>
       </div>
     <% } %>
   </div>
   <%- include('../../partials/footer'); %>
   <%- include('../../partials/scripttag', {isNiceSelect: true}); %>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <!-- Bootstrap JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy-bundle.umd.min.js"></script>
   <script>
-    // Error Toast
+    // Toast notification function
+    function showToast(title, message, type = 'success') {
+      const toastEl = document.getElementById('toastNotification');
+      const toastTitle = document.getElementById('toastTitle');
+      const toastMessage = document.getElementById('toastMessage');
+      
+      toastTitle.textContent = title;
+      toastMessage.textContent = message;
+      
+      toastEl.className = 'toast';
+      if (type === 'error') {
+        toastEl.classList.add('text-bg-danger');
+      } else if (type === 'warning') {
+        toastEl.classList.add('text-bg-warning');
+      } else {
+        toastEl.classList.add('text-bg-success');
+      }
+      
+      const toast = new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 });
+      toast.show();
+    }
+
+    // Error Toast (legacy support)
     const showError = (message) => {
-      const toast = document.getElementById('errorToast');
-      toast.textContent = message;
-      toast.style.display = 'block';
-      setTimeout(() => toast.style.display = 'none', 5000);
+      showToast('Error', message, 'error');
     };
 
     // Toggle Card Sections
@@ -575,6 +706,124 @@
     document.querySelectorAll('.detail-card .card-body').forEach(body => {
       body.style.display = 'block';
     });
+
+    // Calculate discount for edit amount form
+    function calculateEditDiscount() {
+      const original = <%= booking.totalTripCostWithGST || booking.totalTripCost %>;
+      const final = parseFloat(document.getElementById('editFinalAmount')?.value) || 0;
+      const discount = Math.max(0, original - final);
+      const discountField = document.getElementById('editDiscountAmount');
+      if (discountField) {
+        discountField.value = '₹' + discount.toFixed(2);
+      }
+    }
+
+    // Initialize discount calculation
+    if (document.getElementById('editFinalAmount')) {
+      calculateEditDiscount();
+      document.getElementById('editFinalAmount').addEventListener('input', calculateEditDiscount);
+    }
+
+    // Handle amount update form
+    const updateAmountForm = document.getElementById('updateAmountForm');
+    if (updateAmountForm) {
+      updateAmountForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const spinner = submitBtn.querySelector('.spinner-border');
+        const originalText = submitBtn.innerHTML;
+        
+        submitBtn.disabled = true;
+        spinner.classList.remove('d-none');
+        
+        const formData = new FormData(this);
+        const data = {
+          adminFinalAmount: parseFloat(formData.get('adminFinalAmount')),
+          adminNotes: formData.get('adminNotes'),
+        };
+
+        try {
+          const response = await fetch(`/admin/bookings/<%= booking._id %>/amount`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': '<%= csrfToken %>',
+            },
+            body: JSON.stringify(data),
+          });
+
+          const result = await response.json();
+          if (result.success) {
+            showToast('Success', 'Amount updated successfully', 'success');
+            setTimeout(() => window.location.reload(), 1500);
+          } else {
+            showToast('Error', result.message || 'Failed to update amount', 'error');
+            submitBtn.disabled = false;
+            spinner.classList.add('d-none');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          showToast('Error', 'An error occurred while updating the amount', 'error');
+          submitBtn.disabled = false;
+          spinner.classList.add('d-none');
+        }
+      });
+    }
+
+    // Handle payment recording form
+    const recordPaymentForm = document.getElementById('recordPaymentForm');
+    if (recordPaymentForm) {
+      recordPaymentForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const spinner = submitBtn.querySelector('.spinner-border');
+        
+        const formData = new FormData(this);
+        const data = {
+          amount: parseFloat(formData.get('amount')),
+          paymentMethod: formData.get('paymentMethod'),
+          referenceId: formData.get('referenceId') || '',
+          notes: formData.get('notes') || '',
+        };
+
+        if (!data.amount || data.amount <= 0) {
+          showToast('Validation Error', 'Please enter a valid amount', 'warning');
+          return;
+        }
+
+        submitBtn.disabled = true;
+        spinner.classList.remove('d-none');
+
+        try {
+          const response = await fetch('/payment/manual-payment', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': '<%= csrfToken %>',
+            },
+            body: JSON.stringify({
+              bookingId: '<%= booking._id %>',
+              ...data,
+            }),
+          });
+
+          const result = await response.json();
+          if (result.success) {
+            showToast('Success', 'Payment recorded successfully', 'success');
+            setTimeout(() => window.location.reload(), 1500);
+          } else {
+            showToast('Error', result.message || 'Failed to record payment', 'error');
+            submitBtn.disabled = false;
+            spinner.classList.add('d-none');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          showToast('Error', 'An error occurred while recording the payment', 'error');
+          submitBtn.disabled = false;
+          spinner.classList.add('d-none');
+        }
+      });
+    }
   </script>
 </body>
 </html>

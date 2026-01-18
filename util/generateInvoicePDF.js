@@ -107,8 +107,16 @@ const generateInvoicePDF = (booking, tour, outputPath) => {
       const adultCount = booking.totalPerson.adult || 0;
       const childCount = booking.totalPerson.child || 0;
       const subtotal = booking.totalTripCost || 0; // Excluding GST
-      const gst = booking.totalTripCostWithGST - subtotal || 0;
-      const grandTotal = booking.totalTripCostWithGST || 0;
+      // Calculate original GST and total (before any admin adjustments)
+      const originalGST = subtotal * 0.05;
+      const originalTotal = subtotal + originalGST; // Original total before discount
+      const discountAmount = booking.discountAmount || 0;
+      const hasDiscount = discountAmount > 0;
+      // If discount exists, use adminFinalAmount; otherwise use totalTripCostWithGST
+      const finalTotal = hasDiscount ? (booking.adminFinalAmount || booking.totalTripCostWithGST || 0) : (booking.totalTripCostWithGST || 0);
+      const grandTotal = finalTotal; // Use final total (after discount if applicable)
+      // GST shown should be based on original calculation, not updated total
+      const gst = hasDiscount ? originalGST : (booking.totalTripCostWithGST - subtotal || 0);
       const paidAmount = booking.paidAmount || 0;
 
       // Pricing Table
@@ -165,9 +173,26 @@ const generateInvoicePDF = (booking, tour, outputPath) => {
       doc.text(`Rs.${Number(gst).toFixed(2)}`, tableLeft + descWidth + rateWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
       currentY += 20;
 
-      // Grand Total
+      // Original Total (before discount) - only show if discount exists
+      if (hasDiscount) {
+        doc.rect(tableLeft, currentY, tableWidth, 20).stroke();
+        doc.font('Helvetica').text('Total (Before Discount)', tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2 });
+        doc.text('', tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: rateWidth - cellPadding * 2 }); // Empty Rate
+        doc.text(`Rs.${Number(originalTotal).toFixed(2)}`, tableLeft + descWidth + rateWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
+        currentY += 20;
+
+        // Discount
+        doc.rect(tableLeft, currentY, tableWidth, 20).stroke();
+        doc.font('Helvetica').fillColor('#10b981').text('Discount', tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2 });
+        doc.text('', tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: rateWidth - cellPadding * 2 }); // Empty Rate
+        doc.fillColor('#10b981').text(`-Rs.${Number(discountAmount).toFixed(2)}`, tableLeft + descWidth + rateWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
+        doc.fillColor('#333333'); // Reset color
+        currentY += 20;
+      }
+
+      // Grand Total (Final Total After Discount)
       doc.rect(tableLeft, currentY, tableWidth, 20).stroke();
-      doc.font('Helvetica-Bold').text('Grand Total', tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2 });
+      doc.font('Helvetica-Bold').text(hasDiscount ? 'Final Total (After Discount)' : 'Grand Total', tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2 });
       doc.text('', tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: rateWidth - cellPadding * 2 }); // Empty Rate
       doc.text(`Rs.${Number(grandTotal).toFixed(2)}`, tableLeft + descWidth + rateWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
       currentY += 20;
