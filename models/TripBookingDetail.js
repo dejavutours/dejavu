@@ -93,6 +93,33 @@ const TripBookingDetailSchema = new Schema(
       match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please enter a valid email address'],
     },
     invoicePath: { type: String }, // Path to the latest invoice PDF
+
+    // Admin pricing fields
+    adminFinalAmount: {
+      type: Number,
+      min: 0,
+    },
+    discountAmount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    // Source tracking
+    createdBy: {
+      type: String,
+      enum: ['user', 'admin', 'lead_conversion'],
+      default: 'user',
+    },
+    adminNotes: {
+      type: String,
+      default: '',
+    },
+    sourceLeadId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'BookingLead',
+      default: null,
+    },
   },
   {
     collection: 'trip_booking_detail',

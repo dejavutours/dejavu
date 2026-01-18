@@ -177,18 +177,129 @@ const createUser = async (req, res) => {
     let user;
 
     if (type === 'gmail') {
-      user = new GmailUser({ id: new mongoose.Types.ObjectId().toString(), email, name, details });
+      if (!email) {
+        return res.status(400).json({ success: false, message: 'Email is required for Gmail user' });
+      }
+      
+      // Check for duplicate email in BOTH schemas
+      const existingGmail = await GmailUser.findOne({ email });
+      if (existingGmail) {
+        return res.status(400).json({ 
+          success: false,
+          message: 'A user with this email already exists in the system',
+          user: existingGmail,
+          error: 'duplicate_email'
+        });
+      }
+      
+      // Check if email exists in MobileUser schema
+      const existingMobileWithEmail = await MobileUser.findOne({ 
+        $or: [
+          { 'details.email': email },
+          { 'details.mobileNumber': phoneNumber }
+        ]
+      });
+      if (existingMobileWithEmail) {
+        return res.status(400).json({ 
+          success: false,
+          message: 'This email or phone number is already associated with a mobile user account',
+          user: existingMobileWithEmail,
+          error: 'duplicate_contact'
+        });
+      }
+      
+      // Check if phoneNumber provided and exists in either schema
+      if (phoneNumber) {
+        const existingPhoneGmail = await GmailUser.findOne({ 'details.mobileNumber': phoneNumber });
+        const existingPhoneMobile = await MobileUser.findOne({ phoneNumber });
+        if (existingPhoneGmail || existingPhoneMobile) {
+          return res.status(400).json({ 
+            success: false,
+            message: 'This phone number is already registered with another user',
+            error: 'duplicate_phone'
+          });
+        }
+      }
+      
+      user = new GmailUser({ 
+        id: new mongoose.Types.ObjectId().toString(), 
+        email, 
+        name: name || `${details?.firstName || ''} ${details?.lastName || ''}`.trim() || email, 
+        paymentids: [],
+        details: {
+          ...details,
+          email: email,
+          mobileNumber: phoneNumber || details?.mobileNumber || ''
+        } 
+      });
     } else if (type === 'mobile') {
-      user = new MobileUser({ phoneNumber, otp: 1234, otpExpiration: new Date(), details });
+      if (!phoneNumber) {
+        return res.status(400).json({ success: false, message: 'Phone number is required for Mobile user' });
+      }
+      
+      // Check for duplicate phone in BOTH schemas
+      const existingMobile = await MobileUser.findOne({ phoneNumber });
+      if (existingMobile) {
+        return res.status(400).json({ 
+          success: false,
+          message: 'A user with this phone number already exists in the system',
+          user: existingMobile,
+          error: 'duplicate_phone'
+        });
+      }
+      
+      // Check if phone exists in GmailUser schema
+      const existingGmailWithPhone = await GmailUser.findOne({ 'details.mobileNumber': phoneNumber });
+      if (existingGmailWithPhone) {
+        return res.status(400).json({ 
+          success: false,
+          message: 'This phone number is already associated with a Gmail user account',
+          user: existingGmailWithPhone,
+          error: 'duplicate_contact'
+        });
+      }
+      
+      // Check if email provided and exists in either schema
+      if (email || details?.email) {
+        const checkEmail = email || details.email;
+        const existingEmailGmail = await GmailUser.findOne({ email: checkEmail });
+        const existingEmailMobile = await MobileUser.findOne({ 'details.email': checkEmail });
+        if (existingEmailGmail || existingEmailMobile) {
+          return res.status(400).json({ 
+            success: false,
+            message: 'This email is already registered with another user',
+            error: 'duplicate_email'
+          });
+        }
+      }
+      
+      user = new MobileUser({ 
+        phoneNumber, 
+        otp: 1234, 
+        otpExpiration: new Date(), 
+        paymentids: [],
+        details: {
+          ...details,
+          mobileNumber: phoneNumber,
+          email: email || details?.email || ''
+        } 
+      });
     } else {
-      return res.status(400).json({ message: 'Invalid user type' });
+      return res.status(400).json({ success: false, message: 'Invalid user type' });
     }
 
     await user.save();
-    res.status(201).json({ message: 'User created successfully', user });
+    res.status(201).json({ success: true, message: 'User created successfully', user });
   } catch (err) {
     console.error('Error creating user:', err);
-    res.status(500).json({ message: 'Failed to create user' });
+    if (err.code === 11000) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'User with this contact information already exists. Please check email and phone number.',
+        error: 'duplicate_unique_constraint'
+      });
+    }
+    res.status(500).json({ success: false, message: 'Failed to create user. Please try again.' });
   }
 };
 

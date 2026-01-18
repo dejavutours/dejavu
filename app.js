@@ -112,6 +112,7 @@ const customTripRoutes = require('./routes/customTripRoutes');
 const tripRoutes = require('./routes/tripRoutes');
 const quickCallRoutes = require('./routes/quickCallRoutes');
 const displayOrderRoutes = require('./routes/displayOrderRoutes');
+const bookingLeadRoutes = require('./routes/bookingLeadRoutes');
 
 
 app.use(compression());
@@ -183,6 +184,7 @@ app.use(customTripRoutes);
 app.use(tripRoutes);
 app.use(quickCallRoutes);
 app.use(displayOrderRoutes);
+app.use(bookingLeadRoutes);
 
 mongoose
     .connect(MONGODB_URI, {

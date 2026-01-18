@@ -122,6 +122,15 @@ const generateReceiptPDF = (booking, tour, paymentLog, outputPath) => {
 
       let currentY = tableTop + 20;
       const formattedAmount = `Rs. ${Number(paymentLog.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+      const discountAmount = booking.discountAmount || 0;
+      const hasDiscount = discountAmount > 0;
+      // Calculate original total from base cost (before any admin adjustments)
+      const subtotal = booking.totalTripCost || 0;
+      const originalGST = subtotal * 0.05;
+      const originalTotal = subtotal + originalGST; // Original total before discount
+      // If discount exists, use adminFinalAmount; otherwise use totalTripCostWithGST
+      const finalTotal = hasDiscount ? (booking.adminFinalAmount || booking.totalTripCostWithGST || 0) : (booking.totalTripCostWithGST || 0);
+      
       // Amount Paid
       doc.rect(tableLeft, currentY, tableWidth, 20).stroke();
       doc.font('Helvetica').fontSize(10).fillColor('#333333');
@@ -134,10 +143,25 @@ const generateReceiptPDF = (booking, tour, paymentLog, outputPath) => {
       });
       currentY += 20;
 
-      // Total Trip Cost
+      // Original Trip Cost (before discount) - only show if discount exists
+      if (hasDiscount) {
+        doc.rect(tableLeft, currentY, tableWidth, 20).stroke();
+        doc.text('Original Trip Cost (Before Discount)', tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2 });
+        doc.text(`Rs. ${Number(originalTotal).toFixed(2)}`, tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
+        currentY += 20;
+
+        // Discount Applied
+        doc.rect(tableLeft, currentY, tableWidth, 20).stroke();
+        doc.fillColor('#10b981').text('Discount Applied', tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2 });
+        doc.text(`-Rs. ${Number(discountAmount).toFixed(2)}`, tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
+        doc.fillColor('#333333'); // Reset color
+        currentY += 20;
+      }
+
+      // Final Trip Cost (After Discount if applicable)
       doc.rect(tableLeft, currentY, tableWidth, 20).stroke();
-      doc.text('Total Trip Cost (incl. 5% GST)', tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2 });
-      doc.text(`Rs. ${Number(booking.totalTripCostWithGST).toFixed(2)}`, tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
+      doc.text(hasDiscount ? 'Final Trip Cost (After Discount)' : 'Total Trip Cost (incl. 5% GST)', tableLeft + cellPadding, currentY + cellPadding, { width: descWidth - cellPadding * 2 });
+      doc.text(`Rs. ${Number(finalTotal).toFixed(2)}`, tableLeft + descWidth + cellPadding, currentY + cellPadding, { width: amountWidth - cellPadding * 2, align: 'right' });
       currentY += 20;
 
       // Due Amount
