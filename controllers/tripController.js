@@ -543,7 +543,7 @@ exports.getAddTours = async (req, res, next) => {
         }
 
         // Render Update Tours page with fetched trip details
-        return res.render("pages/addtours", {
+        return res.render("pages/Addtours", {
           message: null,
           trips: tripdetails,
           states, // Pass states instead of states_arr
@@ -556,7 +556,7 @@ exports.getAddTours = async (req, res, next) => {
     }
 
     // If no trip ID is provided, render Add Tours page
-    return res.render("pages/addtours", {
+    return res.render("pages/Addtours", {
       message: null,
       trips: [],
       states, // Pass states instead of states_arr
