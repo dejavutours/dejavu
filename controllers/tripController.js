@@ -1107,7 +1107,7 @@ exports.getTripDetialbyName = async (req, res, next) => {
       // Continue without recommended trips if there's an error
     }
 
-    res.render("pages/tripdetail", {
+    res.render("pages/Tripdetail", {
       trips: {
         ...tripdetails._doc,
         deptcities: deptCitiesWithImages,
