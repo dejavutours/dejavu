@@ -4121,6 +4121,7 @@ a { text-decoration: none; }
     const selectedDate = document.querySelector('.mobile-date-item.active')?.getAttribute('data-value');
     const selectedTransport = document.querySelector('.mobile-transport-option.active')?.textContent;
     const selectedPayment = document.querySelector('input[name="mobilePaymentOption"]:checked')?.value;
+
     
     if (!selectedCity || !selectedDate || !selectedTransport) {
       return;
@@ -4139,6 +4140,32 @@ a { text-decoration: none; }
       showContactModal(`The selected date is within the ${cutoffDays}-day booking cutoff period. Please contact our team to proceed.`);
       return;
     }
+
+    // 3. Update desktop hidden form fields + trigger change events!
+    const mainCity    = document.getElementById('selectedCity');
+    const mainDate    = document.getElementById('selectedDate');
+    const mainTrans   = document.getElementById('selectedTransport');
+    const mainPayment = document.getElementById('paymentOption');
+
+    if (mainCity) {
+        mainCity.value = selectedCity;
+        mainCity.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    if (mainDate) {
+        mainDate.value = selectedDate;
+        mainDate.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    if (mainTrans) {
+        mainTrans.value = selectedTransport;
+        mainTrans.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    if (mainPayment) {
+        mainPayment.value = selectedPayment;
+        mainPayment.dispatchEvent(new Event('change', { bubbles: true }));
+    }
     
     // Update main form and submit
     const form = document.getElementById('proceedToBook');
@@ -4156,6 +4183,12 @@ a { text-decoration: none; }
     const paymentRadio = document.querySelector(`input[name="paymentOptionRadio"][value="${selectedPayment}"]`);
     if (paymentRadio) paymentRadio.checked = true;
     
+    // ── BNPL special handling ───────────────────────────────────────────
+    if (selectedPayment === 'bnpl') {
+        // Do NOT submit form → just open BNPL modal
+        $('#bnplModal').modal('show');
+        return;
+    }
     form.submit();
   }
 
