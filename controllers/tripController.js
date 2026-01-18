@@ -1433,7 +1433,7 @@ exports.renderBookingTourPage = async (req, res) => {
       }
     }
 
-    res.render("pages/booktour", {
+    res.render("pages/BookTour", {
       tourDetails: existingTrip,
       userData,
       csrfToken: req.csrfToken(),
