@@ -418,6 +418,7 @@ header .subtitle { color: #6c757d; font-size: 0.875rem; }
   z-index: 1;
   filter: brightness(0) invert(1);
 }
+#bnplModal .btn-close-white {top: 30px;}
 
 .quick-call-modal-header .modal-title {
   font-size: 1.25rem;
@@ -2239,15 +2240,12 @@ a { text-decoration: none; }
     </div>
   </div>
   <!-- BNPL Modal -->
-  <div class="modal fade" id="bnplModal" tabindex="-1" aria-labelledby="bnplModalLabel" aria-hidden="true">
+  <div class="modal show fade" id="bnplModal" tabindex="-1" aria-labelledby="bnplModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content quick-call-modal-content">
         <div class="modal-header quick-call-modal-header position-relative">
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-          <div class="modal-body-content">
-            <h5 class="modal-title text-white" id="bnplModalLabel">Book Now, Pay Later</h5>
-            <p class="text-white">Complete your booking details and we'll contact you to finalize payment.</p>
-          </div>
+          <h5 class="modal-title text-white mb-0" id="bnplModalLabel">Book Now Pay Later</h5>
         </div>
         <div class="modal-body quick-call-modal-body">
           <div class="mb-2">
@@ -2290,10 +2288,10 @@ a { text-decoration: none; }
                 <span>No payment required now. We'll contact you to complete the booking.</span>
               </div>
             </div>
+            <p class="mb-0 mt-3 p-2 bg-warning-subtle rounded-3" style="font-size: 0.8rem;">This option allows you to have temporarily reservation for the trip, you can confirm your booking offline or after discussing with the travel experts.</p>
           </form>
         </div>
         <div class="modal-footer quick-call-modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
           <button type="submit" form="bnplForm" class="btn quick-call-modal-btn" id="submitBNPL" disabled>
             <i class="bi bi-check-circle-fill me-2"></i> Submit Booking Request
           </button>

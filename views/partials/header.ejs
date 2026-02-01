@@ -340,26 +340,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             <li><a class="dropdown-item" href="/admin/users" target="_blank">User</a></li>
                             <li><a class="dropdown-item" href="/admin/addtours" target="_blank">Add Tours</a></li>
                             <li><a class="dropdown-item" href="/cities" target="_blank">Master setting</a></li>
-                            <li><a class="dropdown-item" href="/admin/category-trip-order" target="_blank">Homepage Categories</a></li>
-                          <ul% } %>
-                          <li>
-                            <form id="my_form" action="/logout" method="post">
-                              <a class="dropdown-item" href="javascript:{}" onclick="signout()">Sign Out</a>
-                              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                            </form>
-                          </li>
+                            <li><a class="dropdown-item" href="/admin/category-trip-order" target="_blank">Homepage
+                                Categories</a></li>
+                            <% } %>
+                              <li>
+                                <form id="my_form" action="/logout" method="post">
+                                  <a class="dropdown-item" href="javascript:{}" onclick="signout()">Sign Out</a>
+                                  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                                </form>
+                              </li>
                         </ul>
                       </span>
-                    <% }else { %>
+                      <% }else { %>
                 <li class="nav-item">
                   <a class="nav-link" role="button" tabindex="-1" aria-current="page" data-bs-toggle="modal"
                     data-bs-target="#signinModal">Login</a>
                 </li>
-            <% } %>
-          </div>
+                <% } %>
+        </div>
         </li>
-      </ul>
-    </div>
+        </ul>
+  </div>
   </div>
 </nav>
 <!-- Signin Modal -->
