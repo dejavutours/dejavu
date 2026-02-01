@@ -642,14 +642,15 @@ a { text-decoration: none; }
 .cutoff-modal-btn:hover { transform: translateY(-2px); }
 
 /* Mobile Booking Styles */
-.mobile-booking-fab {
+.mobile-booking-fab, .mobile-whatsapp-fab {
   position: fixed;
   bottom: 20px;
-  right: 20px;
+  right: 120px;
   box-shadow: 0 4px 12px rgba(26, 75, 142, 0.3);
   z-index: 1000;
   transition: all var(--transition);
 }
+.mobile-whatsapp-fab{right: 20px}
 
 .mobile-booking-fab:hover {
   transform: translateY(-2px);
@@ -1578,8 +1579,8 @@ a { text-decoration: none; }
           <h1 class="trek-title"><%= trips.name %></h1>
           <article class="subtitle"><%- trips.destinations %></article>
           <div class="d-flex flex-wrap d-lg-none gap-2 align-items-center pt-2">
-            <a href="/dreamtrip" class="btn btn-app-primary rounded-pill" target="_blank">Inquire Now</a>
-            <button class="btn btn-app-stroked-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#quickCallModal">Request Call Back</button>
+            <a href="/dreamtrip" class="btn btn-warning rounded-pill" target="_blank">Inquire Now</a>
+            <button class="btn btn-app-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#quickCallModal">Request Call Back</button>
           </div>
         </div>
         <article class="custom-card p-lg-3">
@@ -2011,6 +2012,10 @@ a { text-decoration: none; }
     <i class="bi bi-bookmark-check-fill me-2"></i>
     Book Now
   </button>
+  <a class="btn btn-success rounded-pill mobile-whatsapp-fab p-0 d-lg-none" aria-label="WhatsApp" href="https://wa.me/+918511117891?text=Hello%20I%20am%20interested%20in%20the%20following%20trip%20<%= encodeURIComponent(trips.name) %>%20tour.%20could%20you%20please%20share%20more%20details." target="_blank" aria-label="Contact via WhatsApp for <%= trips.name %>">
+    <i class="bi bi-whatsapp" style="font-size: 2rem;"></i>
+  </a>
+
   <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content cutoff-modal-content">
