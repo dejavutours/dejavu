@@ -277,7 +277,6 @@ const getBookingDetails = async (req, res) => {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      console.warn(`Invalid booking ID: ${id}`);
       return res.status(400).render('pages/admin/booking-detail', {
         booking: null,
         error: 'Invalid booking ID',
@@ -285,13 +284,15 @@ const getBookingDetails = async (req, res) => {
       });
     }
 
-    const booking = await TripBookingDetail.findById(id).populate({
-      path: 'toursSystemId',
-      select: 'name state destinations price about activities'
-    });
+    // Fetch booking + populate tour
+    const booking = await TripBookingDetail.findById(id)
+      .populate({
+        path: 'toursSystemId',
+        select: 'name state destinations price about activities'
+      })
+      .lean(); // better performance for rendering
 
     if (!booking) {
-      console.warn(`Booking not found for ID: ${id}`);
       return res.status(404).render('pages/admin/booking-detail', {
         booking: null,
         error: 'Booking not found',
@@ -299,26 +300,21 @@ const getBookingDetails = async (req, res) => {
       });
     }
 
+    // Ensure duePayment is correct (sometimes it can be inconsistent)
+    const finalAmount = booking.adminFinalAmount || booking.totalTripCostWithGST || booking.totalTripCost || 0;
+    booking.duePayment = Math.max(0, finalAmount - (booking.paidAmount || 0));
+
+    // Fetch user
     let userDetails = null;
-    try {
-      if (mongoose.Types.ObjectId.isValid(booking.userId)) {
-        userDetails = await MobileUser.findOne({ _id: booking.userId });
-        if (!userDetails) {
-          userDetails = await GmailUser.findOne({ _id: booking.userId });
-        }
-      }
-    } catch (err) {
-      console.error(`Error fetching user details for userId: ${booking.userId}`, err);
+    if (booking.userId && mongoose.Types.ObjectId.isValid(booking.userId)) {
+      userDetails = await MobileUser.findById(booking.userId).lean() ||
+                    await GmailUser.findById(booking.userId).lean();
     }
 
-    const userBookings = await TripBookingDetail.find({ userId: booking.userId });
+    // Analytics
+    const userBookings = await TripBookingDetail.find({ userId: booking.userId }).lean();
     const totalBookings = userBookings.length;
     const lifetimeValue = userBookings.reduce((sum, b) => sum + (b.paidAmount || 0), 0);
-    const paymentBreakdown = {
-      total: booking.totalTripCost,
-      paid: booking.paidAmount,
-      remaining: booking.totalTripCost - booking.paidAmount
-    };
 
     const bookingHistory = await TripBookingDetail.aggregate([
       {
@@ -337,25 +333,39 @@ const getBookingDetails = async (req, res) => {
       { $project: { month: '$_id', count: 1, _id: 0 } }
     ]);
 
+    // Latest receipt (if multiple payments)
+    const latestReceipt = await PaymentLog.findOne({ bookingId: booking._id })
+      .sort({ paymentDate: -1 })
+      .select('receiptPath')
+      .lean();
+
     const enrichedBooking = {
-      ...booking.toObject(),
-      userDetails: userDetails ? userDetails.toObject() : null,
-      tourDetails: booking.toursSystemId ? booking.toursSystemId.toObject() : null,
+      ...booking,
+      userDetails,
+      tourDetails: booking.toursSystemId,
+      duePayment: booking.duePayment,           // ensure it's here
+      invoicePath: booking.invoicePath,
+      receiptPath: latestReceipt?.receiptPath || booking.receiptPath, // prefer latest
       analytics: {
         totalBookings,
         lifetimeValue,
-        paymentBreakdown,
+        paymentBreakdown: {
+          total: finalAmount,
+          paid: booking.paidAmount || 0,
+          remaining: booking.duePayment
+        },
         bookingHistory
       }
     };
 
     res.render('pages/admin/booking-detail', {
       booking: enrichedBooking,
-      error: booking.toursSystemId ? null : 'Tour details not found for this booking',
+      error: null,
       csrfToken: req.csrfToken()
     });
+
   } catch (err) {
-    console.error(`Error in getBookingDetails for bookingId: ${req.params.id}`, err);
+    console.error('Error in getBookingDetails:', err);
     res.status(500).render('pages/admin/booking-detail', {
       booking: null,
       error: 'Failed to load booking details',

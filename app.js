@@ -36,7 +36,7 @@ const store = new MongoDBStore({
 const csrfProtection = csrf();
 
 // Define constants for file upload limits
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 const ALLOWED_FILE_TYPES = ["image/png", "image/jpg", "image/jpeg", "application/pdf"];
 
 const fileStorage = multer.diskStorage({

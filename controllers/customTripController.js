@@ -55,11 +55,9 @@ const generateEmailHtml = (data) => {
     if (data[field]) {
       html = html.replace(
         regex,
-        `<tr><td style="padding: 8px 0; font-weight: bold;">${
-          field.charAt(0).toUpperCase() +
-          field.slice(1).replace(/([A-Z])/g, " $1")
-        }:</td><td style="padding: 8px 0;">${
-          field === "budget" ? "₹" + data[field] : data[field]
+        `<tr><td style="padding: 8px 0; font-weight: bold;">${field.charAt(0).toUpperCase() +
+        field.slice(1).replace(/([A-Z])/g, " $1")
+        }:</td><td style="padding: 8px 0;">${field === "budget" ? "₹" + data[field] : data[field]
         }</td></tr>`
       );
     } else {
@@ -74,24 +72,24 @@ const generateEmailHtml = (data) => {
 const sendEmail = async (tripData) => {
   try {
     const mailOptions = {
-      from: "travel@dejavutours.in",
-      to:   "dejavuoutdoors@gmail.com", // Admin email (same as sender for now)
-      subject: "New Customized Trip Submission",
+      from: "dejavuoutdoors@gmail.com",
+      to: "travel@dejavutours.in",
+      subject: "Customized trip leads",
       html: generateEmailHtml(tripData),
     };
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "travel@dejavutours.in",
-        pass:  "pxii eznn bdxg ryas" // "vbkx zspn oodm mjkj",
+        user: 'dejavuoutdoors@gmail.com',
+        pass: 'vueo rgzp mktv mdxr'
       },
     });
     await transporter.sendMail(mailOptions);
     console.log("Email sent successfully");
   } catch (error) {
     console.error("Error sending email:", error);
-    throw error; // Let the controller handle the error
+    throw error;
   }
 };
 

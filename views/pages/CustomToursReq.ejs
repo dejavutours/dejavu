@@ -326,14 +326,14 @@
                   toastEl.classList.remove("toast-success");
                   toastEl.classList.add("toast-error");
                   toastTitle.textContent = "Error";
-                  toastMessage.textContent = result.message;
+                  toastMessage.textContent = result.error;
                   toast.show();
                 }
               } catch (error) {
                 toastEl.classList.remove("toast-success");
                 toastEl.classList.add("toast-error");
                 toastTitle.textContent = "Error";
-                toastMessage.textContent = "Failed to submit form. Please try again.";
+                toastMessage.textContent = result.error;
                 toast.show();
               }
             });
