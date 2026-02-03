@@ -344,8 +344,8 @@
             <label for="document" class="form-label">Upload PDF Document</label>
             <input type="file" accept="application/pdf" name="image" id="document" class="form-control" aria-describedby="pdfHelpText">
             <input type="hidden" name="existingDocument" value="<%= trips.documentUrl || '' %>">
-            <p class="form-text small" id="pdfHelpText">PDF file size should be Max 5MB</p>
-            <small class="text-danger d-none" id="documentError">Invalid file type or size exceeded (Max 5MB).</small>
+            <p class="form-text small" id="pdfHelpText">PDF file size should be Max 10MB</p>
+            <small class="text-danger d-none" id="documentError">Invalid file type or size exceeded (Max 10MB).</small>
             <div class="pdf-preview-container" id="pdfPreviewContainer" style="display: <%= trips.documentUrl ? 'block' : 'none' %>;">
               <embed id="pdfPreview" src="<%= trips.documentUrl || '' %>" type="application/pdf" data-bs-toggle="modal" data-bs-target="#pdfModal">
               <button type="button" class="btn btn-sm btn-danger rounded-pill remove-pdf" id="removePdf" style="display: <%= trips.documentUrl ? 'block' : 'none' %>;">
@@ -1225,7 +1225,7 @@
       const pdfPreviewContainer = document.getElementById("pdfPreviewContainer");
       const removePdfButton = document.getElementById("removePdf");
       const documentError = document.getElementById("documentError");
-      const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+      const MAX_FILE_SIZE = 10 * 1024 * 1024; // 5MB
 
       documentInput.addEventListener("change", function() {
         const file = this.files[0];
@@ -2251,7 +2251,7 @@
       const existingDocument = document.querySelector('input[name="existingDocument"]').value;
       if (documentInput.files.length > 0) {
         const file = documentInput.files[0];
-        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 5MB
         if (file.type !== "application/pdf") {
           validationErrors.push("Document must be a PDF file.");
           documentInput.classList.add("is-invalid");
@@ -2455,7 +2455,6 @@
           handleResponse(data, status);
         })
         .catch(err => {
-          console.error("Submission error:", err);
           handleResponse({
             message: "An error occurred while submitting the form. Please try again."
           }, 500);

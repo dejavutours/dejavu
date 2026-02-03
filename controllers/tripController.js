@@ -1444,39 +1444,6 @@ exports.renderBookingTourPage = async (req, res) => {
   }
 };
 
-exports.submitBookingTourPage = async (req, res) => {
-  try {
-    if (req && req.body) {
-      const tourDate = req.body.travelDate.split("to");
-      const newBookingDetail = {};
-      newBookingDetail.userId = req.user.id;
-      newBookingDetail.tripName = req.body.tourDetails.name;
-      newBookingDetail.totalPerson = {
-        adult: parseInt(req.body.totalPerson.adult),
-        child: parseInt(req.body.totalPerson.child),
-      };
-      newBookingDetail.personDetails = req.body.personDetails;
-      newBookingDetail.joiningFrom = req.body.joiningFrom;
-      newBookingDetail.bookingStatus = req.body.bookingStatus;
-      newBookingDetail.totalTripCost = parseInt(req.body.totalTripCost);
-      newBookingDetail.paidAmount = parseInt(req.body.paidAmount);
-      newBookingDetail.paymentStatus = req.body.paymentStatus;
-      newBookingDetail.tripStartDate = tourDate[0].trim();
-      newBookingDetail.tripEndDate = tourDate[1].trim();
-      const newTripBookingDetail = new TripBookingDetail(newBookingDetail);
-      const savednewTripBookingDetail = await newTripBookingDetail.save();
-      return res.status(200).json({
-        success: true,
-        message: "You have successfully booked your trip.",
-      });
-    }
-  } catch (error) {
-    console.error("Error in booking:", error);
-    res.status(500).json({ success: false, message: "Server error", error });
-  }
-  console.log(req.body);
-};
-
 
 exports.getTrips = async (req, res) => {
   try {
