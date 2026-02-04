@@ -7,8 +7,8 @@ class EmailService {
     this.transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASSWORD//'vbkx zspn oodm mjkj',
+        user: 'dejavuoutdoors@gmail.com',
+        pass: 'vueo rgzp mktv mdxr'
       },
       tls: {
         rejectUnauthorized: false,
@@ -20,7 +20,7 @@ class EmailService {
     try {
       const isPartialPayment = booking.paymentStatus === 'Partial';
       const attachments = [];
-      
+
       // Add invoice if full payment
       if (!isPartialPayment && booking.invoicePath && fs.existsSync(booking.invoicePath)) {
         attachments.push({
@@ -28,7 +28,7 @@ class EmailService {
           path: booking.invoicePath
         });
       }
-      
+
       // Add receipt if payment was made
       if (paymentLog && paymentLog.receiptPath && fs.existsSync(paymentLog.receiptPath)) {
         attachments.push({
@@ -94,9 +94,9 @@ class EmailService {
     const formatDate = (date) => new Date(date).toLocaleDateString('en-GB', {
       day: '2-digit', month: 'short', year: 'numeric'
     });
-    
-    const paymentStatus = booking.paymentStatus === 'Partial' ? 
-      `Partial Payment` : 
+
+    const paymentStatus = booking.paymentStatus === 'Partial' ?
+      `Partial Payment` :
       'Full Payment Completed';
 
     return `
