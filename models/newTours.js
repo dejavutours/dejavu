@@ -72,17 +72,6 @@ const newToursSchema = new Schema(
       ],
       default: [],
     },
-    // Upcoming trip start dates
-    trip_dates: {
-      type: [
-        {
-          Year: { type: String, default: "" },
-          Month: { type: String, default: "" },
-          dates: { type: String, default: "" },
-        },
-      ],
-      default: [],
-    },
     // Activities included (e.g., "Boating, Jet Ski")
     activities: { type: String, default: "" },
     // Daily itinerary
@@ -108,12 +97,6 @@ const newToursSchema = new Schema(
     bookncancel: { type: String, default: "" },
     // Traveler rules (e.g., "No smoking")
     guidelines: { type: String, default: "" },
-    // Upcoming trip schedules
-    upcomingtrip: { type: [Date], default: [] },
-    // Additional tour images
-    imageUrlAll: { type: [String], default: [] },
-    // YouTube video link
-    youtubeUrl: { type: String, default: "" },
     // PDF document URL
     documentUrl: { type: String, default: "" },
     // Display order for sorting tours
