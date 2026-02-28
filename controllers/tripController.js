@@ -694,7 +694,7 @@ exports.getFiltertourAPIUseOnly = async (req, res, sortByLatestUpdate) => {
 // Fetch all tours
 exports.getTours = async (req, res) => {
   try {
-    const response = await this.getFiltertourAPIUseOnly(req, res, true); // Use NewTours instead of NewToursSchema
+    const response = await this.getFiltertourAPIUseOnly(req, res, true); 
     // Determine baseUrl based on environment
     const baseUrl = process.env.NODE_ENV === 'production'
       ? 'https://https://www.dejavutours.in/' // Replace with your production domain

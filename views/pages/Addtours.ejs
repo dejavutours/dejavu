@@ -1225,7 +1225,7 @@
       const pdfPreviewContainer = document.getElementById("pdfPreviewContainer");
       const removePdfButton = document.getElementById("removePdf");
       const documentError = document.getElementById("documentError");
-      const MAX_FILE_SIZE = 10 * 1024 * 1024; // 5MB
+      const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15 MB
 
       documentInput.addEventListener("change", function() {
         const file = this.files[0];
@@ -2251,7 +2251,7 @@
       const existingDocument = document.querySelector('input[name="existingDocument"]').value;
       if (documentInput.files.length > 0) {
         const file = documentInput.files[0];
-        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 5MB
+        const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
         if (file.type !== "application/pdf") {
           validationErrors.push("Document must be a PDF file.");
           documentInput.classList.add("is-invalid");

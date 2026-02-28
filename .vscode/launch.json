@@ -17,7 +17,7 @@
       "env": {
         "NODE_ENV": "development"
       },
-      "runtimeVersion": "16.20.2"
+      "runtimeVersion": "20.11.1"
     },
     {
       "type": "node",
@@ -25,7 +25,7 @@
       "name": "Launch Program",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/app.js",
-      "runtimeVersion": "16.20.2"
+      "runtimeVersion": "20.11.1"
     }
   ]
 }
