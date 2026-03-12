@@ -612,10 +612,10 @@
     <div class="search-container d-flex flex-wrap align-items-md-center justify-content-between gap-3 pt-2 pt-md-3">
       <div class="search-bar">
         <div class="select-wrapper">
-          <select class="select" aria-label="Filter by region">
-            <option value="ALL" selected>ALL</option>
-            <option value="India">India</option>
-            <option value="International">International</option>
+          <select id="regionSelect" class="select" aria-label="Filter by region">
+            <option value="ALL" <%= regionFilter === 'ALL' ? 'selected' : '' %>>ALL</option>
+            <option value="India" <%= regionFilter === 'India' ? 'selected' : '' %>>India</option>
+            <option value="International" <%= regionFilter === 'International' ? 'selected' : '' %>>International</option>
           </select>
         </div>
         <div class="input-wrapper">
@@ -655,7 +655,7 @@
       <article class="col-sm-6 col-lg-4">
         <div class="card package-card h-100 rounded-4 <%= !tour.isActive ? 'inactive' : '' %>" 
              role="button" 
-             aria-label="View details for <%= tour.name %> in <%= tour.state %>, India"
+             aria-label="View details for <%= tour.name %> in <%= tour.state %>"
              data-bs-toggle="<%= (!tour.isActive && isAdmin) ? 'tooltip' : '' %>"
              title="<%= (!tour.isActive && isAdmin) ? 'This trip is inactive' : '' %>">
           <!-- Admin status badge -->
@@ -666,7 +666,7 @@
           <% } %>
           <figure class="card-image-container rounded-3">
             <img src="<%= tour.imageurl %>" 
-                 alt="Tour package - <%= tour.name %> in <%= tour.state %>, India" 
+                 alt="Tour package - <%= tour.name %> in <%= tour.state %>"
                  class="card-image card-img-top h-100" 
                  loading="lazy"
                  onerror="this.src='/images/placeholder.jpg';">
@@ -677,7 +677,7 @@
             <p class="small text-truncate text-muted mb-1"><%- tour.destinations %></p>
             <p class="text-truncate mb-1 small text-muted">
               <i class="bi bi-geo-alt-fill"></i>
-              <span><%= tour.state %>, India</span>
+              <span><%= tour.state %></span>
             </p>
             <p class="d-flex justify-content-between align-items-center mb-1">
               <small><i class="bi bi-calendar-event text-muted"></i> <%- tour.days %></small>
@@ -737,6 +737,7 @@
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <input id="filterValue" name="filterValue" type="hidden">
           <input id="searchValue" name="searchValue" type="hidden">
+          <input id="regionFilterInput" name="regionFilter" type="hidden" value="<%= regionFilter || 'ALL' %>">
           <div class="filter-section mb-4">
             <p class="filter-section-title h6">Tour category</p>
             <div class="row gy-2">
@@ -1290,6 +1291,13 @@
             removeChip(chip);
           }
         });
+      });
+
+      // Region filter (ALL / India / International)
+      document.getElementById('regionSelect')?.addEventListener('change', function() {
+        document.getElementById('regionFilterInput').value = this.value;
+        updateFilterValue();
+        submitTourList();
       });
 
       // Search input with debounce

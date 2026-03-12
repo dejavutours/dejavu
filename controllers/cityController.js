@@ -24,7 +24,7 @@ exports.getCities = async (req, res) => {
 exports.getCityList = async (req, res) => {
   try {
     const cities = await City.find({ isDeleted: false, isActive: true })
-      .select("name state image cityId")
+      .select("name state image cityId countryCode")
       .sort({ displayOrder: 1 });
     res.json({ success: true, cities });
   } catch (error) {
@@ -38,7 +38,7 @@ exports.getCityList = async (req, res) => {
 // Upsert city (add or update)
 exports.upsertCity = async (req, res) => {
   try {
-    const { id, name, state, oldImage } = req.body;
+    const { id, name, state, oldImage, countryCode = 'IN' } = req.body;
     let imagePath = oldImage && oldImage !== "" ? oldImage : null;
 
     // Handle image upload
@@ -73,7 +73,7 @@ exports.upsertCity = async (req, res) => {
           .status(404)
           .json({ success: false, message: "City not found." });
 
-      const duplicate = await City.findOne({ name, state, _id: { $ne: id }, isDeleted: false });
+      const duplicate = await City.findOne({ name, state, countryCode, _id: { $ne: id }, isDeleted: false });
       if (duplicate)
         return res
           .status(400)
@@ -84,11 +84,12 @@ exports.upsertCity = async (req, res) => {
 
       city.name = name;
       city.state = state;
+      city.countryCode = countryCode;
       if (imagePath) city.image = imagePath; // Only update image if new imagePath is provided
       await city.save();
     } else {
       // Add new city
-      const existingCity = await City.findOne({ name, state, isDeleted: false});
+      const existingCity = await City.findOne({ name, state, countryCode, isDeleted: false });
       if (existingCity)
         return res
           .status(400)
@@ -103,6 +104,7 @@ exports.upsertCity = async (req, res) => {
       const newCity = new City({
         name,
         state,
+        countryCode,
         image: imagePath,
         displayOrder: newOrder,
       });

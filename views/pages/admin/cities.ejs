@@ -312,18 +312,60 @@
           <input type="hidden" id="cmCityId" name="id" />
           <input type="hidden" id="cmOldImage" name="oldImage" />
 
+          <input type="hidden" id="cmCountryCode" name="countryCode" value="IN" />
+
           <div class="space-y-2">
+            <!-- Country Type Toggle -->
             <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Country Type</label>
+              <div class="flex gap-6">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" name="countryType" id="cmTypeIndia" value="IN" checked class="accent-blue-600" />
+                  <span class="text-sm text-gray-700">India</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" name="countryType" id="cmTypeIntl" value="INTL" class="accent-blue-600" />
+                  <span class="text-sm text-gray-700">International</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- India Mode: existing statecities.json dropdowns -->
+            <div id="cmIndiaSection">
               <label for="cmState" class="block text-sm font-semibold text-gray-700">State</label>
-              <select class="select2 w-full" id="cmState" name="state" required>
+              <select class="select2 w-full" id="cmState" name="state">
                 <option value="">Select State</option>
               </select>
 
-              <label for="cmCityName" class="block text-sm font-semibold text-gray-700">City</label>
-              <select class="select2 w-full" id="cmCityName" name="name" required>
+              <label for="cmCityName" class="block text-sm font-semibold text-gray-700 mt-2">City</label>
+              <select class="select2 w-full" id="cmCityName" name="name">
                 <option value="">Select City</option>
               </select>
             </div>
+
+            <!-- International Mode: country API + free-text city -->
+            <div id="cmIntlSection" class="hidden">
+              <div id="cmIntlCountryWrapper">
+                <label for="cmIntlCountry" class="block text-sm font-semibold text-gray-700">Country</label>
+                <select class="select2 w-full" id="cmIntlCountry">
+                  <option value="">Select Country</option>
+                </select>
+              </div>
+              <div id="cmIntlStateWrapper" class="mt-2">
+                <label for="cmIntlState" class="block text-sm font-semibold text-gray-700">State / Region</label>
+                <select class="select2 w-full" id="cmIntlState" name="state">
+                  <option value="">Select State / Region</option>
+                </select>
+              </div>
+              <div id="cmIntlCityWrapper" class="mt-2">
+                <label for="cmIntlCityName" class="block text-sm font-semibold text-gray-700">City</label>
+                <select class="w-full" id="cmIntlCityName" name="name">
+                  <option value="">Select or type a city</option>
+                </select>
+                <p class="text-xs text-gray-400 mt-1">Select from list or type to search. If city is not listed, type the name and press Enter to add it.</p>
+              </div>
+            </div>
+
             <div>
               <label for="cmImage" class="block text-sm font-semibold text-gray-700">City Image</label>
               <div class="flex items-center space-x-3">
@@ -468,7 +510,20 @@
         width: '100%'
       });
 
-      // Populate state dropdowns
+      // Initialize international city dropdown with tags support
+      $('#cmIntlCityName').select2({
+        placeholder: 'Select or type a city',
+        allowClear: true,
+        width: '100%',
+        tags: true,
+        createTag: function(params) {
+          const term = $.trim(params.term);
+          if (!term) return null;
+          return { id: term, text: term, newTag: true };
+        }
+      });
+
+      // Populate state dropdowns (India states from statecities.json)
       const stateCities = <%- JSON.stringify(stateCities) %>;
       const stateDropdown = $('#cmState');
       const stateFilter = $('#cmStateFilter');
@@ -476,8 +531,17 @@
         stateDropdown.append(`<option value="${state}">${state}</option>`);
         stateFilter.append(`<option value="${state}">${state}</option>`);
       });
+      // Also include any international states already in DB
+      cities.forEach(c => {
+        if (c.countryCode && c.countryCode !== 'IN') {
+          if (!stateFilter.find(`option[value="${c.state}"]`).length) {
+            stateFilter.append(`<option value="${c.state}">${c.state} (${c.countryCode})</option>`);
+          }
+        }
+      });
+      stateFilter.select2({ placeholder: 'All States', allowClear: true, width: '100%' });
 
-      // Update city dropdown based on state selection
+      // Update city dropdown based on state selection (India mode)
       $('#cmState').on('change', function() {
         const selectedState = $(this).val();
         const cityDropdown = $('#cmCityName');
@@ -491,12 +555,19 @@
         updateImagePreview();
       });
 
-      // Auto-update image preview on city selection
+      // Auto-update image preview on city selection (India mode)
       $('#cmCityName').on('change', updateImagePreview);
 
       function updateImagePreview() {
-        const selectedState = $('#cmState').val();
-        const selectedCity = $('#cmCityName').val();
+        const isIntl = $('input[name="countryType"]:checked').val() === 'INTL';
+        let selectedState, selectedCity;
+        if (isIntl) {
+          selectedState = $('#cmIntlState').val();
+          selectedCity = $('#cmIntlCityName').val();
+        } else {
+          selectedState = $('#cmState').val();
+          selectedCity = $('#cmCityName').val();
+        }
         if (selectedState && selectedCity) {
           const city = cities.find(c => c.state === selectedState && c.name === selectedCity);
           if (city && city.image) {
@@ -512,20 +583,260 @@
         }
       }
 
+      // ── Country type toggle ──────────────────────────────────────────────
+      $('input[name="countryType"]').on('change', function() {
+        const isIntl = $(this).val() === 'INTL';
+
+        // ── Clear ALL fields in both sections when switching mode ──
+        // India fields
+        $('#cmState').val(null).trigger('change.select2');
+        const indCityDrop = $('#cmCityName');
+        indCityDrop.empty().append('<option value="">Select City</option>');
+        if (indCityDrop.data('select2')) indCityDrop.trigger('change.select2');
+
+        // International country
+        if ($('#cmIntlCountry').data('select2')) $('#cmIntlCountry').val(null).trigger('change.select2');
+        $('#cmCountryCode').val('IN');
+
+        // International state — reset to empty select
+        const stIntl = $('#cmIntlState');
+        if (stIntl.is('input')) {
+          $('#cmIntlStateWrapper').html(
+            '<label for="cmIntlState" class="block text-sm font-semibold text-gray-700">State / Region</label>' +
+            '<select class="select2 w-full" id="cmIntlState" name="state">' +
+            '<option value="">Select State / Region</option></select>'
+          );
+          $('#cmIntlState').select2({ placeholder: 'Select State / Region', allowClear: true, width: '100%' });
+        } else {
+          if (stIntl.data('select2')) stIntl.val(null).trigger('change.select2');
+          else stIntl.val('');
+        }
+
+        // International city
+        resetIntlCityDropdown();
+
+        // Shared fields
+        $('#cmCityId').val('');
+        $('#cmOldImage').val('');
+        $('#cmImagePreview').attr('src', '').hide();
+        $('#cmSubmitBtn').text('Add City').removeClass('from-green-600 to-green-700 hover:from-green-700 hover:to-green-800').addClass('from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800');
+        $('#cmCancelBtn').addClass('hidden');
+
+        if (isIntl) {
+          $('#cmIndiaSection').addClass('hidden');
+          $('#cmIntlSection').removeClass('hidden');
+          $('#cmState').removeAttr('name');
+          $('#cmCityName').removeAttr('name');
+          $('#cmIntlState').attr('name', 'state');
+          $('#cmIntlCityName').attr('name', 'name');
+          loadCountriesForIntl();
+        } else {
+          $('#cmIntlSection').addClass('hidden');
+          $('#cmIndiaSection').removeClass('hidden');
+          $('#cmState').attr('name', 'state');
+          $('#cmCityName').attr('name', 'name');
+          $('#cmIntlState').removeAttr('name');
+          $('#cmIntlCityName').removeAttr('name');
+          $('#cmCountryCode').val('IN');
+        }
+      });
+
+      // Countries+states cache — loaded once, reused for both country dropdown and state loading
+      let countriesLoaded = false;
+      let countriesCache = null;
+
+      // Load country list. Uses /countries/states (has iso2 + name). Callback fires when done.
+      function loadCountriesForIntl(callback) {
+        if (countriesLoaded) { if (callback) callback(); return; }
+        // /countries/states returns {name, iso2, iso3, states[]} — has iso2
+        $.getJSON('https://countriesnow.space/api/v0.1/countries/states', function(data) {
+          if (data && data.data) {
+            countriesCache = data.data;
+            const intlCountry = $('#cmIntlCountry');
+            intlCountry.empty().append('<option value="">Select Country</option>');
+            data.data
+              .filter(c => c.iso2 && c.iso2 !== 'IN')
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .forEach(c => {
+                intlCountry.append('<option value="' + c.iso2 + '" data-name="' + c.name + '">' + c.name + '</option>');
+              });
+            intlCountry.select2({ placeholder: 'Select Country', allowClear: true, width: '100%' });
+            countriesLoaded = true;
+          }
+          if (callback) callback();
+        }).fail(function() {
+          // API down — show free-text ISO2 input as fallback
+          $('#cmIntlCountryWrapper').html(
+            '<label class="block text-sm font-semibold text-gray-700">Country (ISO2 code)</label>' +
+            '<input type="text" id="cmIntlCountry" placeholder="e.g. AE, US, VN" maxlength="3" ' +
+            'class="w-full border border-gray-300 rounded-md p-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />'
+          );
+          countriesLoaded = true;
+          if (callback) callback();
+        });
+      }
+
+      // Populate states for a given countryCode using cache (or empty select on failure)
+      function populateStatesForCountry(countryCode, countryName) {
+        const wrapper = $('#cmIntlStateWrapper');
+        // Restore to select if it was a text input
+        if ($('#cmIntlState').is('input')) {
+          wrapper.html(
+            '<label for="cmIntlState" class="block text-sm font-semibold text-gray-700">State / Region</label>' +
+            '<select class="select2 w-full" id="cmIntlState" name="state">' +
+            '<option value="">Select State / Region</option></select>'
+          );
+        }
+        const stEl = $('#cmIntlState');
+        if (stEl.data('select2')) stEl.select2('destroy');
+
+        if (!countryCode) {
+          stEl.empty().append('<option value="">Select State / Region</option>');
+          stEl.select2({ placeholder: 'Select State / Region', allowClear: true, width: '100%' });
+          return;
+        }
+
+        function applyStates(allCountries) {
+          const match = allCountries && (
+            allCountries.find(c => c.iso2 === countryCode) ||
+            (countryName ? allCountries.find(c => c.name === countryName) : null)
+          );
+          if ($('#cmIntlState').data('select2')) $('#cmIntlState').select2('destroy');
+          if (match && match.states && match.states.length) {
+            const sel = $('#cmIntlState').length ? $('#cmIntlState') : $('<select class="select2 w-full" id="cmIntlState" name="state"></select>');
+            sel.empty().append('<option value="">Select State / Region</option>');
+            match.states.forEach(s => sel.append('<option value="' + s.name + '" data-country="' + match.name + '">' + s.name + '</option>'));
+            if (!$('#cmIntlState').length) wrapper.append(sel);
+            $('#cmIntlState').select2({ placeholder: 'Select State / Region', allowClear: true, width: '100%' });
+          } else {
+            // No state divisions — replace with text input
+            wrapper.html(
+              '<label for="cmIntlState" class="block text-sm font-semibold text-gray-700">State / Region</label>' +
+              '<input type="text" id="cmIntlState" name="state" placeholder="Enter state/region name" ' +
+              'class="w-full border border-gray-300 rounded-md p-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />'
+            );
+          }
+        }
+
+        if (countriesCache) {
+          applyStates(countriesCache);
+        } else {
+          stEl.empty().append('<option value="">Loading...</option>');
+          stEl.select2({ placeholder: 'Loading...', width: '100%' });
+          $.getJSON('https://countriesnow.space/api/v0.1/countries/states', function(data) {
+            if (data && data.data) countriesCache = data.data;
+            applyStates(countriesCache);
+          }).fail(function() {
+            wrapper.html(
+              '<label for="cmIntlState" class="block text-sm font-semibold text-gray-700">State / Region</label>' +
+              '<input type="text" id="cmIntlState" name="state" placeholder="Enter state/region name" ' +
+              'class="w-full border border-gray-300 rounded-md p-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />'
+            );
+          });
+        }
+      }
+
+      // Helper: reset city field back to a fresh select2 with tags (add mode)
+      function resetIntlCityDropdown() {
+        const wrapper = $('#cmIntlCityWrapper');
+        // Restore to select if edit mode left a text input
+        if ($('#cmIntlCityName').is('input')) {
+          wrapper.html(
+            '<label for="cmIntlCityName" class="block text-sm font-semibold text-gray-700">City</label>' +
+            '<select class="w-full" id="cmIntlCityName" name="name">' +
+            '<option value="">Select or type a city</option></select>' +
+            '<p class="text-xs text-gray-400 mt-1">Select from list or type to search. If city is not listed, type the name and press Enter to add it.</p>'
+          );
+        } else {
+          if ($('#cmIntlCityName').data('select2')) $('#cmIntlCityName').select2('destroy');
+          $('#cmIntlCityName').empty().append('<option value="">Select or type a city</option>');
+        }
+        $('#cmIntlCityName').select2({
+          placeholder: 'Select or type a city', allowClear: true, width: '100%', tags: true,
+          createTag: function(params) {
+            const term = $.trim(params.term);
+            if (!term) return null;
+            return { id: term, text: term, newTag: true };
+          }
+        });
+      }
+
+      // Helper: load cities for a given country name + state name (add mode cascade)
+      function loadIntlCities(countryName, stateName) {
+        resetIntlCityDropdown();
+        const cityEl = $('#cmIntlCityName');
+        if (cityEl.data('select2')) cityEl.select2('destroy');
+        cityEl.empty().append('<option value="">Loading cities...</option>');
+        cityEl.select2({ placeholder: 'Loading cities...', width: '100%' });
+
+        const citiesUrl = 'https://countriesnow.space/api/v0.1/countries/state/cities/q'
+          + '?country=' + encodeURIComponent(countryName)
+          + '&state=' + encodeURIComponent(stateName);
+        $.getJSON(citiesUrl, function(res) {
+          if (cityEl.data('select2')) cityEl.select2('destroy');
+          cityEl.empty().append('<option value="">Select or type a city</option>');
+          if (res && res.data && res.data.length) {
+            res.data.sort().forEach(function(city) { cityEl.append('<option value="' + city + '">' + city + '</option>'); });
+          }
+          cityEl.select2({
+            placeholder: 'Select or type a city', allowClear: true, width: '100%', tags: true,
+            createTag: function(params) {
+              const term = $.trim(params.term);
+              if (!term) return null;
+              return { id: term, text: term, newTag: true };
+            }
+          });
+        }).fail(function() { resetIntlCityDropdown(); });
+      }
+
+      // Load states when country is selected
+      $(document).on('change', '#cmIntlCountry', function() {
+        const countryCode = $(this).val();
+        const countryName = $(this).find(':selected').data('name') || '';
+        $('#cmCountryCode').val(countryCode || '');
+        resetIntlCityDropdown();
+        populateStatesForCountry(countryCode, countryName);
+      });
+
+      // Load cities when state is selected
+      $(document).on('change', '#cmIntlState', function() {
+        const stateName = $(this).val() || $(this).is('input') && $(this).val();
+        const selectedOpt = $(this).find(':selected');
+        const countryName = selectedOpt.data('country') || $('#cmIntlCountry').find(':selected').data('name') || '';
+        if (stateName && countryName) {
+          loadIntlCities(countryName, stateName);
+        } else {
+          resetIntlCityDropdown();
+        }
+      });
+
       $('#cmCityForm').on('submit', function(e) {
         e.preventDefault();
 
-        // Validate image for new cities
         const id = $('#cmCityId').val();
-        const hasImage = $('#cmImage')[0].files.length > 0 || $('#cmOldImage').val();
+        const isIntl = $('input[name="countryType"]:checked').val() === 'INTL';
+
+        // Validate required fields for international mode
+        if (isIntl) {
+          // Sync countryCode from dropdown only if it's a real ISO2 value (not empty/undefined)
+          const liveCC = $('#cmIntlCountry').val();
+          if (liveCC && liveCC !== 'undefined' && liveCC.length >= 2) $('#cmCountryCode').val(liveCC);
+
+          const intlState = $('#cmIntlState').val();
+          const intlCity = $('#cmIntlCityName').val();
+          const intlCC = $('#cmCountryCode').val();
+          if (!intlCC || intlCC === 'IN' || !intlState || !intlCity) {
+            Toastify({ text: 'Please select a country, state/region, and city.', className: 'cm-toast', style: { background: '#F59E0B' }, duration: 3000 }).showToast();
+            return;
+          }
+        }
+
+        // Validate image for new cities
         if (!id && !$('#cmImage')[0].files.length) {
-          $('#cmLoadingOverlay').hide();
           Toastify({
             text: 'An image is required for new cities.',
             className: 'cm-toast',
-            style: {
-              background: '#F59E0B'
-            },
+            style: { background: '#F59E0B' },
             duration: 3000
           }).showToast();
           return;
@@ -810,15 +1121,19 @@
         const cityGrid = $('#cmCityGrid');
         cityGrid.empty();
         filteredCities.forEach(city => {
+          const cc = city.countryCode || 'IN';
+          const badge = cc !== 'IN'
+            ? `<span class="text-xs font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 ml-1">${cc}</span>`
+            : '';
           const card = `
             <div class="cm-card" data-id="${city._id}">
               <input type="checkbox" class="cm-checkbox absolute top-2 left-2" data-id="${city._id}" />
               <img src="${city.image}" alt="${city.name}" class="cm-card-img lazy" data-src="${city.image}" />
-              <h4 class="text-base font-semibold text-gray-800">${city.name}</h4>
+              <h4 class="text-base font-semibold text-gray-800 flex items-center">${city.name}${badge}</h4>
               <p class="text-xs text-gray-600">${city.state}</p>
               <div class="cm-actions">
                 <input type="number" class="cm-order-input w-12 border border-gray-300 rounded-md p-0.5 text-xs" value="${city.displayOrder || 0}" min="0" data-id="${city._id}" />
-                <button class="cm-action-btn edit" onclick="editCity('${city._id}', '${city.name}', '${city.state}', '${city.image}')">Edit</button>
+                <button class="cm-action-btn edit" onclick="editCity('${city._id}', '${city.name}', '${city.state}', '${city.image}', '${cc}')">Edit</button>
                 <form action="/cities/delete/${city._id}" method="POST" class="d-inline cm-delete-form">
                   <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                   <button type="submit" class="cm-action-btn delete">Delete</button>
@@ -894,40 +1209,224 @@
         renderCities();
       });
 
+      // ── Callback-driven cascade for editing international cities ──
+      // Drives country → state → city without relying on event handlers or setTimeout races
+      function populateIntlForEdit(countryCode, stateName, cityName) {
+        const intlCountry = $('#cmIntlCountry');
+
+        function setCountryThenLoadStates() {
+          $('#cmCountryCode').val(countryCode);
+          intlCountry.val(countryCode).trigger('change.select2'); // update UI only, don't fire our handler
+          loadStatesForEdit();
+        }
+
+        function loadStatesForEdit() {
+          const countryName = intlCountry.find(`option[value="${countryCode}"]`).data('name') || '';
+          const stateDropIntl = $('#cmIntlState');
+          if (stateDropIntl.data('select2')) stateDropIntl.select2('destroy');
+          stateDropIntl.empty().append('<option value="">Loading states...</option>');
+          stateDropIntl.select2({ placeholder: 'Loading states...', width: '100%' });
+
+          $.getJSON('https://countriesnow.space/api/v0.1/countries/states', function(data) {
+            // Match strictly by iso2 first; only fall back to name if countryName is non-empty.
+            // Prevents false India match when countryCode is accidentally 'IN'.
+            const match = data.data && (
+              data.data.find(c => c.iso2 === countryCode) ||
+              (countryName ? data.data.find(c => c.name === countryName) : null)
+            );
+            if (stateDropIntl.data('select2')) stateDropIntl.select2('destroy');
+            stateDropIntl.empty().append('<option value="">Select State / Region</option>');
+            let resolvedCountryName = countryName;
+            if (match && match.states && match.states.length) {
+              resolvedCountryName = match.name;
+              match.states.forEach(s => stateDropIntl.append(`<option value="${s.name}" data-country="${match.name}">${s.name}</option>`));
+              stateDropIntl.select2({ placeholder: 'Select State / Region', allowClear: true, width: '100%' });
+              stateDropIntl.val(stateName).trigger('change.select2'); // update UI only
+            } else {
+              // Replace with text input for countries with no state divisions
+              stateDropIntl.closest('div').html(`
+                <label class="block text-sm font-semibold text-gray-700 mt-2">State / Region</label>
+                <input type="text" id="cmIntlState" name="state" value="${stateName}"
+                  class="w-full border border-gray-300 rounded-md p-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              `);
+            }
+            loadCitiesForEdit(resolvedCountryName, stateName);
+          }).fail(function() {
+            if (stateDropIntl.data('select2')) stateDropIntl.select2('destroy');
+            stateDropIntl.closest('div').html(`
+              <label class="block text-sm font-semibold text-gray-700 mt-2">State / Region</label>
+              <input type="text" id="cmIntlState" name="state" value="${stateName}"
+                class="w-full border border-gray-300 rounded-md p-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            `);
+            loadCitiesForEdit('', stateName);
+          });
+        }
+
+        function loadCitiesForEdit(countryName, stateName) {
+          const cityEl = $('#cmIntlCityName');
+          if (cityEl.data('select2')) cityEl.select2('destroy');
+          cityEl.empty().append('<option value="">Loading cities...</option>');
+          cityEl.select2({ placeholder: 'Loading cities...', width: '100%' });
+
+          function setCityValue() {
+            if (!cityEl.find(`option[value="${cityName}"]`).length) {
+              cityEl.append(new Option(cityName, cityName, true, true));
+            } else {
+              cityEl.val(cityName);
+            }
+            cityEl.trigger('change.select2');
+          }
+
+          if (!countryName) {
+            resetIntlCityDropdown();
+            setCityValue();
+            return;
+          }
+
+          // Use GET endpoint directly — API redirects POST to this GET endpoint anyway
+          const citiesUrl = 'https://countriesnow.space/api/v0.1/countries/state/cities/q'
+            + '?country=' + encodeURIComponent(countryName)
+            + '&state=' + encodeURIComponent(stateName);
+          $.getJSON(citiesUrl, function(res) {
+            if (cityEl.data('select2')) cityEl.select2('destroy');
+            cityEl.empty().append('<option value="">Select or type a city</option>');
+            if (res && res.data && res.data.length) {
+              res.data.sort().forEach(c => cityEl.append(`<option value="${c}">${c}</option>`));
+            }
+            cityEl.select2({ placeholder: 'Select or type a city', allowClear: true, width: '100%', tags: true,
+              createTag: function(params) {
+                const term = $.trim(params.term);
+                return term ? { id: term, text: term + ' (custom)', newTag: true } : null;
+              }
+            });
+            setCityValue();
+          }).fail(function() {
+            resetIntlCityDropdown();
+            setCityValue();
+          });
+        }
+
+        // Kick off: ensure country list is loaded first, then cascade
+        if (!countriesLoaded) {
+          $.getJSON('https://countriesnow.space/api/v0.1/countries', function(data) {
+            if (data && data.data) {
+              intlCountry.empty().append('<option value="">Select Country</option>');
+              data.data.filter(c => c.iso2 !== 'IN').sort((a, b) => a.country.localeCompare(b.country))
+                .forEach(c => intlCountry.append(`<option value="${c.iso2}" data-name="${c.country}">${c.country}</option>`));
+              intlCountry.select2({ placeholder: 'Select Country', allowClear: true, width: '100%' });
+              countriesLoaded = true;
+            }
+            setCountryThenLoadStates();
+          }).fail(function() {
+            countriesLoaded = true;
+            setCountryThenLoadStates();
+          });
+        } else {
+          setCountryThenLoadStates();
+        }
+      }
+
       // Edit city
-      window.editCity = function(id, name, state, image) {
+      window.editCity = function(id, name, state, image, countryCode) {
+        countryCode = countryCode || 'IN';
         $('#cmCityId').val(id);
-        $('#cmState').val(state).trigger('change');
-        $('#cmImagePreview').attr('src', image);
+        $('#cmImagePreview').attr('src', image).show();
         $('#cmOldImage').val(image);
         $('#cmSubmitBtn').text('Update City').removeClass('from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800').addClass('from-green-600 to-green-700 hover:from-green-700 hover:to-green-800');
         $('#cmCancelBtn').removeClass('hidden');
         $('#cmCityFormContainer').removeClass('collapsed');
         $('#cmFormToggle').text('Hide Form');
-        setTimeout(() => {
-          if ($('#cmCityName option[value="' + name + '"]').length > 0) {
-            $('#cmCityName').val(name).trigger('change');
-          } else {
-            Toastify({
-              text: 'City not found in dropdown, please check state selection.',
-              className: 'cm-toast',
-              style: {
-                background: '#F59E0B'
-              },
-              duration: 3000
-            }).showToast();
-          }
-        }, 500);
+
+        const isIndiaState = !!stateCities[state];
+        if (countryCode === 'IN' && isIndiaState) {
+          // India mode — switch without clearing (we're about to set values)
+          $('input[name="countryType"][value="IN"]').prop('checked', true);
+          $('#cmIndiaSection').removeClass('hidden');
+          $('#cmIntlSection').addClass('hidden');
+          $('#cmState').attr('name', 'state');
+          $('#cmCityName').attr('name', 'name');
+          $('#cmIntlState').removeAttr('name');
+          $('#cmIntlCityName').removeAttr('name');
+          $('#cmCountryCode').val('IN');
+          // Set state → populate city dropdown → set city
+          $('#cmState').val(state).trigger('change');
+          setTimeout(() => {
+            if ($('#cmCityName option[value="' + name + '"]').length > 0) {
+              $('#cmCityName').val(name).trigger('change');
+            } else {
+              Toastify({ text: 'City not found in dropdown. Check state selection.', className: 'cm-toast', style: { background: '#F59E0B' }, duration: 3000 }).showToast();
+            }
+          }, 300);
+        } else {
+          // International mode — fill directly from saved DB data, no API calls needed
+          $('input[name="countryType"][value="INTL"]').prop('checked', true);
+          $('#cmIndiaSection').addClass('hidden');
+          $('#cmIntlSection').removeClass('hidden');
+          $('#cmState').removeAttr('name');
+          $('#cmCityName').removeAttr('name');
+          $('#cmIntlState').attr('name', 'state');
+          $('#cmIntlCityName').attr('name', 'name');
+
+          // Set countryCode hidden field — this is what gets submitted
+          $('#cmCountryCode').val(countryCode);
+
+          // State: plain text input pre-filled with saved value (directly editable)
+          $('#cmIntlStateWrapper').html(
+            '<label for="cmIntlState" class="block text-sm font-semibold text-gray-700">State / Region</label>' +
+            '<input type="text" id="cmIntlState" name="state" value="' + state.replace(/"/g, '&quot;') + '" ' +
+            'class="w-full border border-gray-300 rounded-md p-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />'
+          );
+
+          // City: plain text input pre-filled with saved value (directly editable)
+          $('#cmIntlCityWrapper').html(
+            '<label for="cmIntlCityName" class="block text-sm font-semibold text-gray-700">City</label>' +
+            '<input type="text" id="cmIntlCityName" name="name" value="' + name.replace(/"/g, '&quot;') + '" ' +
+            'class="w-full border border-gray-300 rounded-md p-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />' +
+            '<p class="text-xs text-gray-400 mt-1">Edit city name directly. Save to update.</p>'
+          );
+
+          // Country dropdown: load list then select the correct country
+          loadCountriesForIntl(function() {
+            const opt = $('#cmIntlCountry').find('option[value="' + countryCode + '"]');
+            if (opt.length) {
+              $('#cmIntlCountry').val(countryCode).trigger('change.select2');
+            } else if ($('#cmIntlCountry').is('input')) {
+              // API failed, text input fallback — just pre-fill with the code
+              $('#cmIntlCountry').val(countryCode);
+            }
+          });
+        }
       };
 
       // Cancel edit
       $('#cmCancelBtn').on('click', function() {
         $('#cmCityForm')[0].reset();
+        // Reset to India mode
+        $('input[name="countryType"][value="IN"]').prop('checked', true);
+        $('#cmIndiaSection').removeClass('hidden');
+        $('#cmIntlSection').addClass('hidden');
+        $('#cmState').attr('name', 'state');
+        $('#cmCityName').attr('name', 'name');
+        // Restore intl state wrapper if it was replaced with text input
+        if ($('#cmIntlState').is('input')) {
+          $('#cmIntlStateWrapper').html(
+            '<label for="cmIntlState" class="block text-sm font-semibold text-gray-700">State / Region</label>' +
+            '<select class="select2 w-full" id="cmIntlState">' +
+            '<option value="">Select State / Region</option></select>'
+          );
+          $('#cmIntlState').select2({ placeholder: 'Select State / Region', allowClear: true, width: '100%' });
+        } else {
+          if ($('#cmIntlState').data('select2')) $('#cmIntlState').val(null).trigger('change.select2');
+        }
+        $('#cmIntlState').removeAttr('name');
+        $('#cmIntlCityName').removeAttr('name');
+        $('#cmCountryCode').val('IN');
         $('#cmState').val('').trigger('change');
         $('#cmCityName').val('').trigger('change');
+        resetIntlCityDropdown(); // also restores city to select if it was text input
         $('#cmCityId').val('');
         $('#cmOldImage').val('');
-        $('#cmImagePreview').attr('src');
+        $('#cmImagePreview').attr('src', '').hide();
         $('#cmSubmitBtn').text('Add City').removeClass('from-green-600 to-green-700 hover:from-green-700 hover:to-green-800').addClass('from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800');
         $('#cmCancelBtn').addClass('hidden');
         $('#cmCityFormContainer').addClass('collapsed');
