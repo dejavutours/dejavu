@@ -1650,7 +1650,7 @@ a { text-decoration: none; }
               </span>
               <p class="mb-0">
                 <small class="text-muted">Region</small>
-                <span class="fw-semibold d-block"><%= trips.state %>, India</span>
+                <span class="fw-semibold d-block"><%= trips.state %>, <%= trips.tripCountry || 'India' %></span>
               </p>
             </div>
             <% } %>
@@ -2360,7 +2360,7 @@ a { text-decoration: none; }
                 </span>
                 <span class="trip-card-state">
                   <i class="bi bi-geo-alt"></i>
-                  <%= trip.state || 'India' %>
+                  <%= trip.state %>
                 </span>
               </div>
             </div>

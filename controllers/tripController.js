@@ -7,6 +7,24 @@ const AWS = require("aws-sdk");
 const jwt = require("jsonwebtoken");
 
 const gmailuser = require("../models/gmailuser");
+
+// ISO2 country code → display name map for international trips
+const ISO2_COUNTRY_NAMES = {
+  AE: 'UAE', VN: 'Vietnam', TH: 'Thailand', SG: 'Singapore', MY: 'Malaysia',
+  ID: 'Indonesia', LK: 'Sri Lanka', NP: 'Nepal', BT: 'Bhutan', MV: 'Maldives',
+  JP: 'Japan', CN: 'China', KR: 'South Korea', PH: 'Philippines', KH: 'Cambodia',
+  MM: 'Myanmar', LA: 'Laos', TW: 'Taiwan', HK: 'Hong Kong', MO: 'Macau',
+  AE: 'UAE', QA: 'Qatar', OM: 'Oman', BH: 'Bahrain', KW: 'Kuwait', JO: 'Jordan',
+  EG: 'Egypt', MA: 'Morocco', TN: 'Tunisia', KE: 'Kenya', TZ: 'Tanzania',
+  ZA: 'South Africa', ET: 'Ethiopia', MU: 'Mauritius', RE: 'Reunion',
+  TR: 'Turkey', GR: 'Greece', IT: 'Italy', FR: 'France', ES: 'Spain',
+  PT: 'Portugal', GB: 'United Kingdom', DE: 'Germany', CH: 'Switzerland',
+  AT: 'Austria', NL: 'Netherlands', BE: 'Belgium', CZ: 'Czech Republic',
+  HU: 'Hungary', PL: 'Poland', HR: 'Croatia', ME: 'Montenegro', AL: 'Albania',
+  RU: 'Russia', US: 'United States', CA: 'Canada', AU: 'Australia', NZ: 'New Zealand',
+  MX: 'Mexico', BR: 'Brazil', AR: 'Argentina', PE: 'Peru', CL: 'Chile',
+  ZW: 'Zimbabwe', ZM: 'Zambia', UG: 'Uganda', RW: 'Rwanda', BW: 'Botswana',
+};
 const User = require("../models/user");
 const Mobileuser = require("../models/mobileuser");
 const NewTours = require("../models/newTours");
@@ -653,6 +671,19 @@ exports.getFiltertourAPIUseOnly = async (req, res, sortByLatestUpdate) => {
       });
     }
 
+    // Filter by region (India vs International)
+    if (req.query.regionFilter && req.query.regionFilter !== 'ALL') {
+      // Get all Indian state names from Statemst (countryCode === 'IN')
+      const indianStates = await Statemst.find({ countryCode: 'IN', isDeleted: false }).select('name').lean();
+      const indianStateNames = indianStates.map(s => s.name);
+      const indianStateRegexes = indianStateNames.map(n => new RegExp(`^${n}$`, 'i'));
+      if (req.query.regionFilter === 'India') {
+        queryConditions.push({ state: { $in: indianStateRegexes } });
+      } else if (req.query.regionFilter === 'International') {
+        queryConditions.push({ state: { $not: { $in: indianStateRegexes } } });
+      }
+    }
+
     // Filter by departure date (only apply if dates are provided)
     if (
       filters["Filter by departure date between"] &&
@@ -704,6 +735,7 @@ exports.getTours = async (req, res) => {
       tourPackages: response.tours,
       filterChips: Object.values(response.filters).flat(),
       Searchvalue: req.query.searchValue,
+      regionFilter: req.query.regionFilter || 'ALL',
       baseUrl
     });
   } catch (error) {
@@ -1053,6 +1085,18 @@ exports.getTripDetialbyName = async (req, res, next) => {
       };
     });
 
+    // Determine country name for Region display
+    let tripCountry = 'India';
+    if (tripdetails.state) {
+      const stateRecord = await Statemst.findOne({
+        name: new RegExp(`^${tripdetails.state}$`, 'i'),
+        isDeleted: false
+      }).select('countryCode').lean();
+      if (stateRecord && stateRecord.countryCode && stateRecord.countryCode !== 'IN') {
+        tripCountry = ISO2_COUNTRY_NAMES[stateRecord.countryCode] || stateRecord.countryCode;
+      }
+    }
+
     // NEW: Verify if documentUrl points to an existing file
     let documentUrl = tripdetails.documentUrl || "";
     if (documentUrl) {
@@ -1113,6 +1157,7 @@ exports.getTripDetialbyName = async (req, res, next) => {
         deptcities: deptCitiesWithImages,
         documentUrl,
         loggedGmailUser,
+        tripCountry,
         csrfToken: req.csrfToken() // Pass the CSRF token to the EJS template
       },
       recommendedTrips: recommendedTrips || []
