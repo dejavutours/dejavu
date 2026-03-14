@@ -1,25 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <%- include('../../partials/headtag', {isNiceSelect: true}); %>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin - User Details</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="/css/styles.css">
+  <%- include('../../partials/admin/admin-layout-head'); %>
+  <title>Customer Detail — Deja-vu Admin</title>
   <style>
+    :root { --primary: #1a4b8e; }
     .timeline { position: relative; padding-left: 2rem; }
     .timeline-item { position: relative; margin-bottom: 2rem; }
     .timeline-item::before { content: ''; position: absolute; left: -1.5rem; top: 0; width: 2px; height: 100%; background: #E2E8F0; }
     .timeline-marker { position: absolute; left: -1.75rem; top: 0; width: 1rem; height: 1rem; background: var(--primary); border-radius: 50%; }
     .card { border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-    .profile-card { background: linear-gradient(135deg, var(--primary), #4C669F) }
+    .profile-card { background: linear-gradient(135deg, var(--primary), #4C669F); }
   </style>
 </head>
-<body>
-  <%- include('../../partials/header', {isSearch: false}); %>
-  <div class="dashboard-container container my-5">
+<body class="admin-body">
+  <%- include('../../partials/admin/admin-topbar', { pageTitle: 'Customer Detail' }); %>
+  <%- include('../../partials/admin/admin-sidebar', { activeNav: 'customers' }); %>
+  <main class="admin-content">
+  <%- include('../../partials/admin/admin-breadcrumb', { breadcrumbs: [{ label: 'Customers', url: '/admin/users' }, { label: 'Detail' }] }); %>
+  <div class="container-xl">
     <div class="row">
       <!-- Profile Card -->
       <div class="col-lg-4">
@@ -67,7 +66,7 @@
       </div>
     </div>
   </div>
-  <%- include('../../partials/footer') %>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+  </main>
 </body>
 </html>

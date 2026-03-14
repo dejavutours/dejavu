@@ -1,0 +1,102 @@
+<%
+  // activeNav is passed from controller render — e.g. { activeNav: 'bookings' }
+  // Defaults to empty string if not set
+  const _nav = typeof activeNav !== 'undefined' ? activeNav : '';
+%>
+
+<!-- Sidebar overlay (mobile tap-to-close) -->
+<div class="admin-sidebar-overlay" id="adminOverlay" onclick="toggleAdminSidebar()"></div>
+
+<!-- Sidebar -->
+<nav class="admin-sidebar" id="adminSidebar" aria-label="Admin navigation">
+
+  <!-- Logo -->
+  <div class="admin-sidebar-logo">
+    <img src="/img/deja-vu icon.png" height="30" alt="Deja-vu Logo" onerror="this.style.display='none'">
+    <span class="text-white fw-semibold" style="font-size:0.9rem; letter-spacing:-0.01em;">Deja-vu Admin</span>
+  </div>
+
+  <!-- Nav items -->
+  <div class="flex-grow-1 py-2">
+
+    <a class="admin-nav-link <%= _nav === 'dashboard' ? 'active' : '' %>" href="/admin/dashboard">
+      <i class="bi bi-speedometer2"></i> Dashboard
+    </a>
+
+    <div class="admin-nav-section">Operations</div>
+    <a class="admin-nav-link <%= _nav === 'addtour' ? 'active' : '' %>" href="/admin/addtours">
+      <i class="bi bi-plus-circle"></i> Add New Trip
+    </a>
+    <a class="admin-nav-link <%= _nav === 'bookings' ? 'active' : '' %>" href="/admin/bookings">
+      <i class="bi bi-journal-bookmark-fill"></i> Bookings
+    </a>
+    <a class="admin-nav-link <%= _nav === 'leads' ? 'active' : '' %>" href="/admin/booking-leads">
+      <i class="bi bi-megaphone-fill"></i> Booking Leads
+    </a>
+    <a class="admin-nav-link <%= _nav === 'customtrips' ? 'active' : '' %>" href="/customTrip">
+      <i class="bi bi-pencil-square"></i> Custom Requests
+    </a>
+    <a class="admin-nav-link <%= _nav === 'quickcalls' ? 'active' : '' %>" href="/quick-call">
+      <i class="bi bi-telephone-fill"></i> Quick Calls
+    </a>
+    <a class="admin-nav-link <%= _nav === 'customers' ? 'active' : '' %>" href="/admin/users">
+      <i class="bi bi-people-fill"></i> Customers
+    </a>
+    <a class="admin-nav-link <%= _nav === 'documents' ? 'active' : '' %>" href="/admin/search-documents">
+      <i class="bi bi-file-earmark-text-fill"></i> Documents
+    </a>
+
+    <div class="admin-nav-section">Master Data</div>
+
+    <a class="admin-nav-link <%= _nav === 'states' ? 'active' : '' %>" href="/states">
+      <i class="bi bi-map-fill"></i> States
+    </a>
+    <a class="admin-nav-link <%= _nav === 'cities' ? 'active' : '' %>" href="/cities">
+      <i class="bi bi-buildings-fill"></i> Cities
+    </a>
+    <a class="admin-nav-link <%= _nav === 'categories' ? 'active' : '' %>" href="/categories">
+      <i class="bi bi-tags-fill"></i> Categories
+    </a>
+    <a class="admin-nav-link <%= _nav === 'catorder' ? 'active' : '' %>" href="/admin/category-trip-order">
+      <i class="bi bi-sort-numeric-down"></i> Category Order
+    </a>
+    <a class="admin-nav-link <%= _nav === 'banners' ? 'active' : '' %>" href="/banner">
+      <i class="bi bi-images"></i> Banners
+    </a>
+    </div>
+
+    <div class="admin-nav-section">Trip Display</div>
+    <a class="admin-nav-link <%= _nav === 'trips' ? 'active' : '' %>" href="/trips">
+      <i class="bi bi-airplane-fill"></i> Trip Management
+    </a>
+
+  </div>
+
+  <!-- Bottom: View Site + Sign Out -->
+  <div style="border-top: 1px solid rgba(255,255,255,0.07); padding: 0.75rem 0;">
+    <a href="/triplist" target="_blank" class="admin-nav-link">
+      <i class="bi bi-box-arrow-up-right"></i> View Live Site
+    </a>
+    <div class="admin-nav-link" style="cursor:default; opacity:0.7;" title="<%= typeof profile !== 'undefined' ? (profile?.email || '') : '' %>">
+      <i class="bi bi-person-circle"></i>
+      <span class="text-truncate" style="max-width:155px;">
+        <%= typeof profile !== 'undefined' ? (profile?.email?.split('@')[0] || 'Admin') : 'Admin' %>
+      </span>
+    </div>
+    <!-- Logout (POST required by CSRF middleware) -->
+    <form action="/logout" method="POST" class="m-0 px-2" style="margin-top:2px !important;">
+      <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+      <button type="submit" class="admin-nav-link w-100 border-0 text-start" style="background:none; cursor:pointer;">
+        <i class="bi bi-box-arrow-left"></i> Sign Out
+      </button>
+    </form>
+  </div>
+
+</nav>
+
+<script>
+  function toggleAdminSidebar() {
+    document.getElementById('adminSidebar').classList.toggle('show');
+    document.getElementById('adminOverlay').classList.toggle('show');
+  }
+</script>

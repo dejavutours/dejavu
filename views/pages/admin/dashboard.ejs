@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../../partials/admin/admin-layout-head'); %>
+  <title>Dashboard — Deja-vu Admin</title>
+  <style>
+    .quick-action-btn {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.65rem 1rem; border-radius: 8px;
+      text-decoration: none; font-size: 0.855rem; font-weight: 500;
+      transition: background 0.15s, color 0.15s;
+      border: 1px solid var(--admin-border);
+      background: #fff; color: #1e293b;
+    }
+    .quick-action-btn:hover { background: var(--admin-primary); color: #fff; border-color: var(--admin-primary); text-decoration: none; }
+    .quick-action-btn i { font-size: 1rem; }
+
+    .lead-age-warn { color: #dc3545; font-weight: 600; }
+
+    .status-badge { display: inline-block; padding: 0.2em 0.65em; border-radius: 20px; font-size: 0.72rem; font-weight: 600; }
+    .status-pending   { background: #fef3c7; color: #92400e; }
+    .status-contacted { background: #dbeafe; color: #1e40af; }
+    .status-converted { background: #d1fae5; color: #065f46; }
+    .status-confirmed { background: #d1fae5; color: #065f46; }
+    .status-rejected  { background: #fee2e2; color: #991b1b; }
+    .status-cancelled { background: #f1f5f9; color: #475569; }
+  </style>
+</head>
+<body class="admin-body">
+
+<%- include('../../partials/admin/admin-topbar', { pageTitle: 'Dashboard' }); %>
+<%- include('../../partials/admin/admin-sidebar', { activeNav: 'dashboard' }); %>
+
+<main class="admin-content">
+
+  <!-- Page heading -->
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+    <div>
+      <h4 class="fw-bold mb-0 text-dark">Welcome back 👋</h4>
+      <p class="text-muted mb-0" style="font-size:0.83rem;">
+        Here's what's happening with Deja-vu Tours today.
+      </p>
+    </div>
+    <a href="/admin/addtours" class="btn btn-primary btn-sm d-flex align-items-center gap-1">
+      <i class="bi bi-plus-lg"></i> Add New Trip
+    </a>
+  </div>
+
+  <!-- ── ROW 1: Primary KPI cards ── -->
+  <div class="row g-3 mb-3">
+
+    <div class="col-6 col-md-3">
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon" style="background:#eff6ff; color:#1d4ed8;">
+          <i class="bi bi-airplane-fill"></i>
+        </div>
+        <div>
+          <div class="admin-stat-label">Total Trips</div>
+          <div class="admin-stat-value"><%= stats.totalTrips || 0 %></div>
+          <div class="admin-stat-sub"><%= stats.activeTrips || 0 %> active</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon" style="background:#f0fdf4; color:#16a34a;">
+          <i class="bi bi-journal-check"></i>
+        </div>
+        <div>
+          <div class="admin-stat-label">Total Bookings</div>
+          <div class="admin-stat-value"><%= stats.totalBookings || 0 %></div>
+          <div class="admin-stat-sub"><%= stats.todayBookings || 0 %> today</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon" style="background:#fffbeb; color:#d97706;">
+          <i class="bi bi-megaphone-fill"></i>
+        </div>
+        <div>
+          <div class="admin-stat-label">Booking Leads</div>
+          <div class="admin-stat-value"><%= stats.totalLeads || 0 %></div>
+          <div class="admin-stat-sub"><%= stats.pendingLeads || 0 %> pending</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon" style="background:#fdf4ff; color:#9333ea;">
+          <i class="bi bi-people-fill"></i>
+        </div>
+        <div>
+          <div class="admin-stat-label">Customers</div>
+          <div class="admin-stat-value"><%= stats.totalCustomers || 0 %></div>
+          <div class="admin-stat-sub">registered users</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── ROW 2: Secondary KPI cards ── -->
+  <div class="row g-3 mb-4">
+
+    <div class="col-6 col-md-3">
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon" style="background:#f0f9ff; color:#0284c7;">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div>
+          <div class="admin-stat-label">Confirmed</div>
+          <div class="admin-stat-value"><%= stats.confirmedBookings || 0 %></div>
+          <div class="admin-stat-sub">bookings</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon" style="background:#fff1f2; color:#e11d48;">
+          <i class="bi bi-hourglass-split"></i>
+        </div>
+        <div>
+          <div class="admin-stat-label">Pending</div>
+          <div class="admin-stat-value"><%= stats.pendingBookings || 0 %></div>
+          <div class="admin-stat-sub">bookings</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon" style="background:#f0fdf4; color:#15803d;">
+          <i class="bi bi-pencil-square"></i>
+        </div>
+        <div>
+          <div class="admin-stat-label">Custom Trips</div>
+          <div class="admin-stat-value"><%= stats.totalCustomTrips || 0 %></div>
+          <div class="admin-stat-sub">requests</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon" style="background:#fff7ed; color:#ea580c;">
+          <i class="bi bi-telephone-fill"></i>
+        </div>
+        <div>
+          <div class="admin-stat-label">Quick Calls</div>
+          <div class="admin-stat-value"><%= stats.totalQuickCalls || 0 %></div>
+          <div class="admin-stat-sub">callbacks</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── ROW 3: Recent Bookings + Quick Actions ── -->
+  <div class="row g-3 mb-4">
+
+    <!-- Recent Bookings -->
+    <div class="col-lg-8">
+      <div class="admin-card h-100">
+        <div class="d-flex align-items-center justify-content-between px-3 pt-3 pb-2 border-bottom">
+          <h6 class="fw-semibold mb-0">Recent Bookings</h6>
+          <a href="/admin/bookings" class="btn btn-sm btn-outline-primary" style="font-size:0.78rem;">View All</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover mb-0" style="font-size:0.82rem;">
+            <thead class="table-light">
+              <tr>
+                <th class="ps-3">Guest</th>
+                <th>Trip</th>
+                <th>From</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (recentBookings && recentBookings.length > 0) { %>
+                <% recentBookings.forEach(function(b) { %>
+                  <% const st = (b.status || '').toLowerCase(); %>
+                  <tr style="cursor:pointer;" onclick="window.location='/admin/bookings/<%= b._id %>'">
+                    <td class="ps-3 fw-medium"><%= b.guestName || '—' %></td>
+                    <td class="text-truncate" style="max-width:160px;"><%= b.tripName || '—' %></td>
+                    <td><%= b.joiningFrom || '—' %></td>
+                    <td>
+                      <span class="status-badge status-<%= st %>"><%= b.status || 'unknown' %></span>
+                    </td>
+                    <td class="text-muted">
+                      <%= b.createdAt ? new Date(b.createdAt).toLocaleDateString('en-IN', {day:'2-digit', month:'short'}) : '—' %>
+                    </td>
+                  </tr>
+                <% }); %>
+              <% } else { %>
+                <tr>
+                  <td colspan="5" class="text-center text-muted py-4">No bookings yet</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="col-lg-4">
+      <div class="admin-card h-100 p-3">
+        <h6 class="fw-semibold mb-3">Quick Actions</h6>
+        <div class="d-flex flex-column gap-2">
+          <a href="/admin/addtours" class="quick-action-btn">
+            <i class="bi bi-plus-circle-fill text-primary"></i> Add New Trip
+          </a>
+          <a href="/admin/bookings/create" class="quick-action-btn">
+            <i class="bi bi-journal-plus text-success"></i> Create Booking
+          </a>
+          <a href="/admin/booking-leads" class="quick-action-btn">
+            <i class="bi bi-megaphone-fill text-warning"></i> View Leads
+          </a>
+          <a href="/admin/users" class="quick-action-btn">
+            <i class="bi bi-people-fill text-purple" style="color:#7c3aed;"></i> Manage Customers
+          </a>
+          <a href="/cities" class="quick-action-btn">
+            <i class="bi bi-buildings-fill text-secondary"></i> Manage Cities
+          </a>
+          <a href="/admin/search-documents" class="quick-action-btn">
+            <i class="bi bi-file-earmark-text-fill text-info"></i> Search Documents
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── ROW 4: Lead Status + Recent Leads ── -->
+  <div class="row g-3">
+
+    <!-- Lead status funnel -->
+    <div class="col-md-4">
+      <div class="admin-card p-3 h-100">
+        <h6 class="fw-semibold mb-3">Lead Pipeline</h6>
+        <%
+          const totalL = stats.totalLeads || 1;
+          const pendW  = Math.round(((stats.pendingLeads || 0) / totalL) * 100);
+          const contW  = Math.round(((stats.contactedLeads || 0) / totalL) * 100);
+          const convW  = Math.round(((stats.convertedLeads || 0) / totalL) * 100);
+        %>
+        <div class="mb-3">
+          <div class="d-flex justify-content-between mb-1" style="font-size:0.8rem;">
+            <span class="text-muted">Pending</span>
+            <span class="fw-semibold"><%= stats.pendingLeads || 0 %></span>
+          </div>
+          <div class="progress" style="height:7px;">
+            <div class="progress-bar bg-warning" style="width:<%= pendW %>%"></div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="d-flex justify-content-between mb-1" style="font-size:0.8rem;">
+            <span class="text-muted">Contacted</span>
+            <span class="fw-semibold"><%= stats.contactedLeads || 0 %></span>
+          </div>
+          <div class="progress" style="height:7px;">
+            <div class="progress-bar bg-primary" style="width:<%= contW %>%"></div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="d-flex justify-content-between mb-1" style="font-size:0.8rem;">
+            <span class="text-muted">Converted</span>
+            <span class="fw-semibold"><%= stats.convertedLeads || 0 %></span>
+          </div>
+          <div class="progress" style="height:7px;">
+            <div class="progress-bar bg-success" style="width:<%= convW %>%"></div>
+          </div>
+        </div>
+        <a href="/admin/booking-leads" class="btn btn-sm btn-outline-secondary w-100 mt-1" style="font-size:0.78rem;">
+          Manage All Leads
+        </a>
+      </div>
+    </div>
+
+    <!-- Recent Leads -->
+    <div class="col-md-8">
+      <div class="admin-card h-100">
+        <div class="d-flex align-items-center justify-content-between px-3 pt-3 pb-2 border-bottom">
+          <h6 class="fw-semibold mb-0">Recent Booking Leads</h6>
+          <a href="/admin/booking-leads" class="btn btn-sm btn-outline-primary" style="font-size:0.78rem;">View All</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover mb-0" style="font-size:0.82rem;">
+            <thead class="table-light">
+              <tr>
+                <th class="ps-3">Guest</th>
+                <th>Trip</th>
+                <th>Status</th>
+                <th>Age</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (recentLeads && recentLeads.length > 0) { %>
+                <% recentLeads.forEach(function(lead) { %>
+                  <%
+                    const st = (lead.status || 'pending').toLowerCase();
+                    const ageMs = Date.now() - new Date(lead.createdAt).getTime();
+                    const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24));
+                    const isStale = st === 'pending' && ageDays >= 2;
+                  %>
+                  <tr>
+                    <td class="ps-3 fw-medium"><%= lead.guestName || '—' %></td>
+                    <td class="text-truncate" style="max-width:140px;">
+                      <%= lead.tripId ? lead.tripId.name : '—' %>
+                    </td>
+                    <td>
+                      <span class="status-badge status-<%= st %>"><%= lead.status || 'pending' %></span>
+                    </td>
+                    <td class="<%= isStale ? 'lead-age-warn' : 'text-muted' %>">
+                      <%= ageDays === 0 ? 'Today' : ageDays + 'd ago' %>
+                    </td>
+                  </tr>
+                <% }); %>
+              <% } else { %>
+                <tr>
+                  <td colspan="4" class="text-center text-muted py-4">No leads yet</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- end rows -->
+
+</main>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

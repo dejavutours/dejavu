@@ -1,12 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <%- include('../../partials/headtag', {isNiceSelect: false}); %>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin - Trip Bookings Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css">
+  <%- include('../../partials/admin/admin-layout-head'); %>
+  <title>Bookings — Deja-vu Admin</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     body { background-color: var(--bg-color); }
@@ -87,10 +83,13 @@
     .nice-select.open .list { width: 100%; }
   </style>
 </head>
-<body>
-  <%- include('../../partials/header', {isSearch: false}); %>
-  <header class="container-fluid d-flex flex-wrap justify-content-between gap-3 py-3">
-    <h1>Trip Bookings Dashboard</h1>
+<body class="admin-body">
+  <%- include('../../partials/admin/admin-topbar', { pageTitle: 'Trip Bookings' }); %>
+  <%- include('../../partials/admin/admin-sidebar', { activeNav: 'bookings' }); %>
+  <main class="admin-content">
+  <%- include('../../partials/admin/admin-breadcrumb', { breadcrumbs: [{ label: 'Bookings' }] }); %>
+  <header class="d-flex flex-wrap justify-content-between gap-3 mb-3">
+    <h1 style="font-size:1.5rem; font-weight:700; color:#1e293b; margin:0;">Trip Bookings</h1>
     <div class="d-flex flex-grow-1 justify-content-end gap-2 flex-wrap">
       <a href="/admin/booking-leads" class="btn btn-info position-relative">
         <i class="bi bi-inbox me-2"></i>Booking Leads
@@ -662,5 +661,6 @@
     document.querySelector('.card-body')?.classList?.remove('d-none');
     document.querySelectorAll('.charts-content')?.forEach(e => e.classList.remove('visually-hidden'));
   </script>
+  </main>
 </body>
 </html>

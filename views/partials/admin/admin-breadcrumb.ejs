@@ -1,0 +1,20 @@
+<% if (typeof breadcrumbs !== 'undefined' && Array.isArray(breadcrumbs) && breadcrumbs.length > 0) { %>
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb" style="font-size:0.82rem; margin-bottom:0;">
+    <li class="breadcrumb-item">
+      <a href="/admin/dashboard" class="text-decoration-none text-secondary">
+        <i class="bi bi-house-door-fill"></i>
+      </a>
+    </li>
+    <% breadcrumbs.forEach(function(crumb, i) { %>
+      <% if (i === breadcrumbs.length - 1) { %>
+        <li class="breadcrumb-item active text-dark fw-medium" aria-current="page"><%= crumb.label %></li>
+      <% } else { %>
+        <li class="breadcrumb-item">
+          <a href="<%= crumb.url %>" class="text-decoration-none text-secondary"><%= crumb.label %></a>
+        </li>
+      <% } %>
+    <% }); %>
+  </ol>
+</nav>
+<% } %>
