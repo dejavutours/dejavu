@@ -1,127 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard - Custom Trip Queries</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <%- include('../../partials/admin/admin-layout-head'); %>
+  <title>Custom Trip Requests — Deja-vu Admin</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
-    .sm-container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 1.5rem 1rem;
-      font-family: "Inter", sans-serif;
-      background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
-    }
-
-    .sm-tabs {
-      display: flex;
-      border-bottom: 2px solid #d1d5db;
-      margin-bottom: 1rem;
-    }
-
-    .sm-tab {
-      padding: 0.5rem 1rem;
-      color: #4b5563;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .sm-tab:hover {
-      color: #1d4ed8;
-    }
-
-    .sm-tab.active {
-      border-bottom: 3px solid #1d4ed8;
-      color: #1d4ed8;
+    .sm-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 0.75rem;
     }
 
     .sm-card {
-      background: #ffffff;
-      border-radius: 0.75rem;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-      padding: 0.75rem;
+      background: #fff;
+      border-radius: 0.6rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      position: relative;
+      overflow: hidden;
     }
 
-    .sm-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
-    }
-
-    .sm-card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 1rem;
-      max-height: 75vh;
-      overflow-y: auto;
-      padding: 0.75rem;
-      background: #f3f4f6;
-      border-radius: 0.75rem;
-    }
-
-    .sm-actions {
-      position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      opacity: 0;
-      transition: opacity 0.2s ease;
+    .sm-card-header {
       display: flex;
-      gap: 0.25rem;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 0.75rem 0.4rem;
+      border-bottom: 1px solid #f1f5f9;
     }
 
-    .sm-card:hover .sm-actions {
-      opacity: 1;
+    .sm-checkbox {
+      width: 1rem;
+      height: 1rem;
+      flex-shrink: 0;
+      cursor: pointer;
+      accent-color: #0d6efd;
     }
 
-    .sm-action-btn {
+    .sm-card-name {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #1e293b;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sm-card-date {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .sm-card-body {
       padding: 0.5rem 0.75rem;
-      font-size: 0.75rem;
-      font-weight: 500;
-      border-radius: 0.375rem;
-      transition: all 0.2s ease;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      flex: 1;
     }
 
-    .sm-action-btn.view {
-      background: linear-gradient(to right, #3b82f6, #1d4ed8);
-      color: white;
+    .sm-card-row {
+      font-size: 0.78rem;
+      color: #475569;
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .sm-action-btn.view:hover {
-      background: linear-gradient(to right, #1d4ed8, #1e40af);
-    }
-
-    .sm-action-btn.delete {
-      background: linear-gradient(to right, #ef4444, #dc2626);
-      color: white;
-    }
-
-    .sm-action-btn.delete:hover {
-      background: linear-gradient(to right, #dc2626, #b91c1c);
+    .sm-card-footer {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.75rem;
+      border-top: 1px solid #f1f5f9;
+      background: #fafafa;
     }
 
     .sm-filter-bar {
       display: flex;
-      gap: 0.75rem;
+      gap: 0.5rem;
       margin-bottom: 1rem;
       align-items: center;
       flex-wrap: wrap;
+      background: #fff;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
 
     .sm-filter-bar .filter-item {
       flex: 1;
-      min-width: 200px;
-      max-width: 300px;
+      min-width: 160px;
+      max-width: 240px;
+    }
+
+    .sm-filter-bar input[type="text"],
+    .sm-filter-bar select:not(.select2-hidden-accessible) {
+      display: block; width: 100%; padding: 0.375rem 0.75rem;
+      font-size: 0.875rem; color: #212529; background-color: #fff;
+      border: 1px solid #ced4da; border-radius: 0.375rem; outline: none;
+    }
+
+    .sm-filter-bar input[type="text"]:focus {
+      border-color: #86b7fe;
+      box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
+    }
+
+    .sm-filter-bar .relative input[type="text"] { padding-left: 2rem; }
+
+    .sm-filter-bar .relative svg {
+      position: absolute; left: 0.6rem; top: 50%; transform: translateY(-50%);
+      width: 1rem; height: 1rem; color: #6c757d; pointer-events: none;
+    }
+
+    .sm-filter-bar button {
+      flex-shrink: 0; font-size: 0.8rem; font-weight: 500;
+      padding: 0.375rem 0.75rem; border-radius: 0.375rem;
+      border: none; cursor: pointer; white-space: nowrap;
     }
 
     .sm-loading {
@@ -158,28 +157,20 @@
       display: inline-flex;
       align-items: center;
       gap: 0.25rem;
-      padding: 0.5rem 1rem;
-      font-size: 0.875rem;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
       border-radius: 0.375rem;
       transition: all 0.2s ease;
     }
 
     .sm-contact-btn.phone {
-      background: linear-gradient(to right, #10b981, #059669);
+      background: #10b981;
       color: white;
-    }
-
-    .sm-contact-btn.phone:hover {
-      background: linear-gradient(to right, #059669, #047857);
     }
 
     .sm-contact-btn.whatsapp {
-      background: linear-gradient(to right, #25d366, #128c7e);
+      background: #25d366;
       color: white;
-    }
-
-    .sm-contact-btn.whatsapp:hover {
-      background: linear-gradient(to right, #128c7e, #0a6d5e);
     }
 
     .sm-copy-btn {
@@ -229,14 +220,6 @@
         align-items: stretch;
       }
 
-      .sm-tabs {
-        flex-wrap: wrap;
-      }
-
-      .sm-tab {
-        flex: 1 1 auto;
-        text-align: center;
-      }
     }
 
     @keyframes sm-fadeIn {
@@ -244,29 +227,19 @@
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
-  <%- include('../../partials/headtag', {isNiceSelect: true}); %>
 </head>
-<body class="bg-gray-100">
-  <%- include('../../partials/header', {isSearch: false}); %>
-  <div class="sm-container">
+<body class="admin-body">
+  <%- include('../../partials/admin/admin-topbar', { pageTitle: 'Custom Trip Requests' }); %>
+  <%- include('../../partials/admin/admin-sidebar', { activeNav: 'customtrips' }); %>
+  <main class="admin-content">
+  <%- include('../../partials/admin/admin-breadcrumb', { breadcrumbs: [{ label: 'Leads' }, { label: 'Custom Requests' }] }); %>
+  <div class="sm-container" style="background:transparent; padding:0; max-width:100%;">
     <!-- Loading Overlay -->
     <div class="sm-loading" id="smLoadingOverlay">
       <div class="sm-loading-spinner"></div>
     </div>
 
-    <!-- Tab Navigation -->
-    <div class="sm-tabs">
-      <div class="sm-tab" data-tab="cities" data-redirect="/cities">City Master</div>
-      <div class="sm-tab" data-tab="states" data-redirect="/states">State Master</div>
-      <div class="sm-tab" data-tab="category" data-redirect="/categories">Category Master</div>
-      <div class="sm-tab" data-tab="banners" data-redirect="/banner">Banner Master</div>
-      <div class="sm-tab" data-tab="trips" data-redirect="/trips">Trip Master</div>
-      <div class="sm-tab active" data-tab="customTrip" data-redirect="/customTrip">Custom Trip</div>
-      <div class="sm-tab" data-tab="quickcall" data-redirect="quick-call">Quick Call</div>
-    </div>
-
-    <!-- Custom Trip Queries Tab Content -->
-    <div id="customTrip-tab" class="sm-tab-content">
+    <!-- Custom Trip Requests Content -->
       <!-- Filter and Search Bar -->
       <div class="sm-filter-bar">
         <div class="filter-item">
@@ -277,20 +250,13 @@
             </svg>
           </div>
         </div>
-        <button id="smClearFiltersBtn" class="px-3 py-1.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-sm font-medium">
-          Clear Filters
-        </button>
-        <button id="smBulkDeleteBtn" class="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium hidden">
-          Delete Selected
-        </button>
-        <button id="smExportBtn" class="sm-export-btn text-sm font-medium">
-          📊 Export to Excel
-        </button>
+        <button id="smClearFiltersBtn" class="btn btn-secondary btn-sm">Clear Filters</button>
+        <button id="smBulkDeleteBtn" class="btn btn-danger btn-sm d-none">Delete Selected</button>
+        <button id="smExportBtn" class="btn btn-primary btn-sm"><i class="bi bi-file-earmark-excel me-1"></i>Export</button>
       </div>
 
       <!-- Custom Trip Cards -->
       <div class="sm-card-grid" id="smCustomTripGrid"></div>
-    </div>
 
     <!-- Details Modal -->
     <div class="modal fade" id="smDetailsModal" tabindex="-1" aria-labelledby="smDetailsModalLabel" aria-hidden="true">
@@ -304,9 +270,7 @@
             <!-- Details will be populated via JavaScript -->
           </div>
           <div class="modal-footer">
-            <button type="button" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm" data-bs-dismiss="modal">
-              Close
-            </button>
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
@@ -317,19 +281,15 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title text-base font-semibold">Confirm Delete</h5>
+            <h5 class="modal-title fw-semibold">Confirm Delete</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="modal-body text-sm">
+          <div class="modal-body small">
             Are you sure you want to delete the selected trip query(s)?
           </div>
           <div class="modal-footer">
-            <button type="button" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm" data-bs-dismiss="modal">
-              Cancel
-            </button>
-            <button type="button" id="smConfirmDeleteBtn" class="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm">
-              Delete
-            </button>
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" id="smConfirmDeleteBtn" class="btn btn-danger btn-sm">Delete</button>
           </div>
         </div>
       </div>
@@ -484,17 +444,22 @@
           filteredTrips.forEach(trip => {
             const card = `
               <div class="sm-card" data-id="${trip._id}">
-                <input type="checkbox" class="sm-checkbox absolute top-2 left-2" data-id="${trip._id}" />
-                <h4 class="text-base font-semibold text-gray-800">${trip.name}</h4>
-                <p class="text-xs text-gray-600">Destination: ${trip.destination}</p>
-                <p class="text-xs text-gray-600">Email: ${trip.email}</p>
-                <p class="text-xs text-gray-600">Mobile: ${trip.mobile} <button class="sm-copy-btn" onclick="copyToClipboard('${trip.mobile}')">Copy</button></p>
-                <p class="text-xs text-gray-600">Submitted: ${new Date(trip.createdAt).toLocaleDateString()}</p>
-                <div class="sm-actions">
-                  <button class="sm-action-btn view" onclick="viewDetails('${trip._id}')">View Details</button>
-                  <form action="/customTrip/delete/${trip._id}" method="POST" class="d-inline sm-delete-form">
+                <div class="sm-card-header">
+                  <input type="checkbox" class="sm-checkbox" data-id="${trip._id}">
+                  <span class="sm-card-name">${trip.name}</span>
+                  <span class="sm-card-date">${new Date(trip.createdAt).toLocaleDateString()}</span>
+                </div>
+                <div class="sm-card-body">
+                  <div class="sm-card-row"><i class="bi bi-geo-alt-fill text-danger"></i>${trip.destination}</div>
+                  <div class="sm-card-row"><i class="bi bi-envelope-fill text-secondary"></i>${trip.email}</div>
+                  <div class="sm-card-row"><i class="bi bi-telephone-fill text-success"></i>${trip.mobile} <button class="sm-copy-btn" onclick="copyToClipboard('${trip.mobile}')">Copy</button></div>
+                  ${(trip.days || trip.persons) ? `<div class="sm-card-row text-secondary"><i class="bi bi-calendar3"></i>${trip.days ? trip.days + ' days' : ''} ${trip.persons ? '· ' + trip.persons + ' persons' : ''}</div>` : ''}
+                </div>
+                <div class="sm-card-footer">
+                  <button class="btn btn-sm btn-outline-primary" onclick="viewDetails('${trip._id}')"><i class="bi bi-eye-fill me-1"></i>View</button>
+                  <form action="/customTrip/delete/${trip._id}" method="POST" class="d-inline sm-delete-form ms-auto">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                    <button type="submit" class="sm-action-btn delete">Delete</button>
+                    <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i></button>
                   </form>
                 </div>
               </div>
@@ -502,7 +467,7 @@
             tripGrid.append(card);
           });
         }
-        $('#smBulkDeleteBtn').toggle(selectedTrips.length > 0);
+        $('#smBulkDeleteBtn').toggleClass('d-none', selectedTrips.length === 0);
       }
 
       // View details (ADDED MOBILE COPY BUTTON IN MODAL TOO)
@@ -657,20 +622,14 @@
         } else {
           selectedTrips = selectedTrips.filter(sid => sid !== id);
         }
-        $('#smBulkDeleteBtn').toggle(selectedTrips.length > 0);
+        $('#smBulkDeleteBtn').toggleClass('d-none', selectedTrips.length === 0);
       });
 
-      // Tab switching (FIXED redirect path consistency)
-      $('.sm-tab').on('click', function() {
-        const redirectUrl = $(this).data('redirect');
-        if (redirectUrl) {
-          window.location.href = redirectUrl;
-        }
-      });
 
       // Initial render
       renderTrips();
     });
   </script>
+  </main>
 </body>
 </html>

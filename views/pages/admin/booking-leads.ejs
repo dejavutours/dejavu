@@ -1,14 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <%- include('../../partials/headtag', {isNiceSelect: false}); %>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin - Booking Leads</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <%- include('../../partials/admin/admin-layout-head'); %>
+  <title>Booking Leads — Deja-vu Admin</title>
   <style>
-    body { background-color: #f3f4f6; }
     .stats-card { background: white; border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
     .badge-pending { background-color: #fbbf24; color: #000; }
     .badge-contacted { background-color: #3b82f6; color: #fff; }
@@ -16,15 +11,11 @@
     .badge-rejected { background-color: #ef4444; color: #fff; }
   </style>
 </head>
-<body>
-  <%- include('../../partials/header', {isSearch: false}); %>
-  <div class="container-fluid py-4">
-    <nav aria-label="breadcrumb" class="mb-3">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/admin/bookings">Bookings</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Booking Leads</li>
-      </ol>
-    </nav>
+<body class="admin-body">
+  <%- include('../../partials/admin/admin-topbar', { pageTitle: 'Booking Leads' }); %>
+  <%- include('../../partials/admin/admin-sidebar', { activeNav: 'leads' }); %>
+  <main class="admin-content">
+  <%- include('../../partials/admin/admin-breadcrumb', { breadcrumbs: [{ label: 'Bookings', url: '/admin/bookings' }, { label: 'Booking Leads' }] }); %>
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
       <h1>Booking Leads</h1>
       <div class="d-flex gap-2">
@@ -232,9 +223,8 @@
     }
   </script>
   
-  <!-- Bootstrap JS CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+  </main>
 </body>
 </html>
 

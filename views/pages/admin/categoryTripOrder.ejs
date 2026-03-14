@@ -2,11 +2,9 @@
 <html lang="en">
 
 <head>
+  <%- include('../../partials/admin/admin-layout-head'); %>
   <meta name="csrf-token" content="<%= csrfToken %>">
-  <%- include('../../partials/headtag', { title: 'Manage Trip Order' , isNiceSelect: false }) %>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <title>Category Trip Order — Deja-vu Admin</title>
 
     <style>
       body {
@@ -19,10 +17,8 @@
         border-bottom: 1px solid #dee2e6;
         padding: 16px 0;
         margin-bottom: 20px;
-        position: sticky;
-        top: 0;
-        z-index: 100;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border-radius: 0.5rem;
       }
 
       .header-content {
@@ -196,10 +192,13 @@
     </style>
 </head>
 
-<body>
-  <%- include('../../partials/header', {isSearch: false}) %>
+<body class="admin-body">
+  <%- include('../../partials/admin/admin-topbar', { pageTitle: 'Category Trip Order' }); %>
+  <%- include('../../partials/admin/admin-sidebar', { activeNav: 'catorder' }); %>
+  <main class="admin-content">
+  <%- include('../../partials/admin/admin-breadcrumb', { breadcrumbs: [{ label: 'Master Data' }, { label: 'Category Order' }] }); %>
 
-    <!-- Mobile-Friendly Sticky Header -->
+    <!-- Content -->
     <div class="page-header">
       <div class="container-fluid px-3 px-xxl-4">
         <div class="header-content">
@@ -211,14 +210,6 @@
               Drag cards to reorder • Changes auto-highlight Save button
             </p>
           </div>
-          <a href="/categories" target="_blank" rel="noopener"
-            class="btn btn-outline-primary d-flex align-items-center gap-2 shadow-sm hover-lift">
-            <i class="bi bi-tags"></i>
-            <span class="d-none d-sm-inline">Manage Categories</span>
-            <span class="d-inline d-sm-none">Categories</span>
-            <i class="bi bi-box-arrow-up-right small"></i>
-          </a>
-
           <div class="header-controls">
             <div>
               <select id="categorySelect" class="form-select form-select-lg shadow-sm">
@@ -430,6 +421,7 @@
           }
         });
       </script>
+  </main>
 </body>
 
 </html>

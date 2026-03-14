@@ -1,0 +1,44 @@
+<header class="admin-topbar">
+  <!-- Mobile hamburger -->
+  <button
+    class="btn btn-sm btn-outline-secondary d-lg-none border-0 p-1"
+    style="line-height:1;"
+    onclick="toggleAdminSidebar()"
+    aria-label="Toggle navigation"
+  >
+    <i class="bi bi-list fs-5"></i>
+  </button>
+
+  <!-- Page title (passed as pageTitle variable, or fallback) -->
+  <h6 class="mb-0 fw-semibold text-dark me-auto" style="font-size:0.95rem;">
+    <%= typeof pageTitle !== 'undefined' ? pageTitle : 'Admin Panel' %>
+  </h6>
+
+  <!-- Right side actions -->
+  <div class="d-flex align-items-center gap-2 gap-md-3">
+    <!-- Live site link -->
+    <a
+      href="/triplist"
+      target="_blank"
+      class="text-secondary d-none d-md-inline-flex align-items-center gap-1"
+      style="font-size:0.8rem; text-decoration:none;"
+      title="Open live website"
+    >
+      <i class="bi bi-globe2"></i>
+      <span class="d-none d-lg-inline">Live Site</span>
+    </a>
+
+    <!-- Admin identity -->
+    <div class="d-none d-md-flex align-items-center gap-2">
+      <div
+        class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
+        style="width:30px; height:30px; font-size:0.75rem; flex-shrink:0;"
+      >
+        <%= typeof profile !== 'undefined' && profile?.email ? profile.email[0].toUpperCase() : 'A' %>
+      </div>
+      <span class="text-muted" style="font-size:0.8rem; max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+        <%= typeof profile !== 'undefined' ? (profile?.email || 'Admin') : 'Admin' %>
+      </span>
+    </div>
+  </div>
+</header>

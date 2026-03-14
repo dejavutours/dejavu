@@ -2,8 +2,12 @@ const express = require('express');
 const router = express.Router();
 const adminBookingController = require('../controllers/adminBookingController');
 const userController = require('../controllers/userController');
+const dashboardController = require('../controllers/dashboardController');
 
 const isAuth = require('../middleware/is-auth');
+
+// Dashboard
+router.get('/dashboard', isAuth, dashboardController.getDashboard);
 
 // Booking routes
 router.get('/bookings', isAuth, adminBookingController.getBookings);

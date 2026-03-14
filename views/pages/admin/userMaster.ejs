@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <%- include('../../partials/headtag', {isNiceSelect: true}); %>
-  <title>Admin - User Management Dashboard</title>
-  <link rel="stylesheet" href="/css/styles.css">
+  <%- include('../../partials/admin/admin-layout-head'); %>
+  <title>Customers — Deja-vu Admin</title>
   <style>
-    :root {--primary: #2A4365;--bg-light: #F7FAFC;}
-    body { background: var(--bg-light); }
-    .card { --bs-card-border-radius: 12px; }.card-body {margin-bottom: 1rem; }
+    :root { --primary: #1a4b8e; }
     .table th { background: var(--primary); color: white; position: sticky; top: 0; }
-    .table-responsive { max-height: 80dvh; }.table>:not(caption)>*>*{padding-inline: 0.75rem;}.name-cell{min-width: 150px;}
+    .table-responsive { max-height: 80dvh; }
+    .table>:not(caption)>*>* { padding-inline: 0.75rem; }
+    .name-cell { min-width: 150px; }
   </style>
 </head>
-<body>
-  <%- include('../../partials/header', {isSearch: false}); %>
-  <section class="container-xl pt-4">
+<body class="admin-body">
+  <%- include('../../partials/admin/admin-topbar', { pageTitle: 'Customers' }); %>
+  <%- include('../../partials/admin/admin-sidebar', { activeNav: 'customers' }); %>
+  <main class="admin-content">
+  <%- include('../../partials/admin/admin-breadcrumb', { breadcrumbs: [{ label: 'Customers' }] }); %>
+  <section>
     <% if (error) { %>
       <div class="alert alert-danger"><%= error %></div>
     <% } %>
@@ -128,5 +130,7 @@
       URL.revokeObjectURL(url);
     });
   </script>
+  </section>
+  </main>
 </body>
 </html>
