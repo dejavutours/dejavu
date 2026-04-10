@@ -7,263 +7,27 @@
   <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* Scoped styles for Banner Management with bm- prefix */
-    .bm-container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 1.5rem 1rem;
-      font-family: "Inter", sans-serif;
-      background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
-    }
-
-
-    .bm-form-container {
-      background: #ffffff;
-      border-radius: 0.75rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      margin-bottom: 1.5rem;
-      transition: all 0.3s ease;
-      overflow: hidden;
-    }
-
-    .bm-form-container.collapsed {
-      height: 2.5rem;
-    }
-
-    .bm-form-toggle {
-      cursor: pointer;
-      padding: 0.5rem 1rem;
-      background: linear-gradient(to right, #1d4ed8, #3b82f6);
-      color: white;
-      font-weight: 600;
-      border-radius: 0.75rem 0.75rem 0 0;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .bm-form {
-      padding: 1rem;
-    }
-
-    .bm-card {
-      background: #fff;
-      border-radius: 0.6rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      overflow: hidden;
-      cursor: move;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-    }
-    .bm-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-    }
-    .bm-checkbox {
-      position: absolute;
-      top: 0.5rem;
-      left: 0.5rem;
-      width: 1rem;
-      height: 1rem;
-      cursor: pointer;
-      z-index: 2;
-      accent-color: #0d6efd;
-    }
-    .bm-card-img {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
-    }
-    .bm-card-info {
-      padding: 0.4rem 0.6rem;
-      flex: 1;
-    }
-    .bm-card-name {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #1e293b;
-      line-height: 1.3;
-      margin-bottom: 0.15rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .bm-card-footer {
-      padding: 0.4rem 0.6rem;
-      border-top: 1px solid #f1f5f9;
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-    .bm-card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 0.75rem;
-      padding: 0.75rem;
-      background: #f3f4f6;
-      border-radius: 0.75rem;
-    }
-    .bm-order-input {
-      width: 52px;
-      font-size: 0.75rem;
-      padding: 0.2rem 0.35rem;
-      border: 1px solid #ced4da;
-      border-radius: 0.375rem;
-      text-align: center;
-      outline: none;
-    }
-    .bm-order-input:focus {
-      border-color: #86b7fe;
-      box-shadow: 0 0 0 2px rgba(13,110,253,0.2);
-    }
-    .bm-order-input.error {
-      border-color: #dc3545;
-      background: #fff5f5;
-    }
-
-    .select2-container--default .select2-selection--single {
-      border: 1px solid #d1d5db;
-      border-radius: 0.375rem;
-      padding: 0.25rem;
-      background: #ffffff;
-      height: 2.25rem;
-    }
-
-    .bm-toast {
-      z-index: 10000 !important;
-    }
-
-    .bm-filter-bar {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-      align-items: center;
-      flex-wrap: wrap;
-      background: #fff;
-      padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
-
-    .bm-filter-bar .filter-item {
-      flex: 1;
-      min-width: 160px;
-      max-width: 240px;
-    }
-
-    .bm-filter-bar input[type="text"],
-    .bm-filter-bar select:not(.select2-hidden-accessible) {
-      display: block; width: 100%; padding: 0.375rem 0.75rem;
-      font-size: 0.875rem; color: #212529; background-color: #fff;
-      border: 1px solid #ced4da; border-radius: 0.375rem; outline: none;
-    }
-
-    .bm-filter-bar input[type="text"]:focus {
-      border-color: #86b7fe;
-      box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
-    }
-
-    .bm-filter-bar .relative input[type="text"] { padding-left: 2rem; }
-
-    .bm-filter-bar .relative svg {
-      position: absolute; left: 0.6rem; top: 50%; transform: translateY(-50%);
-      width: 1rem; height: 1rem; color: #6c757d; pointer-events: none;
-    }
-
-    .bm-filter-bar button {
-      flex-shrink: 0; font-size: 0.8rem; font-weight: 500;
-      padding: 0.375rem 0.75rem; border-radius: 0.375rem;
-      border: none; cursor: pointer; white-space: nowrap;
-    }
-
     .bm-loading {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.6);
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 9999;
     }
-
     .bm-loading-spinner {
       border: 4px solid #f3f3f3;
       border-top: 4px solid #1d4ed8;
       border-radius: 50%;
-      width: 36px;
-      height: 36px;
+      width: 36px; height: 36px;
       animation: bm-spin 1s linear infinite;
     }
-
-    .bm-crop-modal .modal-content {
-      border-radius: 0.75rem;
-      overflow: hidden;
-    }
-
-    .bm-crop-modal select#bmCropRatio {
-      width: 100%;
-      max-width: 200px;
-      margin: 0 auto;
-      display: block;
-    }
-
-    .bm-crop-image {
-      max-width: 100%;
-      max-height: 50vh;
-    }
-
-    .bm-order-input.error {
-      border-color: #ef4444;
-      background-color: #fee2e2;
-    }
-
-    .bm-no-records {
-      text-align: center;
-      padding: 2rem;
-      color: #6b7280;
-      font-size: 1rem;
-      font-weight: 500;
-    }
-
-    @keyframes bm-spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 640px) {
-      .bm-card-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .bm-form .grid {
-        grid-template-columns: 1fr;
-      }
-
-
-      .bm-filter-bar {
-        flex-direction: column;
-        align-items: stretch;
-      }
-    }
-
-    /* Animations */
-    @keyframes bm-fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+    @keyframes bm-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .bm-crop-modal .modal-content { border-radius: 0.75rem; overflow: hidden; }
+    .bm-crop-modal select#bmCropRatio { width: 100%; max-width: 200px; margin: 0 auto; display: block; }
+    .bm-crop-image { max-width: 100%; max-height: 50vh; }
+    .mc-order-input.error { border-color: #dc3545; background: #fff5f5; }
   </style>
 </head>
 
@@ -281,80 +45,66 @@
     <!-- Tab Navigation -->
     <!-- Banner Management Content -->
       <!-- Add/Update Form -->
-      <div class="bm-form-container collapsed" id="bmBannerFormContainer">
-        <div class="bm-form-toggle" id="bmFormToggle">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          Show Form
+      <div class="bm-form-container collapsed mb-4" id="bmBannerFormContainer">
+        <div class="mc-form-header" id="bmFormToggle">
+          <h6 class="mb-0"><i class="bi bi-image-fill me-2"></i>Add / Edit Banner</h6>
+          <button type="button" class="mc-toggle-btn">Show Form</button>
         </div>
-        <form id="bmBannerForm" action="/banner" method="POST" enctype="multipart/form-data" class="bm-form space-y-4">
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-          <input type="hidden" id="bmBannerId" name="id" />
-          <input type="hidden" id="bmOldImage" name="oldImage" />
+        <div class="mc-form-body">
+          <form id="bmBannerForm" action="/banner" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <input type="hidden" id="bmBannerId" name="id" />
+            <input type="hidden" id="bmOldImage" name="oldImage" />
 
-          <div class="space-y-2">
-            <div>
-              <label for="bmBannerCaption" class="block text-sm font-semibold text-gray-700">Banner Caption</label>
-              <input type="text" id="bmBannerCaption" name="caption" class="w-full border border-gray-300 rounded-md p-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required />
-            </div>
-            <div>
-              <label for="bmImage" class="block text-sm font-semibold text-gray-700">Banner Image</label>
-              <div class="flex items-center space-x-3">
-                <input type="file" class="flex-1 border border-gray-300 rounded-md p-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" id="bmImage" name="image" accept="image/*" />
-                <img id="bmImagePreview" src="" alt="Preview" style="max-width:220px; max-height:100px; width:auto; height:auto; object-fit:contain; border-radius:0.375rem; border:1px solid #dee2e6; cursor:pointer; display:none;" onclick="$('#bmPreviewModalImg').attr('src', this.src); $('#bmPreviewModal').modal('show');" />
+            <div class="row g-3 align-items-end">
+              <div class="col-md-5">
+                <label for="bmBannerCaption" class="form-label fw-semibold">Banner Caption <span class="text-danger">*</span></label>
+                <input type="text" id="bmBannerCaption" name="caption" class="form-control" required placeholder="Enter banner caption" />
+              </div>
+              <div class="col-md-5">
+                <label for="bmImage" class="form-label fw-semibold">Banner Image <small class="text-muted">(Recommended: 1200×675)</small></label>
+                <input type="file" id="bmImage" name="image" accept="image/*" class="form-control" />
+                <img id="bmImagePreview" src="" alt="Preview" style="max-width:220px; max-height:90px; width:auto; height:auto; object-fit:contain; border-radius:0.375rem; border:1px solid #dee2e6; cursor:pointer; display:none; margin-top:0.5rem;"
+                  onclick="$('#bmPreviewModalImg').attr('src', this.src); $('#bmPreviewModal').modal('show');" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label fw-semibold">Status</label>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="bmIsActive" name="isActive" checked>
+                  <label class="form-check-label" for="bmIsActive">Active</label>
+                </div>
+                <div class="d-flex gap-2 mt-3">
+                  <button type="button" id="bmCancelBtn" class="mc-cancel-btn hidden">Cancel</button>
+                  <button type="submit" id="bmSubmitBtn" class="mc-submit-btn">Add Banner</button>
+                </div>
               </div>
             </div>
-            <div>
-              <label for="bmIsActive" class="block text-sm font-semibold text-gray-700">Active Status</label>
-              <label class="inline-flex items-center">
-                <input type="checkbox" id="bmIsActive" name="isActive" checked class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-                <span class="ml-2 text-sm text-gray-600">Active</span>
-              </label>
-            </div>
-          </div>
-
-          <div class="flex justify-end space-x-2">
-            <button type="button" id="bmCancelBtn" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm font-medium hidden">
-              Cancel
-            </button>
-            <button type="submit" id="bmSubmitBtn" class="px-4 py-1.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 text-sm font-medium">
-              Add Banner
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
 
       <!-- Filter and Search Bar -->
-      <div class="bm-filter-bar">
-        <div class="filter-item">
-          <div class="relative">
-            <input type="text" id="bmSearchInput" class="w-full border border-gray-300 rounded-md pl-8 pr-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search banners..." />
-            <svg class="absolute left-2.5 top-2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
+      <div class="mc-filter-bar mb-3">
+        <div class="mc-search-wrap">
+          <i class="bi bi-search mc-search-icon"></i>
+          <input type="text" id="bmSearchInput" class="form-control" placeholder="Search banners...">
         </div>
-        <div class="filter-item">
-          <select class="select2 w-full" id="bmActiveFilter">
+        <div class="mc-select-wrap">
+          <select class="form-select select2" id="bmActiveFilter">
             <option value="">All Statuses</option>
             <option value="true">Active</option>
             <option value="false">Inactive</option>
           </select>
         </div>
-        <button id="bmClearFiltersBtn" class="px-3 py-1.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-sm font-medium">
-          Clear Filters
-        </button>
-        <button id="bmBulkDeleteBtn" class="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium hidden">
-          Delete Selected
-        </button>
+        <button id="bmClearFiltersBtn" class="btn-mc-clear"><i class="bi bi-x-circle me-1"></i>Clear</button>
+        <button id="bmBulkDeleteBtn" class="btn-mc-bulk-del d-none"><i class="bi bi-trash me-1"></i>Delete Selected</button>
       </div>
 
       <!-- Banner Cards -->
-      <div class="bm-card-grid" id="bmBannerGrid"></div>
-      <div class="flex justify-end mt-3">
-        <button id="bmSaveOrderBtn" class="px-4 py-1.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-md hover:from-green-700 hover:to-green-800 text-sm font-medium hidden">
-          Save Order
+      <div class="mc-card-grid" id="bmBannerGrid"></div>
+      <div class="text-end mt-3">
+        <button id="bmSaveOrderBtn" class="btn btn-success d-none">
+          <i class="bi bi-save me-2"></i>Save Order
         </button>
       </div>
 
@@ -642,7 +392,7 @@
         touchStartThreshold: 5,
         onEnd: function(evt) {
           orderChanged = true;
-          $('#bmSaveOrderBtn').removeClass('hidden');
+          $('#bmSaveOrderBtn').removeClass('d-none');
           updateOrderInputs();
         }
       });
@@ -682,7 +432,7 @@
                 duration: 3000
               }).showToast();
               orderChanged = false;
-              $('#bmSaveOrderBtn').addClass('hidden');
+              $('#bmSaveOrderBtn').addClass('d-none');
               const orderedBanners = [];
               newOrder.forEach(id => {
                 const banner = banners.find(c => c._id === id);
@@ -747,20 +497,22 @@
         } else {
           filteredBanners.forEach(banner => {
             const card = `
-              <div class="bm-card" data-id="${banner._id}">
-                <input type="checkbox" class="bm-checkbox" data-id="${banner._id}">
-                <img src="${banner.image || '/img/placeholder.jpg'}" alt="${banner.caption}" class="bm-card-img" data-src="${banner.image}">
-                <div class="bm-card-info">
-                  <div class="bm-card-name" title="${banner.caption}">${banner.caption}</div>
-                  <span class="badge ${banner.isActive ? 'bg-success' : 'bg-secondary'}" style="font-size:0.65rem;">${banner.isActive ? 'Active' : 'Inactive'}</span>
+              <div class="mc-card bm-card" data-id="${banner._id}">
+                <input type="checkbox" class="mc-card-check bm-checkbox" data-id="${banner._id}">
+                <img src="${banner.image || '/img/placeholder.jpg'}" alt="${banner.caption}" class="mc-card-img" data-src="${banner.image}">
+                <div class="mc-card-body">
+                  <div class="mc-card-name" title="${banner.caption}">${banner.caption}</div>
+                  <div class="mc-badge-row">
+                    <span class="mc-badge ${banner.isActive ? 'active' : 'inactive'}">${banner.isActive ? 'Active' : 'Inactive'}</span>
+                  </div>
                 </div>
-                <div class="bm-card-footer">
-                  <input type="number" class="bm-order-input" value="${banner.displayOrder || 0}" min="0" data-id="${banner._id}" title="Display Order">
-                  <button class="btn btn-sm btn-warning text-white ms-auto" style="padding:0.2rem 0.5rem;" onclick="editBanner('${banner._id}')"><i class="bi bi-pencil-fill" style="font-size:0.7rem;"></i></button>
+                <div class="mc-card-footer">
+                  <input type="number" class="mc-order-input bm-order-input" value="${banner.displayOrder || 0}" min="0" data-id="${banner._id}" title="Display Order">
+                  <button type="button" class="mc-btn-edit" onclick="editBanner('${banner._id}')"><i class="bi bi-pencil-fill"></i></button>
                   <form action="/banner/delete/${banner._id}" method="POST" class="d-inline bm-delete-form">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <input type="hidden" name="bannerCaption" value="${banner.caption}">
-                    <button type="submit" class="btn btn-sm btn-danger" style="padding:0.2rem 0.5rem;"><i class="bi bi-trash-fill" style="font-size:0.7rem;"></i></button>
+                    <button type="submit" class="mc-btn-delete"><i class="bi bi-trash-fill"></i></button>
                   </form>
                 </div>
               </div>
@@ -827,7 +579,7 @@
         const id = $(this).data('id');
         const newOrder = parseInt($(this).val()) || 0;
         orderChanged = true;
-        $('#bmSaveOrderBtn').removeClass('hidden');
+        $('#bmSaveOrderBtn').removeClass('d-none');
         const banner = banners.find(c => c._id === id);
         if (banner) banner.displayOrder = newOrder;
         renderBanners();
@@ -853,10 +605,10 @@
         $('#bmImagePreview').attr('src', banner.image).show();
         $('#bmOldImage').val(banner.image);
         $('#bmIsActive').prop('checked', banner.isActive === true || banner.isActive === 'true' || banner.isActive === 'on');
-        $('#bmSubmitBtn').text('Update Banner').removeClass('from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800').addClass('from-green-600 to-green-700 hover:from-green-700 hover:to-green-800');
+        $('#bmSubmitBtn').text('Update Banner').addClass('update');
         $('#bmCancelBtn').removeClass('hidden');
         $('#bmBannerFormContainer').removeClass('collapsed');
-        $('#bmFormToggle').text('Hide Form');
+        $('#bmFormToggle .mc-toggle-btn').text('Hide Form');
       };
 
       // Cancel edit
@@ -866,10 +618,10 @@
         $('#bmOldImage').val('');
         $('#bmImagePreview').attr('src', '').hide();
         $('#bmIsActive').prop('checked', true);
-        $('#bmSubmitBtn').text('Add Banner').removeClass('from-green-600 to-green-700 hover:from-green-700 hover:to-green-800').addClass('from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800');
+        $('#bmSubmitBtn').text('Add Banner').removeClass('update');
         $('#bmCancelBtn').addClass('hidden');
         $('#bmBannerFormContainer').addClass('collapsed');
-        $('#bmFormToggle').text('Show Form');
+        $('#bmFormToggle .mc-toggle-btn').text('Show Form');
       });
 
       // Image crop handling
@@ -942,7 +694,7 @@
       // Form toggle
       $('#bmFormToggle').on('click', function() {
         $('#bmBannerFormContainer').toggleClass('collapsed');
-        $(this).text($('#bmBannerFormContainer').hasClass('collapsed') ? 'Show Form' : 'Hide Form');
+        $(this).find('.mc-toggle-btn').text($('#bmBannerFormContainer').hasClass('collapsed') ? 'Show Form' : 'Hide Form');
       });
 
 

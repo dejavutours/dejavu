@@ -15,116 +15,9 @@
     }
 
 
-    .sm-form-container {
-      background: #ffffff;
-      border-radius: 0.75rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      margin-bottom: 1.5rem;
-      transition: all 0.3s ease;
-      overflow: hidden;
-    }
+    .sm-form-container { margin-bottom: 16px; overflow: hidden; }
 
-    .sm-form-container.collapsed {
-      height: 2.5rem;
-    }
-
-    .sm-form-toggle {
-      cursor: pointer;
-      padding: 0.5rem 1rem;
-      background: linear-gradient(to right, #1d4ed8, #3b82f6);
-      color: white;
-      font-weight: 600;
-      border-radius: 0.75rem 0.75rem 0 0;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .sm-form {
-      padding: 1rem;
-    }
-
-    .sm-card {
-      background: #fff;
-      border-radius: 0.6rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      overflow: hidden;
-      cursor: move;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-    }
-    .sm-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-    }
-    .sm-checkbox {
-      position: absolute;
-      top: 0.5rem;
-      left: 0.5rem;
-      width: 1rem;
-      height: 1rem;
-      cursor: pointer;
-      z-index: 2;
-      accent-color: #0d6efd;
-    }
-    .sm-card-img {
-      width: 100%;
-      height: 110px;
-      object-fit: cover;
-    }
-    .sm-card-info {
-      padding: 0.4rem 0.6rem;
-      flex: 1;
-    }
-    .sm-card-name {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #1e293b;
-      line-height: 1.3;
-      margin-bottom: 0.15rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .sm-card-meta {
-      font-size: 0.72rem;
-      color: #64748b;
-      margin-bottom: 0.25rem;
-    }
-    .sm-card-footer {
-      padding: 0.4rem 0.6rem;
-      border-top: 1px solid #f1f5f9;
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-    .sm-card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 0.75rem;
-      padding: 0.75rem;
-      background: #f3f4f6;
-      border-radius: 0.75rem;
-    }
-    .sm-order-input {
-      width: 52px;
-      font-size: 0.75rem;
-      padding: 0.2rem 0.35rem;
-      border: 1px solid #ced4da;
-      border-radius: 0.375rem;
-      text-align: center;
-      outline: none;
-    }
-    .sm-order-input:focus {
-      border-color: #86b7fe;
-      box-shadow: 0 0 0 2px rgba(13,110,253,0.2);
-    }
-    .sm-order-input.error {
-      border-color: #dc3545;
-      background: #fff5f5;
-    }
+    /* sm-order-input and sm-checkbox keep their JS selector names but use mc-* styles */
 
     .select2-container--default .select2-selection--single {
       border: 1px solid #d1d5db;
@@ -138,74 +31,6 @@
       z-index: 10000 !important;
     }
 
-    .sm-filter-bar {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-      align-items: center;
-      flex-wrap: wrap;
-      background: #fff;
-      padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
-
-    .sm-filter-bar .filter-item {
-      flex: 1;
-      min-width: 160px;
-      max-width: 240px;
-    }
-
-    /* Style all inputs/selects in the filter bar like Bootstrap form-control */
-    .sm-filter-bar input[type="text"],
-    .sm-filter-bar select:not(.select2-hidden-accessible) {
-      display: block;
-      width: 100%;
-      padding: 0.375rem 0.75rem;
-      font-size: 0.875rem;
-      font-weight: 400;
-      line-height: 1.5;
-      color: #212529;
-      background-color: #fff;
-      background-clip: padding-box;
-      border: 1px solid #ced4da;
-      border-radius: 0.375rem;
-      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-      outline: none;
-    }
-    .sm-filter-bar input[type="text"]:focus,
-    .sm-filter-bar select:not(.select2-hidden-accessible):focus {
-      border-color: #86b7fe;
-      box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25);
-    }
-    /* Search icon offset */
-    .sm-filter-bar .relative input[type="text"] { padding-left: 2rem; }
-    .sm-filter-bar .relative svg {
-      position: absolute;
-      left: 0.6rem;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 1rem;
-      height: 1rem;
-      color: #6c757d;
-      pointer-events: none;
-    }
-
-    /* Compact action buttons in filter bar */
-    .sm-filter-bar button,
-    .sm-filter-bar a.btn {
-      flex-shrink: 0;
-      font-size: 0.8rem;
-      font-weight: 500;
-      padding: 0.375rem 0.75rem;
-      border-radius: 0.375rem;
-      border: none;
-      cursor: pointer;
-      transition: opacity 0.15s;
-      white-space: nowrap;
-    }
-    .sm-filter-bar button:hover { opacity: 0.88; }
 
     .sm-loading {
       position: fixed;
@@ -315,82 +140,67 @@
     <!-- State Management Content -->
       <!-- Add/Update Form -->
       <div class="sm-form-container collapsed" id="smStateFormContainer">
-        <div class="sm-form-toggle" id="smFormToggle">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          Show Form
+        <div class="mc-form-header">
+          <h6 class="mb-0"><i class="bi bi-geo-alt-fill me-2"></i>Add / Edit State</h6>
+          <button type="button" class="mc-toggle-btn" id="smFormToggle">Show Form</button>
         </div>
-        <form id="smStateForm" action="/states" method="POST" enctype="multipart/form-data" class="sm-form space-y-4">
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-          <input type="hidden" id="smStateId" name="id" />
-          <input type="hidden" id="smOldImage" name="oldImage" />
-
-          <div class="space-y-2">
-            <div>
-              <label for="smCountry" class="block text-sm font-semibold text-gray-700">Country</label>
-              <select class="select2 w-full" id="smCountry" name="countryCode" required>
-                <option value="">Select Country</option>
-              </select>
-            </div>
-            <div>
-              <label for="smStateName" class="block text-sm font-semibold text-gray-700">State</label>
-              <select class="select2 w-full" id="smStateName" name="name" required>
-                <option value="">Select State</option>
-              </select>
-            </div>
-            <div>
-              <label for="smImage" class="block text-sm font-semibold text-gray-700">State Image</label>
-              <div class="flex items-center space-x-3">
-                <input type="file" class="flex-1 border border-gray-300 rounded-md p-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" id="smImage" name="image" accept="image/*" />
-                <img id="smImagePreview" src="" alt="Preview" class="w-16 h-16 object-cover rounded-md border border-gray-200 cursor-pointer" onclick="$('#smPreviewModalImg').attr('src', this.src); $('#smPreviewModal').modal('show');" />
+        <div class="mc-form-body">
+          <form id="smStateForm" action="/states" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <input type="hidden" id="smStateId" name="id" />
+            <input type="hidden" id="smOldImage" name="oldImage" />
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label for="smCountry" class="form-label">Country</label>
+                <select class="select2 w-full" id="smCountry" name="countryCode" required>
+                  <option value="">Select Country</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="smStateName" class="form-label">State</label>
+                <select class="select2 w-full" id="smStateName" name="name" required>
+                  <option value="">Select State</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="smImage" class="form-label">State Image</label>
+                <div class="d-flex align-items-center gap-2">
+                  <input type="file" class="form-control form-control-sm flex-grow-1" id="smImage" name="image" accept="image/*" />
+                  <img id="smImagePreview" src="" alt="Preview" class="rounded" style="width:48px;height:48px;object-fit:cover;border:1px solid #e2e8f0;cursor:pointer;" onclick="$('#smPreviewModalImg').attr('src', this.src); $('#smPreviewModal').modal('show');" />
+                </div>
+              </div>
+              <div class="col-12 d-flex align-items-center gap-3">
+                <div class="form-check form-switch mb-0">
+                  <input class="form-check-input" type="checkbox" id="smIsActive" name="isActive" checked>
+                  <label class="form-check-label small" for="smIsActive">Active</label>
+                </div>
+                <div class="ms-auto d-flex gap-2">
+                  <button type="button" id="smCancelBtn" class="mc-cancel-btn hidden">Cancel</button>
+                  <button type="submit" id="smSubmitBtn" class="mc-submit-btn">Add State</button>
+                </div>
               </div>
             </div>
-            <div>
-              <label for="smIsActive" class="block text-sm font-semibold text-gray-700">Active Status</label>
-              <label class="inline-flex items-center">
-                <input type="checkbox" id="smIsActive" name="isActive" checked class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-                <span class="ml-2 text-sm text-gray-600">Active</span>
-              </label>
-            </div>
-          </div>
-
-          <div class="flex justify-end space-x-2">
-            <button type="button" id="smCancelBtn" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm font-medium hidden">
-              Cancel
-            </button>
-            <button type="submit" id="smSubmitBtn" class="px-4 py-1.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-md hover:from-blue-700 hover:to-blue-800 text-sm font-medium">
-              Add State
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
 
       <!-- Filter and Search Bar -->
-      <div class="sm-filter-bar">
-        <div class="filter-item">
-          <div class="relative">
-            <input type="text" id="smSearchInput" class="w-full border border-gray-300 rounded-md pl-8 pr-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search states..." />
-            <svg class="absolute left-2.5 top-2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
+      <div class="mc-filter-bar">
+        <div class="mc-search-wrap">
+          <i class="bi bi-search mc-search-icon"></i>
+          <input type="text" id="smSearchInput" placeholder="Search states...">
         </div>
-        <div class="filter-item">
+        <div class="mc-select-wrap">
           <select class="select2 w-full" id="smCountryFilter">
             <option value="">All Countries</option>
           </select>
         </div>
-        <button id="smClearFiltersBtn" class="px-3 py-1.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-sm font-medium">
-          Clear Filters
-        </button>
-        <button id="smBulkDeleteBtn" class="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium hidden">
-          Delete Selected
-        </button>
+        <button id="smClearFiltersBtn" class="btn-mc-clear">Clear Filters</button>
+        <button id="smBulkDeleteBtn" class="btn-mc-bulk-del hidden">Delete Selected</button>
       </div>
 
       <!-- State Cards -->
-      <div class="sm-card-grid" id="smStateGrid"></div>
+      <div class="mc-card-grid" id="smStateGrid"></div>
       <div class="flex justify-end mt-3">
         <button id="smSaveOrderBtn" class="px-4 py-1.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-md hover:from-green-700 hover:to-green-800 text-sm font-medium hidden">
           Save Order
@@ -960,21 +770,23 @@ loadCountries();
         } else {
           filteredStates.forEach(state => {
             const card = `
-              <div class="sm-card" data-id="${state._id}">
-                <input type="checkbox" class="sm-checkbox" data-id="${state._id}">
-                <img src="${state.image || '/img/placeholder.jpg'}" alt="${state.name}" class="sm-card-img" data-src="${state.image}">
-                <div class="sm-card-info">
-                  <div class="sm-card-name" title="${state.name}">${state.name}</div>
-                  <div class="sm-card-meta">${state.countryCode || ''}</div>
-                  <span class="badge ${state.isActive ? 'bg-success' : 'bg-secondary'}" style="font-size:0.65rem;">${state.isActive ? 'Active' : 'Inactive'}</span>
+              <div class="mc-card sm-card" data-id="${state._id}">
+                <input type="checkbox" class="mc-card-check sm-checkbox" data-id="${state._id}">
+                <img src="${state.image || '/img/placeholder.jpg'}" alt="${state.name}" class="mc-card-img" data-src="${state.image}" onerror="this.src='/img/placeholder.jpg'">
+                <div class="mc-card-body">
+                  <div class="mc-card-name" title="${state.name}">${state.name}</div>
+                  <div class="mc-card-meta">${state.countryCode || ''}</div>
+                  <div class="mc-badge-row">
+                    <span class="mc-badge ${state.isActive ? 'active' : 'inactive'}">${state.isActive ? 'Active' : 'Inactive'}</span>
+                  </div>
                 </div>
-                <div class="sm-card-footer">
-                  <input type="number" class="sm-order-input" value="${state.displayOrder || 0}" min="0" data-id="${state._id}" title="Display Order">
-                  <button class="btn btn-sm btn-warning text-white ms-auto" style="padding:0.2rem 0.5rem;" onclick="editState('${state._id}')"><i class="bi bi-pencil-fill" style="font-size:0.7rem;"></i></button>
-                  <form action="/states/delete/${state._id}" method="POST" class="d-inline sm-delete-form">
+                <div class="mc-card-footer">
+                  <input type="number" class="mc-order-input sm-order-input" value="${state.displayOrder || 0}" min="0" data-id="${state._id}" title="Display Order">
+                  <button type="button" class="mc-btn-edit" onclick="editState('${state._id}')"><i class="bi bi-pencil-fill"></i></button>
+                  <form action="/states/delete/${state._id}" method="POST" class="d-inline sm-delete-form" style="line-height:0;">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <input type="hidden" name="stateName" value="${state.name}">
-                    <button type="submit" class="btn btn-sm btn-danger" style="padding:0.2rem 0.5rem;"><i class="bi bi-trash-fill" style="font-size:0.7rem;"></i></button>
+                    <button type="submit" class="mc-btn-delete"><i class="bi bi-trash-fill"></i></button>
                   </form>
                 </div>
               </div>
@@ -1068,7 +880,7 @@ loadCountries();
         $('#smOldImage').val(state.image);
         // Normalize isActive to boolean
         $('#smIsActive').prop('checked', state.isActive === true || state.isActive === 'true' || state.isActive === 'on');
-        $('#smSubmitBtn').text('Update State').removeClass('from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800').addClass('from-green-600 to-green-700 hover:from-green-700 hover:to-green-800');
+        $('#smSubmitBtn').text('Update State').addClass('update');
         $('#smCancelBtn').removeClass('hidden');
         $('#smStateFormContainer').removeClass('collapsed');
         $('#smFormToggle').text('Hide Form');
@@ -1106,7 +918,7 @@ loadCountries();
         $('#smOldImage').val('');
         $('#smImagePreview').attr('src', '');
         $('#smIsActive').prop('checked', true);
-        $('#smSubmitBtn').text('Add State').removeClass('from-green-600 to-green-700 hover:from-green-700 hover:to-green-800').addClass('from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800');
+        $('#smSubmitBtn').text('Add State').removeClass('update');
         $('#smCancelBtn').addClass('hidden');
         $('#smStateFormContainer').addClass('collapsed');
         $('#smFormToggle').text('Show Form');

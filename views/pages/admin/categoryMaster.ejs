@@ -7,79 +7,11 @@
   <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css" rel="stylesheet" />
 
   <style>
-    body {
-      background: #f8fafc;
-      font-family: 'Inter', sans-serif;
-    }
-    .cm-container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 1.5rem 1rem;
-    }
-    .card {
-      border: none;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    .card-header {
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-      color: white;
-      cursor: pointer;
-    }
-    .cm-card-grid .card {
-      transition: all 0.3s ease;
-      cursor: move;
-      border-radius: 10px;
-    }
-    .cm-card-grid .card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 12px 25px rgba(0,0,0,0.12) !important;
-    }
-    .cm-card-grid img {
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-    .cm-card-grid .card-body {
-      padding: 0.9rem;
-    }
-    .cm-card-grid h6 {
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin-bottom: 0.4rem;
-    }
-    .cm-card-grid .badge {
-      font-size: 0.7rem;
-    }
-    .cm-order-input {
-      width: 52px !important;
-      font-size: 0.75rem;
-      padding: 0.2rem 0.35rem !important;
-      text-align: center;
-    }
-    .cm-order-input:focus {
-      border-color: #86b7fe;
-      box-shadow: 0 0 0 2px rgba(13,110,253,0.2);
-    }
-    .cm-card-grid .card {
-      cursor: move;
-      border-radius: 0.6rem !important;
-    }
-    .cm-card-grid .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.12) !important;
-    }
-    .cm-card-grid img {
-      width: 100%;
-      height: 100px;
-      object-fit: cover;
-    }
     #cmLoadingOverlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.75);
-      display: none;
+      display: flex;
       align-items: center;
       justify-content: center;
       z-index: 9999;
@@ -90,10 +22,8 @@
       margin-top: 0.35rem;
     }
     .drag-hint {
-      font-size: 0.9rem;
-      color: #4b5563;
-      text-align: center;
-      margin: 1rem 0;
+      font-size: 0.85rem;
+      color: #6b7280;
       font-weight: 500;
     }
   </style>
@@ -114,26 +44,23 @@
 
 
     <!-- Add/Edit Form -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <h6 class="mb-0">
-          <i class="fas fa-tags me-2"></i>
-          <span id="cmFormTitle">Add Category</span>
-        </h6>
+    <div class="mb-4">
+      <div class="mc-form-header">
+        <h6 class="mb-0"><i class="bi bi-tags-fill me-2"></i><span id="cmFormTitle">Add Category</span></h6>
         <div class="d-flex align-items-center gap-2">
-          <button type="button" id="cmCancelBtn" class="btn btn-outline-secondary btn-sm d-none">Cancel</button>
-          <button type="submit" form="cmCategoryForm" id="cmSubmitBtn" class="btn btn-primary position-relative">
+          <button type="button" id="cmCancelBtn" class="btn btn-outline-light btn-sm d-none">Cancel</button>
+          <button type="submit" form="cmCategoryForm" id="cmSubmitBtn" class="mc-submit-btn">
             <span class="submit-text">Save</span>
             <span class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
           </button>
-          <button class="btn btn-link text-white p-0" data-bs-toggle="collapse" data-bs-target="#categoryFormCollapse">
-            <i class="fas fa-chevron-down" id="toggleIcon"></i>
+          <button type="button" class="mc-toggle-btn" data-bs-toggle="collapse" data-bs-target="#categoryFormCollapse">
+            <i class="bi bi-chevron-down" id="toggleIcon"></i>
           </button>
         </div>
       </div>
 
-      <div class="collapse show" id="categoryFormCollapse">
-        <form id="cmCategoryForm" action="/categories" method="POST" enctype="multipart/form-data" class="card-body">
+      <div class="collapse show mc-form-body" id="categoryFormCollapse">
+        <form id="cmCategoryForm" action="/categories" method="POST" enctype="multipart/form-data">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <input type="hidden" id="cmCategoryId" name="id" />
           <input type="hidden" id="cmOldImage" name="oldImage" />
@@ -185,38 +112,30 @@
       </div>
     </div>
 
-    <!-- Filters + Hint -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-body">
-        <div class="row g-3 align-items-end mb-3">
-          <div class="col-lg-5">
-            <input type="text" id="cmSearchInput" class="form-control" placeholder="Search categories..." />
-          </div>
-          <div class="col-lg-3">
-            <select class="form-select select2" id="cmActiveFilter">
-              <option value="">All Status</option>
-              <option value="true">Active Only</option>
-              <option value="false">Inactive Only</option>
-            </select>
-          </div>
-          <div class="col-lg-4 d-flex gap-2">
-            <button id="cmClearFiltersBtn" class="btn btn-outline-secondary flex-grow-1">Clear Filters</button>
-            <button id="cmBulkDeleteBtn" class="btn btn-danger d-none flex-grow-1">Delete Selected</button>
-          </div>
-        </div>
-        <div class="drag-hint">
-          <i class="fas fa-arrows-alt me-2"></i>
-          Drag & drop cards to reorder categories. Lower number = appears first on homepage.
-        </div>
+    <!-- Filters -->
+    <div class="mc-filter-bar mb-3">
+      <div class="mc-search-wrap">
+        <i class="bi bi-search mc-search-icon"></i>
+        <input type="text" id="cmSearchInput" class="form-control" placeholder="Search categories...">
       </div>
+      <div class="mc-select-wrap">
+        <select class="form-select select2" id="cmActiveFilter">
+          <option value="">All Status</option>
+          <option value="true">Active Only</option>
+          <option value="false">Inactive Only</option>
+        </select>
+      </div>
+      <button id="cmClearFiltersBtn" class="btn-mc-clear"><i class="bi bi-x-circle me-1"></i>Clear</button>
+      <button id="cmBulkDeleteBtn" class="btn-mc-bulk-del d-none"><i class="bi bi-trash me-1"></i>Delete Selected</button>
+      <span class="drag-hint ms-auto d-none d-md-inline"><i class="bi bi-arrows-move me-1"></i>Drag cards to reorder</span>
     </div>
 
     <!-- Categories Grid -->
-    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 row-cols-xl-6 g-4 cm-card-grid" id="cmCategoryGrid"></div>
+    <div class="mc-card-grid" id="cmCategoryGrid"></div>
 
-    <div class="text-end mt-4">
-      <button id="cmSaveOrderBtn" class="btn btn-success btn-lg d-none">
-        <i class="fas fa-save me-2"></i> Save New Order
+    <div class="text-end mt-3">
+      <button id="cmSaveOrderBtn" class="btn btn-success d-none">
+        <i class="bi bi-save me-2"></i>Save New Order
       </button>
     </div>
   </div>
@@ -276,27 +195,23 @@
 
         filteredCategories.forEach(cat => {
           const card = `
-            <div class="col" data-id="${cat._id}">
-              <div class="card h-100 shadow-sm position-relative" style="overflow:hidden;cursor:move;">
-                <div class="position-absolute top-0 start-0 p-2" style="z-index:2;">
-                  <input type="checkbox" class="form-check-input cm-checkbox" data-id="${cat._id}" style="width:1rem;height:1rem;cursor:pointer;accent-color:#0d6efd;">
+            <div class="mc-card cm-card" data-id="${cat._id}">
+              <input type="checkbox" class="mc-card-check cm-checkbox" data-id="${cat._id}">
+              <img src="${cat.image || '/images/default-category.jpg'}" alt="${cat.name}" class="mc-card-img">
+              <div class="mc-card-body">
+                <div class="mc-card-name" title="${cat.name}">${cat.name}</div>
+                <div class="mc-badge-row">
+                  <span class="mc-badge ${cat.isActive ? 'active' : 'inactive'}">${cat.isActive ? 'Active' : 'Inactive'}</span>
+                  ${cat.isShowOnHomePage ? '<span class="mc-badge home">Home</span>' : ''}
                 </div>
-                <img src="${cat.image || '/images/default-category.jpg'}" alt="${cat.name}" class="card-img-top" style="height:100px;object-fit:cover;">
-                <div class="card-body p-2 d-flex flex-column">
-                  <div class="fw-semibold text-truncate mb-1" style="font-size:0.82rem;color:#1e293b;" title="${cat.name}">${cat.name}</div>
-                  <div class="d-flex gap-1 flex-wrap mb-1">
-                    ${cat.isActive ? '<span class="badge bg-success" style="font-size:0.65rem;">Active</span>' : '<span class="badge bg-secondary" style="font-size:0.65rem;">Inactive</span>'}
-                    ${cat.isShowOnHomePage ? '<span class="badge bg-info" style="font-size:0.65rem;">Home</span>' : ''}
-                  </div>
-                  <div class="d-flex align-items-center gap-1 mt-auto pt-1" style="border-top:1px solid #f1f5f9;">
-                    <input type="number" class="form-control form-control-sm cm-order-input" value="${cat.displayOrder || 0}" min="0" data-id="${cat._id}" title="Display Order">
-                    <button class="btn btn-sm btn-warning text-white ms-auto" style="padding:0.2rem 0.5rem;" onclick="editCategory('${cat._id}')"><i class="bi bi-pencil-fill" style="font-size:0.7rem;"></i></button>
-                    <form action="/categories/delete/${cat._id}" method="POST" class="d-inline">
-                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                      <button type="submit" class="btn btn-sm btn-danger" style="padding:0.2rem 0.5rem;"><i class="bi bi-trash-fill" style="font-size:0.7rem;"></i></button>
-                    </form>
-                  </div>
-                </div>
+              </div>
+              <div class="mc-card-footer">
+                <input type="number" class="mc-order-input cm-order-input" value="${cat.displayOrder || 0}" min="0" data-id="${cat._id}" title="Display Order">
+                <button type="button" class="mc-btn-edit" onclick="editCategory('${cat._id}')"><i class="bi bi-pencil-fill"></i></button>
+                <form action="/categories/delete/${cat._id}" method="POST" class="d-inline">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="mc-btn-delete"><i class="bi bi-trash-fill"></i></button>
+                </form>
               </div>
             </div>`;
           $grid.append(card);
@@ -331,7 +246,7 @@
           $('#cmOldImage').val('');
         }
 
-        $('#cmSubmitBtn').removeClass('btn-primary').addClass('btn-danger').find('.submit-text').text('Update');
+        $('#cmSubmitBtn').addClass('update').find('.submit-text').text('Update');
         $('#cmFormTitle').text('Edit Category');
         $('#cmCancelBtn').removeClass('d-none');
         formModified = true;
@@ -342,7 +257,7 @@
         $('#cmCategoryForm')[0].reset();
         $('#cmCategoryId, #cmOldImage').val('');
         $('#cmImagePreviewContainer, #cmRemoveImage').hide();
-        $('#cmSubmitBtn').removeClass('btn-danger').addClass('btn-primary').find('.submit-text').text('Save');
+        $('#cmSubmitBtn').removeClass('update').find('.submit-text').text('Save');
         $('#cmFormTitle').text('Add Category');
         $('#cmCancelBtn').addClass('d-none');
         formModified = false;
@@ -351,7 +266,7 @@
       $('#cmCategoryForm :input').on('input change', () => {
         if (!formModified) {
           formModified = true;
-          $('#cmSubmitBtn').removeClass('btn-primary').addClass('btn-danger').find('.submit-text').text('Update Category');
+          $('#cmSubmitBtn').addClass('update').find('.submit-text').text('Update Category');
         }
       });
 
@@ -380,7 +295,7 @@
       });
 
       $('#cmSaveOrderBtn').click(function() {
-       const order = Array.from($('#cmCategoryGrid > .col')).map(el => el.dataset.id);
+       const order = Array.from($('#cmCategoryGrid > .mc-card')).map(el => el.dataset.id);
         $('#cmLoadingOverlay').removeClass('d-none');
 
         $.post('/categories/update-order', {
@@ -423,8 +338,8 @@
       });
 
       // Collapse icon
-      $('#categoryFormCollapse').on('show.bs.collapse', () => $('#toggleIcon').removeClass('fa-chevron-down').addClass('fa-chevron-up'));
-      $('#categoryFormCollapse').on('hide.bs.collapse', () => $('#toggleIcon').removeClass('fa-chevron-up').addClass('fa-chevron-down'));
+      $('#categoryFormCollapse').on('show.bs.collapse', () => $('#toggleIcon').removeClass('bi-chevron-down').addClass('bi-chevron-up'));
+      $('#categoryFormCollapse').on('hide.bs.collapse', () => $('#toggleIcon').removeClass('bi-chevron-up').addClass('bi-chevron-down'));
 
       renderCategories();
     });

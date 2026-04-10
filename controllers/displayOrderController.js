@@ -8,10 +8,24 @@ exports.getCategoryTripOrderPage = async (req, res) => {
     try {
         const categories = await Category.find({ isDeleted: false, isActive: true })
             .select('name')
-            .sort({ displayOrder: 1 });
+            .sort({ displayOrder: 1 })
+            .lean();
+
+        // Count active trips per category name
+        const tripCounts = await NewTours.aggregate([
+            { $match: { isActive: true, isDeleted: { $ne: true } } },
+            { $unwind: '$tripCategories' },
+            { $group: { _id: { $trim: { input: '$tripCategories' } }, count: { $sum: 1 } } }
+        ]);
+
+        const countMap = new Map(tripCounts.map(tc => [tc._id, tc.count]));
+        const categoriesWithCount = categories.map(cat => ({
+            ...cat,
+            tripCount: countMap.get(cat.name) || 0
+        }));
 
         res.render('pages/admin/categoryTripOrder', {
-            categories,
+            categories: categoriesWithCount,
             csrfToken: req.csrfToken()
         });
     } catch (err) {

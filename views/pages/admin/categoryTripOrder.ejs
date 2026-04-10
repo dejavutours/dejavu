@@ -361,6 +361,11 @@
               els.select.value = option.value;
               loadCategory(option.value);
             }
+          } else if (els.select.options.length > 1) {
+            // Auto-select first real category on load
+            els.select.selectedIndex = 1;
+            els.search.disabled = false;
+            loadCategory(els.select.value);
           }
         });
 

@@ -77,7 +77,8 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .banner_section .image-slider {
-    height: 300px;
+    height: 70vh;
+    min-height: 420px;
   }
 
   .banner_section .image-slider .banner-caption {
@@ -93,7 +94,8 @@
 
 @media (max-width: 576px) {
   .banner_section .image-slider {
-    height: 200px;
+    height: 70vh;
+    min-height: 380px;
   }
 
   .banner_section .image-slider .banner-caption {

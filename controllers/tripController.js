@@ -106,7 +106,6 @@ exports.verifyotp = async (req, res, next) => {
 // send all the require detail to main index page of the user
 exports.getIndexPage = async (req, res, next) => {
   try {
-    const tests = await NewTours.find().distinct("name");
     const response = await this.getFiltertourAPIUseOnly(req, res, false);
 
     // Function to get state-wise trips
@@ -487,19 +486,16 @@ exports.getIndexPage = async (req, res, next) => {
     // Fetch all required data
     const placeItems = await getStateWiseTrips();
     const categoryItems = await getCategoryWiseTrips();
-    const departureCities = await getDepartureCityTrips();
     const bannerImages = await getBannerImages();
     const homepageCategoryRows = await getHomepageCategoryTrips();
     // Render the index page
     res.render("pages/index", {
       tourPackages: response.tours,
-      test: tests,
       user: req.user,
       placeItems,
       bannerImages,
       categoryItems,
       homepageCategoryRows,
-      departureCities,
     });
   } catch (error) {
     console.error("Error in getIndexPage:", error);

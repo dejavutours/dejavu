@@ -7,35 +7,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" href="css/dashboard.css">
     <style>
-      /* Departure City Section */
-      .departure_city_section {
-        padding-bottom: 3rem;
-      }
-
-      .nav.departure-city-tabs {
-        /* -webkit-mask-image: linear-gradient(to left, transparent, rgb(0 0 0 / 50%) 20%, rgb(0 0 0 / 100%) 80%, transparent); mask-image: linear-gradient(to left, transparent, rgb(0 0 0 / 50%) 20%, rgb(0 0 0 / 100%) 80%, transparent); mask-size: 100% 100%; mask-repeat: no-repeat; padding-inline: 1rem;  */
-        white-space: nowrap;
-        scrollbar-width: none;
-        /* Hide scrollbar for Firefox */
-        -ms-overflow-style: none;
-        /* Hide scrollbar for IE and Edge */
-        --bs-nav-tabs-link-hover-bg: #dee2e6;
-        --bs-nav-tabs-link-hover-border-color: #dee2e6;
-        --bs-nav-tabs-link-active-border-color: #000000;
-        --bs-nav-tabs-border-color: transparent;
-      }
-
-      .departure-city-tabs .nav-link {
-        border-radius: 10px;
-        color: #6c757d;
-        font-weight: 500;
-        transition: all 0.3s ease;
-      }
-
-      .departure-city-tabs .nav-link:hover {
-        background-color: #f8f9fa;
-      }
-
       /* Trip Cards Container */
       .trip-cards-container {
         position: relative;
@@ -241,15 +212,24 @@
           right: 5px;
         }
 
-        .nav.departure-city-tabs {
-          --bs-nav-link-padding-x: 0.5rem;
-          --bs-nav-link-padding-y: 0.25rem;
-        }
       }
 
       @media (max-width: 575.98px) {
         .trip-cards-container::after {
           width: 15px;
+        }
+      }
+
+      /* Large desktop — show more cards per row */
+      @media (min-width: 1200px) {
+        .trip-card {
+          width: 300px;
+        }
+      }
+
+      @media (min-width: 1400px) {
+        .trip-card {
+          width: 320px;
         }
       }
     </style>
@@ -294,7 +274,18 @@
       </div>
       <div class="hero_section position-absolute top-0 left-0 h-100 w-100 text-center d-flex align-items-center">
         <div class="container position-relative z-1">
+          <!-- Mobile-only hero headline -->
+          <div class="d-md-none text-white text-center mb-3">
+            <h2 class="fw-bold mb-1" style="text-shadow: 0 2px 10px rgba(0,0,0,0.6);">Explore India Your Way</h2>
+            <p class="mb-0 small" style="text-shadow: 0 1px 6px rgba(0,0,0,0.6);">Handpicked trips. Real experiences.</p>
+          </div>
           <div class="form rounded-5 bg-white p-md-2 position-relative">
+            <!-- Mobile search trigger -->
+            <button class="d-flex d-md-none w-100 align-items-center gap-2 btn btn-dark rounded-pill py-3 px-4"
+              data-bs-toggle="modal" data-bs-target="#filterModal">
+              <i class="bi bi-search"></i>
+              <span class="flex-grow-1 text-start" style="color: #adb5bd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Search destinations...</span>
+            </button>
             <div class="filter_row rounded-5 d-none d-md-flex gap-2 position-relative z-1">
               <div class="dropdown">
                 <button class="btn btn-light d-flex gap-2 align-items-center rounded-pill dropdownBtn" type="button"
@@ -432,151 +423,31 @@
     </aside>
   </section>
 
-  <!-- Trending state section -->
-  <section class="trending_state_section container-xl py-4 pb-lg-5">
-    <p class="pb-md-3">
-      <small class="text-dejavu-secondary-light">Explore trips by</small><br>
-      <span class="h3">Trending State</span>
-    </p>
-    <aside class="overflow-auto d-flex position-relative">
-      <% for (let item of placeItems ) { %>
-        <a href="/triplist?filterValue=<%= encodeURIComponent(JSON.stringify({ 'States': [item?.name] })) %>"
-          style="--bg-image: url('<%= item.thumb %>'); background-image: var(--bg-image); background-position: center; background-repeat: no-repeat;"
-          class="rounded-4 item_card overflow-hidden">
-          <p class="p-3 mb-0 text-light text-center shadow_content">
-            <span class="fs-5">
-              <%= item.name %>
-            </span><br>
-            <small>
-              <%= item.place %> Place
-            </small>
-          </p>
-        </a>
-        <% } %>
-    </aside>
-  </section>
-
-  <!-- Category section -->
-  <section class="cat_section container-xl pb-4 pb-lg-5">
-    <p class="pb-md-3">
-      <small class="text-dejavu-secondary-light">Explore trips by</small><br>
-      <span class="h3">Categories</span>
-    </p>
-    <aside class="overflow-auto text-nowrap">
-      <% categoryItems.forEach(category=> { %>
-        <a href="/triplist?filterValue=<%= encodeURIComponent(JSON.stringify({ 'Tour category': [category.name] })) %>"
-          class="rounded-4 item_card position-relative d-inline-flex align-items-center">
-          <img src="<%= category.thumb %>" alt="<%= category.name %>" class="rounded-4 w-100 object-fit-cover h-100"
-            width="200" height="230" loading="lazy">
-          <span class="px-3 py-1 bg-white text-center mx-auto rounded content">
-            <strong class="text-truncate">
-              <%= category.name %>
-            </strong><br>
-            <small class="small text-secondary">
-              <%= category.count %> Tour<%= category.count> 1 ? 's' : '' %>
-            </small>
-          </span>
-        </a>
-        <% }) %>
-    </aside>
-  </section>
-
-  <!-- Departure city section -->
-  <section class="departure_city_section container-xl py-4 pb-lg-5">
-    <p class="pb-md-3">
-      <small class="text-dejavu-secondary-light">Departing from your nearby location</small><br>
-      <span class="h3">Tour packages available from</span>
-    </p>
-
-    <!-- Tabs for Departure Cities -->
-    <ul class="nav nav-tabs departure-city-tabs mb-4 flex-nowrap overflow-x-auto pb-1 gap-2" id="departureCityTabs"
-      role="tablist">
-      <% departureCities.forEach((city, index)=> { %>
-        <li class="nav-item" role="presentation">
-          <a href="#" class="nav-link text-nowrap <%= index === 0 ? 'active' : '' %>"
-            id="tab-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" data-bs-toggle="tab"
-            data-bs-target="#pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" type="button" role="tab"
-            aria-controls="pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>"
-            aria-selected="<%= index === 0 ? 'true' : 'false' %>">
-            <%= city.name %>
-          </a>
-        </li>
-        <% }); %>
-    </ul>
-
-    <!-- Tab Content -->
-    <div class="tab-content" id="departureCityTabContent">
-      <% departureCities.forEach((city, index)=> { %>
-        <div class="tab-pane fade <%= index === 0 ? 'show active' : '' %>"
-          id="pane-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>" role="tabpanel"
-          aria-labelledby="tab-<%= city.name.toLowerCase().replace(/\s+/g, '-') %>">
-          <!-- Trip Cards Container with Navigation -->
-          <div class="position-relative">
-            <div class="trip-cards-container">
-              <div class="trip-cards-row">
-                <% city.trips.forEach((trip, tripIndex)=> { %>
-                  <a class="trip-card" data-card-index="<%= tripIndex %>" href="/tripdetail/<%= trip.name %>"
-                    title="<%= trip.name %>">
-                    <!-- Swiper Slider for Banner Images -->
-                    <div class="trip-image-slider swiper">
-                      <div class="swiper-wrapper">
-                        <% if (trip.bannerimages && trip.bannerimages.length> 0) { %>
-                          <% trip.bannerimages.forEach((img, imgIndex)=> { %>
-                            <div class="swiper-slide">
-                              <img src="<%= img %>" alt="Trip Image <%= imgIndex + 1 %>"
-                                class="w-100 h-100 object-fit-cover"
-                                onerror="this.onerror=null; this.src='/images/placeholder.jpg';" />
-                            </div>
-                            <% }); %>
-                              <% } else { %>
-                                <div class="swiper-slide">
-                                  <img src="<%= trip.imageurl %>" alt="Trip Image"
-                                    class="w-100 h-100 object-fit-cover"
-                                    onerror="this.onerror=null; this.src='/images/placeholder.jpg';" />
-                                </div>
-                                <% } %>
-                      </div>
-                      <!-- Navigation Buttons for Slider -->
-                      <% if (trip.bannerimages && trip.bannerimages.length> 1) { %>
-                        <div class="swiper-button-prev swiper-button-white-black" aria-label="Previous slide"></div>
-                        <div class="swiper-button-next swiper-button-white-black" aria-label="Next slide"></div>
-                        <% } %>
-                    </div>
-                    <!-- Trip Details -->
-                    <div class="p-3">
-                      <h5 class="mb-1">
-                        <%= trip.name %>
-                      </h5>
-                      <p class="text-muted small mb-2">
-                        <%= trip.destinations %>
-                      </p>
-                      <p class="d-flex justify-content-between align-items-center mb-0">
-                        <span><strong>₹<%= trip.adultPrice || trip.price %></strong>/person</span>
-                        <span class="">
-                          <i class="text-muted bi bi-calendar"></i>
-                          <%= trip.tripDuration || '2 Days - 3 Nights' %>
-                        </span>
-                      </p>
-                    </div>
-                  </a>
-                  <% }); %>
-              </div>
-            </div>
-            <!-- Navigation Buttons for Row -->
-            <button class="row-nav-btn row-nav-prev btn btn-light rounded-circle shadow-sm"
-              aria-label="Previous cards">
-              <i class="bi bi-chevron-left"></i>
-            </button>
-            <button class="row-nav-btn row-nav-next btn btn-light rounded-circle shadow-sm" aria-label="Next cards">
-              <i class="bi bi-chevron-right"></i>
-            </button>
-          </div>
-        </div>
-        <% }); %>
+    <!-- Customization section -->
+  <section class="custom_section container-xl pt-md-3 pb-lg-5">
+    <div class="rounded-4 overflow-hidden position-relative" style="min-height: 300px;">
+      <div class="position-absolute top-0 start-0 w-100 h-100" style="
+    background-image: url('../img/dashboard/dream_trip.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  ">
+      </div>
+      <div
+        class="d-flex flex-column align-items-start justify-content-center h-100 p-3 p-md-4 p-xl-5 text-light position-relative z-1">
+        <small>We're Crafting the Perfect Getaway You'll Love</small>
+        <h4>Let's Make Your Dream Trip</h4>
+        <p class="small col-xl-6">Customized trip is your gateway to personalized travel. Tell us your
+          interests,
+          and
+          we'll curate an itinerary that you'll love.</p>
+        <button class="btn btn-light rounded-pill" onclick="window.location.href='/dreamtrip'">Customize
+          Trip</button>
+      </div>
     </div>
   </section>
-
-  <!-- Homepage Category Rows – Only isShowOnHomePage = true -->
+  
+   <!-- Homepage Category Rows – Only isShowOnHomePage = true -->
   <% if (homepageCategoryRows && homepageCategoryRows.length> 0) { %>
   <section class="category_tours_section container-xl py-4 py-lg-5">
     <p class="pb-md-3">
@@ -673,31 +544,6 @@
     <% }) %>
   </section>
   <% } %>
-
-
-  <!-- Customization section -->
-  <section class="custom_section container-xl pt-md-3 pb-lg-5">
-    <div class="rounded-4 overflow-hidden position-relative" style="min-height: 300px;">
-      <div class="position-absolute top-0 start-0 w-100 h-100" style="
-    background-image: url('../img/dashboard/dream_trip.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  ">
-      </div>
-      <div
-        class="d-flex flex-column align-items-start justify-content-center h-100 p-3 p-md-4 p-xl-5 text-light position-relative z-1">
-        <small>We're Crafting the Perfect Getaway You'll Love</small>
-        <h4>Let's Make Your Dream Trip</h4>
-        <p class="small col-xl-6">Customized trip is your gateway to personalized travel. Tell us your
-          interests,
-          and
-          we'll curate an itinerary that you'll love.</p>
-        <button class="btn btn-light rounded-pill" onclick="window.location.href='/dreamtrip'">Customize
-          Trip</button>
-      </div>
-    </div>
-  </section>
 
   <%- include('../partials/footer'); %>
   <%- include('../partials/scripttag', {isNiceSelect: false}); %>
