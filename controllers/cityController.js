@@ -38,7 +38,9 @@ exports.getCityList = async (req, res) => {
 // Upsert city (add or update)
 exports.upsertCity = async (req, res) => {
   try {
-    const { id, name, state, oldImage, countryCode = 'IN' } = req.body;
+    const { id, oldImage, countryCode = 'IN' } = req.body;
+    const name  = Array.isArray(req.body.name)  ? (req.body.name.find(v => v)  || '') : (req.body.name  || '');
+    const state = Array.isArray(req.body.state) ? (req.body.state.find(v => v) || '') : (req.body.state || '');
     let imagePath = oldImage && oldImage !== "" ? oldImage : null;
 
     // Handle image upload
