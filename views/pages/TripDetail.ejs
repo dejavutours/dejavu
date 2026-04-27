@@ -55,6 +55,7 @@
   --dark-gray: #333333;
 }
 
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
 .normal-hight { line-height: normal; }
 
 /* Image slider styling */
@@ -63,9 +64,26 @@
   border-radius: 12px;
   overflow: hidden;
   position: relative;
+  height: 360px;
 }
 .swiper-slide { width: 100%; height: 100%; }
-.image-slider img { width: 100%; height: 300px; object-fit: cover; }
+.image-slider img { width: 100%; height: 100%; object-fit: cover; }
+.image-slider::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 55%;
+  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+.trip-hero-overlay {
+  position: absolute;
+  bottom: 0; left: 0;
+  z-index: 2;
+  padding: 1.25rem 1.5rem;
+  color: #fff;
+}
 
 .swiper-button-next,
 .swiper-button-prev {
@@ -92,6 +110,40 @@
 }
 
 .swiper-pagination-bullet-active { opacity: 1; }
+
+/* Trip stat grid */
+.trip-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+.trip-stat-item { background: #f8f9fa; border-radius: 12px; padding: 0.75rem; text-align: center; }
+.trip-stat-icon { font-size: 1.4rem; color: var(--primary-blue); margin-bottom: 0.25rem; }
+.trip-stat-label { font-size: 0.7rem; color: #6c757d; text-transform: uppercase; letter-spacing: 0.05em; }
+.trip-stat-value { font-size: 0.9rem; font-weight: 600; color: #212529; }
+
+/* Itinerary accordion enhancements */
+.accordion-item { border-left: 3px solid transparent; transition: border-color 0.2s; }
+.accordion-item:has(.accordion-button:not(.collapsed)) { border-left-color: var(--primary-blue); }
+.itinerary-day-badge { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; background: var(--primary-blue); color: #fff; border-radius: 50%; font-size: 0.7rem; font-weight: 700; margin-right: 0.5rem; flex-shrink: 0; }
+
+/* FAB polish — sizing handled in Mobile Booking Styles block above */
+
+/* More info tabs scroll fade */
+.more-info-tabs-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 40px;
+  background: linear-gradient(to right, transparent, #fff);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Mobile sheet drag handle */
+.sheet-drag-handle {
+  width: 36px; height: 4px;
+  background: #d1d5db;
+  border-radius: 2px;
+  margin: 10px auto 2px;
+  flex-shrink: 0;
+}
 
 header .subtitle { color: #6c757d; font-size: 0.875rem; }
 
@@ -643,20 +695,33 @@ a { text-decoration: none; }
 .cutoff-modal-btn:hover { transform: translateY(-2px); }
 
 /* Mobile Booking Styles */
-.mobile-booking-fab, .mobile-whatsapp-fab {
+.mobile-booking-fab {
   position: fixed;
   bottom: 20px;
-  right: 120px;
-  box-shadow: 0 4px 12px rgba(26, 75, 142, 0.3);
+  right: 76px;
   z-index: 1000;
   transition: all var(--transition);
+  box-shadow: 0 4px 12px rgba(26, 75, 142, 0.35);
+  font-size: 0.9rem;
+  padding: 0.6rem 1.1rem;
+  line-height: 1.4;
 }
-.mobile-whatsapp-fab{right: 20px}
-
-.mobile-booking-fab:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(26, 75, 142, 0.4);
+.mobile-whatsapp-fab {
+  position: fixed;
+  bottom: 20px;
+  right: 16px;
+  z-index: 1000;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  box-shadow: 0 4px 12px rgba(37,211,102,0.4);
+  transition: all var(--transition);
 }
+.mobile-booking-fab:hover { transform: translateY(-2px); }
+.mobile-whatsapp-fab:hover { transform: translateY(-2px); }
 
   /* Floating book now section for mobile */
   .tour-booking-floating-sec {
@@ -878,7 +943,7 @@ a { text-decoration: none; }
 
 .mobile-date-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
   gap: 6px;
 }
 
@@ -970,15 +1035,14 @@ a { text-decoration: none; }
 
 /* Hide desktop booking section on mobile */
 @media (max-width: 991.98px) {
-  .stickySec {
-    display: none !important;
-  }
+  .stickySec { display: none !important; }
+  body { padding-bottom: 90px; }
 }
 
 /* Media Queries */
 @media screen and (min-width: 992px) {
   body { background-color: #f3f3f6; }
-  .image-slider img { height: 500px; }
+  .image-slider { height: 500px; }
   .custom-card + .custom-card { margin-top: 1rem; }
   .stickySec { position: sticky; top: 100px; bottom: unset; }
   .stickySec .card, .custom-card, .actionCard { box-shadow: var(--bs-box-shadow-sm); border-radius: 0.75rem; }
@@ -987,7 +1051,9 @@ a { text-decoration: none; }
 }
 
 @media (max-width: 768px) {
-  .trek-title, h3 { font-size: 1.5rem; }
+  .trek-title { font-size: 1.4rem; }
+  article > h3, .detailSec > article > h3 { font-size: 1rem; }
+  .trip-cta-btns .btn { font-size: 0.78rem; padding: 0.45rem 0.5rem; white-space: nowrap; }
   .accordion-button { font-size: 1rem; }
   .tour-booking-city-card { width: 140px; }
   .tour-booking-city-card img { height: 90px; }
@@ -999,7 +1065,8 @@ a { text-decoration: none; }
 }
 
 @media (max-width: 576px) {
-  .image-slider img { height: 200px; }
+  .image-slider { height: 260px; }
+  .trip-stat-grid { grid-template-columns: repeat(2, 1fr); }
   .tour-booking-city-card { width: 120px; }
   .tour-booking-city-card img { height: 80px; }
   .tour-booking-city-card h6 { font-size: 0.85rem; }
@@ -1464,28 +1531,26 @@ a { text-decoration: none; }
   }
   
   /* Plan Next Trip Mobile */
+  .plan-next-trip-section { margin-top: 1.5rem; }
+  .plan-next-trip-card { padding: 1.5rem; }
   .plan-next-trip-content {
     flex-direction: column;
     text-align: center;
-    gap: 1.5rem;
+    gap: 1rem;
   }
-  
-  .plan-next-trip-title {
-    font-size: 1.5rem;
-  }
-  
-  .plan-next-trip-subtitle {
-    font-size: 1rem;
-  }
-  
+  .plan-next-trip-title { font-size: 1.3rem; }
+  .plan-next-trip-subtitle { font-size: 0.9rem; }
   .plan-next-trip-actions {
-    flex-direction: column;
+    flex-direction: row;
     width: 100%;
+    gap: 0.625rem;
   }
-  
   .plan-next-trip-btn {
-    width: 100%;
+    flex: 1;
     justify-content: center;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.82rem;
+    text-align: center;
   }
 }
 
@@ -1528,22 +1593,13 @@ a { text-decoration: none; }
   }
   
   /* Plan Next Trip Small Mobile */
-  .plan-next-trip-card {
-    padding: 1.5rem;
-  }
-  
-  .plan-next-trip-icon {
-    width: 60px;
-    height: 60px;
-  }
-  
-  .plan-next-trip-icon i {
-    font-size: 1.5rem;
-  }
-  
-  .plan-next-trip-title {
-    font-size: 1.25rem;
-  }
+  .plan-next-trip-section { margin-top: 1rem; }
+  .plan-next-trip-card { padding: 1.25rem; }
+  .plan-next-trip-icon { width: 52px; height: 52px; }
+  .plan-next-trip-icon i { font-size: 1.25rem; }
+  .plan-next-trip-title { font-size: 1.1rem; }
+  .plan-next-trip-subtitle { font-size: 0.82rem; }
+  .plan-next-trip-btn { padding: 0.55rem 0.6rem; font-size: 0.78rem; }
   
   .plan-next-trip-subtitle {
     font-size: 0.9rem;
@@ -1559,38 +1615,48 @@ a { text-decoration: none; }
         <% if (trips.bannerimages && trips.bannerimages.length > 0) { %>
         <% trips.bannerimages.forEach((img, index) => { %>
         <div class="swiper-slide">
-          <img src="<%= img %>" alt="Banner Image <%= index + 1 %>" loading="lazy" onerror="this.onerror=null; this.src='/images/placholderbanner.jpg';" />
+          <img src="<%= img %>" alt="Banner Image <%= index + 1 %>" loading="<%= index === 0 ? 'eager' : 'lazy' %>" onerror="this.onerror=null; this.src='/images/placholderbanner.jpg';" />
         </div>
         <% }); %>
         <% } else { %>
         <div class="swiper-slide">
-          <img src="<%= trips.imageurl %>" alt="Main Image" loading="lazy" onerror="this.onerror=null; this.src='/images/placholderbanner.jpg';">
+          <img src="<%= trips.imageurl %>" alt="Main Image" loading="eager" onerror="this.onerror=null; this.src='/images/placholderbanner.jpg';">
         </div>
         <% } %>
       </div>
       <div class="swiper-pagination"></div>
       <div class="swiper-button-prev"></div>
       <div class="swiper-button-next"></div>
+      <div class="trip-hero-overlay">
+        <div class="d-flex gap-2 flex-wrap align-items-center">
+          <% if (trips.days && trips.days.trim() !== '') { %>
+          <span class="badge bg-white text-dark"><i class="bi bi-clock me-1"></i><%= trips.days %></span>
+          <% } %>
+          <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].City !== 'Unknown' && trips.deptcities[0].price && trips.deptcities[0].price[0]) { %>
+          <span class="badge bg-primary">From ₹<%= trips.deptcities[0].price[0].adultPrice?.toLocaleString('en-IN') %></span>
+          <% } %>
+        </div>
+      </div>
     </section>
   </div>
-  <div class="container-md container-lg pt-4">
+  <div class="container-lg pt-3 pt-lg-4">
     <section class="row g-3 mt-0">
       <div class="col-lg-7 col-xl-8 detailSec">
-        <div class="custom-card p-lg-3">
+        <div class="custom-card p-3 p-lg-4">
           <h1 class="trek-title"><%= trips.name %></h1>
           <article class="subtitle"><%- trips.destinations %></article>
-          <div class="d-flex flex-wrap d-lg-none gap-2 align-items-center pt-2">
-            <a href="/dreamtrip" class="btn btn-warning rounded-pill" target="_blank">Inquire Now</a>
-            <button class="btn btn-app-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#quickCallModal">Request Call Back</button>
+          <div class="d-flex d-lg-none gap-2 pt-2 trip-cta-btns">
+            <a href="/dreamtrip" class="btn btn-warning rounded-pill flex-fill" target="_blank">Inquire Now</a>
+            <button class="btn btn-app-primary rounded-pill flex-fill" data-bs-toggle="modal" data-bs-target="#quickCallModal">Request Call Back</button>
           </div>
         </div>
-        <article class="custom-card p-lg-3">
+        <article class="custom-card p-3 p-lg-4">
           <h3>About</h3>
           <div class="about-wrapper position-relative">
             <div class="abouts"><%- trips.about %></div>
           </div>
         </article>
-        <article class="custom-card p-lg-3">
+        <article class="custom-card p-3 p-lg-4">
           <% if (trips.documentUrl) { %>
           <button class="btn btn-light border rounded-pill px-4 py-2" onclick="downloadItinerary()">
             <i class="bi bi-download"></i> Download Itinerary
@@ -1598,65 +1664,45 @@ a { text-decoration: none; }
           <% } else { %>
           <p class="text-muted pt-1">Itinerary PDF not available.</p>
           <% } %>
-          <div class="row g-3 normal-hight">
+          <div class="trip-stat-grid mt-3">
             <% if (trips.days && trips.days.trim() !== '') { %>
-            <div class="col-6 col-sm-4 d-flex gap-2 align-items-center">
-              <span class="icon-circle">
-                <i class="bi bi-calendar-event"></i>
-              </span>
-              <p class="mb-0">
-                <small class="text-muted">Duration</small>
-                <span class="fw-semibold d-block"><%= trips.days %></span>
-              </p>
+            <div class="trip-stat-item">
+              <div class="trip-stat-icon"><i class="bi bi-calendar-event"></i></div>
+              <div class="trip-stat-label">Duration</div>
+              <div class="trip-stat-value"><%= trips.days %></div>
             </div>
             <% } %>
             <% if (trips.tripType && trips.tripType.trim() !== '') { %>
-            <div class="col-6 col-sm-4 d-flex gap-2 align-items-center">
-              <span class="icon-circle">
-                <i class="bi bi-bar-chart"></i>
-              </span>
-              <p class="mb-0">
-                <small class="text-muted">Difficulty</small>
-                <span class="fw-semibold d-block"><%= trips.tripType %></span>
-              </p>
+            <div class="trip-stat-item">
+              <div class="trip-stat-icon"><i class="bi bi-bar-chart"></i></div>
+              <div class="trip-stat-label">Difficulty</div>
+              <div class="trip-stat-value"><%= trips.tripType %></div>
             </div>
             <% } %>
             <% if (trips.altitude && trips.altitude.trim() !== '') { %>
-            <div class="col-6 col-sm-4 d-flex gap-2 align-items-center">
-              <span class="icon-circle">
-                <i class="bi bi-signpost"></i>
-              </span>
-              <p class="mb-0">
-                <small class="text-muted">Altitude</small>
-                <span class="fw-semibold d-block"><%= trips.altitude %></span>
-              </p>
+            <div class="trip-stat-item">
+              <div class="trip-stat-icon"><i class="bi bi-signpost"></i></div>
+              <div class="trip-stat-label">Altitude</div>
+              <div class="trip-stat-value"><%= trips.altitude %></div>
             </div>
             <% } %>
             <% if (trips.bestSession && trips.bestSession.length > 0) { %>
-            <div class="col-6 col-sm-4 d-flex gap-2 align-items-center">
-              <span class="icon-circle">
-                <i class="bi bi-cloud-sun"></i>
-              </span>
-              <p class="mb-0">
-                <small class="text-muted">Best season</small>
-                <span class="fw-semibold d-block"><%= trips.bestSession.join(', ') %></span>
-              </p>
+            <div class="trip-stat-item">
+              <div class="trip-stat-icon"><i class="bi bi-cloud-sun"></i></div>
+              <div class="trip-stat-label">Best Season</div>
+              <div class="trip-stat-value"><%= trips.bestSession.join(', ') %></div>
             </div>
             <% } %>
             <% if (trips.state && trips.state.trim() !== '') { %>
-            <div class="col-6 col-sm-4 d-flex gap-2 align-items-center">
-              <span class="icon-circle">
-                <i class="bi bi-geo-alt"></i>
-              </span>
-              <p class="mb-0">
-                <small class="text-muted">Region</small>
-                <span class="fw-semibold d-block"><%= trips.state %>, <%= trips.tripCountry || 'India' %></span>
-              </p>
+            <div class="trip-stat-item">
+              <div class="trip-stat-icon"><i class="bi bi-geo-alt"></i></div>
+              <div class="trip-stat-label">Region</div>
+              <div class="trip-stat-value"><%= trips.state %>, <%= trips.tripCountry || 'India' %></div>
             </div>
             <% } %>
           </div>
         </article>
-        <article class="custom-card p-lg-3">
+        <article class="custom-card p-3 p-lg-4">
           <h3>Departure City</h3>
           <div class="position-relative">
             <div class="d-flex gap-3 overflow-auto py-2" id="carouselTrack">
@@ -1702,14 +1748,17 @@ a { text-decoration: none; }
           <% } %>
         </article>
         <% if (trips && trips.itinerary && trips.itinerary.length > 0) { %>
-          <article class="custom-card p-lg-3">
+          <article class="custom-card p-3 p-lg-4">
             <h3>Itinerary</h3>
             <div class="accordion" id="accordionPanelsStayOpenExample">
               <% trips.itinerary.forEach((item, index) => { %>
                 <% if (!item.day || !item.header || !item.description) return; %>
                 <div class="accordion-item">
                   <h3 class="accordion-header">
-                    <button class="accordion-button <%= index === 0 ? '' : 'collapsed' %>" type="button" data-bs-toggle="collapse" data-bs-target="#itinerary-<%= index %>" aria-expanded="<%= index === 0 ? 'true' : 'false' %>" aria-controls="itinerary-<%= index %>"><%= item.day %>: <%= item.header %></button>
+                    <button class="accordion-button <%= index === 0 ? '' : 'collapsed' %>" type="button" data-bs-toggle="collapse" data-bs-target="#itinerary-<%= index %>" aria-expanded="<%= index === 0 ? 'true' : 'false' %>" aria-controls="itinerary-<%= index %>">
+                      <span class="itinerary-day-badge"><%= index + 1 %></span>
+                      <span class="itinerary-btn-text"><%= item.day %>: <%= item.header %></span>
+                    </button>
                   </h3>
                   <div id="itinerary-<%= index %>" class="accordion-collapse collapse<%= index === 0 ? ' show' : '' %>">
                     <div class="accordion-body"><%- item.description %></div>
@@ -1721,6 +1770,7 @@ a { text-decoration: none; }
         <% } %>
         <article class="pt-4 mt-3 mt-lg-0">
           <h3>More Information</h3>
+          <div class="position-relative more-info-tabs-wrap">
           <div class="tab-menu more-info-tabs d-flex overflow-auto gap-3 mb-3 scroll-hide h-scroll">
             <% if (trips.package_cost) { %>
             <button class="tab text-nowrap active" onclick="showTab('package')"><i class="bi bi-wallet2"></i> Package Cost</button>
@@ -1741,6 +1791,7 @@ a { text-decoration: none; }
             <button class="tab text-nowrap" onclick="showTab('infonfaq')"><i class="bi bi-question-circle"></i> Info & FAQs</button>
             <% } %>
           </div>
+          </div><!-- end more-info-tabs-wrap -->
           <% if (trips.package_cost) { %>
           <div id="package" class="tab-content active"><%- trips.package_cost %></div>
           <% } %>
@@ -1874,6 +1925,7 @@ a { text-decoration: none; }
   <div class="tour-booking-floating-backdrop" id="mobileBookingBackdrop"></div>
   <div class="tour-booking-floating-sec d-lg-none" id="mobileBookingSection">
     <div class="tour-booking-floating-panel d-flex flex-column" id="mobileBookingPanel">
+      <div class="sheet-drag-handle"></div>
       <div class="mobile-booking-header d-flex align-items-center justify-content-between p-3 border-bottom">
         <h5 class="mb-0">Book Your Trip</h5>
         <button type="button" class="btn-close" onclick="toggleMobileBooking()"></button>
@@ -2009,12 +2061,11 @@ a { text-decoration: none; }
   </div>
 
   <!-- Mobile Floating Button -->
-  <button class="btn btn-lg btn-app-primary rounded-pill mobile-booking-fab d-lg-none" id="mobileBookingFab" onclick="toggleMobileBooking()">
-    <i class="bi bi-bookmark-check-fill me-2"></i>
-    Book Now
+  <button class="btn btn-app-primary rounded-pill mobile-booking-fab d-lg-none" id="mobileBookingFab" onclick="toggleMobileBooking()">
+    <i class="bi bi-bookmark-check-fill me-1"></i> Book Now
   </button>
-  <a class="btn btn-success rounded-pill mobile-whatsapp-fab p-0 d-lg-none" aria-label="WhatsApp" href="https://wa.me/+918511117891?text=Hello%20I%20am%20interested%20in%20the%20following%20trip%20<%= encodeURIComponent(trips.name) %>%20tour.%20could%20you%20please%20share%20more%20details." target="_blank" aria-label="Contact via WhatsApp for <%= trips.name %>">
-    <i class="bi bi-whatsapp" style="font-size: 2rem;"></i>
+  <a class="btn btn-success rounded-circle mobile-whatsapp-fab d-lg-none" aria-label="WhatsApp" href="https://wa.me/+918511117891?text=Hello%20I%20am%20interested%20in%20the%20following%20trip%20<%= encodeURIComponent(trips.name) %>%20tour.%20could%20you%20please%20share%20more%20details." target="_blank">
+    <i class="bi bi-whatsapp"></i>
   </a>
 
   <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
@@ -2750,6 +2801,7 @@ a { text-decoration: none; }
       }
     }
 
+    // Update itinerary accordion headers with actual calendar dates
     // Update city from dropdown
     function updateCityFromDropdown() {
       const selectedCity = document.getElementById("selectedCity").value;
@@ -3739,13 +3791,25 @@ a { text-decoration: none; }
   }
 
   function initializeMobileBooking() {
-    // Select first city by default
-    const firstCityCard = document.querySelector('.mobile-city-card');
-    if (firstCityCard) {
-      selectMobileCity(firstCityCard);
+    // Sync from whatever city is already selected on the main page
+    const mainCity = document.getElementById('selectedCity')?.value;
+    const syncCard = mainCity
+      ? document.querySelector(`.mobile-city-card[data-city="${mainCity}"]`)
+      : document.querySelector('.mobile-city-card');
+    if (syncCard) selectMobileCity(syncCard);
+
+    // Sync date if already selected on main page
+    const mainDate = document.getElementById('selectedDate')?.value;
+    if (mainDate) {
+      const matchingBtn = document.querySelector(`.mobile-date-item[data-value="${mainDate}"]`);
+      if (matchingBtn) {
+        document.querySelectorAll('.mobile-date-item').forEach(i => i.classList.remove('active'));
+        matchingBtn.classList.add('active');
+        const dateElements = document.querySelectorAll('.mobile-booking-summary .booking-summary-date');
+        dateElements.forEach(el => el.textContent = matchingBtn.textContent);
+      }
     }
-    
-    // Setup carousel navigation
+
     checkMobileCarouselButtons();
   }
 
