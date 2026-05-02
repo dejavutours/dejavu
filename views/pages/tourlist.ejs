@@ -1055,6 +1055,10 @@
           showToast('Please upload a valid image for the main image.', 'danger');
           return;
         }
+        if (mainImageInput.files[0].size > 5 * 1024 * 1024) {
+          showToast('Main image must be under 5 MB.', 'danger');
+          return;
+        }
         const mainFormData = new FormData();
         mainFormData.append('image', mainImageInput.files[0]);
         mainFormData.append('tripId', tripId);
@@ -1079,6 +1083,11 @@
         const invalidFiles = Array.from(bannerImagesInput.files).filter(file => !file.type.startsWith('image/'));
         if (invalidFiles.length > 0) {
           showToast('Please upload only valid image files for banner images.', 'danger');
+          return;
+        }
+        const oversizedFiles = Array.from(bannerImagesInput.files).filter(file => file.size > 5 * 1024 * 1024);
+        if (oversizedFiles.length > 0) {
+          showToast('Each banner image must be under 5 MB.', 'danger');
           return;
         }
         const bannerFormData = new FormData();

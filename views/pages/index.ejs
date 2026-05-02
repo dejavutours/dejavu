@@ -478,23 +478,28 @@
                   role="button" tabindex="0" title="<%= trip.name %>">
                   <div class="trip-image-slider swiper">
                     <div class="swiper-wrapper">
-                      <% if (trip.bannerimages && trip.bannerimages.length> 0) { %>
+                      <% if (trip.imageurl) { %>
+                        <div class="swiper-slide">
+                          <img src="<%= trip.imageurl %>" alt="<%= trip.name %>"
+                            class="w-100 h-100 object-fit-cover"
+                            onerror="this.onerror=null;this.src='/images/placeholder.jpg';"
+                            loading="lazy">
+                        </div>
+                      <% } else if (trip.bannerimages && trip.bannerimages.length > 0) { %>
                         <% trip.bannerimages.forEach(img=> { %>
                           <div class="swiper-slide">
                             <img src="<%= img %>" alt="<%= trip.name %>" class="w-100 h-100 object-fit-cover"
                               onerror="this.onerror=null;this.src='/images/placeholder.jpg';" loading="lazy">
                           </div>
-                          <% }) %>
-                            <% } else { %>
-                              <div class="swiper-slide">
-                                <img src="<%= trip.imageurl %>" alt="<%= trip.name %>"
-                                  class="w-100 h-100 object-fit-cover"
-                                  onerror="this.onerror=null;this.src='/images/placeholder.jpg';"
-                                  loading="lazy">
-                              </div>
-                              <% } %>
+                        <% }) %>
+                      <% } else { %>
+                        <div class="swiper-slide">
+                          <img src="/images/placeholder.jpg" alt="<%= trip.name %>"
+                            class="w-100 h-100 object-fit-cover" loading="lazy">
+                        </div>
+                      <% } %>
                     </div>
-                    <% if ((trip.bannerimages || []).length> 1) { %>
+                    <% if (!trip.imageurl && (trip.bannerimages || []).length > 1) { %>
                       <div class="swiper-button-prev swiper-button-white-black"></div>
                       <div class="swiper-button-next swiper-button-white-black"></div>
                       <% } %>

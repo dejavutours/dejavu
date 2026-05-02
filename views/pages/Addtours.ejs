@@ -328,6 +328,7 @@
           <div class="col-12 col-sm-6 col-md-4">
             <label for="file" class="form-label">Upload Image</label>
             <input type="file" accept="image/*" name="image" id="file" class="form-control">
+            <small class="text-danger d-none" id="mainImageError">Image size must not exceed 5 MB.</small>
             <input type="hidden" name="existingImage" value="<%= trips.imageurl || '' %>">
             <div class="preview-container d-flex align-items-center border rounded p-2" id="mainImagePreviewContainer" style="display: <%= trips.imageurl ? 'flex' : 'none' %>;">
               <img id="mainImagePreview" src="<%= trips.imageurl || '' %>" alt="Preview" data-bs-toggle="modal" data-bs-target="#imageModal">
@@ -1179,6 +1180,12 @@
       mainImageInput.addEventListener("change", function() {
         const file = this.files[0];
         if (file) {
+          if (file.size > 5 * 1024 * 1024) {
+            document.getElementById("mainImageError").classList.remove("d-none");
+            this.value = "";
+            return;
+          }
+          document.getElementById("mainImageError").classList.add("d-none");
           const reader = new FileReader();
           reader.onload = function(e) {
             mainImagePreview.src = e.target.result;
