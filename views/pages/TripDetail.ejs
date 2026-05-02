@@ -66,6 +66,10 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Robo
   position: relative;
   height: 360px;
 }
+
+@media (min-width: 992px) {
+  .image-slider { height: 500px; }
+}
 .swiper-slide { width: 100%; height: 100%; }
 .image-slider img { width: 100%; height: 100%; object-fit: cover; }
 .image-slider::after {
@@ -113,8 +117,8 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Robo
 
 /* Trip stat grid */
 .trip-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
-.trip-stat-item { background: #f8f9fa; border-radius: 12px; padding: 0.75rem; text-align: center; }
-.trip-stat-icon { font-size: 1.4rem; color: var(--primary-blue); margin-bottom: 0.25rem; }
+.trip-stat-item { background: #f8f9fa; border-radius: 12px; padding: 0.75rem; text-align: center; border-top: 3px solid #EF4F5F; }
+.trip-stat-icon { font-size: 1.4rem; color: #EF4F5F; margin-bottom: 0.25rem; }
 .trip-stat-label { font-size: 0.7rem; color: #6c757d; text-transform: uppercase; letter-spacing: 0.05em; }
 .trip-stat-value { font-size: 0.9rem; font-weight: 600; color: #212529; }
 
@@ -164,53 +168,141 @@ header .subtitle { color: #6c757d; font-size: 0.875rem; }
 
 .about-read-more-btn { text-underline-offset: 2px; }
 
+/* Section heading accent */
+.detailSec article > h3 {
+  display: inline-block;
+  padding-bottom: 6px;
+  border-bottom: 3px solid #EF4F5F;
+  margin-bottom: 1rem;
+}
+
+/* Payment option cards — styled like real payment mode tiles */
+.tour-booking-payment-option {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 11px 14px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+}
+.tour-booking-payment-option:has(input:checked) {
+  border-color: #16a34a;
+  background: #f0fdf4;
+  box-shadow: 0 0 0 2px rgba(22,163,74,0.12);
+}
+.tour-booking-payment-option label {
+  cursor: pointer; margin: 0; width: 100%;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.tour-booking-payment-option label .pay-amount {
+  font-weight: 700; color: #16a34a; font-size: 0.95rem;
+}
+.tour-booking-payment-option input[type="radio"] { accent-color: #16a34a; width: 16px; height: 16px; flex-shrink: 0; }
+
+/* Mobile payment option cards */
+.mobile-payment-option {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 11px 14px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+}
+.mobile-payment-option:has(input:checked) {
+  border-color: #16a34a;
+  background: #f0fdf4;
+  box-shadow: 0 0 0 2px rgba(22,163,74,0.12);
+}
+.mobile-payment-option label { cursor: pointer; margin: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; }
+.mobile-payment-option label .payment-price { font-weight: 700; color: #16a34a; }
+.mobile-payment-option input[type="radio"] { accent-color: #16a34a; width: 16px; height: 16px; flex-shrink: 0; }
+
 /* City card styling */
 .tour-booking-city-card {
-  width: 160px;
+  width: 148px;
   flex-shrink: 0;
   text-align: center;
   background: #fff;
-  padding: 12px;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
+  padding: 0;
+  border: 2px solid #e5e7eb;
+  border-radius: 14px;
   cursor: pointer;
+  overflow: hidden;
   transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+  position: relative;
 }
-
 .tour-booking-city-card:hover {
-  box-shadow: var(--shadow);
-  transform: translateY(-2px);
+  border-color: #1a4b8e;
+  box-shadow: 0 4px 16px rgba(26,75,142,0.15);
+  transform: translateY(-3px);
 }
-
 .tour-booking-city-card.active {
-  border-color: var(--primary-blue);
-  box-shadow: var(--shadow);
+  border-color: #1a4b8e;
+  box-shadow: 0 4px 16px rgba(26,75,142,0.2);
 }
-
+.tour-booking-city-card.active::after {
+  content: '✓';
+  position: absolute;
+  top: 7px; right: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  background: #1a4b8e;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+}
 .tour-booking-city-card img {
   width: 100%;
-  height: 100px;
+  height: 90px;
   object-fit: cover;
-  border-radius: 6px;
+  display: block;
 }
-
+.tour-booking-city-card-body {
+  padding: 9px 10px 10px;
+}
 .tour-booking-city-card h6 {
-  font-size: 0.95rem;
-  margin: 8px 0 4px;
+  font-size: 0.88rem;
+  margin: 0 0 3px;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-
 .tour-booking-city-card small {
-  font-size: 0.8rem;
-  line-height: 1.3;
+  font-size: 0.75rem;
+  color: #6b7280;
+  line-height: 1.2;
+  display: block;
+}
+.tour-booking-city-card .city-price {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #16a34a;
+  margin-top: 3px;
 }
 
 /* Carousel track */
 #carouselTrack {
-  white-space: nowrap;
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
   scroll-behavior: smooth;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  padding: 10px 0;
+  padding: 6px 2px 10px;
+  white-space: nowrap;
 }
 
 #carouselTrack::-webkit-scrollbar { display: none; }
@@ -241,132 +333,212 @@ header .subtitle { color: #6c757d; font-size: 0.875rem; }
 
 /* Departure city and available dates */
 .tour-booking-departure-section { margin-top: 1.5rem; }
-.tour-booking-departure-section h5 { font-size: 1.1rem; font-weight: 600; }
 
+/* Section sub-headings inside departure card */
+.booking-section-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #6b7280;
+  margin-bottom: 10px;
+  margin-top: 22px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.booking-section-label::before {
+  content: '';
+  width: 3px;
+  height: 12px;
+  background: #1a4b8e;
+  border-radius: 2px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Year/month pill tabs */
 .tour-booking-year-tabs,
 .tour-booking-month-tabs {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .tour-booking-year-tab,
 .tour-booking-month-tab {
-  background: none;
-  border: none;
-  padding: 6px 12px;
+  background: #f3f4f6;
+  border: 1.5px solid transparent;
+  padding: 5px 14px;
   cursor: pointer;
   font-weight: 500;
-  font-size: 0.9rem;
-  border-radius: 6px;
-  transition: background var(--transition), color var(--transition);
+  font-size: 0.82rem;
+  border-radius: 20px;
+  color: #374151;
+  transition: all var(--transition);
+  white-space: nowrap;
 }
-
 .tour-booking-year-tab:hover,
+.tour-booking-month-tab:hover {
+  border-color: #1a4b8e;
+  color: #1a4b8e;
+  background: #f0f4ff;
+}
 .tour-booking-year-tab.active,
-.tour-booking-month-tab:hover,
 .tour-booking-month-tab.active {
-  background: var(--primary-blue);
-  color: white;
+  background: #1a4b8e;
+  color: #fff;
+  border-color: #1a4b8e;
+  box-shadow: 0 2px 6px rgba(26,75,142,0.25);
 }
 
+/* Date grid */
 .tour-booking-date-selector {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  padding: 8px 0;
+  gap: 7px;
+  padding: 4px 0 8px;
 }
 
 .tour-booking-date-item {
-  min-width: 40px;
-  padding: 8px;
-  font-size: 0.85rem;
-  border: 1px solid #dee2e6;
-  border-radius: 6px;
+  min-width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
   background: #fff;
   cursor: pointer;
-  transition: background var(--transition), color var(--transition), border-color var(--transition);
+  transition: all var(--transition);
+  color: #374151;
 }
-
 .tour-booking-date-item:hover {
-  background: var(--light-gray);
-  border-color: var(--primary-blue);
+  border-color: #1a4b8e;
+  color: #1a4b8e;
+  background: #f0f4ff;
 }
-
 .tour-booking-date-item.active {
-  background: var(--primary-blue);
-  color: white;
-  border-color: var(--primary-blue);
-  box-shadow: var(--shadow);
+  background: #1a4b8e;
+  color: #fff;
+  border-color: #1a4b8e;
+  box-shadow: 0 2px 8px rgba(26,75,142,0.3);
+  font-weight: 700;
 }
 
-/* Booking summary and payment options */
+/* ── Sidebar card shell ── */
+.stickySec > form.card {
+  border: none !important;
+  border-radius: 1rem !important;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10) !important;
+}
+
+/* Money-green header — like Zomato/Swiggy treat payment confirmation */
+.sidebar-card-header {
+  background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+  padding: 1rem 1.25rem 0.9rem;
+  color: #fff;
+}
+.sidebar-card-header .sidebar-trip-name {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.75;
+  margin-bottom: 3px;
+}
+.sidebar-card-header strong { font-size: 1rem; font-weight: 700; display: block; line-height: 1.3; }
+.sidebar-card-header .sidebar-price-pill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin-top: 2px;
+  backdrop-filter: blur(4px);
+}
+.sidebar-card-header .sidebar-price-pill small { font-size: 0.68rem; font-weight: 400; opacity: 0.8; }
+
+/* Booking summary rows */
 .tour-booking-summary-card {
   background: #fff;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  padding: 12px;
-  max-height: 350px;
-  overflow-y: auto;
-  scrollbar-width: none;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+  border-radius: 0;
+  padding: 1rem 1.25rem 0.75rem;
 }
 
-.tour-booking-summary-card::-webkit-scrollbar { display: none; }
+.sidebar-summary-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #9ca3af;
+  margin-bottom: 0.65rem;
+}
 
-.tour-booking-summary-item {
+.booking-summary-item {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
-  font-size: 0.9rem;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 0.83rem;
+  border-bottom: 1px solid #f5f5f5;
 }
+.booking-summary-item:last-child { border-bottom: none; }
+.booking-summary-item span:first-child { color: #9ca3af; font-size: 0.78rem; }
+.booking-summary-item span:last-child { font-weight: 600; color: #111827; text-align: right; max-width: 58%; }
+.booking-summary-item .booking-summary-price { color: #16a34a; font-weight: 700; font-size: 0.9rem; }
 
-.tour-booking-summary-item span:first-child { color: #6c757d; }
-.tour-booking-summary-item span:last-child { font-weight: 500; }
-
+/* Payment options section */
 .tour-booking-payment-options {
-  margin-top: 1rem;
-  padding: 12px;
-  background: var(--light-gray);
-  border-radius: 8px;
+  padding: 0.85rem 1.25rem 0.5rem;
+  background: #fafafa;
+  border-top: 1px solid #f0f0f0;
+}
+.sidebar-payment-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #9ca3af;
+  margin-bottom: 0.6rem;
 }
 
-.tour-booking-payment-option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-  font-size: 0.9rem;
-}
-
-.tour-booking-payment-option input[type="radio"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-}
-
-.tour-booking-payment-option label {
-  flex: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.tour-booking-payment-option label:hover { color: var(--primary-blue); }
-
+/* Proceed button — green = money action */
 .tour-booking-proceed-btn {
   width: 100%;
-  padding: 10px;
-  font-size: 0.95rem;
-  border-radius: 8px;
-  background: var(--primary-blue);
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
   color: #fff;
-  transition: background var(--transition);
+  border: none;
+  letter-spacing: 0.02em;
+  transition: opacity var(--transition), box-shadow var(--transition);
+  box-shadow: 0 4px 14px rgba(22,163,74,0.4);
 }
+.tour-booking-proceed-btn:hover { opacity: 0.93; color: #fff; box-shadow: 0 6px 20px rgba(22,163,74,0.5); }
+.tour-booking-proceed-btn:disabled { background: #d1d5db; box-shadow: none; cursor: not-allowed; color: #9ca3af; opacity: 1; }
 
-.tour-booking-proceed-btn:hover { background: #143c73;  color: #fff;}
-.tour-booking-proceed-btn:disabled { background: #6c757d; cursor: not-allowed;  color: #fff;}
+/* Still Got Queries card */
+.actionCard {
+  border: 1px solid #e3eaf5 !important;
+  border-radius: 1rem !important;
+  background: #fff;
+}
+.actionCard .btn { font-size: 0.8rem; }
 
 /* Modal and form styling */
 .trip-details-form-select,
@@ -399,48 +571,123 @@ header .subtitle { color: #6c757d; font-size: 0.875rem; }
   border-color: var(--error-red);
 }
 
-/* Inquiry modal styling */
-.inquiry-modal-content {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+/* ── Contact / inquiry modal — same shell as quickCallModal ── */
+.contact-modal-content {
+  border: none;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  max-width: 450px;
+  margin: 0 auto;
+}
+/* Navy gradient header — mirrors quickCallModal header */
+.contact-modal-header {
+  background: linear-gradient(150deg, #1A3C6C 0%, #0f2647 60%, #15437a 100%);
+  padding: 28px 24px 22px;
+  text-align: center;
+  position: relative;
+}
+.contact-modal-close {
+  position: absolute;
+  top: 12px; right: 12px;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.7);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  z-index: 1;
+}
+.contact-modal-close:hover { color: #fff; }
+/* Icon ring — mirrors .qcm-icon-ring */
+.contact-modal-icon-ring {
+  width: 56px; height: 56px;
+  background: rgba(255,255,255,0.14);
+  border: 2px solid rgba(255,255,255,0.22);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px;
+}
+.contact-modal-icon-ring i { font-size: 1.5rem; color: #fff; }
+.contact-modal-header h5 {
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 5px;
+  line-height: 1.3;
+}
+.contact-modal-header p {
+  color: rgba(255,255,255,0.72);
+  font-size: 0.82rem;
+  margin: 0;
 }
 
-.inquiry-modal-body p { color: var(--dark-gray); }
-.inquiry-modal-footer { border-top: 1px solid #dee2e6; }
-
-.inquiry-modal-btn {
-  transition: background var(--transition), transform var(--transition);
+/* Modal body */
+.contact-modal-body {
+  padding: 20px 22px 4px;
+  background: #fff;
 }
-
-.inquiry-modal-btn-whatsapp {
-  --bs-btn-bg: #25D366;
-  --bs-btn-hover-bg: #20b358;
-  --bs-btn-hover-color: #fff;
-  --bs-btn-color: #fff;
+.contact-modal-message {
+  font-size: 0.85rem;
+  color: #4b5563;
+  line-height: 1.55;
+  margin-bottom: 14px;
 }
-
-.inquiry-modal-btn-customize {
-  --bs-btn-bg: var(--premium-gold);
-  --bs-btn-hover-bg: #e6c200;
-  --bs-btn-hover-color: var(--dark-gray);
-  --bs-btn-color: var(--dark-gray);
+/* WhatsApp CTA — primary */
+.contact-modal-wa-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #25D366;
+  color: #fff;
+  border-radius: 10px;
+  padding: 12px 16px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+  transition: background 0.18s;
 }
-
-.inquiry-modal-btn-ok {
-  --bs-btn-bg: var(--primary-blue);
-  --bs-btn-hover-bg: #143c73;
-  --bs-btn-hover-color: #fff;
-  --bs-btn-color: #fff;
+.contact-modal-wa-btn:hover { background: #20b559; color: #fff; }
+.contact-modal-wa-btn i { font-size: 1.1rem; flex-shrink: 0; }
+.contact-modal-wa-btn small { font-size: 0.72rem; opacity: 0.88; display: block; font-weight: 400; }
+/* Call / secondary action */
+.contact-modal-call-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f3f4f6;
+  color: #374151;
+  border-radius: 10px;
+  padding: 11px 16px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: background 0.18s;
 }
+.contact-modal-call-btn:hover { background: #e5e7eb; color: #111827; }
+.contact-modal-call-btn i { font-size: 1rem; flex-shrink: 0; color: #6b7280; }
 
-.inquiry-modal-btn-ok:hover,
-.inquiry-modal-btn-customize:hover,
-.inquiry-modal-btn-whatsapp:hover {
-  transform: translateY(-2px);
+/* Footer — ghost dismiss */
+.contact-modal-footer {
+  padding: 10px 22px 18px;
+  text-align: center;
+  background: #fff;
 }
+.contact-modal-footer .btn-dismiss {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.contact-modal-footer .btn-dismiss:hover { color: #374151; }
 
 /* Quick call modal styling */
 .quick-call-modal-content {
-  border-radius: 16px;
+  border-radius: 22px;
   overflow: hidden;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   border: none;
@@ -448,20 +695,57 @@ header .subtitle { color: #6c757d; font-size: 0.875rem; }
   margin: 0 auto;
 }
 
+/* Quick call modal header — premium gradient */
 .quick-call-modal-header {
-  background: var(--primary-blue);
-  background-image: url('/images/exit-modal-banner.avif');
-  background-size: 100% 100%;
-  background-position: center;
+  background: linear-gradient(150deg, #1A3C6C 0%, #0f2647 60%, #15437a 100%);
   position: relative;
   border-bottom: none;
-  padding: 20px 16px;
-  min-height: 80px;
+  padding: 0;
+  display: block;
+}
+.qcm-header-inner {
+  padding: 28px 24px 22px;
+  text-align: center;
+  position: relative;
+}
+.qcm-icon-ring {
+  width: 60px; height: 60px;
+  background: rgba(255,255,255,0.14);
+  border: 2px solid rgba(255,255,255,0.22);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px;
+}
+.qcm-icon-ring i { font-size: 1.65rem; color: #fff; }
+.qcm-header-inner h5 {
+  color: #fff;
+  font-size: 1.12rem;
+  font-weight: 700;
+  margin: 0 0 5px;
+  line-height: 1.3;
+}
+.qcm-header-inner p {
+  color: rgba(255,255,255,0.72);
+  font-size: 0.82rem;
+  margin: 0;
+}
+/* Social proof strip inside header */
+.qcm-social-proof {
+  background: rgba(255,255,255,0.08);
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 9px 16px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+.qcm-social-proof span {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.78);
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 5px;
 }
-
+.qcm-social-proof i { color: #fde047; font-size: 0.78rem; }
 .btn{--bs-btn-line-height: 1.55;}
 .quick-call-modal-header .btn-close-white {
   position: absolute;
@@ -472,42 +756,27 @@ header .subtitle { color: #6c757d; font-size: 0.875rem; }
 }
 #bnplModal .btn-close-white {top: 30px;}
 
-.quick-call-modal-header .modal-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 8px;
-  line-height: 1.3;
-}
-
-.quick-call-modal-header p {
-  font-size: 0.9rem;
-  margin-bottom: 0;
-  line-height: 1.4;
-}
-
 .quick-call-modal-body {
-  padding: 16px 20px;
+  padding: 20px 22px 4px;
   background: #fff;
-  border-bottom-left-radius: 16px;
-  border-bottom-right-radius: 16px;
 }
 
 .quick-call-modal-body .form-label {
-  font-size: 0.85rem;
-  color: var(--dark-gray);
-  text-align: left;
+  font-size: 0.82rem;
+  color: #374151;
+  font-weight: 600;
   margin-bottom: 6px;
-  font-weight: 500;
 }
 
 .quick-call-modal-body .form-control,
 .quick-call-modal-body .form-select {
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1.5px solid #e5e7eb;
+  padding: 10px 13px;
   font-size: 0.9rem;
   box-shadow: none;
   transition: border-color var(--transition), box-shadow var(--transition);
+  background: #f9fafb;
 }
 
 .quick-call-modal-body .form-select {
@@ -518,8 +787,9 @@ header .subtitle { color: #6c757d; font-size: 0.875rem; }
 
 .quick-call-modal-body .form-control:focus,
 .quick-call-modal-body .form-select:focus {
-  border-color: var(--primary-blue);
-  box-shadow: 0 0 0 2px rgba(26, 75, 142, 0.2);
+  border-color: #1a4b8e;
+  box-shadow: 0 0 0 3px rgba(26, 75, 142, 0.12);
+  background: #fff;
   outline: none;
 }
 
@@ -535,54 +805,63 @@ header .subtitle { color: #6c757d; font-size: 0.875rem; }
   display: none;
 }
 
-.quick-call-modal-body .notes {
-  margin-top: 12px;
+/* Privacy + trust row */
+.qcm-trust-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: #f0f9ff;
+  border-radius: 10px;
+  border: 1px solid #bae6fd;
 }
-
-.quick-call-modal-body .notes .note-icon {
-  color: var(--primary-blue);
-  margin-right: 8px;
-  font-size: 1rem;
+.qcm-trust-row span {
+  font-size: 0.74rem;
+  color: #0369a1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  justify-content: center;
 }
-
-.quick-call-modal-body .notes span {
-  font-size: 0.8rem;
-  color: #6b7280;
-}
+.qcm-trust-row i { font-size: 0.82rem; }
 
 .quick-call-modal-footer {
-  padding: 16px 24px;
+  padding: 14px 22px 20px;
   border-top: none;
   display: flex;
   justify-content: center;
   background: #fff;
-  border-bottom-left-radius: 16px;
-  border-bottom-right-radius: 16px;
 }
 
 .quick-call-modal-btn {
-  background: var(--premium-gold);
-  color: var(--dark-gray);
-  padding: 10px 24px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: background var(--transition), transform var(--transition);
+  background: linear-gradient(135deg, #1a4b8e 0%, #0f2d5c 100%);
+  color: #fff;
+  padding: 13px 24px;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  transition: transform 0.18s, box-shadow 0.18s;
   display: flex;
   align-items: center;
   width: 100%;
   justify-content: center;
+  box-shadow: 0 4px 14px rgba(26,75,142,0.3);
+  letter-spacing: 0.01em;
 }
 
 .quick-call-modal-btn:hover {
-  background: #e6c200;
   transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(26,75,142,0.38);
+  color: #fff;
 }
 
 .quick-call-modal-btn:disabled {
   background: #d1d5db;
   color: #6b7280;
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 .quick-call-modal-btn i { font-size: 1rem; }
@@ -591,21 +870,30 @@ header .subtitle { color: #6c757d; font-size: 0.875rem; }
 .custom-card + .custom-card { margin-top: 1.5rem; }
 
 .transport-option {
-  border: 1px solid #dee2e6;
+  border: 1.5px solid #e5e7eb;
   display: inline-flex;
-  border-radius: 6px;
-  padding: 6px 12px;
+  align-items: center;
+  gap: 6px;
+  border-radius: 20px;
+  padding: 6px 16px;
   justify-content: center;
-  color: #6c757d;
+  color: #374151;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.83rem;
+  font-weight: 500;
+  background: #fff;
   transition: all var(--transition);
 }
-
+.transport-option:hover {
+  border-color: #1a4b8e;
+  color: #1a4b8e;
+  background: #f0f4ff;
+}
 .transport-option.active {
-  background-color: var(--primary-blue);
-  border-color: var(--primary-blue);
+  background: #1a4b8e;
+  border-color: #1a4b8e;
   color: #fff;
+  box-shadow: 0 2px 8px rgba(26,75,142,0.25);
 }
 
 .stickySec {
@@ -622,26 +910,49 @@ header .subtitle { color: #6c757d; font-size: 0.875rem; }
 .price strong { font-size: 1.5rem; }
 .summaryPara > :not(span) { color: #525252; }
 
-.tab-menu { border-bottom: 2px solid #e0e0e0; }
+.tab-menu {
+  border-bottom: none;
+  gap: 6px !important;
+  padding: 4px;
+  background: #f1f3f5;
+  border-radius: 10px;
+  flex-wrap: nowrap;
+}
+
 .tab {
   background: none;
   border: none;
-  padding-block: 10px;
+  padding: 7px 14px;
   font-weight: 500;
-  border-bottom: 3px solid transparent;
-  transition: border-color var(--transition), color var(--transition);
+  font-size: 0.82rem;
+  border-radius: 7px;
+  border-bottom: none;
+  color: #555;
+  white-space: nowrap;
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
 }
 
-.tab:hover, .tab.active { border-color: #111; color: #111; }
+.tab:hover { background: rgba(26,60,108,0.08); color: #1A3C6C; }
+.tab.active { background: #1A3C6C; color: #fff; box-shadow: 0 2px 8px rgba(26,60,108,0.25); }
 
 .tab-content { display: none; }
-.tab-content.active { display: block; }
-.tab-content li { list-style: unset; }
+.tab-content.active {
+  display: block;
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  padding: 1.25rem;
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+.tab-content li { list-style: unset; margin-left: 1.2rem; }
 
-#contactModal .modal-content { border-radius: 10px; }
-#contactModal .modal-header { background: var(--primary-blue); color: white };
+@media (max-width: 768px) {
+  .tab { font-size: 0.78rem; padding: 6px 10px; }
+  .tab-content.active { padding: 1rem; font-size: 0.87rem; }
+}
+
 #contactModal { z-index: 1080 !important; }
-#contactModal .modal-backdrop { z-index: 1079 !important; }
 /* Ensure contact modal appears above BNPL modal (BNPL is typically 1050) */
 #bnplModal { z-index: 1050; }
 #bnplModal .modal-backdrop { z-index: 1049; }
@@ -658,69 +969,65 @@ a { text-decoration: none; }
 .trust-signals {
   display: flex;
   flex-direction: column;
-  font-size: 0.8rem;
-  margin-top: 10px;
+  font-size: 0.75rem;
+  margin-top: 12px;
+  gap: 5px;
+  color: #6c757d;
 }
 
-.trust-signals i { font-size: 0.9rem; margin-right: 4px; color: #25D366; }
+.trust-signals i { font-size: 0.85rem; margin-right: 5px; color: #25D366; }
 
-.cutoff-modal-content {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.cutoff-modal-header {
-  background: var(--primary-blue);
-  color: white;
-  border-bottom: none;
-  padding: 20px;
-}
-
-.cutoff-modal-body {
-  padding: 20px;
-  text-align: center;
-}
-
-.cutoff-modal-footer {
-  border-top: none;
-  justify-content: center;
-  padding: 15px;
-}
-
-.cutoff-modal-btn {
-  transition: background var(--transition), transform var(--transition);
-}
-
-.cutoff-modal-btn:hover { transform: translateY(-2px); }
 
 /* Mobile Booking Styles */
-.mobile-booking-fab {
+.mobile-fab-bar {
   position: fixed;
-  bottom: 20px;
-  right: 76px;
-  z-index: 1000;
-  transition: all var(--transition);
-  box-shadow: 0 4px 12px rgba(26, 75, 142, 0.35);
-  font-size: 0.9rem;
-  padding: 0.6rem 1.1rem;
-  line-height: 1.4;
-}
-.mobile-whatsapp-fab {
-  position: fixed;
-  bottom: 20px;
+  bottom: 16px;
+  left: 16px;
   right: 16px;
   z-index: 1000;
-  width: 52px;
-  height: 52px;
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+.mobile-booking-fab {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
-  box-shadow: 0 4px 12px rgba(37,211,102,0.4);
+  gap: 8px;
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 16px rgba(22,163,74,0.45) !important;
+  font-size: 0.92rem;
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+  line-height: 1;
+  border-radius: 12px !important;
+  color: #fff !important;
   transition: all var(--transition);
 }
-.mobile-booking-fab:hover { transform: translateY(-2px); }
+.mobile-booking-fab .fab-chevron {
+  font-size: 1rem;
+  opacity: 0.85;
+  transition: transform 0.3s ease;
+}
+.mobile-booking-fab:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(22,163,74,0.55) !important; }
+.mobile-whatsapp-fab {
+  width: 52px;
+  height: auto;
+  min-height: 52px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  box-shadow: 0 4px 14px rgba(37,211,102,0.45);
+  transition: all var(--transition);
+  border-radius: 12px !important;
+  background: #25D366 !important;
+  color: #fff !important;
+  border: none !important;
+}
 .mobile-whatsapp-fab:hover { transform: translateY(-2px); }
 
   /* Floating book now section for mobile */
@@ -755,22 +1062,64 @@ a { text-decoration: none; }
 
   .tour-booking-floating-panel {
     background: #fff;
-    border-radius: 16px 16px 0 0;
-    max-height: 60vh;
-    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 20px 20px 0 0;
+    max-height: 82vh;
+    box-shadow: 0 -8px 32px rgba(26,60,108,0.18);
   }
 
-.mobile-booking-summary {
-  padding: 15px 20px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
+.mobile-booking-header {
+  background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+  border-radius: 20px 20px 0 0;
+  color: #fff;
+  padding: 14px 18px 12px !important;
+  border-bottom: none !important;
 }
+.mobile-booking-header h5 { color: #fff; font-size: 1rem; font-weight: 700; }
+.mobile-booking-header .btn-close { filter: brightness(0) invert(1); opacity: 0.8; }
+.sheet-drag-handle { display: none; }
+
+.mobile-booking-summary {
+  padding: 12px 16px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+.mobile-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 12px;
+}
+.mobile-summary-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.mobile-summary-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #9ca3af;
+}
+.mobile-summary-val {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.3;
+}
+.mobile-booking-summary .booking-summary-price { color: #16a34a !important; }
 
 .mobile-booking-section {
-  padding: 20px;
-  border-bottom: 1px solid #e9ecef;
+  padding: 13px 16px;
+  border-bottom: 1px solid #f3f4f6;
 }
-
+.mobile-booking-section > h6 {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #9ca3af;
+  margin-bottom: 10px;
+}
 .mobile-booking-section:last-of-type {
   border-bottom: none;
 }
@@ -795,54 +1144,69 @@ a { text-decoration: none; }
 }
 
 .mobile-city-card {
-  min-width: 120px;
-  background: white;
-  border: 2px solid #e9ecef;
-  border-radius: 12px;
-  padding: 12px;
+  min-width: 130px;
+  background: #fff;
+  border: 2px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 0;
   cursor: pointer;
   transition: all var(--transition);
   text-align: center;
   flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
 }
-
 .mobile-city-card:hover {
-  border-color: var(--primary-blue);
+  border-color: #1a4b8e;
+  box-shadow: 0 4px 12px rgba(26,75,142,0.15);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
 .mobile-city-card.active {
-  border-color: var(--primary-blue);
-  background: #f8f9ff;
-  box-shadow: 0 4px 8px rgba(26, 75, 142, 0.2);
+  border-color: #1a4b8e;
+  box-shadow: 0 4px 14px rgba(26,75,142,0.2);
 }
-
+.mobile-city-card.active::after {
+  content: '✓';
+  position: absolute;
+  top: 6px; right: 7px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #fff;
+  background: #1a4b8e;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+}
 .mobile-city-card img {
   width: 100%;
-  height: 60px;
+  height: 72px;
   object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 8px;
-}
-
-.mobile-city-info h6 {
-  font-size: 0.85rem;
-  margin: 0 0 4px;
-  font-weight: 600;
-}
-
-.mobile-city-info small {
-  font-size: 0.75rem;
-  color: #6c757d;
   display: block;
-  margin-bottom: 4px;
 }
-
-.mobile-city-price {
-  font-size: 0.8rem;
+.mobile-city-info {
+  padding: 8px 9px 9px;
+}
+.mobile-city-info h6 {
+  font-size: 0.82rem;
+  margin: 0 0 2px;
   font-weight: 600;
-  color: var(--primary-blue);
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mobile-city-info small {
+  font-size: 0.72rem;
+  color: #6b7280;
+  display: block;
+}
+.mobile-city-price {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #16a34a;
+  margin-top: 2px;
 }
 
 .mobile-carousel-btn {
@@ -869,13 +1233,10 @@ a { text-decoration: none; }
   border-color: var(--primary-blue);
 }
 
-.mobile-carousel-prev {
-  left: -16px;
-}
-
-.mobile-carousel-next {
-  right: -16px;
-}
+.mobile-carousel-prev { left: 0; }
+.mobile-carousel-next { right: 0; }
+/* Hide carousel arrows — swipe/scroll handles navigation on touch */
+.mobile-carousel-btn { display: none; }
 
 .mobile-transport-options {
   display: flex;
@@ -884,67 +1245,67 @@ a { text-decoration: none; }
 }
 
 .mobile-transport-option {
-  background: white;
-  border: 2px solid #e9ecef;
-  border-radius: 8px;
-  padding: 8px 12px;
+  background: #f3f4f6;
+  border: 1.5px solid transparent;
+  border-radius: 20px;
+  padding: 6px 16px;
   cursor: pointer;
   transition: all var(--transition);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 500;
+  color: #374151;
+  white-space: nowrap;
 }
-
 .mobile-transport-option:hover {
-  border-color: var(--primary-blue);
-  color: var(--primary-blue);
+  border-color: #1a4b8e;
+  color: #1a4b8e;
+  background: #f0f4ff;
 }
-
 .mobile-transport-option.active {
-  background: var(--primary-blue);
-  color: white;
-  border-color: var(--primary-blue);
+  background: #1a4b8e;
+  color: #fff;
+  border-color: #1a4b8e;
+  box-shadow: 0 2px 8px rgba(26,75,142,0.25);
 }
 
 .mobile-date-tabs {
   display: flex;
   gap: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-
-.mobile-date-tabs::-webkit-scrollbar {
-  display: none;
-}
+.mobile-date-tabs::-webkit-scrollbar { display: none; }
 
 .mobile-date-tab {
-  background: white;
-  border: 1px solid #dee2e6;
-  border-radius: 6px;
-  padding: 6px 12px;
+  background: #f3f4f6;
+  border: 1.5px solid transparent;
+  border-radius: 20px;
+  padding: 5px 14px;
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: 500;
   white-space: nowrap;
   transition: all var(--transition);
+  color: #374151;
 }
-
 .mobile-date-tab:hover {
-  border-color: var(--primary-blue);
-  color: var(--primary-blue);
+  border-color: #1a4b8e;
+  color: #1a4b8e;
+  background: #f0f4ff;
 }
-
 .mobile-date-tab.active {
-  background: var(--primary-blue);
-  color: white;
-  border-color: var(--primary-blue);
+  background: #1a4b8e;
+  color: #fff;
+  border-color: #1a4b8e;
+  box-shadow: 0 2px 6px rgba(26,75,142,0.25);
 }
 
 .mobile-date-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
-  gap: 6px;
+  grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
+  gap: 7px;
 }
 
 .mobile-date-item {
@@ -952,52 +1313,32 @@ a { text-decoration: none; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: white;
-  border: 1px solid #dee2e6;
-  border-radius: 6px;
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 500;
+  color: #374151;
   transition: all var(--transition);
 }
-
 .mobile-date-item:hover {
-  border-color: var(--primary-blue);
-  color: var(--primary-blue);
+  border-color: #1a4b8e;
+  color: #1a4b8e;
+  background: #f0f4ff;
 }
-
 .mobile-date-item.active {
-  background: var(--primary-blue);
-  color: white;
-  border-color: var(--primary-blue);
+  background: #1a4b8e;
+  color: #fff;
+  border-color: #1a4b8e;
+  box-shadow: 0 2px 8px rgba(26,75,142,0.3);
+  font-weight: 700;
 }
 
 .mobile-payment-options {
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.mobile-payment-option {
-  background: white;
-  border: 2px solid #e9ecef;
-  border-radius: 8px;
-  padding: 12px;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.mobile-payment-option:hover {
-  border-color: var(--primary-blue);
-}
-
-.mobile-payment-option.active {
-  border-color: var(--primary-blue);
-  background: #f8f9ff;
-}
-
-.mobile-payment-option input[type="radio"] {
-  display: none;
 }
 
 .mobile-payment-option label {
@@ -1011,32 +1352,50 @@ a { text-decoration: none; }
 
 .payment-label {
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
+  color: #1f2937;
 }
 
 .payment-price {
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #16a34a;
 }
 
 .mobile-booking-actions {
-  background: #f8f9fa;
+  background: #fff;
   border-top: 1px solid #e9ecef;
+  padding: 12px 18px !important;
+  gap: 10px !important;
 }
 
 .mobile-booking-actions .btn {
-  --bs-btn-border-radius: 0.5rem;
+  --bs-btn-border-radius: 0.6rem;
+}
+
+.mobile-booking-actions .btn-outline-success,
+.mobile-booking-actions .btn-app-stroked-primary {
+  min-width: 44px;
+  padding: 0.55rem 0.9rem;
 }
 
 .mobile-booking-proceed {
   flex: 1;
-  font-weight: 600;
+  font-weight: 700;
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 14px rgba(22,163,74,0.4);
+  padding: 0.65rem 1rem !important;
+  letter-spacing: 0.02em;
 }
+.mobile-booking-proceed:disabled { background: #d1d5db !important; color: #9ca3af !important; box-shadow: none; cursor: not-allowed; }
 
 /* Hide desktop booking section on mobile */
 @media (max-width: 991.98px) {
   .stickySec { display: none !important; }
-  body { padding-bottom: 90px; }
+  body { padding-bottom: 96px; }
 }
 
 /* Media Queries */
@@ -1055,131 +1414,92 @@ a { text-decoration: none; }
   article > h3, .detailSec > article > h3 { font-size: 1rem; }
   .trip-cta-btns .btn { font-size: 0.78rem; padding: 0.45rem 0.5rem; white-space: nowrap; }
   .accordion-button { font-size: 1rem; }
-  .tour-booking-city-card { width: 140px; }
-  .tour-booking-city-card img { height: 90px; }
-  .tour-booking-year-tab, .tour-booking-month-tab { font-size: 0.85rem; padding: 5px 10px; }
-  .tour-booking-date-item { min-width: 36px; padding: 6px; font-size: 0.8rem; }
-  .tour-booking-summary-card { max-height: 300px; padding: 10px; }
-  .tour-booking-payment-options { padding: 10px; }
-  .tour-booking-payment-option { font-size: 0.85rem; }
+  .tour-booking-city-card { width: 132px; }
+  .tour-booking-city-card img { height: 80px; }
 }
 
 @media (max-width: 576px) {
   .image-slider { height: 260px; }
   .trip-stat-grid { grid-template-columns: repeat(2, 1fr); }
   .tour-booking-city-card { width: 120px; }
-  .tour-booking-city-card img { height: 80px; }
-  .tour-booking-city-card h6 { font-size: 0.85rem; }
-  .tour-booking-city-card small { font-size: 0.75rem; }
-  .tour-booking-year-tab, .tour-booking-month-tab { font-size: 0.8rem; padding: 4px 8px; }
-  .tour-booking-date-item { min-width: 32px; padding: 5px; font-size: 0.75rem; }
-  .tour-booking-summary-card { max-height: 250px; font-size: 0.8rem; }
-  .tour-booking-payment-options { padding: 8px; }
+  .tour-booking-city-card img { height: 72px; }
+  .tour-booking-summary-card { font-size: 0.8rem; }
+  .tour-booking-payment-options { padding: 0.6rem 0.85rem 0.4rem; }
   .tour-booking-payment-option { font-size: 0.8rem; }
   .quick-call-modal-content { max-width: 100%; margin: 10px; }
-  .quick-call-modal-header { min-height: 70px; padding: 16px 12px; }
-  .quick-call-modal-header .modal-title { font-size: 1rem; }
-  .quick-call-modal-header p { font-size: 0.8rem; }
-  .quick-call-modal-header .btn-close-white { top: 8px; right: 8px; }
-  .quick-call-modal-body { padding: 12px 16px; }
+  .qcm-header-inner { padding: 22px 18px 16px; }
+  .qcm-icon-ring { width: 50px; height: 50px; margin-bottom: 10px; }
+  .qcm-icon-ring i { font-size: 1.35rem; }
+  .qcm-header-inner h5 { font-size: 0.98rem; }
+  .qcm-header-inner p { font-size: 0.78rem; }
+  .qcm-social-proof { padding: 7px 12px; gap: 12px; }
+  .qcm-social-proof span { font-size: 0.68rem; }
+  .quick-call-modal-header .btn-close-white { top: 10px; right: 10px; }
+  .quick-call-modal-body { padding: 16px 16px 4px; }
   .quick-call-modal-body .form-label { font-size: 0.8rem; }
-  .quick-call-modal-body .form-control, .quick-call-modal-body .form-select { font-size: 0.85rem; padding: 6px 10px; }
+  .quick-call-modal-body .form-control, .quick-call-modal-body .form-select { font-size: 0.85rem; padding: 9px 11px; }
   .quick-call-modal-body .form-select { max-width: 80px; }
   .quick-call-modal-body .error-message { font-size: 0.7rem; }
-  .quick-call-modal-body .notes .note-icon { font-size: 0.9rem; margin-right: 6px; }
-  .quick-call-modal-body .notes span { font-size: 0.75rem; }
-  .quick-call-modal-footer { padding: 12px 20px; }
-  .quick-call-modal-btn { font-size: 0.85rem; padding: 8px 20px; }
+  .qcm-trust-row span { font-size: 0.68rem; }
+  .quick-call-modal-footer { padding: 12px 16px 18px; }
+  .quick-call-modal-btn { font-size: 0.87rem; padding: 12px 20px; border-radius: 10px; }
 }
 
 @media (max-width: 400px) {
-  .quick-call-modal-header { min-height: 60px; padding: 12px 10px; }
-  .quick-call-modal-header .modal-title { font-size: 0.95rem; }
-  .quick-call-modal-header p { font-size: 0.75rem; }
-  .quick-call-modal-body { padding: 10px 12px; }
-  .quick-call-modal-body .form-label { font-size: 0.75rem; }
-  .quick-call-modal-body .form-control, .quick-call-modal-body .form-select { font-size: 0.8rem; padding: 6px 8px; }
-  .quick-call-modal-body .form-select { max-width: 70px; }
-  .quick-call-modal-body .error-message { font-size: 0.65rem; }
-  .quick-call-modal-body .notes .note-icon { font-size: 0.85rem; margin-right: 5px; }
-  .quick-call-modal-body .notes span { font-size: 0.7rem; }
-  .quick-call-modal-footer { padding: 10px 16px; }
-  .quick-call-modal-btn { font-size: 0.8rem; padding: 8px 16px; } 
+  .qcm-header-inner { padding: 18px 14px 14px; }
+  .qcm-icon-ring { width: 44px; height: 44px; }
+  .qcm-icon-ring i { font-size: 1.2rem; }
+  .qcm-header-inner h5 { font-size: 0.92rem; }
+  .qcm-social-proof { gap: 8px; flex-wrap: wrap; }
+  .quick-call-modal-body { padding: 14px 14px 4px; }
+  .quick-call-modal-body .form-control, .quick-call-modal-body .form-select { font-size: 0.82rem; padding: 8px 10px; }
+  .quick-call-modal-body .form-select { max-width: 72px; }
+  .quick-call-modal-footer { padding: 10px 14px 16px; }
+  .quick-call-modal-btn { font-size: 0.83rem; padding: 11px 16px; }
 }
 
-/* Recommended Trips Section Styles */
-.recommended-trips-section {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  position: relative;
-  overflow: hidden;
-}
-
-.recommended-trips-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="%23ffffff" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="%23ffffff" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-  pointer-events: none;
-}
-
-.recommended-trips-header {
-  position: relative;
-  z-index: 2;
-}
+/* ── Recommended Trips ── */
+.recommended-trips-section { background: #f3f4f6; }
 
 .recommended-trips-title {
-  font-size: 2.5rem;
+  font-size: 1.35rem;
   font-weight: 700;
-  color: var(--primary-blue);
-  margin-bottom: 0.5rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #1A3C6C;
+  margin-bottom: 4px;
 }
-
 .recommended-trips-subtitle {
-  font-size: 1.1rem;
-  font-weight: 400;
+  font-size: 0.85rem;
   color: #6c757d;
 }
 
-.recommended-trips-slider {
-  position: relative;
-  margin: 2rem 0;
-}
+.recommended-trips-slider { position: relative; }
 
 .recommended-trips-track {
   display: flex;
-  gap: 1.5rem;
+  gap: 14px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding: 1rem 0;
+  padding: 4px 2px 12px;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
+.recommended-trips-track::-webkit-scrollbar { display: none; }
 
-.recommended-trips-track::-webkit-scrollbar {
-  display: none;
-}
-
+/* Card — matches page's custom-card style */
 .recommended-trip-card {
-  min-width: 280px;
-  max-width: 280px;
-  background: white;
+  min-width: 260px;
+  max-width: 260px;
+  background: #fff;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  position: relative;
-  border: 1px solid #e9ecef;
+  border: 1px solid #e5e7eb;
   cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+  flex-shrink: 0;
 }
-
 .recommended-trip-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-  border-color: var(--primary-blue);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  transform: translateY(-3px);
 }
 
 .trip-card-image {
@@ -1187,423 +1507,215 @@ a { text-decoration: none; }
   height: 160px;
   overflow: hidden;
 }
-
 .trip-card-image img {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s;
 }
-
-.recommended-trip-card:hover .trip-card-image img {
-  transform: scale(1.03);
-}
+.recommended-trip-card:hover .trip-card-image img { transform: scale(1.04); }
 
 .trip-card-group-label {
   position: absolute;
-  top: 12px;
-  left: 12px;
-  background: rgba(26, 75, 142, 0.9);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 0.75rem;
+  top: 8px; left: 8px;
+  background: rgba(26,75,142,0.88);
+  color: #fff;
+  padding: 3px 7px;
+  border-radius: 5px;
+  font-size: 0.7rem;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 4px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.trip-card-group-label i {
-  font-size: 0.7rem;
+  gap: 3px;
 }
 
 .trip-card-price-badge {
   position: absolute;
-  bottom: 12px;
-  right: 12px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 6px 10px;
-  border-radius: 8px;
+  bottom: 8px; right: 8px;
+  background: #EF4F5F;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.82rem;
   font-weight: 700;
-  color: var(--primary-blue);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  display: flex;
-  align-items: center;
-  gap: 2px;
 }
 
-.price-currency {
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.price-amount {
-  font-size: 1rem;
-  font-weight: 800;
-}
-
-.trip-card-content {
-  padding: 1rem;
-}
+.trip-card-content { padding: 10px 12px 12px; }
 
 .trip-card-title {
-  font-size: 1rem;
+  font-size: 0.88rem;
   font-weight: 600;
-  color: #2c3e50;
-  margin-bottom: 0.75rem;
-  line-height: 1.4;
-  height: 2.8rem;
-  overflow: hidden;
+  color: #1f2937;
+  margin-bottom: 8px;
+  line-height: 1.35;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   line-clamp: 2;
-  word-wrap: break-word;
-  word-break: break-word;
-  hyphens: auto;
+  overflow: hidden;
 }
 
 .trip-card-meta {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  font-size: 0.8rem;
-  color: #6c757d;
-  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+  gap: 6px;
 }
-
-.trip-card-duration,
-.trip-card-state {
+.trip-card-duration, .trip-card-state {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  flex: 1;
+  gap: 3px;
   min-width: 0;
 }
-
-.trip-card-duration i,
-.trip-card-state i {
-  color: var(--primary-blue);
-  font-size: 0.75rem;
+.trip-card-duration i, .trip-card-state i {
+  color: #1a4b8e;
+  font-size: 0.7rem;
   flex-shrink: 0;
 }
-
-.trip-card-duration span,
 .trip-card-state span {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+/* Scroll nav arrows */
 .recommended-trips-nav {
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
-  background: white;
-  border: 2px solid var(--primary-blue);
+  transform: translateY(-60%);
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 36px; height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 10;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  color: var(--primary-blue);
-  font-size: 1.2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  color: #1a4b8e;
+  font-size: 1rem;
+  transition: background 0.18s, border-color 0.18s;
 }
+.recommended-trips-nav:hover { background: #1a4b8e; color: #fff; border-color: #1a4b8e; }
+.recommended-trips-prev { left: -14px; }
+.recommended-trips-next { right: -14px; }
 
-.recommended-trips-nav:hover {
-  background: var(--primary-blue);
-  color: white;
-  transform: translateY(-50%) scale(1.1);
-}
-
-.recommended-trips-prev {
-  left: -10px;
-}
-
-.recommended-trips-next {
-  right: -10px;
-}
-
+/* View All button */
 .recommended-view-more {
-  --bs-btn-padding-y: 1rem;
-  --bs-btn-padding-x: 2rem;
+  font-size: 0.88rem;
   font-weight: 600;
-  transition: all 0.3s ease;
+  padding: 0.5rem 1.5rem;
 }
 
-.recommended-view-more:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(26, 75, 142, 0.3);
-}
-
-/* Let's Plan Your Next Trip Section */
-.plan-next-trip-section {
-  margin-top: 3rem;
-}
+/* ── Plan Next Adventure banner ── */
+.plan-next-trip-section { margin-top: 2rem; }
 
 .plan-next-trip-card {
-  background: linear-gradient(135deg, var(--primary-blue) 0%, #143c73 100%);
-  border-radius: 20px;
-  padding: 2.5rem;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(26, 75, 142, 0.3);
+  background: linear-gradient(120deg, #1A3C6C 0%, #1a4b8e 100%);
+  border-radius: 14px;
+  padding: 1.75rem 2rem;
 }
-
-.plan-next-trip-card::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -20%;
-  width: 200px;
-  height: 200px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  animation: float 6s ease-in-out infinite;
-}
-
-.plan-next-trip-card::after {
-  content: '';
-  position: absolute;
-  bottom: -30%;
-  left: -10%;
-  width: 150px;
-  height: 150px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 50%;
-  animation: float 8s ease-in-out infinite reverse;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-20px) rotate(180deg); }
-}
-
 .plan-next-trip-content {
   display: flex;
   align-items: center;
-  gap: 2rem;
-  position: relative;
-  z-index: 2;
+  gap: 1.5rem;
 }
 
 .plan-next-trip-icon {
   flex-shrink: 0;
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
+  width: 56px; height: 56px;
+  background: rgba(255,255,255,0.15);
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid rgba(255,255,255,0.25);
 }
+.plan-next-trip-icon i { font-size: 1.5rem; color: #fff; }
 
-.plan-next-trip-icon i {
-  font-size: 2rem;
-  color: white;
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
-
-.plan-next-trip-text {
-  flex: 1;
-  color: white;
-}
-
+.plan-next-trip-text { flex: 1; min-width: 0; }
 .plan-next-trip-title {
-  font-size: 2rem;
+  font-size: 1.2rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: #fff;
+  margin: 0 0 4px;
+  line-height: 1.3;
 }
-
 .plan-next-trip-subtitle {
-  font-size: 1.1rem;
-  opacity: 0.9;
-  margin-bottom: 0;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.78);
+  margin: 0;
   line-height: 1.5;
 }
 
 .plan-next-trip-actions {
   display: flex;
-  gap: 1rem;
+  gap: 10px;
   flex-shrink: 0;
 }
-
 .plan-next-trip-btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 50px;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
   font-weight: 600;
+  font-size: 0.88rem;
   text-decoration: none;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  border: 2px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: opacity 0.18s, transform 0.18s;
 }
-
-.plan-next-trip-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.plan-next-trip-btn:hover::before {
-  left: 100%;
-}
-
+.plan-next-trip-btn:hover { opacity: 0.9; transform: translateY(-1px); }
 .plan-next-trip-btn.btn-primary {
-  background: white;
-  color: var(--primary-blue);
-  border-color: white;
+  background: #fff;
+  color: #1A3C6C;
+  border: none;
 }
-
-.plan-next-trip-btn.btn-primary:hover {
-  background: #f8f9fa;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
-}
-
+.plan-next-trip-btn.btn-primary:hover { background: #f0f4ff; color: #1A3C6C; }
 .plan-next-trip-btn.btn-outline-success {
-  background: transparent;
-  color: white;
-  border-color: rgba(255, 255, 255, 0.5);
+  background: #25D366;
+  color: #fff;
+  border: none;
+}
+.plan-next-trip-btn.btn-outline-success:hover { background: #20b559; color: #fff; }
+
+/* Responsive */
+@media (max-width: 991px) {
+  .recommended-trips-nav { display: none; }
+  .recommended-trip-card { min-width: 240px; max-width: 240px; }
+  .trip-card-image { height: 145px; }
+
+  .plan-next-trip-content { gap: 1rem; }
+  .plan-next-trip-title { font-size: 1.1rem; }
+  .plan-next-trip-subtitle { font-size: 0.82rem; }
+  .plan-next-trip-btn { font-size: 0.82rem; padding: 0.55rem 0.9rem; }
 }
 
-.plan-next-trip-btn.btn-outline-success:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
-}
-
-/* Responsive Design for Recommended Trips */
 @media (max-width: 768px) {
-  .recommended-trips-title {
-    font-size: 2rem;
-  }
-  
-  .recommended-trip-card {
-    min-width: 260px;
-    max-width: 260px;
-  }
-  
-  .trip-card-image {
-    height: 140px;
-  }
-  
-  .trip-card-content {
-    padding: 0.875rem;
-  }
-  
-  .trip-card-title {
-    font-size: 0.95rem;
-    height: 2.6rem;
-  }
-  
-  .trip-card-meta {
-    font-size: 0.75rem;
-  }
-  
-  .recommended-trips-nav {
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
-  }
-  
-  /* Plan Next Trip Mobile */
-  .plan-next-trip-section { margin-top: 1.5rem; }
-  .plan-next-trip-card { padding: 1.5rem; }
+  .recommended-trip-card { min-width: 220px; max-width: 220px; }
+  .trip-card-image { height: 135px; }
+
+  .plan-next-trip-card { padding: 1.25rem 1.25rem; }
   .plan-next-trip-content {
     flex-direction: column;
     text-align: center;
-    gap: 1rem;
+    gap: 0.875rem;
   }
-  .plan-next-trip-title { font-size: 1.3rem; }
-  .plan-next-trip-subtitle { font-size: 0.9rem; }
-  .plan-next-trip-actions {
-    flex-direction: row;
-    width: 100%;
-    gap: 0.625rem;
-  }
-  .plan-next-trip-btn {
-    flex: 1;
-    justify-content: center;
-    padding: 0.6rem 0.75rem;
-    font-size: 0.82rem;
-    text-align: center;
-  }
+  .plan-next-trip-icon { width: 48px; height: 48px; }
+  .plan-next-trip-icon i { font-size: 1.25rem; }
+  .plan-next-trip-actions { width: 100%; }
+  .plan-next-trip-btn { flex: 1; justify-content: center; }
 }
 
 @media (max-width: 576px) {
-  .recommended-trips-title {
-    font-size: 1.75rem;
-  }
-  
-  .recommended-trip-card {
-    min-width: 240px;
-    max-width: 240px;
-  }
-  
-  .trip-card-image {
-    height: 120px;
-  }
-  
-  .trip-card-content {
-    padding: 0.75rem;
-  }
-  
-  .trip-card-title {
-    font-size: 0.9rem;
-    height: 2.4rem;
-  }
-  
-  .trip-card-meta {
-    font-size: 0.7rem;
-    flex-direction: column;
-    gap: 0.25rem;
-    align-items: flex-start;
-  }
-  
-  .recommended-trips-nav {
-    display: none;
-  }
-  
-  .recommended-trips-track {
-    padding: 0.5rem 0;
-  }
-  
-  /* Plan Next Trip Small Mobile */
-  .plan-next-trip-section { margin-top: 1rem; }
-  .plan-next-trip-card { padding: 1.25rem; }
-  .plan-next-trip-icon { width: 52px; height: 52px; }
-  .plan-next-trip-icon i { font-size: 1.25rem; }
-  .plan-next-trip-title { font-size: 1.1rem; }
-  .plan-next-trip-subtitle { font-size: 0.82rem; }
-  .plan-next-trip-btn { padding: 0.55rem 0.6rem; font-size: 0.78rem; }
-  
-  .plan-next-trip-subtitle {
-    font-size: 0.9rem;
-  }
+  .recommended-trip-card { min-width: 200px; max-width: 200px; }
+  .trip-card-image { height: 120px; }
+  .trip-card-content { padding: 8px 10px 10px; }
+  .trip-card-title { font-size: 0.84rem; }
+  .trip-card-meta { font-size: 0.72rem; }
+  .plan-next-trip-icon { display: none; }
+  .plan-next-trip-title { font-size: 1rem; }
+  .plan-next-trip-subtitle { font-size: 0.8rem; }
+  .plan-next-trip-btn { font-size: 0.8rem; padding: 0.5rem 0.75rem; }
 }
   </style>
 </head>
@@ -1643,10 +1755,10 @@ a { text-decoration: none; }
     <section class="row g-3 mt-0">
       <div class="col-lg-7 col-xl-8 detailSec">
         <div class="custom-card p-3 p-lg-4">
-          <h1 class="trek-title"><%= trips.name %></h1>
-          <article class="subtitle"><%- trips.destinations %></article>
+          <h1 class="trek-title fw-bold"><%= trips.name %></h1>
+          <article class="subtitle text-muted"><i class="bi bi-geo-alt-fill me-1 text-danger"></i><%- trips.destinations %></article>
           <div class="d-flex d-lg-none gap-2 pt-2 trip-cta-btns">
-            <a href="/dreamtrip" class="btn btn-warning rounded-pill flex-fill" target="_blank">Inquire Now</a>
+            <a href="/dreamtrip" class="btn btn-outline-dark rounded-pill flex-fill" target="_blank">Inquire Now</a>
             <button class="btn btn-app-primary rounded-pill flex-fill" data-bs-toggle="modal" data-bs-target="#quickCallModal">Request Call Back</button>
           </div>
         </div>
@@ -1705,26 +1817,26 @@ a { text-decoration: none; }
         <article class="custom-card p-3 p-lg-4">
           <h3>Departure City</h3>
           <div class="position-relative">
-            <div class="d-flex gap-3 overflow-auto py-2" id="carouselTrack">
+            <div class="d-flex gap-3 overflow-auto py-2" id="carouselTrack" style="scrollbar-width:none;-ms-overflow-style:none;">
               <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].City !== 'Unknown') { %>
                 <% trips.deptcities.forEach((city, index) => { %>
-                <div class="tour-booking-city-card bg-light <%= index === 0 ? 'active' : '' %>" 
-                     data-city="<%= city.City %>" 
-                     data-state="<%= city.State %>" 
-                     data-price="<%= city.price && city.price[0] ? city.price[0].adultPrice : 0 %>" 
-                     data-duration="<%= city.tripDuration %>" 
+                <div class="tour-booking-city-card <%= index === 0 ? 'active' : '' %>"
+                     data-city="<%= city.City %>"
+                     data-state="<%= city.State %>"
+                     data-price="<%= city.price && city.price[0] ? city.price[0].adultPrice : 0 %>"
+                     data-duration="<%= city.tripDuration %>"
                      data-cutoff="<%= city.bookingCutoffDays || '0' %>"
                      data-partial="<%= city.partialPayment || '0' %>">
                   <img src="<%= city.image %>" alt="<%= city.City %>" loading="lazy" onerror="this.onerror=null; this.src='/images/placeholder.jpg';" />
-                  <h6 class="mt-2 mb-1"><%= city.City %></h6>
-                  <small><i class="bi bi-calendar-event"></i> <%= city.tripDuration %></small><br />
-                  <small class="fw-semibold text-dark">
-                    ₹<%= city.price && city.price[0] ? city.price[0].adultPrice : 'N/A' %>/person
-                  </small>
+                  <div class="tour-booking-city-card-body">
+                    <h6><%= city.City %></h6>
+                    <small><i class="bi bi-clock me-1"></i><%= city.tripDuration %></small>
+                    <div class="city-price">₹<%= city.price && city.price[0] ? city.price[0].adultPrice?.toLocaleString('en-IN') : 'N/A' %>/person</div>
+                  </div>
                 </div>
                 <% }); %>
               <% } else { %>
-                <p class="text-muted">No departure cities available.</p>
+                <p class="text-muted fst-italic py-2">No departure cities available.</p>
               <% } %>
             </div>
             <button id="prevBtn" class="carousel-control-prev d-none" type="button" onclick="slideLeft()">
@@ -1737,10 +1849,10 @@ a { text-decoration: none; }
             </button>
           </div>
           <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].City !== 'Unknown') { %>
-          <h5 class="pt-3">Travelling Options</h5>
+          <div class="booking-section-label" style="margin-top:14px;">Travelling Options</div>
           <div class="transport-options d-flex flex-wrap gap-2" id="transportOptions" role="radiogroup" aria-label="Transport Types"></div>
-          <div class="mt-4">
-            <h5>Available Dates</h5>
+          <div>
+            <div class="booking-section-label">Available Dates</div>
             <div class="tour-booking-year-tabs" id="yearTabs"></div>
             <div class="tour-booking-month-tabs" id="monthTabs"></div>
             <div class="tour-booking-date-selector" id="dateSelector"></div>
@@ -1813,35 +1925,53 @@ a { text-decoration: none; }
         </article>
       </div>
       <aside class="col-lg-5 col-xl-4 align-self-start stickySec">
+        <div class="actionCard card border-0 p-3 d-flex flex-row flex-wrap gap-2 align-items-center mb-3">
+          <span class="fw-semibold w-100 mb-1" style="font-size:0.95rem; color:#1A3C6C;"><i class="bi bi-chat-dots-fill me-1"></i> Still Got Queries?</span>
+          <a class="btn btn-outline-success rounded-pill btn-sm flex-grow-1"
+          href="https://wa.me/+918511117891?text=Hello%20I%20am%20interested%20in%20the%20following%20trip%20<%= encodeURIComponent(trips.name) %>%20tour.%20could%20you%20please%20share%20more%20details."
+          target="_blank" aria-label="Contact via WhatsApp for <%= trips.name %>">
+            <i class="bi bi-whatsapp me-1"></i> WhatsApp
+          </a>
+          <button class="btn btn-app-stroked-primary rounded-pill btn-sm flex-grow-1" data-bs-toggle="modal" data-bs-target="#quickCallModal"><i class="bi bi-telephone-forward me-1"></i> Call Back</button>
+          <a class="btn btn-app-primary rounded-pill btn-sm flex-grow-1" href="/dreamtrip" target="_blank" title="Plan your dream trip"><i class="bi bi-calendar-check me-1"></i> Plan trip</a>
+        </div>
         <form class="card border-0 overflow-hidden" id="proceedToBook" action="/bookingTour/<%- trips._id %>" method="GET">
-          <p class="card-header mb-0 bg-primary bg-opacity-10 fw-bold fs-5 border-primary-subtle">Book Now</p>
-          <div class="card-body d-flex flex-column gap-2">
+          <div class="sidebar-card-header">
+            <div class="sidebar-trip-name">Book Your Trip</div>
+            <div class="d-flex align-items-center justify-content-between mt-1">
+              <strong style="font-size:1.05rem;"><%= trips.name %></strong>
+              <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].City !== 'Unknown' && trips.deptcities[0].price && trips.deptcities[0].price[0]) { %>
+              <span class="sidebar-price-pill">₹<%= trips.deptcities[0].price[0].adultPrice?.toLocaleString('en-IN') %><small>/person</small></span>
+              <% } %>
+            </div>
+          </div>
+          <div class="card-body d-flex flex-column gap-0 p-0">
             <div class="tour-booking-summary-card">
-              <h6 class="fw-bold mb-3"><b>Booking Summary</b></h6>
+              <div class="sidebar-summary-title">Booking Summary</div>
               <div class="booking-summary-item">
-                <span class="text-primary-emphasis">Departure City:</span>
+                <span>Departure City</span>
                 <span class="booking-summary-city">Not selected</span>
               </div>
               <div class="booking-summary-item">
-                <span class="text-primary-emphasis">Tour Date:</span>
+                <span>Tour Date</span>
                 <span class="booking-summary-date">Not selected</span>
               </div>
               <div class="booking-summary-item">
-                <span class="text-primary-emphasis">Trip Duration:</span>
+                <span>Duration</span>
                 <span class="booking-summary-duration">Not selected</span>
               </div>
               <div class="booking-summary-item">
-                <span class="text-primary-emphasis">Price:</span>
+                <span>Price</span>
                 <span class="booking-summary-price">Not selected</span>
               </div>
               <div class="booking-summary-item">
-                <span class="text-primary-emphasis">Transport Type:</span>
+                <span>Transport</span>
                 <span class="booking-summary-transport">Not selected</span>
               </div>
               <% if(trips.seats){ %>
               <div class="booking-summary-item">
                 <span>Seats Available</span>
-                <span class="booking-summary-seats text-success"><%= trips.seats %> left!</span>
+                <span class="booking-summary-seats text-success fw-bold"><%= trips.seats %> left!</span>
               </div>
               <% } %>
             </div>
@@ -1881,20 +2011,29 @@ a { text-decoration: none; }
               <option value="bnpl">Book Now, Pay Later</option>
             </select>
             <div class="tour-booking-payment-options">
-              <h6 class="fw-bold mb-3">Payment Options</h6>
+              <div class="sidebar-payment-title">Choose Payment Mode</div>
               <div class="tour-booking-payment-option">
                 <input type="radio" id="payFull" name="paymentOptionRadio" value="full" checked>
-                <label for="payFull">Pay Full Amount <span class="booking-summary-price-full">Not selected</span></label>
+                <label for="payFull">
+                  <span><i class="bi bi-credit-card me-2 text-muted"></i>Pay Full Amount</span>
+                  <span class="pay-amount booking-summary-price-full">Not selected</span>
+                </label>
               </div>
               <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].partialPayment && parseFloat(trips.deptcities[0].partialPayment) > 0) { %>
               <div class="tour-booking-payment-option">
                 <input type="radio" id="payPartial" name="paymentOptionRadio" value="partial">
-                <label for="payPartial">Pay Partial <span class="booking-summary-price-partial">₹<%= trips.deptcities[0].partialPayment %></span>, Balance Later</label>
+                <label for="payPartial">
+                  <span><i class="bi bi-wallet2 me-2 text-muted"></i>Pay Partial, Rest Later</span>
+                  <span class="pay-amount booking-summary-price-partial">₹<%= trips.deptcities[0].partialPayment %></span>
+                </label>
               </div>
               <% } %>
               <div class="tour-booking-payment-option">
                 <input type="radio" id="payLater" name="paymentOptionRadio" value="bnpl">
-                <label for="payLater">Book Now, Pay Later <span class="text-success">(No payment now)</span></label>
+                <label for="payLater">
+                  <span><i class="bi bi-calendar-check me-2 text-muted"></i>Book Now, Pay Later</span>
+                  <span style="font-size:0.78rem;color:#16a34a;font-weight:600;">₹0 now</span>
+                </label>
               </div>
               <div class="trust-signals">
                 <span><i class="bi bi-shield-lock-fill"></i> Secure Payments</span>
@@ -1902,22 +2041,12 @@ a { text-decoration: none; }
                 <span><i class="bi bi-check-circle-fill"></i> Trusted by Thousands</span>
               </div>
             </div>
-            <div class="btnSec ms-auto mb-auto">
-              <button class="btn tour-booking-proceed-btn w-100" type="button" onclick="proceedWithBooking()" disabled>Proceed to Book</button>
+            <div class="btnSec px-3 pb-3 pt-2">
+              <button class="btn tour-booking-proceed-btn w-100" type="button" onclick="proceedWithBooking()" disabled><i class="bi bi-lock-fill me-1"></i> Proceed to Book</button>
+              <p class="text-center text-muted mt-2 mb-0" style="font-size:0.72rem;"><i class="bi bi-shield-check me-1"></i>100% Secure &amp; Encrypted</p>
             </div>
           </div>
         </form>
-        <div class="actionCard card border-0 p-3 flex-row flex-wrap gap-2 align-items-start mt-3">
-          <h5 class="w-100">Still Got Queries?</h5>
-          <!-- <a href="https://wa.me/+918511117891" class="btn btn-outline-secondary rounded-pill" target="_blank">WhatsApp Us</a> -->
-          <a class="btn btn-outline-success rounded-pill btn-sm flex-grow-1"
-          href="https://wa.me/+918511117891?text=Hello%20I%20am%20interested%20in%20the%20following%20trip%20<%= encodeURIComponent(trips.name) %>%20tour.%20could%20you%20please%20share%20more%20details." 
-          target="_blank" aria-label="Contact via WhatsApp for <%= trips.name %>">
-            <i class="bi bi-whatsapp me-1"></i> WhatsApp
-          </a>
-          <button class="btn btn-app-stroked-primary rounded-pill btn-sm flex-grow-1" data-bs-toggle="modal" data-bs-target="#quickCallModal"><i class="bi bi-telephone-forward me-1"></i> Call Back</button>
-          <a class="btn btn-app-primary rounded-pill btn-sm flex-grow-1" href="/dreamtrip" target="_blank" title="Plan your dream trip"><i class="bi bi-calendar-check me-1"></i> Plan trip</a>
-        </div>
       </aside>
     </section>
   </div>
@@ -1925,45 +2054,49 @@ a { text-decoration: none; }
   <div class="tour-booking-floating-backdrop" id="mobileBookingBackdrop"></div>
   <div class="tour-booking-floating-sec d-lg-none" id="mobileBookingSection">
     <div class="tour-booking-floating-panel d-flex flex-column" id="mobileBookingPanel">
-      <div class="sheet-drag-handle"></div>
-      <div class="mobile-booking-header d-flex align-items-center justify-content-between p-3 border-bottom">
-        <h5 class="mb-0">Book Your Trip</h5>
+      <div class="mobile-booking-header d-flex align-items-center justify-content-between">
+        <div>
+          <div style="font-size:0.7rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;opacity:0.7;">Book Your Trip</div>
+          <h5 class="mb-0"><%= trips.name %></h5>
+        </div>
         <button type="button" class="btn-close" onclick="toggleMobileBooking()"></button>
       </div>
       <div class="flex-grow-1 overflow-auto">
         <!-- Mobile Booking Summary -->
         <div class="mobile-booking-summary">
-          <div class="booking-summary-item">
-            <span class="text-muted">Departure City:</span>
-            <span class="booking-summary-city fw-semibold">Not selected</span>
+          <div class="mobile-summary-grid">
+            <div class="mobile-summary-cell">
+              <span class="mobile-summary-label">City</span>
+              <span class="mobile-summary-val booking-summary-city">—</span>
+            </div>
+            <div class="mobile-summary-cell">
+              <span class="mobile-summary-label">Date</span>
+              <span class="mobile-summary-val booking-summary-date">—</span>
+            </div>
+            <div class="mobile-summary-cell">
+              <span class="mobile-summary-label">Duration</span>
+              <span class="mobile-summary-val booking-summary-duration">—</span>
+            </div>
+            <div class="mobile-summary-cell">
+              <span class="mobile-summary-label">Price</span>
+              <span class="mobile-summary-val booking-summary-price" style="color:#16a34a;">—</span>
+            </div>
+            <div class="mobile-summary-cell">
+              <span class="mobile-summary-label">Transport</span>
+              <span class="mobile-summary-val booking-summary-transport">—</span>
+            </div>
+            <% if(trips.seats){ %>
+            <div class="mobile-summary-cell">
+              <span class="mobile-summary-label">Seats</span>
+              <span class="mobile-summary-val booking-summary-seats" style="color:#16a34a;font-weight:700;"><%= trips.seats %> left</span>
+            </div>
+            <% } %>
           </div>
-          <div class="booking-summary-item">
-            <span class="text-muted">Tour Date:</span>
-            <span class="booking-summary-date fw-semibold">Not selected</span>
-          </div>
-          <div class="booking-summary-item">
-            <span class="text-muted">Duration:</span>
-            <span class="booking-summary-duration fw-semibold">Not selected</span>
-          </div>
-          <div class="booking-summary-item">
-            <span class="text-muted">Price:</span>
-            <span class="booking-summary-price fw-semibold text-primary">Not selected</span>
-          </div>
-          <div class="booking-summary-item">
-            <span class="text-muted">Transport:</span>
-            <span class="booking-summary-transport fw-semibold">Not selected</span>
-          </div>
-          <% if(trips.seats){ %>
-          <div class="booking-summary-item">
-            <span class="text-muted">Seats Available:</span>
-            <span class="booking-summary-seats text-success fw-semibold"><%= trips.seats %> left!</span>
-          </div>
-          <% } %>
         </div>
   
         <!-- Mobile City Selection -->
         <div class="mobile-booking-section">
-          <h6 class="fw-bold mb-2">Select Departure City</h6>
+          <h6>Select Departure City</h6>
           <div class="mobile-city-carousel">
             <div class="mobile-city-track" id="mobileCityTrack">
               <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].City !== 'Unknown') { %>
@@ -1999,13 +2132,13 @@ a { text-decoration: none; }
   
         <!-- Mobile Transport Selection -->
         <div class="mobile-booking-section" id="mobileTransportSection" style="display: none;">
-          <h6 class="fw-bold mb-2">Transport Type</h6>
+          <h6>Transport Type</h6>
           <div class="mobile-transport-options" id="mobileTransportOptions"></div>
         </div>
   
         <!-- Mobile Date Selection -->
         <div class="mobile-booking-section" id="mobileDateSection" style="display: none;">
-          <h6 class="fw-bold mb-2">Select Date</h6>
+          <h6>Select Date</h6>
           <div class="mobile-date-tabs" id="mobileYearTabs"></div>
           <div class="mobile-date-tabs" id="mobileMonthTabs"></div>
           <div class="mobile-date-grid" id="mobileDateGrid"></div>
@@ -2013,20 +2146,20 @@ a { text-decoration: none; }
   
         <!-- Mobile Payment Options -->
         <div class="mobile-booking-section" id="mobilePaymentSection" style="display: none;">
-          <h6 class="fw-bold mb-2">Payment Options</h6>
+          <h6>Payment Options</h6>
           <div class="mobile-payment-options">
             <div class="mobile-payment-option">
               <input type="radio" id="mobilePayFull" name="mobilePaymentOption" value="full" checked>
               <label for="mobilePayFull">
-                <span class="payment-label">Pay Full Amount</span>
-                <span class="payment-price booking-summary-price-full">Not selected</span>
+                <span class="payment-label"><i class="bi bi-credit-card me-2 text-muted"></i>Pay Full Amount</span>
+                <span class="payment-price booking-summary-price-full">—</span>
               </label>
             </div>
             <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].partialPayment && parseFloat(trips.deptcities[0].partialPayment) > 0) { %>
             <div class="mobile-payment-option">
               <input type="radio" id="mobilePayPartial" name="mobilePaymentOption" value="partial">
               <label for="mobilePayPartial">
-                <span class="payment-label">Pay Partial</span>
+                <span class="payment-label"><i class="bi bi-wallet2 me-2 text-muted"></i>Pay Partial, Rest Later</span>
                 <span class="payment-price booking-summary-price-partial">₹<%= trips.deptcities[0].partialPayment %></span>
               </label>
             </div>
@@ -2034,8 +2167,8 @@ a { text-decoration: none; }
             <div class="mobile-payment-option">
               <input type="radio" id="mobilePayLater" name="mobilePaymentOption" value="bnpl">
               <label for="mobilePayLater">
-                <span class="payment-label">Book Now, Pay Later</span>
-                <span class="payment-price text-success">(No payment now)</span>
+                <span class="payment-label"><i class="bi bi-calendar-check me-2 text-muted"></i>Book Now, Pay Later</span>
+                <span class="payment-price" style="color:#16a34a;font-weight:700;">₹0 now</span>
               </label>
             </div>
           </div>
@@ -2043,71 +2176,81 @@ a { text-decoration: none; }
       </div>
 
       <!-- Mobile Action Buttons -->
-      <div class="mobile-booking-actions d-flex align-items-center gap-2 p-3">
-        <button class="btn btn-app-stroked-primary" aria-label="Call Back" data-bs-toggle="modal" data-bs-target="#quickCallModal">
+      <div class="mobile-booking-actions d-flex align-items-stretch gap-2">
+        <button class="btn btn-app-stroked-primary" style="min-width:44px;border-radius:10px;padding:0.6rem 0.8rem;" aria-label="Call Back" data-bs-toggle="modal" data-bs-target="#quickCallModal">
           <i class="bi bi-telephone-fill"></i>
         </button>
-        <a class="btn btn-outline-success" aria-label="WhatsApp" 
-           href="https://wa.me/+918511117891?text=Hello%20I%20am%20interested%20in%20the%20following%20trip%20<%= encodeURIComponent(trips.name) %>%20tour.%20could%20you%20please%20share%20more%20details." 
-           target="_blank" 
-           aria-label="Contact via WhatsApp for <%= trips.name %>">
+        <a class="btn btn-outline-success" style="min-width:44px;border-radius:10px;padding:0.6rem 0.8rem;display:flex;align-items:center;justify-content:center;" aria-label="WhatsApp"
+           href="https://wa.me/+918511117891?text=Hello%20I%20am%20interested%20in%20the%20following%20trip%20<%= encodeURIComponent(trips.name) %>%20tour.%20could%20you%20please%20share%20more%20details."
+           target="_blank">
           <i class="bi bi-whatsapp"></i>
         </a>
-        <button class="btn btn-app-primary mobile-booking-proceed" onclick="proceedMobileBooking()" disabled>
-          <i class="bi bi-arrow-right me-1"></i> Book Now
+        <button class="btn mobile-booking-proceed" onclick="proceedMobileBooking()" disabled>
+          <i class="bi bi-lock-fill me-1"></i> Proceed to Book
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Mobile Floating Button -->
-  <button class="btn btn-app-primary rounded-pill mobile-booking-fab d-lg-none" id="mobileBookingFab" onclick="toggleMobileBooking()">
-    <i class="bi bi-bookmark-check-fill me-1"></i> Book Now
-  </button>
-  <a class="btn btn-success rounded-circle mobile-whatsapp-fab d-lg-none" aria-label="WhatsApp" href="https://wa.me/+918511117891?text=Hello%20I%20am%20interested%20in%20the%20following%20trip%20<%= encodeURIComponent(trips.name) %>%20tour.%20could%20you%20please%20share%20more%20details." target="_blank">
-    <i class="bi bi-whatsapp"></i>
-  </a>
+  <!-- Mobile Floating Button Bar -->
+  <div class="mobile-fab-bar d-lg-none">
+    <button class="btn mobile-booking-fab" id="mobileBookingFab" onclick="toggleMobileBooking()">
+      <i class="bi bi-chevron-up fab-chevron"></i>
+      <span><i class="bi bi-lock-fill me-1" style="font-size:0.8rem;"></i>Book Now<% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].City !== 'Unknown' && trips.deptcities[0].price && trips.deptcities[0].price[0]) { %> &nbsp;<strong>₹<%= trips.deptcities[0].price[0].adultPrice?.toLocaleString('en-IN') %></strong><% } %></span>
+    </button>
+    <a class="mobile-whatsapp-fab d-lg-none" aria-label="WhatsApp" href="https://wa.me/+918511117891?text=Hello%20I%20am%20interested%20in%20the%20following%20trip%20<%= encodeURIComponent(trips.name) %>%20tour.%20could%20you%20please%20share%20more%20details." target="_blank">
+      <i class="bi bi-whatsapp"></i>
+    </a>
+  </div>
 
   <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content cutoff-modal-content">
-        <div class="modal-header cutoff-modal-header">
-          <h5 class="modal-title" id="contactModalLabel">Booking Unavailable</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-dialog modal-dialog-centered" style="max-width:380px;">
+      <div class="modal-content contact-modal-content">
+        <div class="contact-modal-header">
+          <button type="button" class="contact-modal-close" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+          <div class="contact-modal-icon-ring"><i class="bi bi-headset"></i></div>
+          <h5 id="contactModalLabel">Need help booking?</h5>
+          <p>Our travel team will find the right dates for you</p>
         </div>
-        <div class="modal-body cutoff-modal-body">
-          <p id="contactModalMessage">Online booking is temporarily unavailable or the selected date is too soon. Please contact our team to proceed.</p>
-          <p><strong>Call/WhatsApp:</strong> <a href="https://wa.me/+918511117891" target="_blank">+91 851111 7891</a></p>
-          <div class="trust-signals mt-3">
-            <span><i class="bi bi-shield-lock-fill"></i> Secure Booking Process</span>
-            <span><i class="bi bi-person-fill"></i> Expert Support</span>
-          </div>
+        <div class="contact-modal-body">
+          <p class="contact-modal-message" id="contactModalMessage">No future dates available for this city. Please contact our team.</p>
+          <a href="https://wa.me/+918511117891?text=Hi%2C%20I%20want%20to%20book%20<%= encodeURIComponent(trips.name) %>%20—%20can%20you%20help%20with%20available%20dates%3F" target="_blank" class="contact-modal-wa-btn">
+            <i class="bi bi-whatsapp"></i>
+            <span>WhatsApp Us<small>Fastest way to reach us</small></span>
+          </a>
+          <a href="tel:+918511117891" class="contact-modal-call-btn">
+            <i class="bi bi-telephone-fill"></i>
+            +91 85111 17891
+          </a>
         </div>
-        <div class="modal-footer cutoff-modal-footer">
-          <a href="https://wa.me/+918511117891" class="btn cutoff-modal-btn btn-success" target="_blank">Contact via WhatsApp</a>
-          <button type="button" class="btn cutoff-modal-btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <div class="contact-modal-footer">
+          <button type="button" class="btn-dismiss" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
   </div>
   <div class="modal fade" id="inquiryModal" tabindex="-1" aria-labelledby="inquiryModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content inquiry-modal-content">
-        <div class="modal-header inquiry-modal-header">
-          <h5 class="modal-title" id="inquiryModalLabel">Inquire About This Trip</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-dialog modal-dialog-centered" style="max-width:380px;">
+      <div class="modal-content contact-modal-content">
+        <div class="contact-modal-header">
+          <button type="button" class="contact-modal-close" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+          <div class="contact-modal-icon-ring"><i class="bi bi-calendar-x"></i></div>
+          <h5 id="inquiryModalLabel">Date not available</h5>
+          <p>Let our team find the right slot for you</p>
         </div>
-        <div class="modal-body inquiry-modal-body">
-          <p class="fw-medium">Group Batch is not available or the selected date is too soon.<br>Contact our team or customize this trip.</p>
-          <div class="trust-signals mt-3">
-            <span><i class="bi bi-shield-lock-fill"></i> Secure Booking Process</span>
-            <span><i class="bi bi-person-fill"></i> Expert Support</span>
-          </div>
+        <div class="contact-modal-body">
+          <p class="contact-modal-message">This batch isn't open for the selected date. Reach out and we'll match you with the best available option.</p>
+          <a href="https://wa.me/+918511117891?text=Hello%2C%20I%20am%20interested%20in%20<%= encodeURIComponent(trips.name) %>%20and%20want%20to%20discuss%20options." class="contact-modal-wa-btn" target="_blank">
+            <i class="bi bi-whatsapp"></i>
+            <span>WhatsApp Us<small>Fastest way to reach us</small></span>
+          </a>
+          <a href="/dreamtrip" class="contact-modal-call-btn" target="_blank">
+            <i class="bi bi-pencil-square"></i>
+            Build a Custom Itinerary
+          </a>
         </div>
-        <div class="modal-footer inquiry-modal-footer justify-content-center">
-          <a href="https://wa.me/+918511117891" class="btn inquiry-modal-btn inquiry-modal-btn-whatsapp" target="_blank">WhatsApp Us</a>
-          <a href="/dreamtrip" class="btn inquiry-modal-btn inquiry-modal-btn-customize" target="_blank">Customize Trip</a>
-          <button type="button" class="btn inquiry-modal-btn inquiry-modal-btn-ok" data-bs-dismiss="modal">Okay</button>
+        <div class="contact-modal-footer">
+          <button type="button" class="btn-dismiss" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
@@ -2122,7 +2265,7 @@ a { text-decoration: none; }
         <div class="modal-body booking-modal-body">
           <form id="modalBookingForm">
             <div class="mb-4 booking-modal-section">
-              <h6 class="fw-bold mb-2">Select Departure City</h6>
+              <h6>Select Departure City</h6>
               <select class="trip-details-form-select booking-modal-select" id="modalSelectedCity" name="city" onchange="updateModalCityFromDropdown()">
                 <% if (trips.deptcities && trips.deptcities.length > 0 && trips.deptcities[0].City !== 'Unknown') { %>
                 <% trips.deptcities.forEach((city) => { %>
@@ -2228,47 +2371,50 @@ a { text-decoration: none; }
   <div class="modal fade" id="quickCallModal" tabindex="-1" aria-labelledby="quickCallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content quick-call-modal-content">
-        <div class="modal-header quick-call-modal-header position-relative">
+        <div class="modal-header quick-call-modal-header">
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-          <div class="modal-body-content">
-            <h5 class="modal-title text-white" id="quickCallModalLabel">Scrolling is fun, but travelling is better.</h5>
-            <p class="text-white">Leave your number, and let's get you packing!</p>
+          <div class="qcm-header-inner">
+            <div class="qcm-icon-ring">
+              <i class="bi bi-headset"></i>
+            </div>
+            <h5 id="quickCallModalLabel">Get a Free Expert Callback</h5>
+            <p>Our travel specialist will call within 15 minutes — no pushy sales, just helpful advice.</p>
+          </div>
+          <div class="qcm-social-proof">
+            <span><i class="bi bi-star-fill"></i> 500+ Happy Travellers</span>
+            <span><i class="bi bi-lightning-charge-fill"></i> Fast Response</span>
+            <span><i class="bi bi-shield-check-fill"></i> No Spam</span>
           </div>
         </div>
         <div class="modal-body quick-call-modal-body">
           <form id="quickCallForm">
             <div class="mb-3">
-              <label for="guestName" class="form-label">Guest Name *</label>
-              <input type="text" class="form-control quick-call-input" id="guestName" name="guestName" placeholder="Enter guest name" required>
-              <div class="error-message" id="guestNameError">Please enter guest name</div>
+              <label for="guestName" class="form-label">Your Name *</label>
+              <input type="text" class="form-control quick-call-input" id="guestName" name="guestName" placeholder="E.g. Rahul Sharma" required>
+              <div class="error-message" id="guestNameError">Please enter your name</div>
             </div>
-            <div class="mb-3">
-              <label for="mobileNo" class="form-label">Mobile No *</label>
+            <div class="mb-2">
+              <label for="mobileNo" class="form-label">WhatsApp / Mobile Number *</label>
               <div class="input-group">
                 <select class="form-select quick-call-select" id="countryCode" name="countryCode">
                   <option value="+91" data-flag="🇮🇳">🇮🇳 +91</option>
                   <option value="+1" data-flag="🇺🇸">🇺🇸 +1</option>
                   <option value="+44" data-flag="🇬🇧">🇬🇧 +44</option>
                 </select>
-                <input type="tel" class="form-control quick-call-input" id="mobileNo" name="mobileNo" placeholder="Enter mobile number" required>
+                <input type="tel" class="form-control quick-call-input" id="mobileNo" name="mobileNo" placeholder="10-digit mobile number" required>
               </div>
               <div class="error-message" id="mobileNoError">Please enter a valid mobile number</div>
             </div>
-            <div class="notes d-flex flex-column gap-2">
-              <div class="d-flex align-items-center">
-                <i class="bi bi-shield-lock-fill note-icon"></i>
-                <span>We assure the privacy of your contact data.</span>
-              </div>
-              <div class="d-flex align-items-center">
-                <i class="bi bi-telephone-x-fill note-icon"></i>
-                <span>No annoying spam calls.</span>
-              </div>
+            <div class="qcm-trust-row">
+              <span><i class="bi bi-shield-lock-fill"></i> 100% Private</span>
+              <span><i class="bi bi-telephone-x-fill"></i> Zero Spam</span>
+              <span><i class="bi bi-clock-fill"></i> &lt;15 Min Reply</span>
             </div>
           </form>
         </div>
         <div class="modal-footer quick-call-modal-footer">
           <button type="submit" form="quickCallForm" class="btn quick-call-modal-btn" id="submitQuickCall" disabled>
-            <i class="bi bi-telephone-fill me-2"></i> Request Call Back
+            <i class="bi bi-telephone-fill me-2"></i> Request Free Callback
           </button>
         </div>
       </div>
@@ -3774,14 +3920,15 @@ a { text-decoration: none; }
     const backdrop = document.getElementById('mobileBookingBackdrop');
     const fab = document.getElementById('mobileBookingFab');
     
+    const fabBar = fab ? fab.closest('.mobile-fab-bar') : null;
     if (mobileSection.classList.contains('active')) {
       mobileSection.classList.remove('active');
       backdrop.classList.remove('active');
-      fab.style.display = 'flex';
+      if (fabBar) fabBar.style.display = 'flex';
     } else {
       backdrop.classList.add('active');
       mobileSection.classList.add('active');
-      fab.style.display = 'none';
+      if (fabBar) fabBar.style.display = 'none';
       // Initialize mobile booking if not already done
       if (!mobileSection.dataset.initialized) {
         initializeMobileBooking();
@@ -3806,7 +3953,9 @@ a { text-decoration: none; }
         document.querySelectorAll('.mobile-date-item').forEach(i => i.classList.remove('active'));
         matchingBtn.classList.add('active');
         const dateElements = document.querySelectorAll('.mobile-booking-summary .booking-summary-date');
-        dateElements.forEach(el => el.textContent = matchingBtn.textContent);
+        const mainSel = document.getElementById('selectedDate');
+        const selectedOpt = mainSel ? mainSel.options[mainSel.selectedIndex] : null;
+        dateElements.forEach(el => el.textContent = (selectedOpt && selectedOpt.text !== 'Select a date') ? selectedOpt.text : matchingBtn.textContent);
       }
     }
 
