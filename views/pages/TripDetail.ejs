@@ -126,6 +126,18 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Robo
 .accordion-item { border-left: 3px solid transparent; transition: border-color 0.2s; }
 .accordion-item:has(.accordion-button:not(.collapsed)) { border-left-color: var(--primary-blue); }
 .itinerary-day-badge { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; background: var(--primary-blue); color: #fff; border-radius: 50%; font-size: 0.7rem; font-weight: 700; margin-right: 0.5rem; flex-shrink: 0; }
+.itin-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
+.itin-title { font-size:1.1rem; font-weight:700; color:#111; margin:0; }
+.itin-actions { display:flex; gap:8px; flex-shrink:0; }
+.itin-action-btn { display:inline-flex; align-items:center; gap:5px; padding:6px 14px; border:1.5px solid #d1d5db; border-radius:50px; background:#fff; color:#374151; font-size:0.8rem; font-weight:500; cursor:pointer; white-space:nowrap; transition:background 0.15s; }
+.itin-action-btn:hover { background:#f3f4f6; }
+.itin-item { border:1px solid #e5e7eb; border-radius:10px; overflow:hidden; margin-bottom:8px; border-left:1px solid #e5e7eb; }
+.itin-acc-btn { background:#fff; gap:10px; padding:12px 14px; box-shadow:none !important; }
+.itin-acc-btn:not(.collapsed) { background:#f8f9fa; box-shadow:none !important; }
+.itin-acc-btn::after { margin-left:auto; flex-shrink:0; }
+.itin-day-badge { display:inline-flex; align-items:center; justify-content:center; background:#4b5563; color:#fff; border-radius:7px; padding:3px 10px; font-size:0.72rem; font-weight:700; letter-spacing:0.02em; white-space:nowrap; flex-shrink:0; }
+.itin-btn-text { font-size:0.9rem; font-weight:500; color:#111; line-height:1.3; }
+.itin-acc-btn.collapsed .itin-btn-text { color:#374151; }
 
 /* FAB polish — sizing handled in Mobile Booking Styles block above */
 
@@ -1769,14 +1781,7 @@ a { text-decoration: none; }
           </div>
         </article>
         <article class="custom-card p-3 p-lg-4">
-          <% if (trips.documentUrl) { %>
-          <button class="btn btn-light border rounded-pill px-4 py-2" onclick="downloadItinerary()">
-            <i class="bi bi-download"></i> Download Itinerary
-          </button>
-          <% } else { %>
-          <p class="text-muted pt-1">Itinerary PDF not available.</p>
-          <% } %>
-          <div class="trip-stat-grid mt-3">
+          <div class="trip-stat-grid">
             <% if (trips.days && trips.days.trim() !== '') { %>
             <div class="trip-stat-item">
               <div class="trip-stat-icon"><i class="bi bi-calendar-event"></i></div>
@@ -1861,18 +1866,37 @@ a { text-decoration: none; }
         </article>
         <% if (trips && trips.itinerary && trips.itinerary.length > 0) { %>
           <article class="custom-card p-3 p-lg-4">
-            <h3>Itinerary</h3>
+            <div class="itin-header">
+              <h3 class="itin-title">Itinerary</h3>
+              <div class="itin-actions">
+                <% if (trips.documentUrl) { %>
+                <button type="button" class="itin-action-btn" onclick="downloadItinerary()">
+                  <i class="bi bi-download"></i> Get PDF
+                </button>
+                <% } %>
+                <button type="button" class="itin-action-btn" id="itinExpandBtn" onclick="toggleAllItinerary()">
+                  <i class="bi bi-arrows-expand" id="itinExpandIcon"></i>
+                  <span id="itinExpandLabel">Expand All</span>
+                </button>
+              </div>
+            </div>
             <div class="accordion" id="accordionPanelsStayOpenExample">
               <% trips.itinerary.forEach((item, index) => { %>
                 <% if (!item.day || !item.header || !item.description) return; %>
-                <div class="accordion-item">
+                <div class="accordion-item itin-item">
                   <h3 class="accordion-header">
-                    <button class="accordion-button <%= index === 0 ? '' : 'collapsed' %>" type="button" data-bs-toggle="collapse" data-bs-target="#itinerary-<%= index %>" aria-expanded="<%= index === 0 ? 'true' : 'false' %>" aria-controls="itinerary-<%= index %>">
-                      <span class="itinerary-day-badge"><%= index + 1 %></span>
-                      <span class="itinerary-btn-text"><%= item.day %>: <%= item.header %></span>
+                    <button class="accordion-button itin-acc-btn <%= index === 0 ? '' : 'collapsed' %>"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#itinerary-<%= index %>"
+                      aria-expanded="<%= index === 0 ? 'true' : 'false' %>"
+                      aria-controls="itinerary-<%= index %>">
+                      <span class="itin-day-badge">Day <%= index + 1 %></span>
+                      <span class="itin-btn-text"><%= item.header %></span>
                     </button>
                   </h3>
-                  <div id="itinerary-<%= index %>" class="accordion-collapse collapse<%= index === 0 ? ' show' : '' %>">
+                  <div id="itinerary-<%= index %>"
+                    class="accordion-collapse collapse<%= index === 0 ? ' show' : '' %>">
                     <div class="accordion-body"><%- item.description %></div>
                   </div>
                 </div>
@@ -2664,6 +2688,19 @@ a { text-decoration: none; }
         const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
         modal.show();
       }, 300);
+    }
+
+    function toggleAllItinerary() {
+      var collapses = document.querySelectorAll('#accordionPanelsStayOpenExample .accordion-collapse');
+      var label = document.getElementById('itinExpandLabel');
+      var icon = document.getElementById('itinExpandIcon');
+      var anyOpen = false;
+      collapses.forEach(function(el) { if (el.classList.contains('show')) anyOpen = true; });
+      collapses.forEach(function(el) {
+        bootstrap.Collapse.getOrCreateInstance(el, { toggle: false })[anyOpen ? 'hide' : 'show']();
+      });
+      label.textContent = anyOpen ? 'Expand All' : 'Collapse All';
+      icon.className = anyOpen ? 'bi bi-arrows-expand' : 'bi bi-arrows-collapse';
     }
 
     // Download itinerary with login check
