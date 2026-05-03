@@ -15,17 +15,13 @@
       --dark-gray: #333333;
     }
 
-    /* Subtitle styling */
-    .subtitle {
-      color: #f05a5a;
-      font-size: 0.875rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .subtitle + h1 {
-      font-size: 1.75rem;
-      margin-bottom: 1.25rem;
-      color: #222;
+    /* Search bar */
+    .search-container { margin-top:18px; }
+    .search-bar { flex:1; min-width:0; }
+    /* Mobile search input shrink */
+    @media (max-width:480px) {
+      .search-input { font-size:0.78rem; padding:10px 8px 10px 32px; }
+      .search-icon { left:10px; }
     }
 
     /* Search bar styling */
@@ -98,15 +94,21 @@
     .filters-btn {
       display: flex;
       align-items: center;
-      gap: 8px;
-      --bs-btn-font-size: 0.9rem;
-      --bs-btn-padding-x: 20px;
+      gap: 6px;
+      --bs-btn-font-size: 0.85rem;
+      --bs-btn-padding-x: 16px;
       --bs-btn-padding-y: 10px;
       --bs-btn-bg: #fff;
-      --bs-btn-border-color: #e0e0e0;
+      --bs-btn-border-color: #d1d5db;
       --bs-btn-hover-bg: var(--primary-blue);
       --bs-btn-hover-border-color: var(--primary-blue);
       --bs-btn-hover-color: #fff;
+      border-radius: 10px;
+      font-weight: 600;
+      color: #374151;
+    }
+    @media (max-width:576px) {
+      .filters-btn { --bs-btn-padding-x:12px; --bs-btn-padding-y:9px; }
     }
 
     /* Package card styling */
@@ -600,124 +602,273 @@
         padding: 8px 16px;
       }
     }
+
+    /* ── Filter count badge ── */
+    .filter-count-badge { display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:50%; background:#EF4F5F; color:#fff; font-size:0.65rem; font-weight:700; margin-left:4px; }
+
+    /* ── Active filter bar ── */
+    .active-filter-bar { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:10px 0 2px; }
+    .active-filter-label { font-size:0.78rem; font-weight:600; color:#6b7280; white-space:nowrap; }
+    .active-filter-chip { display:inline-flex; align-items:center; gap:6px; background:#eef2f8; border:1px solid #c7d7ef; color:#1A3C6C; font-size:0.78rem; font-weight:600; padding:4px 10px 4px 12px; border-radius:50px; }
+    .active-filter-chip-remove { background:none; border:none; color:#1A3C6C; font-size:0.7rem; cursor:pointer; padding:0; line-height:1; opacity:0.7; }
+    .active-filter-chip-remove:hover { opacity:1; }
+    .active-filter-chip.search-chip { background:#fef3f2; border-color:#fecaca; color:#b91c1c; }
+    .active-filter-chip.search-chip .active-filter-chip-remove { color:#b91c1c; }
+    .active-filter-clear-all { font-size:0.78rem; font-weight:600; color:#EF4F5F; text-decoration:none; margin-left:4px; white-space:nowrap; }
+    .active-filter-clear-all:hover { text-decoration:underline; }
+
+    /* ── Region pill tabs ── */
+    .region-pill-tabs { display:flex; gap:5px; align-items:center; padding:4px 6px; flex-shrink:0; }
+    .region-pill { padding:6px 14px; border-radius:50px; border:1.5px solid #d1d5db; background:#fff; color:#374151; font-size:0.78rem; font-weight:600; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+    .region-pill.active { background:#1A3C6C; color:#fff; border-color:#1A3C6C; }
+    .region-pill:hover:not(.active) { background:#f3f4f6; }
+    @media (max-width:480px) {
+      .region-pill { padding:5px 10px; font-size:0.72rem; }
+    }
+
+    /* ── Filter drawer ── */
+    .filter-drawer-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:1040; }
+    .filter-drawer-overlay.open { display:block; }
+    .filter-drawer { position:fixed; top:0; right:0; height:100%; width:380px; max-width:95vw; background:#fff; z-index:1050; transform:translateX(100%); transition:transform 0.28s cubic-bezier(0.32,0.72,0,1); display:flex; flex-direction:column; box-shadow:-4px 0 24px rgba(0,0,0,0.12); }
+    .filter-drawer.open { transform:translateX(0); }
+    .filter-drawer-head { padding:18px 20px; border-bottom:1px solid #e5e7eb; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+    .filter-drawer-head h5 { font-size:1rem; font-weight:700; color:#111; margin:0; }
+    .filter-drawer-body { padding:20px; overflow-y:auto; flex:1; }
+    .filter-section-label { font-size:0.7rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; margin-top:20px; display:block; }
+    .filter-pill-group { display:flex; flex-wrap:wrap; gap:8px; }
+    .filter-pill input[type=checkbox] { display:none; }
+    .filter-pill label { padding:5px 14px; border-radius:50px; border:1.5px solid #d1d5db; background:#fff; color:#374151; font-size:0.8rem; font-weight:500; cursor:pointer; transition:all 0.15s; display:inline-block; }
+    .filter-pill input[type=checkbox]:checked + label { background:#1A3C6C; color:#fff; border-color:#1A3C6C; }
+    .filter-drawer-foot { padding:14px 20px; border-top:1px solid #e5e7eb; display:flex; gap:10px; flex-shrink:0; }
+    .filter-drawer-foot .btn-clear { flex:1; padding:10px; border-radius:10px; border:1.5px solid #d1d5db; background:#fff; color:#374151; font-weight:600; font-size:0.88rem; cursor:pointer; }
+    .filter-drawer-foot .btn-apply { flex:2; padding:10px; border-radius:10px; background:#1A3C6C; color:#fff; font-weight:600; font-size:0.88rem; border:none; cursor:pointer; }
+    .filter-drawer-foot .btn-apply:hover { background:#0f2647; }
+
+    /* ── Trip cards ── */
+    .trip-card { border-radius:16px; overflow:hidden; border:none; box-shadow:0 2px 16px rgba(0,0,0,0.07); transition:transform 0.2s ease, box-shadow 0.2s ease; background:#fff; cursor:pointer; position:relative; display:flex; flex-direction:column; }
+    .trip-card:hover { transform:translateY(-6px); box-shadow:0 16px 40px rgba(0,0,0,0.14); }
+    .trip-card.inactive { opacity:0.65; }
+
+    /* Image */
+    .trip-card-img-wrap { position:relative; height:220px; overflow:hidden; flex-shrink:0; }
+    .trip-card-img-wrap img { width:100%; height:100%; object-fit:cover; transition:transform 0.5s ease; display:block; }
+    .trip-card:hover .trip-card-img-wrap img { transform:scale(1.08); }
+    .trip-card-img-overlay { position:absolute; inset:0; background:linear-gradient(160deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%); }
+
+    /* State badge — bottom left over image */
+    .trip-card-state-badge { position:absolute; bottom:10px; left:12px; background:rgba(255,255,255,0.15); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.35); color:#fff; font-size:0.68rem; font-weight:700; padding:3px 10px; border-radius:50px; letter-spacing:0.03em; }
+
+    /* Trending / popular badge — top right */
+    .trip-card-trending { position:absolute; top:10px; right:10px; background:linear-gradient(135deg,#FF6B35,#FF4500); color:#fff; font-size:0.62rem; font-weight:700; padding:3px 9px; border-radius:50px; letter-spacing:0.05em; text-transform:uppercase; }
+
+    /* Card body */
+    .trip-card-body { padding:16px 16px 14px; display:flex; flex-direction:column; flex:1; }
+    .trip-card-name { font-size:1rem; font-weight:700; color:#0d1b2a; margin-bottom:2px; line-height:1.35; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .trip-card-dest { font-size:0.75rem; color:#8a94a6; margin-bottom:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:4px; }
+
+    /* Duration + price row */
+    .trip-card-meta { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:8px; }
+    .trip-card-duration { display:inline-flex; align-items:center; gap:5px; font-size:0.72rem; color:#374151; background:#f0f4ff; border-radius:50px; padding:4px 11px; font-weight:600; border:1px solid #dde5ff; }
+
+    /* Price — the conversion hero */
+    .trip-card-price-wrap { display:flex; flex-direction:column; align-items:flex-end; flex-shrink:0; }
+    .trip-card-price-label { font-size:0.58rem; color:#8a94a6; font-weight:600; text-transform:uppercase; letter-spacing:0.07em; line-height:1; margin-bottom:2px; }
+    .trip-card-price { font-size:1.15rem; font-weight:800; color:#EF4F5F; line-height:1; }
+    .trip-card-price small { font-size:0.6rem; font-weight:500; color:#8a94a6; }
+
+    /* Actions */
+    .trip-card-actions { display:flex; gap:8px; align-items:stretch; margin-top:auto; }
+    .trip-card-view-btn {
+      flex:1; padding:11px 0; border-radius:10px;
+      background:#1A3C6C; color:#fff;
+      font-size:0.85rem; font-weight:700; border:none; cursor:pointer;
+      text-align:center; letter-spacing:0.04em;
+      display:flex; align-items:center; justify-content:center; gap:6px;
+      transition:background 0.18s;
+    }
+    .trip-card-view-btn::after { content:'→'; font-size:1rem; font-weight:400; }
+    .trip-card-view-btn:hover { background:#0f2749; }
+    .trip-card-wa-btn, .trip-card-call-btn, .trip-card-share-btn { width:42px; border-radius:10px; background:#f4f6f9; border:1.5px solid #e2e6ed; color:#4b5563; display:flex; align-items:center; justify-content:center; font-size:0.92rem; flex-shrink:0; text-decoration:none; cursor:pointer; transition:background 0.15s, border-color 0.15s; }
+    .trip-card-wa-btn:hover, .trip-card-call-btn:hover, .trip-card-share-btn:hover { background:#e8ecf2; border-color:#cbd2db; color:#1A3C6C; }
+
+    /* ── Share popover ── */
+    .share-popover-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.28); z-index:1060; }
+    .share-popover-backdrop.open { display:block; }
+    .share-popover {
+      display:none; position:fixed; z-index:1061;
+      background:#fff; border-radius:20px;
+      box-shadow:0 16px 56px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.06);
+      padding:22px 22px 18px;
+      width:340px; max-width:calc(100vw - 32px);
+    }
+    .share-popover.open { display:block; }
+    .share-popover-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    .share-popover-title { font-size:1rem; font-weight:700; color:#111; margin:0; }
+    .share-popover-close { background:none; border:none; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; color:#6b7280; cursor:pointer; transition:background 0.15s; flex-shrink:0; }
+    .share-popover-close:hover { background:#f3f4f6; color:#111; }
+
+    /* Trip preview card — matches reference: image left, name+subtitle right, border */
+    .share-popover-trip { display:flex; align-items:center; gap:14px; border:1px solid #e5e7eb; border-radius:14px; padding:12px 14px; margin-bottom:18px; }
+    .share-popover-trip-img { width:52px; height:52px; border-radius:10px; object-fit:cover; flex-shrink:0; background:#e5e7eb; }
+    .share-popover-trip-info { flex:1; min-width:0; }
+    .share-popover-trip-name { font-size:0.92rem; font-weight:700; color:#111; margin:0 0 2px; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .share-popover-trip-sub { font-size:0.75rem; color:#6b7280; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    /* Action row — two equal columns, text+icon, no coloured backgrounds */
+    .share-popover-actions { display:grid; grid-template-columns:1fr 1fr; gap:0; border:1px solid #e5e7eb; border-radius:12px; overflow:hidden; }
+    .share-popover-btn { display:flex; align-items:center; justify-content:center; gap:8px; padding:13px 0; background:#fff; color:#222; font-size:0.82rem; font-weight:600; cursor:pointer; border:none; transition:background 0.15s; }
+    .share-popover-btn:first-child { border-right:1px solid #e5e7eb; }
+    .share-popover-btn:hover { background:#f7f8fa; }
+    .share-popover-btn i { font-size:1rem; color:#555; }
+    .share-popover-copied { font-size:0.72rem; color:#16a34a; text-align:center; margin-top:10px; height:14px; font-weight:500; }
+
+    /* Page section header */
+    .page-hero-label { font-size:0.72rem; font-weight:700; color:#EF4F5F; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; }
+    .page-hero-title { font-size:1.85rem; font-weight:800; color:#0d1b2a; line-height:1.2; margin-bottom:0; }
+
+    /* Mobile responsive card tightening */
+    @media (max-width:576px) {
+      .page-hero-title { font-size:1.4rem; }
+      .trip-card-img-wrap { height:190px; }
+      .trip-card-body { padding:12px 13px 13px; }
+      .trip-card-name { font-size:0.92rem; }
+      .trip-card-dest { font-size:0.72rem; margin-bottom:10px; }
+      .trip-card-meta { margin-bottom:12px; }
+      .trip-card-price { font-size:1rem; }
+      .trip-card-view-btn { font-size:0.8rem; padding:10px 0; }
+      .trip-card-wa-btn, .trip-card-call-btn, .trip-card-share-btn { width:36px; font-size:0.88rem; }
+    }
   </style>
 </head>
 
 <body>
   <%- include('../partials/header', {isSearch: false}); %>
   <!-- Main header -->
-  <header class="container-xl py-3">
-    <span class="subtitle">Our curated tour packages</span>
-    <h1 class="h2">Where are you planning to go next?</h1>
-    <div class="search-container d-flex flex-wrap align-items-md-center justify-content-between gap-3 pt-2 pt-md-3">
-      <div class="search-bar">
-        <div class="select-wrapper">
-          <select id="regionSelect" class="select" aria-label="Filter by region">
-            <option value="ALL" <%= regionFilter === 'ALL' ? 'selected' : '' %>>ALL</option>
-            <option value="India" <%= regionFilter === 'India' ? 'selected' : '' %>>India</option>
-            <option value="International" <%= regionFilter === 'International' ? 'selected' : '' %>>International</option>
-          </select>
+  <header class="container-xl py-3 pt-4">
+    <p class="page-hero-label">Our curated tour packages</p>
+    <h1 class="page-hero-title">Where are you planning to go next?</h1>
+    <div class="search-container d-flex align-items-center gap-2 pt-3">
+      <div class="search-bar d-flex align-items-center flex-1" style="flex:1;min-width:0;border:1px solid #e0e0e0;border-radius:10px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.06);overflow:hidden;">
+        <div class="region-pill-tabs">
+          <button type="button" class="region-pill <%= (!regionFilter || regionFilter === 'ALL') ? 'active' : '' %>" onclick="setRegion('ALL')">All</button>
+          <button type="button" class="region-pill <%= regionFilter === 'India' ? 'active' : '' %>" onclick="setRegion('India')">India</button>
+          <button type="button" class="region-pill <%= regionFilter === 'International' ? 'active' : '' %>" onclick="setRegion('International')">International</button>
         </div>
-        <div class="input-wrapper">
+        <div class="input-wrapper" style="flex:1;min-width:0;display:flex;align-items:center;position:relative;">
           <i class="bi bi-search search-icon"></i>
-          <input id="searchEntry" type="text" class="search-input" placeholder="Try searching place name, region, category" aria-label="Search tours">
+          <input id="searchEntry" type="text" class="search-input" placeholder="Search destinations, trips..." aria-label="Search tours" value="<%= Searchvalue || '' %>">
         </div>
       </div>
-      <button class="btn filters-btn ms-auto" id="filterButton" aria-label="Open filters">
-        <i class="bi bi-sliders2-vertical"></i> Filters
+      <button class="btn filters-btn flex-shrink-0" id="filterButton" aria-label="Open filters">
+        <i class="bi bi-sliders2-vertical"></i> <span class="d-none d-sm-inline">Filters</span>
+        <span id="filterCountBadge" class="filter-count-badge" style="display:<%= filterChips && filterChips.length > 0 ? 'inline-flex' : 'none' %>;"><%= filterChips ? filterChips.length : 0 %></span>
       </button>
     </div>
-    <!-- Filter chips -->
-    <div class="mt-4 d-flex flex-wrap gap-2" id="chipContainer">
-      <% filterChips.forEach((chip, index) => { %>
-      <span class="chip" data-chip="<%= chip %>">
-        <span class="text-truncate"><%= chip %></span>
-        <span class="close" aria-label="Remove filter <%= chip %>">×</span>
+    <!-- Active filter bar -->
+    <% if ((filterChips && filterChips.length > 0) || Searchvalue) { %>
+    <div class="active-filter-bar mt-3" id="chipContainer">
+      <span class="active-filter-label">Active filters:</span>
+      <% filterChips.forEach(function(chip) { %>
+      <span class="active-filter-chip" data-chip="<%= chip %>">
+        <%= chip.charAt(0).toUpperCase() + chip.slice(1) %>
+        <button type="button" class="active-filter-chip-remove close" aria-label="Remove filter">&#x2715;</button>
       </span>
       <% }); %>
       <% if (Searchvalue) { %>
-      <span class="chip" data-chip="<%= Searchvalue %>">
-        <span class="text-truncate"><%= Searchvalue %></span>
-        <span class="close" aria-label="Remove search term <%= Searchvalue %>">×</span>
+      <span class="active-filter-chip search-chip" data-chip="<%= Searchvalue %>">
+        <i class="bi bi-search" style="font-size:0.7rem;"></i> <%= Searchvalue %>
+        <button type="button" class="active-filter-chip-remove close" aria-label="Remove search">&#x2715;</button>
       </span>
       <% } %>
+      <a href="/triplist" class="active-filter-clear-all">Clear all</a>
     </div>
+    <% } %>
   </header>
 
   <!-- Main content -->
   <main class="container-xl">
-    <% 
+    <%
       const isAdmin = (profile?.email === process.env.GMAIL_ADMIN) || (profile?.email === process.env.GMAIL_ADMIN_TWO);
       let displayedPackages = isAdmin ? tourPackages : tourPackages.filter(tour => tour.isActive);
     %>
+    <p class="mb-3" style="font-size:0.8rem;color:#8a94a6;font-weight:500;">
+      <span style="color:#0d1b2a;font-weight:700;"><%= displayedPackages.length %></span> trips found
+      <% if (regionFilter && regionFilter !== 'ALL') { %> in <span style="color:#1A3C6C;font-weight:700;"><%= regionFilter %></span><% } %>
+    </p>
     <div class="row g-3">
       <% displayedPackages.forEach(function(tour) { %>
-      <article class="col-sm-6 col-lg-4">
-        <div class="card package-card h-100 rounded-4 <%= !tour.isActive ? 'inactive' : '' %>" 
-             role="button" 
-             aria-label="View details for <%= tour.name %> in <%= tour.state %>"
-             data-bs-toggle="<%= (!tour.isActive && isAdmin) ? 'tooltip' : '' %>"
-             title="<%= (!tour.isActive && isAdmin) ? 'This trip is inactive' : '' %>">
+      <article class="col-sm-6 col-lg-4 mb-2">
+        <div class="trip-card package-card <%= !tour.isActive ? 'inactive' : '' %>"
+             data-trip-name="<%= tour.name %>"
+             data-trip-id="<%= tour._id %>"
+             role="button"
+             aria-label="View details for <%= tour.name %>">
           <!-- Admin status badge -->
           <% if (isAdmin) { %>
           <span class="status-badge <%= !tour.isActive ? 'inactive' : '' %>">
             <%= tour.isActive ? 'Published' : 'Draft' %>
           </span>
           <% } %>
-          <figure class="card-image-container rounded-3">
-            <img src="<%= tour.imageurl %>" 
-                 alt="Tour package - <%= tour.name %> in <%= tour.state %>"
-                 class="card-image card-img-top h-100" 
+          <div class="trip-card-img-wrap">
+            <img src="<%= tour.imageurl %>"
+                 alt="<%= tour.name %>"
                  loading="lazy"
                  onerror="this.src='/images/placeholder.jpg';">
-            <figcaption class="visually-hidden">Trip image for <%= tour.name %></figcaption>
-          </figure>
-          <div class="card-body">
-            <h3 class="card-title mb-1"><%= tour.name %></h3>
-            <p class="small text-truncate text-muted mb-1"><%- tour.destinations %></p>
-            <p class="text-truncate mb-1 small text-muted">
-              <i class="bi bi-geo-alt-fill"></i>
-              <span><%= tour.state %></span>
-            </p>
-            <p class="d-flex justify-content-between align-items-center mb-1">
-              <small><i class="bi bi-calendar-event text-muted"></i> <%- tour.days %></small>
-              <span class="fw-medium">From ₹<%- tour.price %><small>/person</small></span>
-            </p>
+            <div class="trip-card-img-overlay"></div>
+            <% if (tour.state) { %>
+            <span class="trip-card-state-badge"><i class="bi bi-geo-alt-fill me-1"></i><%= tour.state %></span>
+            <% } %>
+            <% if (tour.category && ['adventure','trekking','safari','offbeat','himalaya'].some(c => (tour.category||'').toLowerCase().includes(c))) { %>
+            <span class="trip-card-trending">&#9733; Popular</span>
+            <% } %>
+          </div>
+          <div class="trip-card-body">
+            <div class="trip-card-name"><%= tour.name %></div>
+            <div class="trip-card-dest"><i class="bi bi-map" style="font-size:0.65rem;opacity:0.6;"></i><%- tour.destinations %></div>
+            <div class="trip-card-meta">
+              <span class="trip-card-duration"><i class="bi bi-calendar3" style="color:#4f6ef7;font-size:0.72rem;"></i> <%- tour.days %></span>
+              <div class="trip-card-price-wrap">
+                <span class="trip-card-price-label">Starting from</span>
+                <span class="trip-card-price">₹<%- tour.price %><small>/person</small></span>
+              </div>
+            </div>
             <% if (isAdmin) { %>
-            <div class="my-2 d-flex align-items-center gap-2 flex-wrap">
-              <button class="btn btn-primary btn-sm edit-tour" data-id="<%= tour._id %>" data-bs-toggle="tooltip" title="Edit tour details">Edit</button>
-              <button class="btn btn-primary btn-sm manage-images" data-id="<%= tour._id %>" data-bs-toggle="tooltip" title="Manage tour images">Manage Images</button>
-              <button class="btn btn-warning btn-sm change-status" data-id="<%= tour._id %>" data-active="<%= tour.isActive !== false %>" data-bs-toggle="tooltip" title="Toggle tour status">
+            <div class="mb-2 d-flex align-items-center gap-2 flex-wrap">
+              <button class="btn btn-primary btn-sm edit-tour" data-id="<%= tour._id %>">Edit</button>
+              <button class="btn btn-primary btn-sm manage-images" data-id="<%= tour._id %>">Manage Images</button>
+              <button class="btn btn-warning btn-sm change-status" data-id="<%= tour._id %>" data-active="<%= tour.isActive !== false %>">
                 <%= tour.isActive !== false ? 'Disable' : 'Enable' %>
               </button>
-              <button class="btn btn-danger btn-sm delete-tour" data-id="<%= tour._id %>" data-bs-toggle="tooltip" title="Delete tour">Delete</button>
+              <button class="btn btn-danger btn-sm delete-tour" data-id="<%= tour._id %>">Delete</button>
             </div>
             <% } %>
-            <div class="d-flex flex-wrap gap-2 mt-2">
-              <a class="btn call-now-btn" 
-                 href="tel:+918511117891" 
-                 aria-label="Call now for <%= tour.name %>">
-                <i class="bi bi-telephone-fill me-1"></i> Call Now
+            <div class="trip-card-actions">
+              <button class="trip-card-view-btn" data-action="view">View Trip</button>
+              <a class="trip-card-wa-btn whatsapp-btn"
+                 href="https://wa.me/+918511117891?text=Hello%20I%20am%20interested%20in%20the%20trip%20*<%= encodeURIComponent(tour.name) %>*%20tour.%20Could%20you%20please%20share%20more%20details."
+                 target="_blank"
+                 title="WhatsApp"
+                 aria-label="WhatsApp for <%= tour.name %>">
+                <i class="bi bi-whatsapp"></i>
               </a>
-              <button class="btn request-callback-btn" 
-                      data-bs-toggle="modal" 
-                      data-bs-target="#quickCallModal" 
-                      data-trip-id="<%= tour._id %>" 
-                      aria-label="Request callback for <%= tour.name %>">
-                <i class="bi bi-telephone-inbound-fill me-1"></i> Request Call
+              <button class="trip-card-call-btn request-callback-btn"
+                      data-bs-toggle="modal"
+                      data-bs-target="#quickCallModal"
+                      data-trip-id="<%= tour._id %>"
+                      title="Request Call"
+                      aria-label="Request call for <%= tour.name %>">
+                <i class="bi bi-telephone-fill"></i>
               </button>
-              <a class="btn whatsapp-btn" 
-                href="https://wa.me/+918511117891?text=Hello%20I%20am%20interested%20in%20the%20trip%20*<%= encodeURIComponent(tour.name) %>*%20tour.%20Could%20you%20please%20share%20more%20details." 
-                target="_blank" 
-                aria-label="Contact via WhatsApp for <%= tour.name %>">
-                <i class="bi bi-whatsapp me-1"></i> WhatsApp
-              </a>
+              <button class="trip-card-share-btn"
+                      data-action="share"
+                      data-trip-name="<%= tour.name %>"
+                      data-trip-img="<%= tour.imageurl %>"
+                      data-trip-dest="<%= tour.state || '' %>"
+                      title="Share"
+                      aria-label="Share <%= tour.name %>">
+                <i class="bi bi-share-fill"></i>
+              </button>
             </div>
-            <!-- <button class="btn share-btn" 
-                    aria-label="Share <%= tour.name %>">
-              <i class="bi bi-share-fill"></i>
-              <span class="visually-hidden">Share this trip</span>
-            </button> -->
           </div>
         </div>
       </article>
@@ -725,64 +876,81 @@
     </div>
   </main>
 
-  <!-- Filters Modal -->
-  <div class="modal fade bd-example-modal-lg" id="filtersModal" tabindex="-1" aria-labelledby="filtersModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable">
-      <form class="modal-content" id="tourList" action="/triplist" method="GET">
-        <div class="modal-header text-white">
-          <h5 class="modal-title" id="filtersModalLabel">Filters</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-          <input id="filterValue" name="filterValue" type="hidden">
-          <input id="searchValue" name="searchValue" type="hidden">
-          <input id="regionFilterInput" name="regionFilter" type="hidden" value="<%= regionFilter || 'ALL' %>">
-          <div class="filter-section mb-4">
-            <p class="filter-section-title h6">Tour category</p>
-            <div class="row gy-2">
-              <% ['adventure', 'heritage', 'wildlife', 'safari', 'trekking', 'camping', 'sightseeing', 'offbeat', 'backpacking', 'spiritual', 'summer', 'leisure', 'himalaya', 'festival', 'winter', 'monsoon'].forEach(category => { %>
-              <div class="col-6 col-md-3">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="<%= category %>" name="category">
-                  <label class="form-check-label" for="<%= category %>"><%= category.charAt(0).toUpperCase() + category.slice(1) %></label>
-                </div>
-              </div>
-              <% }); %>
-            </div>
-          </div>
-          <div class="filter-section mb-4">
-            <p class="filter-section-title h6">Tour type</p>
-            <div class="row gy-2">
-              <% ['family', 'solo', 'couple', 'bachelors', 'students'].forEach(type => { %>
-              <div class="col-6 col-md-3">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="<%= type %>" name="type">
-                  <label class="form-check-label" for="<%= type %>"><%= type.charAt(0).toUpperCase() + type.slice(1) %></label>
-                </div>
-              </div>
-              <% }); %>
-            </div>
-          </div>
-          <div class="filter-section mb-4">
-            <p class="filter-section-title h6">Departure city</p>
-            <div class="row gy-2">
-              <% ['ahmedabad', 'mumbai', 'bhuj', 'vadodara', 'pune', 'rajkot', 'surat', 'delhi'].forEach(city => { %>
-              <div class="col-6 col-md-3">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="<%= city %>" name="city">
-                  <label class="form-check-label" for="<%= city %>"><%= city.charAt(0).toUpperCase() + city.slice(1) %></label>
-                </div>
-              </div>
-              <% }); %>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" id="clearButton" aria-label="Clear all filters">Clear selection</button>
-          <button type="submit" class="btn btn-primary show-trips-btn" id="applyFilterButton" aria-label="Apply filters">Show trips</button>
-        </div>
-      </form>
+  <!-- Share popover (single instance, positioned by JS) -->
+  <div class="share-popover-backdrop" id="shareBackdrop" onclick="closeSharePopover()"></div>
+  <div class="share-popover" id="sharePopover" role="dialog" aria-modal="true" aria-label="Share trip">
+    <div class="share-popover-header">
+      <p class="share-popover-title">Share this Page</p>
+      <button type="button" class="share-popover-close" onclick="closeSharePopover()" aria-label="Close">&#x2715;</button>
+    </div>
+    <div class="share-popover-trip">
+      <img class="share-popover-trip-img" id="sharePopoverImg" src="" alt="">
+      <div class="share-popover-trip-info">
+        <p class="share-popover-trip-name" id="sharePopoverName"></p>
+        <p class="share-popover-trip-sub" id="sharePopoverSub"></p>
+      </div>
+    </div>
+    <div class="share-popover-actions">
+      <button type="button" class="share-popover-btn" id="shareCopyBtn" onclick="shareCopyLink()">
+        <i class="bi bi-link-45deg"></i> Copy Link
+      </button>
+      <button type="button" class="share-popover-btn" id="shareWaBtn" onclick="shareViaWhatsApp()">
+        <i class="bi bi-whatsapp"></i> Whatsapp
+      </button>
+    </div>
+    <p class="share-popover-copied" id="shareCopiedMsg"></p>
+  </div>
+
+  <!-- Hidden form inputs for filter submission (keep existing form logic) -->
+  <form id="tourList" action="/triplist" method="GET" style="display:none;">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input id="filterValue" name="filterValue" type="hidden">
+    <input id="searchValue" name="searchValue" type="hidden">
+    <input id="regionFilterInput" name="regionFilter" type="hidden" value="<%= regionFilter || 'ALL' %>">
+  </form>
+
+  <!-- Filter Drawer -->
+  <div class="filter-drawer-overlay" id="filterOverlay" onclick="closeFilterDrawer()"></div>
+  <div class="filter-drawer" id="filterDrawer">
+    <div class="filter-drawer-head">
+      <h5>Filters</h5>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <button type="button" style="background:none;border:none;color:#EF4F5F;font-size:0.82rem;font-weight:600;cursor:pointer;" onclick="clearFilters()">Clear all</button>
+        <button type="button" style="background:none;border:none;font-size:1.1rem;cursor:pointer;color:#6b7280;" onclick="closeFilterDrawer()">&#x2715;</button>
+      </div>
+    </div>
+    <div class="filter-drawer-body">
+      <p class="filter-section-label" style="margin-top:0;">Tour Category</p>
+      <div class="filter-pill-group">
+        <% ['adventure','heritage','wildlife','safari','trekking','camping','sightseeing','offbeat','backpacking','spiritual','summer','leisure','himalaya','festival','winter','monsoon'].forEach(function(cat){ %>
+        <span class="filter-pill">
+          <input type="checkbox" id="cat_<%= cat %>" name="category" value="<%= cat %>">
+          <label for="cat_<%= cat %>"><%= cat.charAt(0).toUpperCase() + cat.slice(1) %></label>
+        </span>
+        <% }); %>
+      </div>
+      <p class="filter-section-label">Tour Type</p>
+      <div class="filter-pill-group">
+        <% ['family','solo','couple','bachelors','students'].forEach(function(t){ %>
+        <span class="filter-pill">
+          <input type="checkbox" id="type_<%= t %>" name="type" value="<%= t %>">
+          <label for="type_<%= t %>"><%= t.charAt(0).toUpperCase() + t.slice(1) %></label>
+        </span>
+        <% }); %>
+      </div>
+      <p class="filter-section-label">Departure City</p>
+      <div class="filter-pill-group">
+        <% ['ahmedabad','mumbai','bhuj','vadodara','pune','rajkot','surat','delhi'].forEach(function(city){ %>
+        <span class="filter-pill">
+          <input type="checkbox" id="city_<%= city %>" name="city" value="<%= city %>">
+          <label for="city_<%= city %>"><%= city.charAt(0).toUpperCase() + city.slice(1) %></label>
+        </span>
+        <% }); %>
+      </div>
+    </div>
+    <div class="filter-drawer-foot">
+      <button type="button" class="btn-clear" onclick="clearFilters()">Clear</button>
+      <button type="button" class="btn-apply" onclick="applyFilters()">Show Trips</button>
     </div>
   </div>
 
@@ -932,16 +1100,22 @@
       });
     };
 
-    // Handle filter updates
+    // Handle filter updates — keys must match backend expectations exactly
     const updateFilterValue = () => {
-      const categories = {};
-      document.querySelectorAll('.filter-section').forEach(section => {
-        const sectionTitle = section.querySelector('.filter-section-title')?.innerText.trim();
-        if (!sectionTitle) return;
-        const checkedValues = Array.from(section.querySelectorAll('input[type="checkbox"]:checked')).map(input => input.id);
-        categories[sectionTitle] = checkedValues;
-      });
+      const get = (name) => Array.from(document.querySelectorAll(`#filterDrawer input[name="${name}"]:checked`)).map(i => i.value);
+      const categories = {
+        'Tour category': get('category'),
+        'Tour type': get('type'),
+        'Departure city': get('city')
+      };
       document.getElementById('filterValue').value = JSON.stringify(categories);
+      updateFilterBadge();
+    };
+
+    const updateFilterBadge = () => {
+      const total = document.querySelectorAll('#filterDrawer input[type=checkbox]:checked').length;
+      const badge = document.getElementById('filterCountBadge');
+      if (badge) { badge.textContent = total; badge.style.display = total > 0 ? 'inline-flex' : 'none'; }
     };
 
     // Submit tour list form
@@ -949,7 +1123,83 @@
       document.getElementById('tourList').submit();
     };
 
-    // Handle chip removal
+    // ── Share popover ──
+    let _shareCurrentTrip = '';
+
+    function openSharePopover(triggerEl, trip) {
+      _shareCurrentTrip = trip.name;
+      document.getElementById('sharePopoverName').textContent = trip.name;
+      document.getElementById('sharePopoverSub').textContent = trip.dest || '';
+      const imgEl = document.getElementById('sharePopoverImg');
+      imgEl.onerror = function() { this.src = '/images/placeholder.jpg'; };
+      imgEl.src = trip.img && trip.img.trim() ? trip.img : '/images/placeholder.jpg';
+      imgEl.alt = trip.name;
+      document.getElementById('shareCopiedMsg').textContent = '';
+
+      const popover = document.getElementById('sharePopover');
+      // Center on screen
+      popover.style.left = '50%';
+      popover.style.top = '50%';
+      popover.style.transform = 'translate(-50%, -50%)';
+      document.getElementById('shareBackdrop').classList.add('open');
+      popover.classList.add('open');
+    }
+
+    function closeSharePopover() {
+      document.getElementById('sharePopover').classList.remove('open');
+      document.getElementById('shareBackdrop').classList.remove('open');
+      _shareCurrentTrip = '';
+    }
+
+    function shareCopyLink() {
+      const url = window.location.origin + '/tripdetail/' + encodeURIComponent(_shareCurrentTrip);
+      navigator.clipboard.writeText(url).then(function() {
+        const msg = document.getElementById('shareCopiedMsg');
+        msg.textContent = '✓ Link copied to clipboard';
+        setTimeout(function() { msg.textContent = ''; }, 2500);
+      });
+    }
+
+    function shareViaWhatsApp() {
+      const url = window.location.origin + '/tripdetail/' + encodeURIComponent(_shareCurrentTrip);
+      const text = 'Check out this trip: *' + _shareCurrentTrip + '*\n' + url;
+      window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+      closeSharePopover();
+    }
+
+    // Close share popover on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeSharePopover();
+    });
+
+    function setRegion(val) {
+      document.getElementById('regionFilterInput').value = val;
+      updateFilterValue();
+      submitTourList();
+    }
+
+    function openFilterDrawer() {
+      document.getElementById('filterOverlay').classList.add('open');
+      document.getElementById('filterDrawer').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeFilterDrawer() {
+      document.getElementById('filterOverlay').classList.remove('open');
+      document.getElementById('filterDrawer').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function clearFilters() {
+      document.querySelectorAll('#filterDrawer input[type=checkbox]').forEach(function(cb) { cb.checked = false; });
+    }
+
+    function applyFilters() {
+      updateFilterValue();
+      closeFilterDrawer();
+      submitTourList();
+    }
+
     const removeChip = (chip) => {
       const chipProperty = document.getElementById(chip);
       if (chipProperty) chipProperty.checked = false;
@@ -1190,13 +1440,20 @@
         card.addEventListener('click', (e) => {
           const target = e.target.closest('a, button');
           if (!target) {
-            const tourName = card.querySelector('.card-title').textContent;
-            window.location.href = `/tripdetail/${encodeURIComponent(tourName)}`;
+            const tourName = card.dataset.tripName || card.querySelector('.trip-card-name, .card-title')?.textContent;
+            if (tourName) window.location.href = `/tripdetail/${encodeURIComponent(tourName)}`;
             return;
           }
 
-          if (target.classList.contains('call-now-btn') || target.classList.contains('whatsapp-btn')) {
+          if (target.classList.contains('whatsapp-btn')) {
             e.stopPropagation();
+            return;
+          }
+
+          if (target.dataset.action === 'view') {
+            e.stopPropagation();
+            const tourName = card.dataset.tripName || card.querySelector('.trip-card-name')?.textContent;
+            if (tourName) window.location.href = `/tripdetail/${encodeURIComponent(tourName)}`;
             return;
           }
 
@@ -1205,13 +1462,14 @@
             document.getElementById('tripId').value = target.dataset.tripId;
           }
 
-          // if (target.classList.contains('share-btn')) {
-          //   e.stopPropagation();
-          //   const name = encodeURIComponent(card.querySelector('.card-title').textContent);
-          //   const state = card.querySelector('.text-muted span').textContent;
-          //   const imageurl = card.querySelector('.card-image').src;
-          //   handleShare(name, state, imageurl);
-          // }
+          if (target.dataset.action === 'share') {
+            e.stopPropagation();
+            openSharePopover(target, {
+              name: target.dataset.tripName || card.dataset.tripName || '',
+              img:  target.dataset.tripImg || '',
+              dest: target.dataset.tripDest || ''
+            });
+          }
 
           if (target.classList.contains('edit-tour')) {
             e.stopPropagation();
@@ -1276,24 +1534,14 @@
         });
       });
 
-      // Filter modal logic
-      const filterModal = new bootstrap.Modal(document.getElementById('filtersModal'));
-      document.getElementById('filterButton')?.addEventListener('click', () => filterModal.show());
-      document.getElementById('clearButton')?.addEventListener('click', () => {
-        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
-        updateFilterValue();
-      });
-      document.getElementById('applyFilterButton')?.addEventListener('click', () => {
-        updateFilterValue();
-        submitTourList();
-        filterModal.hide();
-      });
+      // Filter drawer logic
+      document.getElementById('filterButton')?.addEventListener('click', openFilterDrawer);
 
       // Chip removal
-      document.querySelectorAll('.chip .close').forEach(closeBtn => {
+      document.querySelectorAll('.active-filter-chip-remove').forEach(closeBtn => {
         closeBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          const chip = closeBtn.parentElement.dataset.chip;
+          const chip = closeBtn.closest('[data-chip]').dataset.chip;
           if (chip === '<%= Searchvalue %>') {
             removeSearchChip();
           } else {
@@ -1302,12 +1550,15 @@
         });
       });
 
-      // Region filter (ALL / India / International)
-      document.getElementById('regionSelect')?.addEventListener('change', function() {
-        document.getElementById('regionFilterInput').value = this.value;
-        updateFilterValue();
-        submitTourList();
+      // Pre-check drawer pills from active server-side filters
+      const activeChips = <%- JSON.stringify(filterChips || []) %>;
+      activeChips.forEach(function(chip) {
+        const el = document.querySelector(`#filterDrawer input[value="${chip}"]`);
+        if (el) el.checked = true;
       });
+      updateFilterBadge();
+
+      // Region filter handled via setRegion() on pill buttons
 
       // Search input with debounce
       document.getElementById('searchEntry')?.addEventListener('keypress', debounce((e) => {

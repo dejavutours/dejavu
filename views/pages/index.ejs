@@ -7,231 +7,159 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" href="css/dashboard.css">
     <style>
-      /* Trip Cards Container */
-      .trip-cards-container {
-        position: relative;
-        overflow-x: auto;
-        scroll-behavior: smooth;
-        -webkit-overflow-scrolling: touch;
-        scroll-snap-type: x mandatory;
-        /* Enable scroll snapping */
+      /* ── Shared tokens ── */
+      :root {
+        --navy: #1A3C6C;
+        --red: #EF4F5F;
+        --text-main: #0d1b2a;
+        --text-muted: #8a94a6;
       }
 
-      /* Fix underline + better clickable cards */
-      .clickable-card {
-        cursor: pointer;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      /* ── Hero section: collapse padding on mobile (form is hidden) ── */
+      @media (max-width: 767px) {
+        .hero_section { padding-block: 0 !important; padding-inline: 0 !important; pointer-events: none; }
+        .banner_section { margin-bottom: 0 !important; }
+      }
+
+      /* ── Section headings ── */
+      .section-label { font-size:0.72rem; font-weight:700; color:var(--red); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px; display:block; }
+      .section-title { font-size:1.5rem; font-weight:800; color:var(--text-main); margin-bottom:0; line-height:1.2; }
+      @media (max-width:576px) { .section-title { font-size:1.25rem; } }
+
+      /* ── Trending cards — override dashboard.css .item_card completely ── */
+      .trending_section .item_card {
+        flex: 0 0 auto !important;
+        width: 300px !important;
+        min-width: unset !important;
+        max-width: unset !important;
+        aspect-ratio: unset !important;
+        background-image: none !important;
+        background-blend-mode: unset !important;
+        border-radius: 16px !important;
+        overflow: hidden !important;
+        background-color: #fff !important;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.09) !important;
         text-decoration: none !important;
-        color: inherit;
+        color: inherit !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        margin: 0 !important;
+      }
+      .trending_section .item_card:hover { transform: translateY(-5px) !important; box-shadow: 0 12px 32px rgba(0,0,0,0.14) !important; }
+
+      .trending_section .item_card .cover { position:relative; height:220px; overflow:hidden; flex-shrink:0; }
+      .trending_section .item_card .cover img { width:100% !important; height:100% !important; object-fit:cover !important; display:block; transition:transform 0.4s ease; }
+      .trending_section .item_card:hover .cover img { transform:scale(1.06); }
+      .trending_section .item_card .cover .shadow_content {
+        position:absolute; bottom:0; left:0; right:0;
+        background:linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%) !important;
+        padding:40px 14px 14px !important;
+        font-size:inherit !important;
+      }
+      .trending_section .item_card .cover .shadow_content strong { font-size:0.95rem; font-weight:700; color:#fff; display:block; line-height:1.3; }
+      .trending_section .item_card .cover .shadow_content small { font-size:0.75rem; color:rgba(255,255,255,0.85); }
+      .trending_section .item_card .card-foot {
+        padding:12px 15px 14px;
+        display:flex; justify-content:space-between; align-items:center;
+        background:#fff; border-top:1px solid #f0f2f5; flex-shrink:0;
+      }
+      .trending_section .item_card .card-foot .price-from { font-size:0.6rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; line-height:1; margin-bottom:2px; }
+      .trending_section .item_card .card-foot .price-val { font-size:1rem; font-weight:800; color:var(--red); line-height:1.1; }
+      .trending_section .item_card .card-foot .price-val small { font-size:0.6rem; font-weight:500; color:var(--text-muted); }
+      .trending_section .item_card .card-foot .dur { display:inline-flex; align-items:center; gap:4px; font-size:0.7rem; color:#374151; background:#f0f4ff; border:1px solid #dde5ff; border-radius:50px; padding:4px 10px; font-weight:600; }
+
+      /* scroll strip */
+      .h-scroll { display:flex; gap:16px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:8px; scrollbar-width:none; }
+      .h-scroll::-webkit-scrollbar { display:none; }
+
+      @media (max-width:576px) {
+        .trending_section .item_card { width:230px !important; }
+        .trending_section .item_card .cover { height:170px; }
       }
 
-      .clickable-card:hover,
-      .clickable-card:focus {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12) !important;
-        outline: none;
+      /* ── Category row scroll ── */
+      .trip-cards-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x;
+        scrollbar-width: none;
+        cursor: grab;
       }
+      .trip-cards-container:active { cursor: grabbing; }
+      .trip-cards-container::-webkit-scrollbar { display:none; }
+      .trip-cards-row { display:flex; flex-wrap:nowrap; gap:20px; padding-bottom:6px; }
 
-      /* Make entire card focusable via keyboard */
-      .clickable-card:focus-visible {
-        outline: 3px solid #0d6efd;
-        outline-offset: 2px;
-        border-radius: 20px;
-      }
-
-      /* Improve mobile spacing */
-      @media (max-width: 767.98px) {
-        .category-row-wrapper {
-          margin-bottom: 3rem !important;
-        }
-
-        .category-row-wrapper .d-flex {
-          gap: 1rem !important;
-        }
-
-        .btn-sm {
-          font-size: 0.875rem;
-          padding: 0.5rem 1rem;
-        }
-
-        /* Optional: Reduce card width slightly on mobile */
-        .trip-card {
-          width: 290px;
-        }
-      }
-
-      /* Hide arrows on small screens – horizontal scroll with finger swipe is better */
-      @media (max-width: 992px) {
-        .row-nav-btn {
-          display: none !important;
-        }
-      }
-
-
-      .trip-cards-row {
-        display: flex;
-        flex-wrap: nowrap;
-        gap: 1rem;
-        /* padding: 0 1rem; */
-        /* Add padding to ensure cards don't touch edges */
-        min-width: max-content;
-      }
-
-      /* Trip Card Styling */
+      /* ── Category trip card — reference style ── */
       .trip-card {
-        flex: 0 0 auto;
-        width: 340px;
-        height: inherit;
-        border: 1px solid #dee2e6;
+        flex: 0 0 300px;
+        border: none;
         border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        user-select: none;
         overflow: hidden;
-        background-color: #fff;
-        transition: transform 0.3s ease;
-        scroll-snap-align: start;
-        /* Snap cards to start of container */
       }
+      .trip-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,0.14); }
 
-      .trip-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      /* Ensure Swiper slider doesn't interfere */
+      /* Image: rounded corners, slight inset padding like reference */
       .trip-image-slider {
         position: relative;
-        height: 250px;
-        touch-action: pan-y;
+        height: 230px;
+        overflow: hidden;
+        flex-shrink: 0;
+        margin: 10px 10px 0;
+        border-radius: 14px;
       }
+      .trip-image-slider img { width:100%; height:100%; object-fit:cover; pointer-events:none; display:block; transition:transform 0.4s ease; }
+      .trip-card:hover .trip-image-slider img { transform:scale(1.05); }
 
-      .trip-image-slider img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        pointer-events: none;
+      /* Swiper pagination dots inside image */
+      .trip-image-slider .swiper-pagination { bottom:8px; }
+      .trip-image-slider .swiper-button-prev,
+      .trip-image-slider .swiper-button-next { width:28px; height:28px; background:rgba(255,255,255,0.9); border-radius:50%; box-shadow:0 2px 6px rgba(0,0,0,0.2); color:#333; opacity:1; top:50%; }
+      .trip-image-slider .swiper-button-prev::after,
+      .trip-image-slider .swiper-button-next::after { font-size:11px; font-weight:800; }
+      .trip-image-slider .swiper-button-prev { left:8px; }
+      .trip-image-slider .swiper-button-next { right:8px; }
+
+      /* Card body */
+      .trip-card-info { padding:14px 16px 18px; display:flex; flex-direction:column; flex:1; }
+      .trip-card-info .tc-duration { font-size:0.72rem; color:var(--text-muted); font-weight:500; margin-bottom:4px; }
+      .trip-card-info .tc-name { font-size:1rem; font-weight:700; color:var(--text-main); margin-bottom:2px; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .trip-card-info .tc-dest { font-size:0.78rem; color:var(--text-muted); margin-bottom:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .trip-card-info .tc-divider { border:none; border-top:1px solid #f0f2f5; margin:0 0 12px; }
+      .trip-card-info .tc-price-row { display:flex; align-items:center; gap:8px; margin-top:auto; }
+      .trip-card-info .tc-price { font-size:1.05rem; font-weight:800; color:var(--red); }
+      .trip-card-info .tc-price-label { font-size:0.65rem; color:var(--text-muted); font-weight:500; }
+      .trip-card-info .tc-dur-badge { display:inline-flex; align-items:center; gap:4px; font-size:0.68rem; color:#374151; background:#f0f4ff; border:1px solid #dde5ff; border-radius:50px; padding:3px 10px; font-weight:600; margin-left:auto; }
+
+      /* Row nav arrows */
+      .row-nav-btn { position:absolute; top:42%; transform:translateY(-50%); width:36px; height:36px; background:#fff; border:1px solid #e2e6ed; border-radius:50%; color:#374151; display:flex; align-items:center; justify-content:center; z-index:10; box-shadow:0 2px 10px rgba(0,0,0,0.12); transition:background 0.15s; }
+      .row-nav-btn:hover { background:#f4f6f9; }
+      .row-nav-prev { left:-16px; }
+      .row-nav-next { right:-16px; }
+      @media (max-width:992px) { .row-nav-btn { display:none !important; } }
+
+      /* Category section header */
+      .cat-header-img { width:42px; height:42px; border-radius:10px; object-fit:cover; }
+      .cat-header-name { font-size:1.05rem; font-weight:700; color:var(--text-main); margin:0 0 1px; }
+      .cat-header-count { font-size:0.72rem; color:var(--text-muted); }
+      .cat-view-all { font-size:0.78rem; font-weight:700; color:var(--navy); border:1.5px solid var(--navy); border-radius:50px; padding:6px 16px; text-decoration:none; transition:background 0.15s, color 0.15s; white-space:nowrap; }
+      .cat-view-all:hover { background:var(--navy); color:#fff; }
+
+      @media (max-width:576px) {
+        .trip-card { flex: 0 0 260px; }
+        .trip-image-slider { height:185px; margin:8px 8px 0; border-radius:12px; }
+        .trip-card-info { padding:12px 13px 15px; }
+        .trip-card-info .tc-name { font-size:0.9rem; }
       }
-
-      /* Swiper Navigation Buttons for Trip Slider */
-      .swiper-button-prev,
-      .swiper-button-next {
-        width: 30px;
-        height: 30px;
-        background-color: #fff;
-        border-radius: 50%;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        color: #000;
-        opacity: 0.8;
-        transition: opacity 0.3s ease;
-      }
-
-      .swiper-button-prev:hover,
-      .swiper-button-next:hover {
-        opacity: 1;
-      }
-
-      .swiper-button-prev::after,
-      .swiper-button-next::after {
-        font-size: 14px;
-        font-weight: bold;
-      }
-
-      .swiper-button-prev {
-        left: 10px;
-      }
-
-      .swiper-button-next {
-        right: 10px;
-      }
-
-      /* Row Navigation Buttons */
-      .row-nav-btn {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 40px;
-        height: 40px;
-        background-color: #fff;
-        border: 1px solid #dee2e6;
-        color: #000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10;
-        transition: background-color 0.3s ease;
-      }
-
-      .row-nav-btn:hover {
-        background-color: #f8f9fa;
-      }
-
-      .row-nav-prev {
-        left: 0;
-      }
-
-      .row-nav-next {
-        right: 0;
-      }
-
-      .row-nav-btn i {
-        font-size: 16px;
-      }
-
-      .row-nav-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-
-      .trip-cards-container.scrolled-to-start::after {
-        background: none;
-      }
-
-      /* Responsive Adjustments */
-      @media (max-width: 767.98px) {
-        .trip-image-slider {
-          height: 180px;
-        }
-
-        #modalApplyBtn {
-          width: 180px;
-        }
-
-        /* .trip-cards-row {
-        padding: 0 5px;
-      } */
-
-        .row-nav-btn {
-          width: 32px;
-          height: 32px;
-          font-size: 14px;
-        }
-
-        .row-nav-prev {
-          left: 5px;
-        }
-
-        .row-nav-next {
-          right: 5px;
-        }
-
-      }
-
-      @media (max-width: 575.98px) {
-        .trip-cards-container::after {
-          width: 15px;
-        }
-      }
-
-      /* Large desktop — show more cards per row */
-      @media (min-width: 1200px) {
-        .trip-card {
-          width: 300px;
-        }
-      }
-
-      @media (min-width: 1400px) {
-        .trip-card {
-          width: 320px;
-        }
-      }
+      @media (max-width:767.98px) { #modalApplyBtn { width:180px; } }
     </style>
 </head>
 
@@ -388,25 +316,26 @@
   %>
 
   <!-- Trending destination section -->
-  <section class="trending_section container-xl mt-3 py-4 py-lg-5">
-    <p>
-      <small class="text-dejavu-secondary-light">Experience our</small><br>
-      <span class="h3">Trending destinations</span>
-    </p>
-    <aside class="overflow-auto d-flex h-scroll">
-      <% displayedPackages.forEach(function(tour, index) { %>
-      <a href="/tripdetail/<%= tour.name %>" title="<%= tour.name %>" class="rounded-4 item_card overflow-hidden">
-        <div class="cover position-relative">
-          <img src="<%= tour.imageurl %>" alt="Tour package - <%= tour.name %> in <%= tour.state %>, India" class="w-100 object-fit-cover" height="220" width="300" loading="lazy" onerror="this.onerror=null; this.src='/images/placeholder.jpg'">
-          <p class="px-3 py-2 mb-0 d-flex flex-column text-light position-absolute bottom-0 w-100 shadow_content">
+  <section class="trending_section container-xl mt-2 py-4 py-lg-5">
+    <p class="section-label">Experience our</p>
+    <h2 class="section-title mb-4">Trending destinations</h2>
+    <aside class="h-scroll">
+      <% displayedPackages.forEach(function(tour) { %>
+      <a href="/tripdetail/<%= encodeURIComponent(tour.name) %>" title="<%= tour.name %>" class="item_card">
+        <div class="cover">
+          <img src="<%= tour.imageurl %>" alt="<%= tour.name %>" loading="lazy" onerror="this.onerror=null;this.src='/images/placeholder.jpg'">
+          <div class="shadow_content">
             <strong><%= tour.name %></strong>
-            <small><%= tour.state %>, India</small>
-          </p>
+            <small><% if(tour.state){ %><%= tour.state %>, <% } %>India</small>
+          </div>
         </div>
-        <p class="bg-white px-3 py-2 mb-0 d-flex justify-content-between gap-3 position-relative">
-          <span class="text-muted">From<br /><strong class="text-dark">₹<%- tour.price %></strong>/person</span>
-          <span class="text-end"><i class="bi bi-calendar"></i> <strong><%- tour.days %></strong></span>
-        </p>
+        <div class="card-foot">
+          <div>
+            <div class="price-from">Starting from</div>
+            <div class="price-val">₹<%- tour.price %><small>/person</small></div>
+          </div>
+          <span class="dur"><i class="bi bi-calendar3" style="color:#4f6ef7;font-size:0.7rem;"></i> <%- tour.days %></span>
+        </div>
       </a>
       <% }); %>
     </aside>
@@ -439,103 +368,83 @@
    <!-- Homepage Category Rows – Only isShowOnHomePage = true -->
   <% if (homepageCategoryRows && homepageCategoryRows.length> 0) { %>
   <section class="category_tours_section container-xl py-4 py-lg-5">
-    <p class="pb-md-3">
-      <small class="text-dejavu-secondary-light">Discover trips by</small><br>
-      <span class="h3">Popular Categories</span>
-    </p>
+    <p class="section-label">Discover trips by</p>
+    <h2 class="section-title mb-5">Popular Categories</h2>
 
     <% homepageCategoryRows.forEach((category, catIndex)=> { %>
-      <% const sortedTrips=category.trips || []; %>
-      <% if (sortedTrips.length===0) return; %>
+      <% const sortedTrips = category.trips || []; %>
+      <% if (sortedTrips.length === 0) return; %>
 
       <div class="category-row-wrapper mb-5">
-        <!-- Header: Title + View All -->
-        <div
-          class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4">
-          <div class="d-flex align-items-center gap-3 flex-wrap">
-            <img src="<%= category.image %>" alt="<%= category.name %>" class="rounded-3" width="50" height="50"
-              style="object-fit:cover" onerror="this.src='/images/placeholder.jpg'">
+        <!-- Category header -->
+        <div class="d-flex align-items-center justify-content-between gap-3 mb-4 flex-wrap">
+          <div class="d-flex align-items-center gap-3">
+            <img src="<%= category.image %>" alt="<%= category.name %>" class="cat-header-img"
+              onerror="this.src='/images/placeholder.jpg'">
             <div>
-              <h4 class="mb-0 fw-bold">
-                <%= category.name %> Tours
-              </h4>
-              <span class="text-muted small">(<%= sortedTrips.length %> trips)</span>
+              <p class="cat-header-name"><%= category.name %> Tours</p>
+              <span class="cat-header-count"><%= sortedTrips.length %> trips available</span>
             </div>
           </div>
           <a href="/triplist?filterValue=<%= encodeURIComponent(JSON.stringify({'Tour category': [category.name]})) %>"
-            class="btn btn-outline-dark btn-sm rounded-pill px-4 py-2 d-flex align-items-center gap-2 flex-shrink-0">
-            View All <i class="bi bi-arrow-right"></i>
-          </a>
+            class="cat-view-all">View All &rarr;</a>
         </div>
 
-        <!-- Scrollable Trip Cards -->
+        <!-- Scrollable cards -->
         <div class="position-relative">
           <div class="trip-cards-container category-scroll-container" data-index="<%= catIndex %>">
             <div class="trip-cards-row">
-              <% sortedTrips.forEach(trip=> { %>
-                <!-- Removed <a> wrapper → now uses div + onclick for no underline -->
-                <div class="trip-card clickable-card" onclick="window.location='/tripdetail/<%= trip.name %>'"
-                  role="button" tabindex="0" title="<%= trip.name %>">
-                  <div class="trip-image-slider swiper">
-                    <div class="swiper-wrapper">
-                      <% if (trip.imageurl) { %>
-                        <div class="swiper-slide">
-                          <img src="<%= trip.imageurl %>" alt="<%= trip.name %>"
-                            class="w-100 h-100 object-fit-cover"
-                            onerror="this.onerror=null;this.src='/images/placeholder.jpg';"
-                            loading="lazy">
-                        </div>
-                      <% } else if (trip.bannerimages && trip.bannerimages.length > 0) { %>
-                        <% trip.bannerimages.forEach(img=> { %>
-                          <div class="swiper-slide">
-                            <img src="<%= img %>" alt="<%= trip.name %>" class="w-100 h-100 object-fit-cover"
-                              onerror="this.onerror=null;this.src='/images/placeholder.jpg';" loading="lazy">
-                          </div>
-                        <% }) %>
-                      <% } else { %>
-                        <div class="swiper-slide">
-                          <img src="/images/placeholder.jpg" alt="<%= trip.name %>"
-                            class="w-100 h-100 object-fit-cover" loading="lazy">
-                        </div>
-                      <% } %>
+              <% sortedTrips.forEach(trip => { %>
+              <div class="trip-card"
+                   onclick="window.location='/tripdetail/<%= encodeURIComponent(trip.name) %>'"
+                   role="button" tabindex="0" title="<%= trip.name %>">
+                <div class="trip-image-slider swiper">
+                  <div class="swiper-wrapper">
+                    <% if (trip.imageurl) { %>
+                    <div class="swiper-slide">
+                      <img src="<%= trip.imageurl %>" alt="<%= trip.name %>" loading="lazy"
+                        onerror="this.onerror=null;this.src='/images/placeholder.jpg';">
                     </div>
-                    <% if (!trip.imageurl && (trip.bannerimages || []).length > 1) { %>
-                      <div class="swiper-button-prev swiper-button-white-black"></div>
-                      <div class="swiper-button-next swiper-button-white-black"></div>
-                      <% } %>
+                    <% } else if (trip.bannerimages && trip.bannerimages.length > 0) { %>
+                      <% trip.bannerimages.forEach(function(img){ %>
+                      <div class="swiper-slide">
+                        <img src="<%= img %>" alt="<%= trip.name %>" loading="lazy"
+                          onerror="this.onerror=null;this.src='/images/placeholder.jpg';">
+                      </div>
+                      <% }); %>
+                    <% } else { %>
+                    <div class="swiper-slide">
+                      <img src="/images/placeholder.jpg" alt="<%= trip.name %>" loading="lazy">
+                    </div>
+                    <% } %>
                   </div>
-                  <div class="p-3">
-                    <h5 class="mb-1 text-truncate">
-                      <%= trip.name %>
-                    </h5>
-                    <p class="text-muted small mb-2 text-truncate">
-                      <%= trip.destinations || trip.state || 'India' %>
-                    </p>
-                    <div class="d-flex justify-content-between align-items-center">
-                      <span><strong>₹<%= trip.adultPrice || trip.price || '9,999' %></strong>/person</span>
-                      <span class="text-end small">
-                        <i class="bi bi-calendar"></i>
-                        <%= trip.days || trip.tripDuration || '3D/2N' %>
-                      </span>
+                  <% if (!trip.imageurl && (trip.bannerimages || []).length > 1) { %>
+                  <div class="swiper-button-prev"></div>
+                  <div class="swiper-button-next"></div>
+                  <% } %>
+                </div>
+                <div class="trip-card-info">
+                  <p class="tc-duration"><%- trip.days || trip.tripDuration || '' %></p>
+                  <p class="tc-name"><%= trip.name %></p>
+                  <p class="tc-dest"><% if(trip.destinations){ %><%- trip.destinations %><% } else { %><%= trip.state || 'India' %><% } %></p>
+                  <hr class="tc-divider">
+                  <div class="tc-price-row">
+                    <div>
+                      <div class="tc-price-label">Starting from</div>
+                      <div class="tc-price">₹<%= (trip.adultPrice || trip.price || '9,999').toLocaleString ? Number(trip.adultPrice || trip.price || 9999).toLocaleString('en-IN') : (trip.adultPrice || trip.price || '9,999') %><span style="font-size:0.65rem;font-weight:500;color:var(--text-muted);">/person</span></div>
                     </div>
+                    <span class="tc-dur-badge"><i class="bi bi-calendar3" style="color:#4f6ef7;font-size:0.68rem;"></i> <%- trip.days || trip.tripDuration || '' %></span>
                   </div>
                 </div>
-                <% }) %>
+              </div>
+              <% }); %>
             </div>
           </div>
-
-          <!-- Navigation Arrows (Hidden on Mobile if not needed) -->
-          <button class="row-nav-btn row-nav-prev btn btn-light rounded-circle shadow d-none d-lg-flex"
-            data-target="<%= catIndex %>">
-            <i class="bi bi-chevron-left"></i>
-          </button>
-          <button class="row-nav-btn row-nav-next btn btn-light rounded-circle shadow d-none d-lg-flex"
-            data-target="<%= catIndex %>">
-            <i class="bi bi-chevron-right"></i>
-          </button>
+          <button class="row-nav-btn row-nav-prev d-none d-lg-flex" data-target="<%= catIndex %>"><i class="bi bi-chevron-left"></i></button>
+          <button class="row-nav-btn row-nav-next d-none d-lg-flex" data-target="<%= catIndex %>"><i class="bi bi-chevron-right"></i></button>
         </div>
       </div>
-    <% }) %>
+    <% }); %>
   </section>
   <% } %>
 
@@ -700,6 +609,27 @@
           new ResizeObserver(checkOverflow).observe(container);
           window.addEventListener('resize', checkOverflow);
           checkOverflow(); // initial check
+
+          // Drag-to-scroll (desktop mouse)
+          let isDown = false, startX, scrollStart;
+          container.addEventListener('mousedown', function(e) {
+            isDown = true; startX = e.pageX; scrollStart = container.scrollLeft;
+            container.style.userSelect = 'none';
+          });
+          document.addEventListener('mouseup', function() { isDown = false; container.style.userSelect = ''; });
+          container.addEventListener('mouseleave', function() { isDown = false; container.style.userSelect = ''; });
+          container.addEventListener('mousemove', function(e) {
+            if (!isDown) return;
+            e.preventDefault();
+            container.scrollLeft = scrollStart - (e.pageX - startX);
+          });
+        });
+
+        // Touch-swipe fix for h-scroll (trending strip)
+        document.querySelectorAll('.h-scroll').forEach(function(el) {
+          let ts, tsl;
+          el.addEventListener('touchstart', function(e) { ts = e.touches[0].clientX; tsl = el.scrollLeft; }, {passive:true});
+          el.addEventListener('touchmove', function(e) { el.scrollLeft = tsl - (e.touches[0].clientX - ts); }, {passive:true});
         });
       });
 
