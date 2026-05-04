@@ -67,7 +67,7 @@
       background: #f3f4f6;
       border-radius: 0.75rem;
     }
-    .sm-order-input {
+    .sm-order-input, .sm-trending-input {
       width: 52px;
       font-size: 0.75rem;
       padding: 0.2rem 0.35rem;
@@ -76,7 +76,7 @@
       text-align: center;
       outline: none;
     }
-    .sm-order-input:focus {
+    .sm-order-input:focus, .sm-trending-input:focus {
       border-color: #86b7fe;
       box-shadow: 0 0 0 2px rgba(13,110,253,0.2);
     }
@@ -249,7 +249,7 @@
           <input
             type="number"
             id="smTrendingLimitInput"
-            class="sm-order-input"
+            class="sm-trending-input"
             value="<%= trendingLimit %>"
             min="1"
             max="100"
