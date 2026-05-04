@@ -9,6 +9,7 @@ const validateLogin = require('../middleware/validateLogin');
 const ensureLoggedIn = ensureLogIn();
 router.get('/trips', ensureLoggedIn, isAuth, toursController.getTrips);
 router.post('/trips/update-order', ensureLoggedIn, isAuth, toursController.updateOrder);
+router.post('/trips/update-trending-limit', ensureLoggedIn, isAuth, toursController.updateTrendingLimit);
 
 // Middleware to set Cache-Control headers for protected routes
 const noCache = (req, res, next) => {

@@ -209,8 +209,10 @@
       <div class="sm-loading-spinner"></div>
     </div>
 
-      <!-- Filter and Search Bar -->
-      <div class="sm-filter-bar">
+      <!-- Top Control Bar -->
+      <div class="sm-filter-bar" style="flex-wrap:wrap;gap:0.5rem;align-items:center;">
+
+        <!-- Row 1: Filters -->
         <div class="filter-item">
           <div class="relative">
             <input type="text" id="smSearchInput" class="w-full border border-gray-300 rounded-md pl-8 pr-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search trips..." />
@@ -237,15 +239,40 @@
         <button id="smClearFiltersBtn" class="px-3 py-1.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-sm font-medium">
           Clear Filters
         </button>
+
+        <!-- Divider -->
+        <div style="width:1px;height:28px;background:#e2e8f0;margin:0 0.25rem;flex-shrink:0;"></div>
+
+        <!-- Trending Limit -->
+        <div style="display:flex;align-items:center;gap:0.4rem;flex-shrink:0;">
+          <span style="font-size:0.8rem;color:#475569;white-space:nowrap;">Show</span>
+          <input
+            type="number"
+            id="smTrendingLimitInput"
+            class="sm-order-input"
+            value="<%= trendingLimit %>"
+            min="1"
+            max="100"
+            style="width:58px;"
+            title="How many trips to show in the Trending section on the homepage"
+          />
+          <span style="font-size:0.8rem;color:#475569;white-space:nowrap;">trending</span>
+          <button id="smSaveTrendingLimitBtn"
+            class="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium"
+            style="white-space:nowrap;">
+            Save Limit
+          </button>
+        </div>
+
+        <!-- Save Order (shown only after drag) -->
+        <button id="smSaveOrderBtn" class="px-4 py-1.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-md hover:from-green-700 hover:to-green-800 text-sm font-medium hidden" style="white-space:nowrap;">
+          Save Order
+        </button>
+
       </div>
 
       <!-- Trip Cards -->
       <div class="sm-card-grid" id="smTripGrid"></div>
-      <div class="flex justify-end mt-3">
-        <button id="smSaveOrderBtn" class="px-4 py-1.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-md hover:from-green-700 hover:to-green-800 text-sm font-medium hidden">
-          Save Order
-        </button>
-      </div>
 
 
   </div>
@@ -372,6 +399,54 @@
             const message = xhr.responseJSON?.error || 'Error updating trip order.';
             Toastify({
               text: message,
+              className: 'sm-toast',
+              style: { background: '#EF4444' },
+              duration: 3000
+            }).showToast();
+          }
+        });
+      });
+
+      // Save trending limit
+      $('#smSaveTrendingLimitBtn').on('click', function() {
+        const limitVal = parseInt($('#smTrendingLimitInput').val());
+        if (isNaN(limitVal) || limitVal < 1 || limitVal > 100) {
+          Toastify({
+            text: 'Please enter a number between 1 and 100.',
+            className: 'sm-toast',
+            style: { background: '#F59E0B' },
+            duration: 3000
+          }).showToast();
+          return;
+        }
+        $('#smLoadingOverlay').show();
+        $.ajax({
+          url: '/trips/update-trending-limit',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({ _csrf: '<%= csrfToken %>', trendingLimit: limitVal }),
+          success: function(response) {
+            $('#smLoadingOverlay').hide();
+            if (response.success) {
+              Toastify({
+                text: 'Trending section updated: showing top ' + response.trendingLimit + ' trips.',
+                className: 'sm-toast',
+                style: { background: '#10B981' },
+                duration: 3000
+              }).showToast();
+            } else {
+              Toastify({
+                text: response.message || 'Failed to update trending limit.',
+                className: 'sm-toast',
+                style: { background: '#EF4444' },
+                duration: 3000
+              }).showToast();
+            }
+          },
+          error: function(xhr) {
+            $('#smLoadingOverlay').hide();
+            Toastify({
+              text: xhr.responseJSON?.message || 'Error updating trending limit.',
               className: 'sm-toast',
               style: { background: '#EF4444' },
               duration: 3000

@@ -83,7 +83,7 @@
       .trip-cards-container {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
-        touch-action: pan-x;
+        touch-action: pan-x pan-y;
         scrollbar-width: none;
         cursor: grab;
       }
@@ -312,7 +312,7 @@
 
   <% 
     // Filter packages based on user role
-    let displayedPackages = tourPackages.filter(tour => tour.isActive)
+    let displayedPackages = tourPackages.filter(tour => tour.isActive).slice(0, trendingLimit)
   %>
 
   <!-- Trending destination section -->

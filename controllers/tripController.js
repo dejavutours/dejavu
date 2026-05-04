@@ -35,6 +35,12 @@ const Statemst = require("../models/statemst");
 const bannerImg = require("../models/bannerImg");
 const Category = require("../models/categorymst");
 const DisplayOrder = require('../models/DisplayOrder');
+const SiteSettings = require('../models/SiteSettings');
+
+async function getTrendingLimit() {
+  const settings = await SiteSettings.findOne({ key: 'global' }).lean();
+  return (settings && settings.trendingLimit) ? settings.trendingLimit : 12;
+}
 
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_SMS,
@@ -488,6 +494,7 @@ exports.getIndexPage = async (req, res, next) => {
     const categoryItems = await getCategoryWiseTrips();
     const bannerImages = await getBannerImages();
     const homepageCategoryRows = await getHomepageCategoryTrips();
+    const trendingLimit = await getTrendingLimit();
     // Render the index page
     res.render("pages/index", {
       tourPackages: response.tours,
@@ -496,6 +503,7 @@ exports.getIndexPage = async (req, res, next) => {
       bannerImages,
       categoryItems,
       homepageCategoryRows,
+      trendingLimit,
     });
   } catch (error) {
     console.error("Error in getIndexPage:", error);
@@ -1496,9 +1504,11 @@ exports.getTrips = async (req, res) => {
     // Get unique states for filter dropdown
     const states = await NewTours.distinct('state', { isDeleted: false });
 
+    const trendingLimit = await getTrendingLimit();
     res.render('pages/admin/trips', {
       trips,
       states,
+      trendingLimit,
       csrfToken: req.csrfToken()
     });
   } catch (error) {
@@ -1531,6 +1541,24 @@ exports.updateOrder = async (req, res) => {
     res.json({ success: true, message: 'Trip order updated successfully' });
   } catch (error) {
     console.error('Error updating trip order:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+exports.updateTrendingLimit = async (req, res) => {
+  try {
+    const limit = parseInt(req.body.trendingLimit);
+    if (isNaN(limit) || limit < 1 || limit > 100) {
+      return res.status(400).json({ success: false, message: 'Trending limit must be a number between 1 and 100.' });
+    }
+    await SiteSettings.findOneAndUpdate(
+      { key: 'global' },
+      { trendingLimit: limit },
+      { upsert: true, new: true }
+    );
+    res.json({ success: true, trendingLimit: limit });
+  } catch (error) {
+    console.error('Error updating trending limit:', error);
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };

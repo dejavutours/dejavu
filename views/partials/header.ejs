@@ -212,6 +212,69 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   #verifyModal .resend-link { font-size: 0.85rem; color: #EF4F5F; font-weight: 500; text-decoration: none; }
   #verifyModal .resend-link:hover { text-decoration: underline; }
   #verifyModal .edit-icon { margin-left: 6px; cursor: pointer; font-size: 0.95rem; color: #EF4F5F; }
+
+  /* ── Mobile top-bar actions (phone + login/user icon) ── */
+  .navbar-phone-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f4f6f9;
+    color: #1A3C6C;
+    font-size: 1rem;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .navbar-phone-pill:hover { background: #e8ecf2; color: #1A3C6C; }
+
+  .navbar-login-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 14px;
+    border-radius: 50px;
+    background: #EF4F5F;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .navbar-login-pill:hover { background: #d63d4d; color: #fff; }
+
+  /* ── Desktop collapsed nav ─────────────────────────────── */
+  /* Login pill in desktop nav */
+  #topNavbar .loginBtn {
+    background: #EF4F5F;
+    color: #fff !important;
+    border-radius: 50px !important;
+    padding: 7px 20px !important;
+    font-weight: 600;
+  }
+  #topNavbar .loginBtn:hover { background: #d63d4d; }
+
+  /* ── Mobile collapsed nav (hamburger menu items) ──────── */
+  @media (max-width: 991.98px) {
+    #topNavbar {
+      border-top: 1px solid #f0f0f0;
+      padding: 8px 0;
+    }
+    #topNavbar .nav-link {
+      padding: 10px 4px !important;
+      font-size: 0.95rem;
+      border-bottom: 1px solid #f5f5f5;
+      color: #1a1a1a;
+    }
+    #topNavbar .nav-link:last-child { border-bottom: none; }
+    #topNavbar .nav-link.active { color: #1A3C6C; font-weight: 600; }
+    /* Hide phone+login from hamburger menu on mobile — they live in top bar */
+    #topNavbar .contactLink,
+    #topNavbar .loginBtn { display: none !important; }
+  }
 </style>
 
 <!-- Meta Pixel Code -->
@@ -245,9 +308,55 @@ src="https://www.facebook.com/tr?id=1118406830120831&ev=PageView&noscript=1"
       <img src="/img/logo_2x.png" alt="Deja Vu" height="50" class="d-inline-block align-text-top object-fit-contain"
         fetchpriority="high" loading="eager">
     </a>
-    <!-- Search bar for small screens -->
+
+    <!-- Phone + Auth — always visible in top bar on mobile, hidden on lg (shown in nav instead) -->
+    <div class="d-flex d-lg-none align-items-center gap-2 navbar-mobile-actions">
+      <a class="navbar-phone-pill" href="tel:+918511117891" aria-label="Call us">
+        <i class="bi bi-telephone-fill"></i>
+      </a>
+      <% if(profile?.email || accessToken) { %>
+        <span class="dropdown">
+          <a class="nav-link userDropdown dropdown-toggle p-0" href="#" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle" style="font-size:1.5rem;color:#1A3C6C;"></i>
+          </a>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <ul class="dropdown-menu dropdown-menu-end navbaruserdropdown">
+            <li><a class="dropdown-item" href="/profile">My Profile</a></li>
+            <% if(profile?.email===process.env.GMAIL_ADMIN || profile?.email===process.env.GMAIL_ADMIN_TWO) { %>
+              <li><a class="dropdown-item" href="/admin/bookings" target="_blank">Bookings</a></li>
+              <li>
+                <a class="dropdown-item position-relative" href="/admin/booking-leads" target="_blank">
+                  Booking Leads
+                  <span id="pendingLeadsBadgeMobile" class="position-absolute top-50 end-0 translate-middle-y badge rounded-pill bg-danger" style="display:none;">
+                    <span id="pendingLeadsCountMobile">0</span>
+                  </span>
+                </a>
+              </li>
+              <li><a class="dropdown-item" href="/admin/bookings/create" target="_blank">Create Booking</a></li>
+              <li><a class="dropdown-item" href="/admin/users" target="_blank">User</a></li>
+              <li><a class="dropdown-item" href="/admin/addtours" target="_blank">Add Tours</a></li>
+              <li><a class="dropdown-item" href="/cities" target="_blank">Master setting</a></li>
+              <li><a class="dropdown-item" href="/admin/category-trip-order" target="_blank">Homepage Categories</a></li>
+            <% } %>
+            <li>
+              <form id="my_form_mobile" action="/logout" method="post">
+                <a class="dropdown-item" href="javascript:{}" onclick="signout()">Sign Out</a>
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              </form>
+            </li>
+          </ul>
+        </span>
+      <% } else { %>
+        <a class="navbar-login-pill" role="button" onclick="openLogin()">
+          <i class="bi bi-person"></i> Login
+        </a>
+      <% } %>
+    </div>
+
+    <!-- Search bar — mobile only, wraps to its own row. Hidden on md+ where hero/page search is visible -->
     <% if(isSearch) {%>
-      <div class="search-bar d-flex d-md-none align-items-center flex-grow-1 mx-3" data-bs-toggle="modal"
+      <div class="search-bar d-flex d-md-none align-items-center w-100 order-last mt-1" data-bs-toggle="modal"
         data-bs-target="#filterModal">
         <div class="position-relative w-100">
           <input type="text" class="form-control border-0 shadow-none search-input" placeholder="Search destination">
@@ -255,78 +364,71 @@ src="https://www.facebook.com/tr?id=1118406830120831&ev=PageView&noscript=1"
             aria-hidden="true"></i>
         </div>
       </div>
-      <%}%>
-        <div class="collapse navbar-collapse" id="topNavbar">
-          <ul class="navbar-nav gap-lg-3 ms-auto mt-2 mt-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="/">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="/triplist">Tour packages</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="/dreamtrip">Customize trips</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="/triplist">Global trips</a>
-            </li>
-            <% if(!profile?.email || !accessToken) { %>
-              <% } %>
-                <li class="nav-item">
-                  <div class="d-lg-flex gap-2 h-100">
-                    <a class="nav-link rounded-pill fw-semibold contactLink mb-auto mb-lg-0" aria-current="page"
-                      href="tel:+918511117891">
-                      <i class="bi bi-telephone"></i>
-                      +918511117891
-                      <span class="visually-hidden">Contact</span>
-                    </a>
-                    <% if(profile?.email || accessToken) { %>
-                      <span class="dropdown">
-                        <a class="nav-link userDropdown dropdown-toggle" href="#" role="button"
-                          data-bs-toggle="dropdown" aria-expanded="false">
-                          <i class="bi bi-person-circle nav-icon"></i>
-                          <span class="visually-hidden">My Profile</span>
-                        </a>
-                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                        <ul class="dropdown-menu dropdown-menu-lg-end navbaruserdropdown">
-                          <li><a class="dropdown-item" href="/profile">My Profile</a></li>
-                          <% if(profile?.email===process.env.GMAIL_ADMIN ||
-                            profile?.email===process.env.GMAIL_ADMIN_TWO) { %>
-                            <li><a class="dropdown-item" href="/admin/bookings" target="_blank">Bookings</a></li>
-                            <li>
-                              <a class="dropdown-item position-relative" href="/admin/booking-leads" target="_blank">
-                                Booking Leads
-                                <span id="pendingLeadsBadge" class="position-absolute top-50 end-0 translate-middle-y badge rounded-pill bg-danger" style="display: none;">
-                                  <span id="pendingLeadsCount">0</span>
-                                </span>
-                              </a>
-                            </li>
-                            <li><a class="dropdown-item" href="/admin/bookings/create" target="_blank">Create
-                                Booking</a></li>
-                            <li><a class="dropdown-item" href="/admin/users" target="_blank">User</a></li>
-                            <li><a class="dropdown-item" href="/admin/addtours" target="_blank">Add Tours</a></li>
-                            <li><a class="dropdown-item" href="/cities" target="_blank">Master setting</a></li>
-                            <li><a class="dropdown-item" href="/admin/category-trip-order" target="_blank">Homepage
-                                Categories</a></li>
-                            <% } %>
-                              <li>
-                                <form id="my_form" action="/logout" method="post">
-                                  <a class="dropdown-item" href="javascript:{}" onclick="signout()">Sign Out</a>
-                                  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                                </form>
-                              </li>
-                        </ul>
-                      </span>
-                      <% }else { %>
-                <li class="nav-item">
-                  <a class="nav-link" role="button" tabindex="-1" aria-current="page" data-bs-toggle="modal"
-                    data-bs-target="#signinModal">Login</a>
-                </li>
-                <% } %>
-        </div>
+    <%}%>
+
+    <!-- Desktop collapsed nav -->
+    <div class="collapse navbar-collapse" id="topNavbar">
+      <ul class="navbar-nav gap-lg-3 ms-auto mt-2 mt-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="/">Home</a>
         </li>
-        </ul>
-  </div>
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="/triplist">Tour packages</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="/dreamtrip">Customize trips</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="/triplist">Global trips</a>
+        </li>
+        <li class="nav-item d-flex align-items-center">
+          <a class="nav-link rounded-pill fw-semibold contactLink" href="tel:+918511117891">
+            <i class="bi bi-telephone"></i> +918511117891
+          </a>
+        </li>
+        <% if(profile?.email || accessToken) { %>
+          <li class="nav-item">
+            <span class="dropdown">
+              <a class="nav-link userDropdown dropdown-toggle" href="#" role="button"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle nav-icon"></i>
+                <span class="visually-hidden">My Profile</span>
+              </a>
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <ul class="dropdown-menu dropdown-menu-lg-end navbaruserdropdown">
+                <li><a class="dropdown-item" href="/profile">My Profile</a></li>
+                <% if(profile?.email===process.env.GMAIL_ADMIN || profile?.email===process.env.GMAIL_ADMIN_TWO) { %>
+                  <li><a class="dropdown-item" href="/admin/bookings" target="_blank">Bookings</a></li>
+                  <li>
+                    <a class="dropdown-item position-relative" href="/admin/booking-leads" target="_blank">
+                      Booking Leads
+                      <span id="pendingLeadsBadge" class="position-absolute top-50 end-0 translate-middle-y badge rounded-pill bg-danger" style="display: none;">
+                        <span id="pendingLeadsCount">0</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li><a class="dropdown-item" href="/admin/bookings/create" target="_blank">Create Booking</a></li>
+                  <li><a class="dropdown-item" href="/admin/users" target="_blank">User</a></li>
+                  <li><a class="dropdown-item" href="/admin/addtours" target="_blank">Add Tours</a></li>
+                  <li><a class="dropdown-item" href="/cities" target="_blank">Master setting</a></li>
+                  <li><a class="dropdown-item" href="/admin/category-trip-order" target="_blank">Homepage Categories</a></li>
+                <% } %>
+                <li>
+                  <form id="my_form" action="/logout" method="post">
+                    <a class="dropdown-item" href="javascript:{}" onclick="signout()">Sign Out</a>
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                  </form>
+                </li>
+              </ul>
+            </span>
+          </li>
+        <% } else { %>
+          <li class="nav-item">
+            <a class="nav-link loginBtn" role="button" tabindex="-1" onclick="openLogin()">Login</a>
+          </li>
+        <% } %>
+      </ul>
+    </div>
   </div>
 </nav>
 <!-- Signin Modal -->
@@ -339,7 +441,7 @@ src="https://www.facebook.com/tr?id=1118406830120831&ev=PageView&noscript=1"
           <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <img src="/img/logo_2x.png" alt="Deja-vu Tours" class="auth-logo" />
           <p class="auth-welcome">Welcome to</p>
-          <p class="auth-brand" id="signinModalLabel">Deja-vu Tours &amp; Treks</p>
+          <p class="auth-brand" id="signinModalLabel">Deja vu Tours</p>
           <div class="auth-divider"><span>Log in or Sign up</span></div>
           <div class="auth-phone-group">
             <span class="auth-phone-prefix">+91</span>
@@ -399,12 +501,23 @@ src="https://www.facebook.com/tr?id=1118406830120831&ev=PageView&noscript=1"
   // Navigation bar active link
   document.addEventListener("DOMContentLoaded", () => {
     const currentPath = window.location.pathname;
-    document.querySelectorAll("#topNavbar .nav-link").forEach(link => {
-      if (link.getAttribute("href") === currentPath) {
-        link.classList.add("active");
-      }
+    const parentPaths = {
+      '/triplist': ['/triplist', '/tripdetail', '/booktour'],
+      '/dreamtrip': ['/dreamtrip'],
+      '/': ['/'],
+    };
+    document.querySelectorAll("#topNavbar .nav-link[href]").forEach(link => {
+      const href = link.getAttribute("href");
+      if (!href || href.startsWith("tel:") || href === "#") return;
+      const matches = parentPaths[href] || [href];
+      const isActive = matches.some(p => p === "/" ? currentPath === "/" : currentPath.startsWith(p));
+      if (isActive) link.classList.add("active");
     });
   });
+
+  function openLogin() {
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('signinModal')).show();
+  }
 
   // Autocomplete function for search input
   function autocomplete(inp, arr) {
