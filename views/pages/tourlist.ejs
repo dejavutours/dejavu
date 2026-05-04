@@ -3,6 +3,7 @@
 
 <head>
   <%- include('../partials/headtag', {isNiceSelect: true}); %>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css">
   <style>
     /* Defining CSS variables for consistent theming */
     :root {
@@ -418,36 +419,168 @@
       border-radius: 8px;
     }
 
-    /* Image management modal */
-    .image-preview img, .banner-image img {
-      max-width: 150px;
-      max-height: 150px;
-      border-radius: 8px;
-    }
+    /* ── Image management modal ── */
+    #imageManagementModal .modal-dialog { max-width: 760px; }
+    #filtersModal .modal-dialog { max-width: 800px; }
 
-    .image-preview .btn, .banner-image .btn {
-      padding: 2px 6px;
-    }
-
-    .banner-image {
+    /* Main image card */
+    .im-main-card {
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #f8f9fa;
       position: relative;
-      cursor: pointer;
-      transition: transform 0.2s;
+    }
+    .im-main-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+    .im-main-card.is-dirty { border-color: #ef4444; }
+    .im-main-card .im-main-actions {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      gap: 6px;
+    }
+    .im-main-card .im-meta {
+      padding: 6px 10px;
+      font-size: 0.72rem;
+      color: #6b7280;
+      background: #fff;
+      border-top: 1px solid #e5e7eb;
     }
 
-    .banner-image:hover {
-      transform: scale(1.05);
+    /* Banner image thumbnails */
+    .im-banner-thumb {
+      position: relative;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #f8f9fa;
+      width: 160px;
+      flex-shrink: 0;
+      transition: border-color 0.15s;
     }
-
-    .banner-image .remove-btn {
+    .im-banner-thumb img {
+      width: 160px;
+      height: 100px;
+      object-fit: cover;
+      display: block;
+    }
+    .im-banner-thumb.is-dirty { border-color: #ef4444; }
+    .im-banner-thumb.is-saved { border-color: #d1d5db; }
+    .im-banner-thumb .im-thumb-actions {
       position: absolute;
       top: 5px;
       right: 5px;
+      display: flex;
+      gap: 4px;
+    }
+    .im-banner-thumb .im-thumb-meta {
+      padding: 3px 6px;
+      font-size: 0.65rem;
+      color: #6b7280;
+      background: rgba(255,255,255,0.95);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 156px;
+    }
+    .im-banner-thumb .im-pending-badge {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      background: #f59e0b;
+      color: #fff;
+      font-size: 0.58rem;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 4px;
+      text-transform: uppercase;
     }
 
-    #imageManagementModal .modal-dialog,
-    #filtersModal .modal-dialog {
-      max-width: 800px;
+    /* ── Image preview lightbox ── */
+    #imPreviewLightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 1200;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 16px;
+    }
+    #imPreviewLightbox.open { display: flex; }
+    #imPreviewLightbox img {
+      max-width: min(96vw, 1200px);
+      max-height: calc(100vh - 100px);
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 8px 48px rgba(0,0,0,0.6);
+      display: block;
+    }
+    #imPreviewLightboxMeta {
+      margin-top: 12px;
+      color: rgba(255,255,255,0.75);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+    #imPreviewLightboxClose {
+      position: fixed;
+      top: 14px;
+      right: 18px;
+      background: rgba(255,255,255,0.12);
+      border: none;
+      color: #fff;
+      font-size: 1.3rem;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    #imPreviewLightboxClose:hover { background: rgba(255,255,255,0.22); }
+
+    /* Preview (eye) button on main card */
+    .im-preview-btn {
+      background: rgba(0,0,0,0.45);
+      border: none;
+      color: #fff;
+      border-radius: 6px;
+      width: 30px;
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+    .im-preview-btn:hover { background: rgba(0,0,0,0.7); }
+
+    /* Dirty save button */
+    #saveImages.is-dirty {
+      background: #ef4444;
+      border-color: #ef4444;
+      animation: im-pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes im-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); }
+      50%       { box-shadow: 0 0 0 6px rgba(239,68,68,0); }
+    }
+
+    @media (max-width:576px) {
+      .im-banner-thumb { width: 130px; }
+      .im-banner-thumb img { width: 130px; height: 82px; }
+      .im-main-card img { height: 160px; }
     }
 
     /* Responsive adjustments */
@@ -541,11 +674,6 @@
         margin: 0.5rem;
       }
 
-      .image-preview img,
-      .banner-image img {
-        max-width: 100px;
-        max-height: 100px;
-      }
     }
 
     @media (max-width: 400px) {
@@ -602,6 +730,103 @@
         padding: 8px 16px;
       }
     }
+
+    /* ── Banner crop pending preview ── */
+    .banner-pending-preview { border: 2px solid #FFD700; border-radius: 8px; position: relative; }
+    .banner-pending-badge { position: absolute; top: 4px; left: 4px; background: #FFD700; color: #333; font-size: 0.6rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; line-height: 1.4; }
+
+    /* ── Crop modal — sits above imageManagementModal (Bootstrap ~1055) ── */
+    #tlCropModal { z-index: 1100; }
+    .tl-crop-backdrop { z-index: 1099 !important; }
+
+    /* Default: tall modal, flex column so container fills space */
+    #tlCropModal .modal-dialog {
+      max-width: 820px;
+      height: calc(100vh - 56px);
+      max-height: 780px;
+      margin: 28px auto;
+      display: flex;
+      flex-direction: column;
+    }
+    #tlCropModal .modal-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    #tlCropModal .modal-header { flex-shrink: 0; padding: 10px 16px; min-height: 0; }
+    #tlCropModal .modal-body   { flex: 1; padding: 0; display: flex; flex-direction: column; overflow: hidden; }
+    #tlCropModal .modal-footer { flex-shrink: 0; padding: 8px 16px; }
+
+    /* Crop container fills all available space in the modal body */
+    #tlCropContainer {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      background: #111;
+      position: relative;
+    }
+    #tlCropContainer img { display: block; max-width: 100%; }
+
+    /* ── Fullscreen mode ── */
+    #tlCropModal.tl-fullscreen {
+      padding: 0 !important;
+    }
+    #tlCropModal.tl-fullscreen .modal-dialog {
+      width: 100vw;
+      max-width: 100vw;
+      height: 100vh;
+      max-height: 100vh;
+      margin: 0;
+      border-radius: 0;
+    }
+    #tlCropModal.tl-fullscreen .modal-content {
+      border-radius: 0;
+    }
+
+    /* Header inline controls */
+    .tl-crop-header-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+      margin-right: 8px;
+    }
+
+    /* Ratio selector — native, not nice-select */
+    #tlCropRatio {
+      -webkit-appearance: auto !important;
+      -moz-appearance: auto !important;
+      appearance: auto !important;
+      display: inline-block !important;
+      width: auto !important;
+      padding: 4px 8px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      background: #fff !important;
+      cursor: pointer;
+      height: 32px;
+    }
+    /* Kill any nice-select wrapper Bootstrap picks up inside the crop modal */
+    #tlCropModal .nice-select { display: none !important; }
+
+    /* Fullscreen toggle button */
+    #tlCropFullscreenBtn {
+      background: none;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #374151;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    #tlCropFullscreenBtn:hover { background: #f3f4f6; }
 
     /* ── Filter count badge ── */
     .filter-count-badge { display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:50%; background:#EF4F5F; color:#fff; font-size:0.65rem; font-weight:700; margin-left:4px; }
@@ -954,6 +1179,48 @@
     </div>
   </div>
 
+  <!-- Image preview lightbox (z-index:1200, above everything) -->
+  <div id="imPreviewLightbox" role="dialog" aria-modal="true" aria-label="Image preview" onclick="imCloseLightbox()">
+    <button id="imPreviewLightboxClose" onclick="imCloseLightbox()" aria-label="Close preview">&#x2715;</button>
+    <img id="imPreviewLightboxImg" src="" alt="Preview" onclick="event.stopPropagation()">
+    <div id="imPreviewLightboxMeta"></div>
+  </div>
+
+  <!-- Unified Crop Modal (z-index:1100, sits above Manage Trip Images modal) -->
+  <div class="modal fade" id="tlCropModal" tabindex="-1" aria-labelledby="tlCropModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tlCropModalLabel">Crop Image</h5>
+          <div class="tl-crop-header-controls">
+            <label for="tlCropRatio" class="visually-hidden">Crop Ratio</label>
+            <select id="tlCropRatio" title="Crop ratio">
+              <option value="free">Free</option>
+              <option value="1">1:1</option>
+              <option value="1.333">4:3</option>
+              <option value="1.777">16:9</option>
+              <option value="0.75">3:4</option>
+            </select>
+            <button type="button" id="tlCropFullscreenBtn" title="Toggle fullscreen" aria-label="Toggle fullscreen">
+              <i class="bi bi-fullscreen" id="tlCropFullscreenIcon"></i>
+            </button>
+          </div>
+          <button type="button" class="btn-close ms-0" id="tlCropCancelBtn" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="tlCropContainer">
+            <img id="tlCropImage" src="" alt="Crop preview">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <span id="tlCropQueueLabel" class="me-auto text-muted small"></span>
+          <button type="button" class="btn btn-outline-secondary btn-sm" id="tlCropSkipBtn">Skip</button>
+          <button type="button" class="btn btn-primary btn-sm" id="tlCropConfirmBtn">Crop &amp; Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Image Management Modal -->
   <div class="modal fade" id="imageManagementModal" tabindex="-1" aria-labelledby="imageManagementModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
@@ -964,27 +1231,47 @@
         </div>
         <div class="modal-body">
           <input type="hidden" id="tripIdForImages">
+
+          <!-- Main image -->
           <div class="mb-4">
-            <h6>Main Image (Required)</h6>
-            <div id="mainImagePreview" class="image-preview position-relative d-inline-block">
-              <img src="" alt="Main Image" class="img-thumbnail">
-              <button class="btn btn-sm btn-warning position-absolute top-0 end-0 update-main-image" title="Update Main Image" aria-label="Update main image">
-                <i class="bi bi-pencil"></i>
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <h6 class="mb-0 fw-semibold">Main Image <span class="text-danger">*</span></h6>
+              <button type="button" class="btn btn-sm btn-outline-secondary" id="mainImageReplaceBtn">
+                <i class="bi bi-pencil me-1"></i>Replace
               </button>
             </div>
-            <input type="file" class="form-control mt-2 d-none" id="mainImageInput" accept="image/*" aria-label="Upload main image">
-            <small class="text-muted d-block mt-1">This image is required and can only be updated (not deleted).</small>
+            <div class="im-main-card" id="mainImageCard">
+              <img id="mainImagePreviewImg" src="" alt="Main Image">
+              <div class="im-main-actions">
+                <button type="button" class="im-preview-btn" id="mainImagePreviewBtn" title="Preview full size">
+                  <i class="bi bi-eye"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-warning" id="mainImageCropBtn" style="display:none;" title="Crop this image">
+                  <i class="bi bi-crop"></i>
+                </button>
+              </div>
+              <div class="im-meta" id="mainImageMeta">Saved image</div>
+            </div>
+            <input type="file" id="mainImageInput" accept="image/*" class="d-none" aria-label="Upload main image">
+            <small class="text-muted d-block mt-1">Required. Max 5 MB. Click Replace to change.</small>
           </div>
+
+          <!-- Banner images -->
           <div>
-            <h6>Banner Images (Optional)</h6>
-            <div id="bannerImagesPreview" class="d-flex flex-wrap gap-2"></div>
-            <input type="file" class="form-control mt-2" id="bannerImagesInput" multiple accept="image/*" aria-label="Upload banner images">
-            <small class="text-muted d-block mt-1">Add up to 12 banner images. Click an image to remove it.</small>
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <h6 class="mb-0 fw-semibold">Banner Images <span class="text-muted fw-normal">(Optional)</span></h6>
+              <button type="button" class="btn btn-sm btn-outline-secondary" id="bannerImagesAddBtn">
+                <i class="bi bi-plus-lg me-1"></i>Add Images
+              </button>
+            </div>
+            <div id="bannerImagesPreview" class="d-flex flex-wrap gap-2 mb-2"></div>
+            <input type="file" id="bannerImagesInput" multiple accept="image/*" class="d-none" aria-label="Upload banner images">
+            <small class="text-muted">Up to 12 images. Max 5 MB each.</small>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Close</button>
-          <button type="button" class="btn btn-primary" id="saveImages" aria-label="Save image changes">Save Changes</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="saveImages">Save Changes</button>
         </div>
       </div>
     </div>
@@ -1063,6 +1350,7 @@
 
   <%- include('../partials/footer'); %>
   <%- include('../partials/scripttag', {isNiceSelect: true}); %>
+  <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
   <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> -->
   <script>
     // Utility to debounce functions
@@ -1169,7 +1457,10 @@
 
     // Close share popover on Escape key
     document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeSharePopover();
+      if (e.key === 'Escape') {
+        closeSharePopover();
+        imCloseLightbox();
+      }
     });
 
     function setRegion(val) {
@@ -1239,34 +1530,323 @@
     //     .catch(() => showToast('Failed to copy link.', 'danger'));
     // };
 
-    // Image management logic
+    // ── Unified crop state ──
+    let _tlCropper = null;
+    let _tlCropModal = null;
+    let _tlCropMode = 'banner';        // 'main' or 'banner'
+    let _tlBannerQueue = [];           // File[] waiting to crop
+    let _tlBannerIndex = 0;
+    let _tlBannerBlobs = [];           // Final blobs/Files to upload
+
+    const _tlGetAspectRatio = () => {
+      const v = document.getElementById('tlCropRatio').value;
+      return v === 'free' ? NaN : parseFloat(v);
+    };
+
+    const _tlInitCropper = (src) => {
+      const img = document.getElementById('tlCropImage');
+      // destroy() restores the img to its original state before we swap src
+      if (_tlCropper) { _tlCropper.destroy(); _tlCropper = null; }
+      img.onload = () => {
+        _tlCropper = new Cropper(img, {
+          aspectRatio: _tlGetAspectRatio(),
+          viewMode: 1,
+          autoCropArea: 0.85,
+          movable: true,
+          zoomable: true,
+          rotatable: true,
+          background: true,
+          responsive: true
+        });
+      };
+      img.src = src;
+    };
+
+    const _tlShowCropModal = (src, title, queueLabel) => {
+      document.getElementById('tlCropModalLabel').textContent = title;
+      document.getElementById('tlCropQueueLabel').textContent = queueLabel || '';
+      if (!_tlCropModal) _tlCropModal = new bootstrap.Modal(document.getElementById('tlCropModal'));
+      _tlCropModal.show();
+      // Raise backdrops above the image management modal
+      setTimeout(() => {
+        document.querySelectorAll('.modal-backdrop').forEach(bd => {
+          if (!bd.classList.contains('tl-crop-backdrop')) bd.classList.add('tl-crop-backdrop');
+        });
+        // Undo any nice-select wrapping on the ratio select so it behaves as native
+        const ratioSel = document.getElementById('tlCropRatio');
+        if (ratioSel && typeof $ !== 'undefined') {
+          try { $(ratioSel).niceSelect('destroy'); } catch(e) {}
+        }
+      }, 60);
+      // Init Cropper after modal is fully visible so it gets correct container dimensions
+      document.getElementById('tlCropModal').addEventListener('shown.bs.modal', function onShown() {
+        document.getElementById('tlCropModal').removeEventListener('shown.bs.modal', onShown);
+        _tlInitCropper(src);
+      });
+    };
+
+    // Called when admin changes the ratio selector inside the modal
+    const _tlOnRatioChange = () => {
+      if (!_tlCropper) return;
+      _tlCropper.setAspectRatio(_tlGetAspectRatio());
+    };
+
+    // ── Fullscreen toggle ──
+    let _tlIsFullscreen = false;
+    const _tlToggleFullscreen = () => {
+      const modal = document.getElementById('tlCropModal');
+      const icon  = document.getElementById('tlCropFullscreenIcon');
+      _tlIsFullscreen = !_tlIsFullscreen;
+      modal.classList.toggle('tl-fullscreen', _tlIsFullscreen);
+      icon.className = _tlIsFullscreen ? 'bi bi-fullscreen-exit' : 'bi bi-fullscreen';
+      // Cropper needs to re-calculate container size after resize
+      setTimeout(() => { if (_tlCropper) _tlCropper.resize(); }, 50);
+    };
+
+    // ── Main image crop ──
+    const _tlStartMainCrop = (file) => {
+      _tlCropMode = 'main';
+      // Store file in input first so Skip can read it
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      document.getElementById('mainImageInput').files = dt.files;
+      document.getElementById('tlCropRatio').value = 'free';
+      const reader = new FileReader();
+      reader.onload = (e) => _tlShowCropModal(e.target.result, 'Crop Main Image', '');
+      reader.readAsDataURL(file);
+    };
+
+    // ── Banner crop queue ──
+    const _tlStartBannerQueue = (files) => {
+      const invalid = files.find(f => !f.type.startsWith('image/'));
+      if (invalid) { showToast('Please upload only valid image files.', 'danger'); return; }
+      const oversized = files.find(f => f.size > 5 * 1024 * 1024);
+      if (oversized) { showToast('Each banner image must be under 5 MB.', 'danger'); return; }
+
+      _tlCropMode = 'banner';
+      _tlBannerQueue = files;
+      _tlBannerIndex = 0;
+      _tlBannerBlobs = [];
+      // Default ratio to 16:9 for banners
+      document.getElementById('tlCropRatio').value = '1.777';
+      _tlBannerLoadNext();
+    };
+
+    const _tlBannerLoadNext = () => {
+      if (_tlBannerIndex >= _tlBannerQueue.length) {
+        if (_tlCropper) { _tlCropper.destroy(); _tlCropper = null; }
+        if (_tlCropModal) _tlCropModal.hide();
+        _tlRenderPendingPreviews();
+        return;
+      }
+      const file = _tlBannerQueue[_tlBannerIndex];
+      const label = `Image ${_tlBannerIndex + 1} of ${_tlBannerQueue.length}`;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (_tlBannerIndex === 0) {
+          // First image — show modal fresh
+          _tlShowCropModal(e.target.result, 'Crop Banner Image', label);
+        } else {
+          // Subsequent images — modal already open, just swap image
+          document.getElementById('tlCropModalLabel').textContent = 'Crop Banner Image';
+          document.getElementById('tlCropQueueLabel').textContent = label;
+          _tlInitCropper(e.target.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    };
+
+    // ── Confirm crop ──
+    const _tlCropConfirm = () => {
+      if (!_tlCropper) return;
+      const canvas = _tlCropper.getCroppedCanvas({ maxWidth: 1920, maxHeight: 1080 });
+      canvas.toBlob((blob) => {
+        const blobUrl = URL.createObjectURL(blob);
+        const sizeLabel = _fmtSize(blob.size);
+        const dimLabel = `${canvas.width} × ${canvas.height}px`;
+        if (_tlCropMode === 'main') {
+          // Replace main image file input + update preview + dirty state
+          const file = new File([blob], `main-image-${Date.now()}.jpg`, { type: 'image/jpeg' });
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          document.getElementById('mainImageInput').files = dt.files;
+          document.getElementById('mainImagePreviewImg').src = blobUrl;
+          document.getElementById('mainImageCard').classList.add('is-dirty');
+          document.getElementById('mainImageMeta').textContent = `Cropped · ${dimLabel} · ${sizeLabel}`;
+          document.getElementById('mainImageCropBtn').style.display = 'inline-flex';
+          _imSetDirty(true);
+          if (_tlCropper) { _tlCropper.destroy(); _tlCropper = null; }
+          if (_tlCropModal) _tlCropModal.hide();
+        } else {
+          // Banner queue — store blob, continue to next
+          _tlBannerBlobs.push(blob);
+          _tlBannerIndex++;
+          _tlBannerLoadNext();
+        }
+      }, 'image/jpeg', 0.9);
+    };
+
+    // ── Skip (use original file unchanged) ──
+    const _tlCropSkip = () => {
+      if (_tlCropMode === 'main') {
+        // File already set in input from _tlStartMainCrop; just update preview + dirty
+        const file = document.getElementById('mainImageInput').files[0];
+        if (file) {
+          document.getElementById('mainImagePreviewImg').src = URL.createObjectURL(file);
+          document.getElementById('mainImageCard').classList.add('is-dirty');
+          document.getElementById('mainImageMeta').textContent = `Original · ${_fmtSize(file.size)}`;
+          document.getElementById('mainImageCropBtn').style.display = 'inline-flex';
+          _imSetDirty(true);
+        }
+        if (_tlCropper) { _tlCropper.destroy(); _tlCropper = null; }
+        if (_tlCropModal) _tlCropModal.hide();
+      } else {
+        _tlBannerBlobs.push(_tlBannerQueue[_tlBannerIndex]);
+        _tlBannerIndex++;
+        _tlBannerLoadNext();
+      }
+    };
+
+    // ── Render pending banner thumbnails after crop queue finishes ──
+    const _tlRenderPendingPreviews = () => {
+      const preview = document.getElementById('bannerImagesPreview');
+      preview.querySelectorAll('.im-banner-thumb.is-dirty').forEach(el => el.remove());
+
+      _tlBannerBlobs.forEach((blob, i) => {
+        const url = URL.createObjectURL(blob);
+        const isFile = blob instanceof File;
+        const sizeLabel = _fmtSize(blob.size);
+        const meta = isFile ? `Original · ${sizeLabel}` : `Cropped · ${sizeLabel}`;
+        const thumb = _makeBannerThumb(
+          url,
+          `Pending ${i + 1}`,
+          meta,
+          true,
+          // Crop button: re-crop this specific blob
+          () => {
+            _tlCropMode = 'banner';
+            _tlBannerQueue = [isFile ? blob : new File([blob], `banner-${i}.jpg`, { type: 'image/jpeg' })];
+            _tlBannerIndex = 0;
+            const oldBlob = blob;
+            _tlBannerBlobs.splice(i, 1);   // temporarily remove while re-cropping
+            document.getElementById('tlCropRatio').value = '1.777';
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              _tlShowCropModal(e.target.result, `Re-crop Banner Image (${i + 1})`, '');
+            };
+            reader.readAsDataURL(_tlBannerQueue[0]);
+            // On confirm, the queue will push to _tlBannerBlobs and call _tlBannerLoadNext
+            // Since queue length=1 and index starts at 0, it will finish immediately after confirm
+            _tlBannerIndex = 0;
+          },
+          // Remove button
+          () => {
+            _tlBannerBlobs.splice(i, 1);
+            thumb.remove();
+            if (_tlBannerBlobs.length === 0) _imSetDirty(
+              document.getElementById('mainImageInput').files[0] != null
+            );
+          }
+        );
+        preview.appendChild(thumb);
+      });
+      _imSetDirty(true);
+    };
+
+    // ── Dirty-state helpers ──
+    let _imDirty = false;
+    const _imSetDirty = (val) => {
+      _imDirty = val;
+      const btn = document.getElementById('saveImages');
+      if (!btn) return;
+      if (val) btn.classList.add('is-dirty');
+      else btn.classList.remove('is-dirty');
+    };
+
+    // ── Format file size ──
+    const _fmtSize = (bytes) => bytes < 1024 * 1024
+      ? (bytes / 1024).toFixed(0) + ' KB'
+      : (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+
+    // ── Image preview lightbox ──
+    const imOpenLightbox = (src, meta) => {
+      const lb   = document.getElementById('imPreviewLightbox');
+      const img  = document.getElementById('imPreviewLightboxImg');
+      const info = document.getElementById('imPreviewLightboxMeta');
+      img.src = src;
+      // Show real pixel dimensions once image loads
+      img.onload = () => {
+        info.textContent = `${img.naturalWidth} × ${img.naturalHeight}px` + (meta ? `  ·  ${meta}` : '');
+      };
+      info.textContent = meta || '';
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    };
+    const imCloseLightbox = () => {
+      document.getElementById('imPreviewLightbox').classList.remove('open');
+      document.getElementById('imPreviewLightboxImg').src = '';
+      document.body.style.overflow = '';
+    };
+
+    // ── Build a banner thumb element ──
+    const _makeBannerThumb = (imgSrc, label, meta, isPending, onCrop, onRemove) => {
+      const div = document.createElement('div');
+      div.className = 'im-banner-thumb ' + (isPending ? 'is-dirty' : 'is-saved');
+      div.innerHTML = `
+        <img src="${imgSrc}" alt="${label}" title="${label}">
+        ${isPending ? '<span class="im-pending-badge">Pending</span>' : ''}
+        <div class="im-thumb-actions">
+          <button type="button" class="btn btn-dark btn-sm py-0 px-1 preview-thumb-btn" title="Preview" style="opacity:0.82;"><i class="bi bi-eye"></i></button>
+          ${isPending ? `<button type="button" class="btn btn-warning btn-sm py-0 px-1 crop-thumb-btn" title="Crop"><i class="bi bi-crop"></i></button>` : ''}
+          <button type="button" class="btn btn-danger btn-sm py-0 px-1 remove-thumb-btn" title="Remove"><i class="bi bi-trash"></i></button>
+        </div>
+        <div class="im-thumb-meta">${meta}</div>
+      `;
+      div.querySelector('.preview-thumb-btn').addEventListener('click', () => imOpenLightbox(imgSrc, meta));
+      if (isPending) div.querySelector('.crop-thumb-btn').addEventListener('click', onCrop);
+      div.querySelector('.remove-thumb-btn').addEventListener('click', onRemove);
+      return div;
+    };
+
+    // ── Image management ──
     const openImageModal = (tripId) => {
       const imageModal = new bootstrap.Modal(document.getElementById('imageManagementModal'));
-      const tripIdInput = document.getElementById('tripIdForImages');
-      const mainImagePreview = document.getElementById('mainImagePreview')?.querySelector('img');
-      const bannerImagesPreview = document.getElementById('bannerImagesPreview');
       const allTours = <%- JSON.stringify(tourPackages || []) %>;
 
-      if (!imageModal || !tripIdInput || !mainImagePreview || !bannerImagesPreview) return;
-
-      tripIdInput.value = tripId;
       const tour = allTours.find(t => t._id === tripId);
       if (!tour) return;
 
-      mainImagePreview.src = tour.imageurl || '/images/default.jpg';
+      // Reset all state
+      _tlBannerQueue = [];
+      _tlBannerIndex = 0;
+      _tlBannerBlobs = [];
+      _imSetDirty(false);
+      if (_tlCropper) { _tlCropper.destroy(); _tlCropper = null; }
+      if (_tlCropModal) _tlCropModal.hide();
+
+      document.getElementById('tripIdForImages').value = tripId;
+
+      // Main image
+      const mainImg = document.getElementById('mainImagePreviewImg');
+      mainImg.src = tour.imageurl || '/images/default.jpg';
+      document.getElementById('mainImageCard').classList.remove('is-dirty');
+      document.getElementById('mainImageCropBtn').style.display = 'none';
+      document.getElementById('mainImageMeta').textContent = 'Saved image';
       document.getElementById('mainImageInput').value = '';
-      bannerImagesPreview.innerHTML = '';
-      const bannerImages = tour.bannerimages || [];
-      bannerImages.forEach((img, index) => {
-        const div = document.createElement('div');
-        div.className = 'banner-image';
-        div.innerHTML = `
-          <img src="${img}" alt="Banner ${index + 1}">
-          <button class="btn btn-sm btn-danger remove-btn" title="Remove banner image" aria-label="Remove banner image"><i class="bi bi-trash"></i></button>
-        `;
-        div.querySelector('.remove-btn').addEventListener('click', () => removeBannerImage(tripId, img));
-        bannerImagesPreview.appendChild(div);
+
+      // Banner images — saved ones
+      document.getElementById('bannerImagesInput').value = '';
+      const preview = document.getElementById('bannerImagesPreview');
+      preview.innerHTML = '';
+      (tour.bannerimages || []).forEach((url) => {
+        const thumb = _makeBannerThumb(url, url.split('/').pop(), 'Saved', false, null, () => {
+          removeBannerImage(tripId, url);
+          thumb.remove();
+          _imSetDirty(true);
+        });
+        preview.appendChild(thumb);
       });
+
       imageModal.show();
     };
 
@@ -1329,20 +1909,13 @@
         }
       }
 
-      if (bannerImagesInput.files.length > 0) {
-        const invalidFiles = Array.from(bannerImagesInput.files).filter(file => !file.type.startsWith('image/'));
-        if (invalidFiles.length > 0) {
-          showToast('Please upload only valid image files for banner images.', 'danger');
-          return;
-        }
-        const oversizedFiles = Array.from(bannerImagesInput.files).filter(file => file.size > 5 * 1024 * 1024);
-        if (oversizedFiles.length > 0) {
-          showToast('Each banner image must be under 5 MB.', 'danger');
-          return;
-        }
+      if (_tlBannerBlobs.length > 0 || bannerImagesInput.files.length > 0) {
+        const blobsToUpload = _tlBannerBlobs.length > 0
+          ? _tlBannerBlobs
+          : Array.from(bannerImagesInput.files);
         const bannerFormData = new FormData();
-        for (let i = 0; i < bannerImagesInput.files.length; i++) {
-          bannerFormData.append('image', bannerImagesInput.files[i]);
+        for (let i = 0; i < blobsToUpload.length; i++) {
+          bannerFormData.append('image', blobsToUpload[i], `banner-${Date.now()}-${i}.jpg`);
         }
         bannerFormData.append('tripId', tripId);
         try {
@@ -1356,12 +1929,14 @@
             showToast(`Error updating banner images: ${result.message}`, 'danger');
             return;
           }
+          _tlBannerBlobs = [];
         } catch (error) {
           showToast('Error updating banner images.', 'danger');
           return;
         }
       }
 
+      _imSetDirty(false);
       showToast('Images updated successfully!');
       submitTourList();
       bootstrap.Modal.getInstance(document.getElementById('imageManagementModal')).hide();
@@ -1574,22 +2149,68 @@
       document.getElementById('mobileNo')?.addEventListener('input', validateQuickCallForm);
       document.getElementById('submitQuickCall')?.addEventListener('click', submitQuickCall);
 
-      // Image management logic
+      // ── Image management wiring ──
       const mainImageInput = document.getElementById('mainImageInput');
-      const mainImagePreview = document.getElementById('mainImagePreview')?.querySelector('img');
-      if (mainImageInput && mainImagePreview) {
-        mainImagePreview.nextElementSibling?.addEventListener('click', () => mainImageInput.click());
-        mainImageInput.addEventListener('change', () => {
-          if (mainImageInput.files.length > 0 && mainImageInput.files[0].type.startsWith('image/')) {
-            mainImagePreview.src = URL.createObjectURL(mainImageInput.files[0]);
-          } else {
-            showToast('Please upload a valid image file.', 'danger');
-            mainImageInput.value = '';
-          }
-        });
-      }
+
+      // Replace button opens file picker
+      document.getElementById('mainImageReplaceBtn')?.addEventListener('click', () => mainImageInput?.click());
+      // Preview button on main image card
+      document.getElementById('mainImagePreviewBtn')?.addEventListener('click', () => {
+        const src  = document.getElementById('mainImagePreviewImg')?.src;
+        const meta = document.getElementById('mainImageMeta')?.textContent || '';
+        if (src) imOpenLightbox(src, meta);
+      });
+      // Crop-again button on main image card (shown after first crop/skip)
+      document.getElementById('mainImageCropBtn')?.addEventListener('click', () => {
+        const file = mainImageInput?.files[0];
+        if (file) _tlStartMainCrop(file);
+      });
+
+      mainImageInput?.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+          showToast('Please upload a valid image file.', 'danger');
+          mainImageInput.value = '';
+          return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          showToast('Main image must be under 5 MB.', 'danger');
+          mainImageInput.value = '';
+          return;
+        }
+        _tlStartMainCrop(file);
+      });
+
+      // Add banner images button opens file picker
+      document.getElementById('bannerImagesAddBtn')?.addEventListener('click', () =>
+        document.getElementById('bannerImagesInput')?.click()
+      );
+      document.getElementById('bannerImagesInput')?.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) _tlStartBannerQueue(Array.from(e.target.files));
+      });
 
       document.getElementById('saveImages')?.addEventListener('click', saveImages);
+
+      // ── Crop modal controls ──
+      document.getElementById('tlCropConfirmBtn')?.addEventListener('click', _tlCropConfirm);
+      document.getElementById('tlCropSkipBtn')?.addEventListener('click', _tlCropSkip);
+      document.getElementById('tlCropCancelBtn')?.addEventListener('click', _tlCropSkip);
+      document.getElementById('tlCropRatio')?.addEventListener('change', _tlOnRatioChange);
+      document.getElementById('tlCropFullscreenBtn')?.addEventListener('click', _tlToggleFullscreen);
+
+      // Destroy cropper + reset fullscreen when modal hides (escape / close btn)
+      document.getElementById('tlCropModal')?.addEventListener('hidden.bs.modal', () => {
+        if (_tlCropper) { _tlCropper.destroy(); _tlCropper = null; }
+        document.querySelectorAll('.tl-crop-backdrop').forEach(bd => bd.classList.remove('tl-crop-backdrop'));
+        // Reset fullscreen state
+        if (_tlIsFullscreen) {
+          _tlIsFullscreen = false;
+          document.getElementById('tlCropModal').classList.remove('tl-fullscreen');
+          const icon = document.getElementById('tlCropFullscreenIcon');
+          if (icon) icon.className = 'bi bi-fullscreen';
+        }
+      });
     });
   </script>
 </body>
